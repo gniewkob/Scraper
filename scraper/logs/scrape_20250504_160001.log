@@ -1,0 +1,248 @@
+2025-05-04 16:00:56 [ERROR] [5] ❌ Błąd ekstrakcji – Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=135.0.7049.115)
+Stacktrace:
+0   chromedriver                        0x0000000108ca8298 chromedriver + 6197912
+1   chromedriver                        0x0000000108c9f8ba chromedriver + 6162618
+2   chromedriver                        0x0000000108724de0 chromedriver + 417248
+3   chromedriver                        0x000000010870a9bd chromedriver + 309693
+4   chromedriver                        0x0000000108733a3d chromedriver + 477757
+5   chromedriver                        0x00000001087a50e9 chromedriver + 942313
+6   chromedriver                        0x00000001087c36bc chromedriver + 1066684
+7   chromedriver                        0x000000010879c793 chromedriver + 907155
+8   chromedriver                        0x0000000108768b25 chromedriver + 695077
+9   chromedriver                        0x0000000108769791 chromedriver + 698257
+10  chromedriver                        0x0000000108c64c90 chromedriver + 5921936
+11  chromedriver                        0x0000000108c68b81 chromedriver + 5938049
+12  chromedriver                        0x0000000108c3efd4 chromedriver + 5767124
+13  chromedriver                        0x0000000108c695ab chromedriver + 5940651
+14  chromedriver                        0x0000000108c2d6d4 chromedriver + 5695188
+15  chromedriver                        0x0000000108c8d098 chromedriver + 6086808
+16  chromedriver                        0x0000000108c8d260 chromedriver + 6087264
+17  chromedriver                        0x0000000108c9f481 chromedriver + 6161537
+18  libsystem_pthread.dylib             0x00007ff8058d1df1 _pthread_start + 99
+19  libsystem_pthread.dylib             0x00007ff8058cd857 thread_start + 15
+
+2025-05-04 16:00:58 [ERROR] [6] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000108ca8298 chromedriver + 6197912
+1   chromedriver                        0x0000000108c9f8ba chromedriver + 6162618
+2   chromedriver                        0x0000000108724c23 chromedriver + 416803
+3   chromedriver                        0x0000000108767d0f chromedriver + 691471
+4   chromedriver                        0x000000010879c8c6 chromedriver + 907462
+5   chromedriver                        0x000000010879720c chromedriver + 885260
+6   chromedriver                        0x00000001087963a7 chromedriver + 881575
+7   chromedriver                        0x00000001086ee20f chromedriver + 193039
+8   chromedriver                        0x0000000108c64c90 chromedriver + 5921936
+9   chromedriver                        0x0000000108c68b81 chromedriver + 5938049
+10  chromedriver                        0x0000000108c3efd4 chromedriver + 5767124
+11  chromedriver                        0x0000000108c695ab chromedriver + 5940651
+12  chromedriver                        0x0000000108c2d6d4 chromedriver + 5695188
+13  chromedriver                        0x00000001086ec384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:00 [ERROR] [7] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000108ca8298 chromedriver + 6197912
+1   chromedriver                        0x0000000108c9f8ba chromedriver + 6162618
+2   chromedriver                        0x0000000108724c23 chromedriver + 416803
+3   chromedriver                        0x0000000108767d0f chromedriver + 691471
+4   chromedriver                        0x000000010879c8c6 chromedriver + 907462
+5   chromedriver                        0x000000010879720c chromedriver + 885260
+6   chromedriver                        0x00000001087963a7 chromedriver + 881575
+7   chromedriver                        0x00000001086ee20f chromedriver + 193039
+8   chromedriver                        0x0000000108c64c90 chromedriver + 5921936
+9   chromedriver                        0x0000000108c68b81 chromedriver + 5938049
+10  chromedriver                        0x0000000108c3efd4 chromedriver + 5767124
+11  chromedriver                        0x0000000108c695ab chromedriver + 5940651
+12  chromedriver                        0x0000000108c2d6d4 chromedriver + 5695188
+13  chromedriver                        0x00000001086ec384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:01 [ERROR] [8] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000108ca8298 chromedriver + 6197912
+1   chromedriver                        0x0000000108c9f8ba chromedriver + 6162618
+2   chromedriver                        0x0000000108724c23 chromedriver + 416803
+3   chromedriver                        0x0000000108767d0f chromedriver + 691471
+4   chromedriver                        0x000000010879c8c6 chromedriver + 907462
+5   chromedriver                        0x000000010879720c chromedriver + 885260
+6   chromedriver                        0x00000001087963a7 chromedriver + 881575
+7   chromedriver                        0x00000001086ee20f chromedriver + 193039
+8   chromedriver                        0x0000000108c64c90 chromedriver + 5921936
+9   chromedriver                        0x0000000108c68b81 chromedriver + 5938049
+10  chromedriver                        0x0000000108c3efd4 chromedriver + 5767124
+11  chromedriver                        0x0000000108c695ab chromedriver + 5940651
+12  chromedriver                        0x0000000108c2d6d4 chromedriver + 5695188
+13  chromedriver                        0x00000001086ec384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:03 [ERROR] [9] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000108ca8298 chromedriver + 6197912
+1   chromedriver                        0x0000000108c9f8ba chromedriver + 6162618
+2   chromedriver                        0x0000000108724c23 chromedriver + 416803
+3   chromedriver                        0x0000000108767d0f chromedriver + 691471
+4   chromedriver                        0x000000010879c8c6 chromedriver + 907462
+5   chromedriver                        0x000000010879720c chromedriver + 885260
+6   chromedriver                        0x00000001087963a7 chromedriver + 881575
+7   chromedriver                        0x00000001086ee20f chromedriver + 193039
+8   chromedriver                        0x0000000108c64c90 chromedriver + 5921936
+9   chromedriver                        0x0000000108c68b81 chromedriver + 5938049
+10  chromedriver                        0x0000000108c3efd4 chromedriver + 5767124
+11  chromedriver                        0x0000000108c695ab chromedriver + 5940651
+12  chromedriver                        0x0000000108c2d6d4 chromedriver + 5695188
+13  chromedriver                        0x00000001086ec384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:05 [ERROR] [10] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000108ca8298 chromedriver + 6197912
+1   chromedriver                        0x0000000108c9f8ba chromedriver + 6162618
+2   chromedriver                        0x0000000108724c23 chromedriver + 416803
+3   chromedriver                        0x0000000108767d0f chromedriver + 691471
+4   chromedriver                        0x000000010879c8c6 chromedriver + 907462
+5   chromedriver                        0x000000010879720c chromedriver + 885260
+6   chromedriver                        0x00000001087963a7 chromedriver + 881575
+7   chromedriver                        0x00000001086ee20f chromedriver + 193039
+8   chromedriver                        0x0000000108c64c90 chromedriver + 5921936
+9   chromedriver                        0x0000000108c68b81 chromedriver + 5938049
+10  chromedriver                        0x0000000108c3efd4 chromedriver + 5767124
+11  chromedriver                        0x0000000108c695ab chromedriver + 5940651
+12  chromedriver                        0x0000000108c2d6d4 chromedriver + 5695188
+13  chromedriver                        0x00000001086ec384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:29 [ERROR] [12] ❌ Błąd ekstrakcji – Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=135.0.7049.115)
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8de0 chromedriver + 417248
+3   chromedriver                        0x000000010599e9bd chromedriver + 309693
+4   chromedriver                        0x00000001059c7a3d chromedriver + 477757
+5   chromedriver                        0x0000000105a390e9 chromedriver + 942313
+6   chromedriver                        0x0000000105a576bc chromedriver + 1066684
+7   chromedriver                        0x0000000105a30793 chromedriver + 907155
+8   chromedriver                        0x00000001059fcb25 chromedriver + 695077
+9   chromedriver                        0x00000001059fd791 chromedriver + 698257
+10  chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+11  chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+12  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+13  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+14  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+15  chromedriver                        0x0000000105f21098 chromedriver + 6086808
+16  chromedriver                        0x0000000105f21260 chromedriver + 6087264
+17  chromedriver                        0x0000000105f33481 chromedriver + 6161537
+18  libsystem_pthread.dylib             0x00007ff8058d1df1 _pthread_start + 99
+19  libsystem_pthread.dylib             0x00007ff8058cd857 thread_start + 15
+
+2025-05-04 16:01:31 [ERROR] [13] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8c23 chromedriver + 416803
+3   chromedriver                        0x00000001059fbd0f chromedriver + 691471
+4   chromedriver                        0x0000000105a308c6 chromedriver + 907462
+5   chromedriver                        0x0000000105a2b20c chromedriver + 885260
+6   chromedriver                        0x0000000105a2a3a7 chromedriver + 881575
+7   chromedriver                        0x000000010598220f chromedriver + 193039
+8   chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+9   chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+10  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+11  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+12  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+13  chromedriver                        0x0000000105980384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:32 [ERROR] [14] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8c23 chromedriver + 416803
+3   chromedriver                        0x00000001059fbd0f chromedriver + 691471
+4   chromedriver                        0x0000000105a308c6 chromedriver + 907462
+5   chromedriver                        0x0000000105a2b20c chromedriver + 885260
+6   chromedriver                        0x0000000105a2a3a7 chromedriver + 881575
+7   chromedriver                        0x000000010598220f chromedriver + 193039
+8   chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+9   chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+10  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+11  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+12  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+13  chromedriver                        0x0000000105980384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:34 [ERROR] [15] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8c23 chromedriver + 416803
+3   chromedriver                        0x00000001059fbd0f chromedriver + 691471
+4   chromedriver                        0x0000000105a308c6 chromedriver + 907462
+5   chromedriver                        0x0000000105a2b20c chromedriver + 885260
+6   chromedriver                        0x0000000105a2a3a7 chromedriver + 881575
+7   chromedriver                        0x000000010598220f chromedriver + 193039
+8   chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+9   chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+10  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+11  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+12  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+13  chromedriver                        0x0000000105980384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:35 [ERROR] [16] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8c23 chromedriver + 416803
+3   chromedriver                        0x00000001059fbd0f chromedriver + 691471
+4   chromedriver                        0x0000000105a308c6 chromedriver + 907462
+5   chromedriver                        0x0000000105a2b20c chromedriver + 885260
+6   chromedriver                        0x0000000105a2a3a7 chromedriver + 881575
+7   chromedriver                        0x000000010598220f chromedriver + 193039
+8   chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+9   chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+10  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+11  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+12  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+13  chromedriver                        0x0000000105980384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:37 [ERROR] [17] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8c23 chromedriver + 416803
+3   chromedriver                        0x00000001059fbd0f chromedriver + 691471
+4   chromedriver                        0x0000000105a308c6 chromedriver + 907462
+5   chromedriver                        0x0000000105a2b20c chromedriver + 885260
+6   chromedriver                        0x0000000105a2a3a7 chromedriver + 881575
+7   chromedriver                        0x000000010598220f chromedriver + 193039
+8   chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+9   chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+10  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+11  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+12  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+13  chromedriver                        0x0000000105980384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+
+2025-05-04 16:01:38 [ERROR] [18] ❌ Błąd ekstrakcji – Message: invalid session id
+Stacktrace:
+0   chromedriver                        0x0000000105f3c298 chromedriver + 6197912
+1   chromedriver                        0x0000000105f338ba chromedriver + 6162618
+2   chromedriver                        0x00000001059b8c23 chromedriver + 416803
+3   chromedriver                        0x00000001059fbd0f chromedriver + 691471
+4   chromedriver                        0x0000000105a308c6 chromedriver + 907462
+5   chromedriver                        0x0000000105a2b20c chromedriver + 885260
+6   chromedriver                        0x0000000105a2a3a7 chromedriver + 881575
+7   chromedriver                        0x000000010598220f chromedriver + 193039
+8   chromedriver                        0x0000000105ef8c90 chromedriver + 5921936
+9   chromedriver                        0x0000000105efcb81 chromedriver + 5938049
+10  chromedriver                        0x0000000105ed2fd4 chromedriver + 5767124
+11  chromedriver                        0x0000000105efd5ab chromedriver + 5940651
+12  chromedriver                        0x0000000105ec16d4 chromedriver + 5695188
+13  chromedriver                        0x0000000105980384 chromedriver + 185220
+14  dyld                                0x00007ff80552c530 start + 3056
+

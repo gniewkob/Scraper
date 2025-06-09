@@ -1,0 +1,30 @@
+2025-05-08 17:02:09 [ERROR] ❌ [50] Błąd ekstrakcji – Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=136.0.7103.92)
+Stacktrace:
+0   chromedriver                        0x0000000109e06298 chromedriver + 6197912
+1   chromedriver                        0x0000000109dfd8ba chromedriver + 6162618
+2   chromedriver                        0x0000000109882de0 chromedriver + 417248
+3   chromedriver                        0x0000000109889aac chromedriver + 445100
+4   chromedriver                        0x000000010988c493 chromedriver + 455827
+5   chromedriver                        0x000000010988c543 chromedriver + 456003
+6   chromedriver                        0x00000001098d41c9 chromedriver + 750025
+7   chromedriver                        0x00000001098d49b1 chromedriver + 752049
+8   chromedriver                        0x00000001098c8216 chromedriver + 700950
+9   chromedriver                        0x00000001098fa9ed chromedriver + 907757
+10  chromedriver                        0x00000001098c8108 chromedriver + 700680
+11  chromedriver                        0x00000001098fab7e chromedriver + 908158
+12  chromedriver                        0x0000000109921cdb chromedriver + 1068251
+13  chromedriver                        0x00000001098fa793 chromedriver + 907155
+14  chromedriver                        0x00000001098c6b25 chromedriver + 695077
+15  chromedriver                        0x00000001098c7791 chromedriver + 698257
+16  chromedriver                        0x0000000109dc2c90 chromedriver + 5921936
+17  chromedriver                        0x0000000109dc6b81 chromedriver + 5938049
+18  chromedriver                        0x0000000109d9cfd4 chromedriver + 5767124
+19  chromedriver                        0x0000000109dc75ab chromedriver + 5940651
+20  chromedriver                        0x0000000109d8b6d4 chromedriver + 5695188
+21  chromedriver                        0x0000000109deb098 chromedriver + 6086808
+22  chromedriver                        0x0000000109deb260 chromedriver + 6087264
+23  chromedriver                        0x0000000109dfd481 chromedriver + 6161537
+24  libsystem_pthread.dylib             0x00007ff8058d1df1 _pthread_start + 99
+25  libsystem_pthread.dylib             0x00007ff8058cd857 thread_start + 15
+

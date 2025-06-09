@@ -1,0 +1,7 @@
+2025-05-30 00:00:08 [ERROR] All Chrome initialization attempts failed: Message: All ChromeDriver attempts failed
+
+2025-05-30 00:00:10 [ERROR] Failed to initialize Firefox WebDriver: Message: Expected browser binary location, but unable to find binary in default location, no 'moz:firefoxOptions.binary' capability provided, and no binary flag set on the command line
+
+2025-05-30 00:00:10 [ERROR] Firefox fallback also failed: Message: Firefox WebDriver initialization failed: Message: Expected browser binary location, but unable to find binary in default location, no 'moz:firefoxOptions.binary' capability provided, and no binary flag set on the command line
+
+
