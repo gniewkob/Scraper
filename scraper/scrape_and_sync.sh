@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_DIR="/Users/gniewko/App/selenium"
+PROJECT_DIR="/Users/gniewko/Repos/Scraper"
 VENV_DIR="$PROJECT_DIR/venv"
 SCRIPT="$PROJECT_DIR/cli/scrape_all.py"
 SQLITE="$PROJECT_DIR/pharmacy_prices.sqlite"
