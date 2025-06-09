@@ -2,9 +2,9 @@
 
 PROJECT_DIR="/Users/gniewko/Repos/Scraper"
 VENV_DIR="$PROJECT_DIR/venv"
-SCRIPT="$PROJECT_DIR/cli/scrape_all.py"
-SQLITE="$PROJECT_DIR/pharmacy_prices.sqlite"
-GEOCODER="$PROJECT_DIR/services/geocode_pharmacies.py"
+SCRIPT="$PROJECT_DIR/scraper/cli/scrape_all.py"
+SQLITE="$PROJECT_DIR/data/pharmacy_prices.sqlite"
+GEOCODER="$PROJECT_DIR/scraper/services/geocode_pharmacies.py"
 
 REMOTE_USER="vetternkraft"
 REMOTE_HOST="s0.mydevil.net"
