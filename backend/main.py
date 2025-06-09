@@ -13,9 +13,12 @@ from math import radians, cos, sin, asin, sqrt
 DB_PATH = str(Path(__file__).parent.parent / "data" / "pharmacy_prices.sqlite")
 ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 
+STATIC_DIR = str(Path(__file__).parent / "static")
+TEMPLATES_DIR = str(Path(__file__).parent / "templates")
+
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -298,18 +301,20 @@ def get_grouped_alerts():
 		grouped[row["product_id"]].append(offer)
 
 	results = []
+	conn2 = sqlite3.connect(DB_PATH)  # Otwórz nowe połączenie tylko do pobierania nazw
 	for product_id, offers in grouped.items():
 		if not offers:
 			continue
-		name = product_id
+		row = conn2.execute("SELECT name FROM products WHERE product_id = ?", (product_id,)).fetchone()
+		name = row[0] if row else product_id
 		min_price = min(o["price"] for o in offers)
 		results.append({
 			"product_id": product_id,
-			"product": name,
+			"product": name,  # <- teraz jest przyjazna nazwa
 			"min_price": min_price,
 			"offers": sorted(offers, key=lambda x: x["price"])
 		})
-
+	conn2.close()
 	return results
 
 # --------- ALERTY: rejestracja i lista ---------

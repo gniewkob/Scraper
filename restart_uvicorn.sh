@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PORT=61973
-CMD="uvicorn main:app --host 127.0.0.1 --port $PORT --reload"
+CMD="uvicorn backend.main:app --host 127.0.0.1 --port $PORT --reload"
 
 echo "Szukam wszystkich procesów uvicorn..."
 
