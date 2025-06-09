@@ -10,7 +10,6 @@ from datetime import datetime
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 
-# Ścieżki do bazy i pliku alertów
 DB_PATH = str(Path(__file__).parent.parent / "data" / "pharmacy_prices.sqlite")
 ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 
@@ -41,19 +40,20 @@ def get_products():
 		results.append({"name": row[0], "label": label})
 	return results
 
-# Funkcja dystansu w kilometrach (haversine)
 def haversine(lat1, lon1, lat2, lon2):
-	R = 6371
+	# Zwraca dystans w km między dwoma punktami
+	R = 6371  # km
+	lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
 	dlat = radians(lat2 - lat1)
 	dlon = radians(lon2 - lon1)
-	a = sin(dlat/2)**2 + cos(radians(lat1))*cos(radians(lat2))*sin(dlon/2)**2
+	a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
 	c = 2 * asin(sqrt(a))
 	return R * c
 
 @app.get("/api/product/{product_name}", response_class=JSONResponse)
 def get_product_by_name(
 	product_name: str,
-	limit: int = Query(50, ge=1, le=100),   # domyślnie większy limit
+	limit: int = Query(50, ge=1, le=100),
 	offset: int = Query(0, ge=0),
 	sort: str = Query("price"),
 	order: str = Query("asc"),
@@ -76,98 +76,67 @@ def get_product_by_name(
 	sort_sql = sort if sort in allowed_sort else "price"
 	order_sql = order if order in allowed_order else "asc"
 
-	# Jeśli wybrano geolokalizację - bierzemy wszystkie i filtrujemy w Pythonie!
-	if lat is not None and lon is not None and radius is not None:
-		all_rows = conn.execute("SELECT * FROM pharmacy_prices WHERE product_id = ?", (product_id,)).fetchall()
-		offers = []
-		now = datetime.now()
-		MINIMUM_DISPLAY_PRICE = 10
-		for row in all_rows:
-			price = float(row["price"])
-			if price < MINIMUM_DISPLAY_PRICE:
-				continue
-			plat = row.get("pharmacy_lat") or row.get("lat")
-			plon = row.get("pharmacy_lon") or row.get("lon")
-			if plat is not None and plon is not None:
-				dist = haversine(lat, lon, float(plat), float(plon))
-				if dist > radius:
-					continue
-			else:
-				continue  # pomiń oferty bez współrzędnych
-			expiration = row["expiration"]
-			fetched_at = row["fetched_at"]
-			short_expiry = False
-			if expiration:
-				try:
-					days_left = (datetime.fromisoformat(expiration) - now).days
-					short_expiry = days_left <= 30
-				except:
-					pass
-			offers.append({
-				"pharmacy": row["pharmacy_name"],
-				"address": row["address"],
-				"price": price,
-				"unit": row["unit"],
-				"expiration": expiration,
-				"fetched_at": fetched_at,
-				"short_expiry": short_expiry,
-				"map_url": row["map_url"] or "",
-				"distance_km": round(dist, 2)
-			})
-		# Sortowanie i paginacja już na przefiltrowanych wynikach
-		offers = sorted(offers, key=lambda o: o[sort_sql]) if sort_sql in offers[0] else offers
-		if order_sql == "desc":
-			offers = list(reversed(offers))
-		total = len(offers)
-		offers = offers[offset:offset+limit]
-	else:
-		# Standardowe filtrowanie po mieście
-		query = "SELECT * FROM pharmacy_prices WHERE product_id = ?"
-		params = [product_id]
-		if city:
-			query += " AND (address LIKE ? OR address LIKE ?)"
-			params.append(f"%, {city}")
-			params.append(f"% {city}")
-		query += f" ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
-		params += [limit, offset]
-		rows = conn.execute(query, params).fetchall()
-		offers = []
-		now = datetime.now()
-		MINIMUM_DISPLAY_PRICE = 10
-		for row in rows:
-			price = float(row["price"])
-			if price < MINIMUM_DISPLAY_PRICE:
-				continue
-			expiration = row["expiration"]
-			fetched_at = row["fetched_at"]
-			short_expiry = False
-			if expiration:
-				try:
-					days_left = (datetime.fromisoformat(expiration) - now).days
-					short_expiry = days_left <= 30
-				except:
-					pass
-			offers.append({
-				"pharmacy": row["pharmacy_name"],
-				"address": row["address"],
-				"price": price,
-				"unit": row["unit"],
-				"expiration": expiration,
-				"fetched_at": fetched_at,
-				"short_expiry": short_expiry,
-				"map_url": row["map_url"] or ""
-			})
-		# policz ile łącznie rekordów (do paginacji)
-		count_query = "SELECT COUNT(*) FROM pharmacy_prices WHERE product_id = ?"
-		count_params = [product_id]
-		if city:
-			count_query += " AND (address LIKE ? OR address LIKE ?)"
-			count_params.append(f"%, {city}")
-			count_params.append(f"% {city}")
-		total = conn.execute(count_query, count_params).fetchone()[0]
+	query = "SELECT * FROM pharmacy_prices WHERE product_id = ?"
+	params = [product_id]
+
+	if city:
+		query += " AND (address LIKE ? OR address LIKE ?)"
+		params.append(f"%, {city}")
+		params.append(f"% {city}")
+
+	query += f" ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
+	params += [limit, offset]
+	rows = conn.execute(query, params).fetchall()
+
+	count_query = "SELECT COUNT(*) FROM pharmacy_prices WHERE product_id = ?"
+	count_params = [product_id]
+	if city:
+		count_query += " AND (address LIKE ? OR address LIKE ?)"
+		count_params.append(f"%, {city}")
+		count_params.append(f"% {city}")
+	total = conn.execute(count_query, count_params).fetchone()[0]
 	conn.close()
 
-	# Trend i top3
+	offers = []
+	now = datetime.now()
+	MINIMUM_DISPLAY_PRICE = 10
+
+	for row in rows:
+		price = float(row["price"])
+		if price < MINIMUM_DISPLAY_PRICE:
+			continue
+		# --- Filtr promień od lokalizacji użytkownika ---
+		if lat is not None and lon is not None and radius is not None:
+			plat = row["pharmacy_lat"]
+			plon = row["pharmacy_lon"]
+			if plat is None or plon is None:
+				continue
+			distance = haversine(lat, lon, plat, plon)
+			if distance > radius:
+				continue
+		expiration = row["expiration"]
+		fetched_at = row["fetched_at"]
+		short_expiry = False
+		if expiration:
+			try:
+				days_left = (datetime.fromisoformat(expiration) - now).days
+				short_expiry = days_left <= 30
+			except:
+				pass
+		offers.append({
+			"pharmacy": row["pharmacy_name"],
+			"address": row["address"],
+			"price": price,
+			"unit": row["unit"],
+			"expiration": expiration,
+			"fetched_at": fetched_at,
+			"short_expiry": short_expiry,
+			"map_url": row["map_url"] or "",
+			"pharmacy_lat": row["pharmacy_lat"],
+			"pharmacy_lon": row["pharmacy_lon"]
+		})
+
+	# --- budujemy trend i top3 (POZA pętlą for) ---
 	trend_data = []
 	seen_top3_keys = set()
 	top3 = []

@@ -4,6 +4,7 @@ PROJECT_DIR="/Users/gniewko/App/selenium"
 VENV_DIR="$PROJECT_DIR/venv"
 SCRIPT="$PROJECT_DIR/cli/scrape_all.py"
 SQLITE="$PROJECT_DIR/pharmacy_prices.sqlite"
+GEOCODER="$PROJECT_DIR/services/geocode_pharmacies.py"
 
 REMOTE_USER="vetternkraft"
 REMOTE_HOST="s0.mydevil.net"
@@ -30,7 +31,10 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+# 🔍 Geokoduj adresy w bazie (przed uploadem!)
 if [ -f "$SQLITE" ]; then
+	echo "🌍 Geocoding addresses..."
+	python3 "$GEOCODER"
 	echo "📤 Sending database..."
 	scp "$SQLITE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
 else
