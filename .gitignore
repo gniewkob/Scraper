@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtualenv
+venv/
+ENV/
+env/
+
+# Mac/Windows śmieci
+.DS_Store
+Thumbs.db
+
+# Logi, tempy, screenshoty
+logs/
+tmp/
+error_screenshots/
+reports/
+
+# Chromedriver, test cache
+chromedriver
+
+# SQLite backupy
+*.sqlite-journal
+
+# Testy, jeśli nie chcesz ich trzymać w repo
+scraper/tests/
