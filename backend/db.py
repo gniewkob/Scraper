@@ -1,5 +1,4 @@
 import sqlite3
-import sqlite3
 import re
 from scraper.core.config.config import DB_PATH
 
