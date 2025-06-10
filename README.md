@@ -152,6 +152,16 @@ produkcyjnym. Plik `cron_test.py` służy do diagnozowania konfiguracji cron ora
 sprawdzenia, czy Selenium i Chrome działają poprawnie. Skrypt generuje logi z
 informacjami o systemie oraz wykonuje proste uruchomienie przeglądarki.
 
+## 9. Uruchamianie testów
+
+W katalogu projektu znajdują się testy Pytest dla scraperów i backendu.
+Aby je uruchomić lokalnie, aktywuj środowisko i wykonaj:
+
+```bash
+pip install -r requirements.txt
+python -m pytest
+```
+
 ---
 
 **Masz pytania lub chcesz rozwinąć projekt?**
