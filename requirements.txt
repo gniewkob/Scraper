@@ -12,3 +12,5 @@ uvicorn
 geopy
 jinja2
 python-multipart
+httpx<0.25
+itsdangerous
