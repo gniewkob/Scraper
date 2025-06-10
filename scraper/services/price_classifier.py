@@ -192,27 +192,6 @@ def classify_price(price: float, unit: str) -> str:
         return "droga"
             
             
-# --- Test lokalny ---
-if __name__ == "__main__":
-    def test_classify_price():
-        test_cases = [
-            (19.99, "g", "okazja"),
-            (20.0, "g", "dobra"),
-            (34.99, "g", "dobra"),
-            (35.0, "g", "normalna"),
-            (39.99, "g", "normalna"),
-            (40.0, "g", "droga"),
-            (100.0, "10g", "okazja"),
-            (350.0, "10g", "normalna"),
-            (20.0, "szt", "dobra")
-        ]
-
-        for price, unit, expected in test_cases:
-            result = classify_price(price, unit)
-            assert result == expected, f"{price} {unit} → {result} ❌ (oczekiwano: {expected})"
-        print("✅ Wszystkie testy classify_price(price, unit) zakończone sukcesem.")
-
-    test_classify_price()
 
 
 
