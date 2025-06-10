@@ -2,19 +2,12 @@
 
 import sys
 from pathlib import Path
-# 🔧 Dodaj główny katalog do sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import sqlite3
 import importlib.util
 import logging
 
-from core.bootstrap import init_logging, ensure_schema
-from core.config.config import DB_PATH
-
-# 📁 Ustawienie katalogu głównego projektu
-ROOT_DIR = Path(__file__).resolve().parents[1]
-if str(ROOT_DIR) not in sys.path:
-	sys.path.insert(0, str(ROOT_DIR))
+from scraper.core.bootstrap import init_logging, ensure_schema
+from scraper.core.config.config import DB_PATH
 
 # 🧪 Inicjalizacja logowania
 init_logging()
@@ -23,7 +16,7 @@ logger = logging.getLogger("gdziepolek")
 # 🔧 Synchronizacja struktury bazy danych
 ensure_schema()
 
-schema_path = ROOT_DIR / "services" / "update_schema.py"
+schema_path = Path(__file__).resolve().parents[1] / "services" / "update_schema.py"
 if schema_path.exists():
 	spec = importlib.util.spec_from_file_location("update_schema", schema_path)
 	update_schema = importlib.util.module_from_spec(spec)

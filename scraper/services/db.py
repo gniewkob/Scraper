@@ -2,10 +2,10 @@ import sqlite3
 import logging
 from datetime import datetime
 from pathlib import Path
-from services.price_validator import normalize_unit
+from scraper.services.price_validator import normalize_unit
 
 logger = logging.getLogger("gdziepolek")
-from core.config.config import DB_PATH
+from scraper.core.config.config import DB_PATH
 
 
 def ensure_product_name(product_id, product_name):

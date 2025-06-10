@@ -18,7 +18,7 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pytest
-# lub: python main.py --scrape
+# or: python -m scraper.cli.scrape_all
 ```
 
 **Wyniki działania:**
