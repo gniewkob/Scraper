@@ -4,8 +4,7 @@ import re
 from typing import Dict, Optional, Tuple
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).resolve().parents[1]))  # dodaj katalog główny do sys.path
-from core.config.config import DB_PATH
+from scraper.core.config.config import DB_PATH
 
 class PriceClassifier:
     def __init__(self, db_path: str = DB_PATH):

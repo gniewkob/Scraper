@@ -8,14 +8,11 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
-# 🔧 Dodaj główny katalog do sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from core.browser import setup_browser
-from core.data_extractor import extract_pharmacy_data
-from core.bootstrap import ensure_schema, init_logging
-from core.config.urls import PRODUCT_NAMES, get_url_by_name
-from core.config.config import DB_PATH
+from scraper.core.browser import setup_browser
+from scraper.core.data_extractor import extract_pharmacy_data
+from scraper.core.bootstrap import ensure_schema, init_logging
+from scraper.core.config.urls import PRODUCT_NAMES, get_url_by_name
+from scraper.core.config.config import DB_PATH
 
 # 📁 Inicjalizacja logowania i schematu
 init_logging()

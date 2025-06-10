@@ -4,49 +4,49 @@
 # 🧪 AKTUALIZACJA SCHEMATU
 init:
 	@echo "🔧 Aktualizacja struktury bazy danych..."
-	python3 services/update_schema.py
+       python3 -m scraper.services.update_schema
 
 # 🔍 SCRAPOWANIE – wszystkie produkty
 scrape:
 	@echo "🔍 Scraping all products (GUI browser)..."
-	python3 services/update_schema.py
-	python3 cli/scrape_all.py
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.cli.scrape_all
 
 # 🔍 SCRAPOWANIE – headless
 scrape-headless:
 	@echo "🔍 Scraping all products (headless)..."
-	python3 services/update_schema.py
-	python3 core/main.py --headless
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.core.main --headless
 
 # 🔍 SCRAPUJ KONKRETNY PRODUKT
 scrape-product:
 	@echo "🔍 Scraping product ID: $(PRODUCT)"
-	python3 services/update_schema.py
-	python3 core/main.py --product $(PRODUCT)
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.core.main --product $(PRODUCT)
 
 # 🔍 SCRAPUJ PRODUKT (HEADLESS)
 scrape-product-headless:
 	@echo "🔍 Scraping product ID: $(PRODUCT) (headless)"
-	python3 services/update_schema.py
-	python3 core/main.py --product $(PRODUCT) --headless
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.core.main --product $(PRODUCT) --headless
 
 # 📈 ANALIZA CEN CLI
 analyze:
 	@echo "📈 Running CLI analysis..."
-	python3 services/update_schema.py
-	python3 cli/analyze_prices.py --trend
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.cli.analyze_prices --trend
 
 # 🚨 ALERTY CENOWE
 alerts:
 	@echo "🚨 Pokazuję okazje cenowe..."
-	python3 services/update_schema.py
-	python3 cli/check_alerts.py
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.cli.check_alerts
 
 # 📦 PODGLĄD BAZY
 check:
 	@echo "🔍 Wyświetlam ostatnie wpisy z bazy..."
-	python3 services/update_schema.py
-	python3 cli/check_db.py
+       python3 -m scraper.services.update_schema
+       python3 -m scraper.cli.check_db
 
 # 🧼 CZYSZCZENIE PLIKÓW I LOGÓW
 clean:
@@ -58,7 +58,7 @@ reset-db:
 	@echo "🗑️ Usuwam starą bazę..."
 	rm -f pharmacy_prices.sqlite
 	@echo "🧱 Tworzę nową strukturę..."
-	python3 services/update_schema.py
+       python3 -m scraper.services.update_schema
 
 
 # 🆘 POMOC

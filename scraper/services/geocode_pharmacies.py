@@ -4,7 +4,7 @@ import requests
 import time
 from urllib.parse import quote
 from pathlib import Path
-from core.config.config import DB_PATH
+from scraper.core.config.config import DB_PATH
 
 def geocode_address(address):
 	"""Zwraca (lat, lon) dla podanego adresu albo (None, None) jeśli nie znalazł."""

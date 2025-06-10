@@ -8,15 +8,8 @@ from pathlib import Path
 logger = logging.getLogger("gdziepolek")
 logger.setLevel(logging.DEBUG)
 
-from core.config.config import DB_PATH
-
-# Import narzędzi z core.config
-try:
-	sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-	from core.config.urls import URLS, extract_product_id, get_product_name
-except ImportError as e:
-	logger.error(f"❌ Nie udało się zaimportować URL-i: {e}")
-	URLS = []
+from scraper.core.config.config import DB_PATH
+from scraper.core.config.urls import URLS, extract_product_id, get_product_name
 
 def update_schema():
 	try:
