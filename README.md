@@ -75,6 +75,7 @@ Panel pozwala podejrzeć listę zapisanych alertów cenowych.
 ```bash
 alias workon_scraper="source ~/.virtualenvs/scraper/bin/activate"
 workon_scraper
+pip install -r requirements.txt  # m.in. python-multipart do obsługi formularzy
 ```
 
 ### Uruchomienie backendu:
@@ -128,7 +129,7 @@ GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
 * **Backend działa na porcie 61973** – aby udostępnić publicznie, ustaw reverse proxy w panelu MyDevil lub własnym Apache/nginx.
 * **Aby backend korzystał z najnowszych danych**, synchronizuj bazę po każdym scrapingu (rsync).
 * **Selenium/testy i pobieranie danych uruchamiaj wyłącznie lokalnie** (ze wsparciem X/Chrome).
-* **Wymagania backendu**: FastAPI, Uvicorn (`pip install -r requirements.txt`)
+* **Wymagania backendu**: FastAPI, Uvicorn, python-multipart (`pip install -r requirements.txt`)
 * **Wszystkie polecenia zakładają katalog główny:**
   `/home/vetternkraft/scraper_workspace/`
 
