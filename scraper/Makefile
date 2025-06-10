@@ -53,20 +53,6 @@ clean:
 	@echo "🧹 Czyszczenie danych i logów..."
 	rm -rf data/*.json logs/*.log
 
-# 🚀 DASHBOARD FLASK – port domyślny
-dashboard:
-	@echo "🚀 Uruchamiam dashboard na http://localhost:5050"
-	python3 dashboard/app.py
-
-# 🚀 DASHBOARD FLASK – port własny
-dashboard-port:
-	@echo "🚀 Uruchamiam dashboard na porcie $(PORT)"
-	PORT=$(PORT) python3 dashboard/app.py
-
-# 🚧 FLASK W TRYBIE DEV Z AUTORELOADEM
-run-dev:
-	@echo "🚧 Tryb deweloperski Flask z auto-restartem"
-	FLASK_APP=dashboard/app.py FLASK_ENV=development flask run --port=5050
 
 reset-db:
 	@echo "🗑️ Usuwam starą bazę..."
@@ -88,8 +74,5 @@ help:
 	@echo "  make analyze                 - Run price analysis CLI"
 	@echo "  make alerts                  - Show low price alerts"
 	@echo "  make check                   - Show last rows from DB"
-	@echo "  make dashboard               - Run Flask dashboard (port 5050)"
-	@echo "  make dashboard-port PORT=8080 - Run dashboard on custom port"
-	@echo "  make run-dev                 - Run dashboard with FLASK_ENV=dev"
 	@echo "  make clean                   - Delete logs and JSON files"
 	@echo ""
