@@ -63,6 +63,7 @@ def admin_panel(request: Request):
     if not request.session.get("admin"):
         return RedirectResponse("/admin/login")
     require_admin(request)
+
     alerts = []
     if ALERT_FILE.exists():
         try:
