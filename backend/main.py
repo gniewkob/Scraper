@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Query, Request
-from fastapi.responses import JSONResponse, HTMLResponse
+import os
+from fastapi import FastAPI, Query, Request, HTTPException
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 import sqlite3
 import json
@@ -17,7 +19,11 @@ ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "change_me")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin")
+
 app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
@@ -25,6 +31,44 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+def require_admin(request: Request):
+    if not request.session.get("admin"):
+        raise HTTPException(status_code=401)
+
+
+@app.get("/admin/login", response_class=HTMLResponse)
+def admin_login_form(request: Request):
+    return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
+
+
+@app.post("/admin/login", response_class=HTMLResponse)
+async def admin_login(request: Request):
+    form = await request.form()
+    if form.get("password") == ADMIN_PASSWORD:
+        request.session["admin"] = True
+        return RedirectResponse("/admin", status_code=302)
+    return templates.TemplateResponse("admin_login.html", {"request": request, "error": "Błędne hasło"})
+
+
+@app.get("/admin/logout")
+def admin_logout(request: Request):
+    request.session.clear()
+    return RedirectResponse("/admin/login")
+
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin_panel(request: Request):
+    require_admin(request)
+    alerts = []
+    if ALERT_FILE.exists():
+        try:
+            with open(ALERT_FILE, "r", encoding="utf-8") as f:
+                alerts = json.load(f)
+        except Exception:
+            alerts = []
+    return templates.TemplateResponse("admin.html", {"request": request, "alerts": alerts})
 
 
 @app.get("/api/products", response_class=JSONResponse)
