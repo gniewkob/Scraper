@@ -69,6 +69,8 @@ export ADMIN_PASSWORD="moje_super_haslo"
 ```
 
 Panel pozwala podejrzeć listę zapisanych alertów cenowych.
+Użytkownik może zapisać się na alert cenowy z poziomu dashboardu,
+wskazując konkretny produkt oraz maksymalną cenę.
 
 ### Aktywacja środowiska Python (virtualenv):
 
