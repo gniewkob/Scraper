@@ -3,10 +3,15 @@ from fastapi.testclient import TestClient
 
 from backend.main import app
 
-client = TestClient(app)
+
+@pytest.fixture(scope="module")
+def client():
+    """Create a TestClient for the FastAPI app."""
+    with TestClient(app) as c:
+        yield c
 
 
-def test_get_products():
+def test_get_products(client):
     response = client.get('/api/products')
     assert response.status_code == 200
     products = response.json()
@@ -15,7 +20,7 @@ def test_get_products():
     assert {'name', 'label'} <= set(products[0].keys())
 
 
-def test_get_product_by_name():
+def test_get_product_by_name(client):
     products = client.get('/api/products').json()
     product_name = products[0]['name']
     response = client.get(f'/api/product/{product_name}')
@@ -26,12 +31,12 @@ def test_get_product_by_name():
     assert isinstance(data['offers'], list)
 
 
-def test_get_product_not_found():
+def test_get_product_not_found(client):
     response = client.get('/api/product/non-existent-product')
     assert response.status_code == 404
 
 
-def test_get_cities():
+def test_get_cities(client):
     response = client.get('/api/cities')
     assert response.status_code == 200
     cities = response.json()
