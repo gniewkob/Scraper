@@ -13,13 +13,18 @@ REMOTE_PATH="/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite"
 
 cd "$PROJECT_DIR" || exit 1
 
+# Aktywuj virtualenv
 source "$VENV_DIR/bin/activate"
+
+# Poprawka: dodaj katalog SCRAPER do PYTHONPATH aby importy pakietowe działały
+export PYTHONPATH="$PROJECT_DIR/scraper"
 
 # 🔥 Wymuś PATH, żeby znaleźć Chrome
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Google Chrome.app/Contents/MacOS:$PATH"
 
 echo "✅ PATH=$PATH"
 echo "✅ VIRTUAL_ENV=$VIRTUAL_ENV"
+echo "✅ PYTHONPATH=$PYTHONPATH"
 which python3
 python3 --version
 
@@ -34,6 +39,8 @@ fi
 # 🔍 Geokoduj adresy w bazie (przed uploadem!)
 if [ -f "$SQLITE" ]; then
 	echo "🌍 Geocoding addresses..."
+	# Opcjonalnie, test importu:
+	# python3 -c "from core.config.config import DB_PATH; print('DB_PATH:', DB_PATH)"
 	python3 "$GEOCODER"
 	echo "📤 Sending database..."
 	scp "$SQLITE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
