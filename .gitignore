@@ -25,3 +25,6 @@ chromedriver
 
 # Testy, jeśli nie chcesz ich trzymać w repo
 scraper/tests/
+
+# Baza
+data/
