@@ -59,6 +59,17 @@ Zdalne dane możesz zmienić przez zmienne środowiskowe:
 Aplikacja FastAPI udostępniająca REST API oraz dashboard (w przyszłości nowoczesny frontend).
 Korzysta z bazy SQLite synchronizowanej powyżej.
 
+### Panel administracyjny
+
+Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Panel wymaga zalogowania, a formularz logowania znajduje się pod `/admin/login`. Hasło podawane jest w zmiennej środowiskowej `ADMIN_PASSWORD` (domyślnie `admin`).
+Hasło można ustawić np. tak:
+
+```bash
+export ADMIN_PASSWORD="moje_super_haslo"
+```
+
+Panel pozwala podejrzeć listę zapisanych alertów cenowych.
+
 ### Aktywacja środowiska Python (virtualenv):
 
 ```bash
