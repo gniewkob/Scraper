@@ -10,7 +10,7 @@ from datetime import datetime
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 
-DB_PATH = str(Path(__file__).parent.parent / "data" / "pharmacy_prices.sqlite")
+from scraper.core.config.config import DB_PATH
 ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 
 STATIC_DIR = str(Path(__file__).parent / "static")

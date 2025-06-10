@@ -52,18 +52,17 @@ The `update_schema.py` script handles database schema migrations, adding new col
 
 These thresholds are specifically calibrated for medical cannabis products in the Polish market, providing users with quick visual indicators of relative value compared to typical market prices.
 
-### 4. Web Interface (Flask Application)
+### 4. Web Interface (FastAPI Application)
 
-The application provides a web dashboard built with Flask:
+The current version exposes a dashboard powered by FastAPI:
 
-- **API Endpoints** (`app.py`):
-  - `/api/products`: Lists all monitored products
-  - `/api/lowest`: Shows lowest prices for a specific product
-  - `/api/opportunities`: Displays current best deals
-  - `/data`: Retrieves time-series price data for visualization
+- **API Endpoints** (`backend/main.py`):
+  - `/api/products`: lists all monitored products
+  - `/api/product/{name}`: details and price history for a product
+  - `/api/alerts`: currently detected price opportunities
 - **Dashboard UI** (`templates/index.html` & `static/dashboard.combined.js`):
-  - Interactive price trend charts using Chart.js
-  - Product selection dropdown
+  - interactive price trend charts using Chart.js
+  - product selection dropdown
   - Best deals listing
   - Lowest price comparisons per product
 
@@ -140,7 +139,7 @@ The application allows configuration through:
 2. It initializes a WebDriver instance and navigates to each product page
 3. For each page, it extracts pharmacy listings and their data
 4. The data is stored in the SQLite database and exported as JSON
-5. The Flask application (`app.py`) provides a web interface to browse and analyze this data
+5. The FastAPI application (`backend/main.py`) provides a web interface to browse and analyze this data
 6. Users can interact with the dashboard to explore price trends and find best deals
 
 ## Conclusion
