@@ -75,6 +75,7 @@ Panel pozwala podejrzeć listę zapisanych alertów cenowych.
 ```bash
 alias workon_scraper="source ~/.virtualenvs/scraper/bin/activate"
 workon_scraper
+pip install -r requirements.txt  # m.in. python-multipart do obsługi formularzy
 ```
 
 ### Uruchomienie backendu:
@@ -128,7 +129,7 @@ GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
 * **Backend działa na porcie 61973** – aby udostępnić publicznie, ustaw reverse proxy w panelu MyDevil lub własnym Apache/nginx.
 * **Aby backend korzystał z najnowszych danych**, synchronizuj bazę po każdym scrapingu (rsync).
 * **Selenium/testy i pobieranie danych uruchamiaj wyłącznie lokalnie** (ze wsparciem X/Chrome).
-* **Wymagania backendu**: FastAPI, Uvicorn (`pip install -r requirements.txt`)
+* **Wymagania backendu**: FastAPI, Uvicorn, python-multipart (`pip install -r requirements.txt`)
 * **Wszystkie polecenia zakładają katalog główny:**
   `/home/vetternkraft/scraper_workspace/`
 
@@ -151,11 +152,19 @@ produkcyjnym. Plik `cron_test.py` służy do diagnozowania konfiguracji cron ora
 sprawdzenia, czy Selenium i Chrome działają poprawnie. Skrypt generuje logi z
 informacjami o systemie oraz wykonuje proste uruchomienie przeglądarki.
 
+## 9. Uruchamianie testów
+
+W katalogu projektu znajdują się testy Pytest dla scraperów i backendu.
+Aby je uruchomić lokalnie, aktywuj środowisko i wykonaj:
+
+```bash
+pip install -r requirements.txt
+python -m pytest
+```
+
 ---
 
 **Masz pytania lub chcesz rozwinąć projekt?**
 Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
-
-```
 
 ---
