@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_DIR="/Users/gniewko/Repos/Scraper"
-VENV_DIR="$PROJECT_DIR/venv"
+VENV_DIR="$PROJECT_DIR/scraper/venv"
 SCRIPT="$PROJECT_DIR/scraper/cli/scrape_all.py"
 SQLITE="$PROJECT_DIR/data/pharmacy_prices.sqlite"
 GEOCODER="$PROJECT_DIR/scraper/services/geocode_pharmacies.py"
