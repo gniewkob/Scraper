@@ -25,8 +25,9 @@ pytest
 
 * Szczegółowe logi i raporty (HTML/console)
 * Zrzuty ekranu błędów (error\_screenshots/)
-* Dane w formie JSON oraz finalnie w bazie SQLite:
-  **`~/scraper_workspace/scraper/pharmacy_prices.sqlite`**
+* Dane w formie JSON oraz finalnie w bazie SQLite (`data/pharmacy_prices.sqlite`)
+* ChromeDriver dostarcza `webdriver-manager`, dlatego binarka nie jest w repozytorium
+* Baza `data/pharmacy_prices.sqlite` jest generowana podczas scrapingu
 
 ---
 
