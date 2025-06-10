@@ -1,6 +1,4 @@
-import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[0]))
 
 import os
 import json
@@ -13,13 +11,13 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from core.browser import setup_browser
-from core.data_extractor import extract_pharmacy_data
-from core.config.urls import URLS, extract_product_id
-from core.config.selectors import PHARMACY_ITEMS_SELECTORS
-from services.db import insert_prices
-from core.bootstrap import init_logging
-from core.config.config import DB_PATH
+from scraper.core.browser import setup_browser
+from scraper.core.data_extractor import extract_pharmacy_data
+from scraper.core.config.urls import URLS, extract_product_id
+from scraper.core.config.selectors import PHARMACY_ITEMS_SELECTORS
+from scraper.services.db import insert_prices
+from scraper.core.bootstrap import init_logging
+from scraper.core.config.config import DB_PATH
 
 logger = logging.getLogger("gdziepolek")
 

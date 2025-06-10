@@ -1,6 +1,5 @@
 # cli/analyze_prices.py
 import sys
-import os
 import importlib.util
 import logging
 import sqlite3
@@ -8,11 +7,9 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
-from core.config.config import DB_PATH
+from scraper.core.config.config import DB_PATH
 
-from core.bootstrap import init_logging, ensure_schema
-# 🔧 Dodaj główny katalog do sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scraper.core.bootstrap import init_logging, ensure_schema
 # 🔧 Inicjalizacja logowania
 init_logging()
 logger = logging.getLogger("gdziepolek")
