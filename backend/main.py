@@ -60,6 +60,8 @@ def admin_logout(request: Request):
 
 @app.get("/admin", response_class=HTMLResponse)
 def admin_panel(request: Request):
+    if not request.session.get("admin"):
+        return RedirectResponse("/admin/login")
     require_admin(request)
     alerts = []
     if ALERT_FILE.exists():
