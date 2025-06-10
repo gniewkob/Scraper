@@ -1,8 +1,6 @@
 import sqlite3
-import os
 import re
-
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "pharmacy_prices.sqlite")
+from scraper.core.config.config import DB_PATH
 
 def get_connection():
 	conn = sqlite3.connect(DB_PATH)

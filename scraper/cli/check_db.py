@@ -1,4 +1,4 @@
-# cli/show_last_records.py
+# cli/check_db.py
 
 import sys
 from pathlib import Path

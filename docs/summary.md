@@ -37,7 +37,7 @@ This application represents a specialized monitoring system for tracking medical
 - **Regional availability mapping**
 
 ### 4. Presentation Layer
-- **Flask-based web application** with RESTful API endpoints
+- **FastAPI-based web application** with RESTful API endpoints
 - **Interactive dashboard** with Chart.js visualization
 - **Responsive design** for multi-device access
 - **Real-time data updates** and filtering
@@ -86,7 +86,7 @@ This application represents a specialized monitoring system for tracking medical
 ┌───────────────────┐     ┌─────────────────────┐     ┌───────────────────┐
 │  Data Collection  │     │   Data Processing   │     │  Data Presentation │
 │  ---------------  │     │   --------------    │     │  ---------------   │
-│  - Selenium       │     │   - SQLite DB       │     │  - Flask App       │
+│  - Selenium       │     │   - SQLite DB       │     │  - FastAPI app     │
 │  - WebDriver      │──→  │   - Price Analysis  │──→  │  - Chart.js        │
 │  - Page Objects   │     │   - Classification  │     │  - API Endpoints   │
 └───────────────────┘     └─────────────────────┘     └───────────────────┘
