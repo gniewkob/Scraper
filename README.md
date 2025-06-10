@@ -167,6 +167,4 @@ python -m pytest
 **Masz pytania lub chcesz rozwinąć projekt?**
 Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
 
-```
-
 ---
