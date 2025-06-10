@@ -124,6 +124,15 @@ GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
 
 ---
 
+## 8. Narzędzia developerskie
+
+Katalog `tools/` zawiera skrypty pomocnicze niewykorzystywane w środowisku
+produkcyjnym. Plik `cron_test.py` służy do diagnozowania konfiguracji cron oraz
+sprawdzenia, czy Selenium i Chrome działają poprawnie. Skrypt generuje logi z
+informacjami o systemie oraz wykonuje proste uruchomienie przeglądarki.
+
+---
+
 **Masz pytania lub chcesz rozwinąć projekt?**
 Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
 
