@@ -41,6 +41,14 @@ rsync -av ~/scraper_workspace/scraper/pharmacy_prices.sqlite \
 
 *Baza ląduje w katalogu `/home/vetternkraft/scraper_workspace/data/`.*
 
+Skrypt `scraper/scrape_and_sync.sh` automatyzuje ten proces.
+Zdalne dane możesz zmienić przez zmienne środowiskowe:
+
+* `REMOTE_USER` – nazwa użytkownika (domyślnie `vetternkraft`)
+* `REMOTE_HOST` – adres serwera (domyślnie `s0.mydevil.net`)
+* `REMOTE_PATH` – ścieżka do pliku na serwerze
+  (domyślnie `/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite`)
+
 ---
 
 ## 3. Backend Dashboard & API (na serwerze, MyDevil)

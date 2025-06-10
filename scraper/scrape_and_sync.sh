@@ -1,13 +1,14 @@
 #!/bin/bash
 
-PROJECT_DIR="/Users/gniewko/Repos/Scraper"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
 VENV_DIR="$PROJECT_DIR/scraper/venv"
 SQLITE="$PROJECT_DIR/data/pharmacy_prices.sqlite"
 GEOCODER="scraper.services.geocode_pharmacies"
 
-REMOTE_USER="vetternkraft"
-REMOTE_HOST="s0.mydevil.net"
-REMOTE_PATH="/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite"
+REMOTE_USER="${REMOTE_USER:-vetternkraft}"
+REMOTE_HOST="${REMOTE_HOST:-s0.mydevil.net}"
+REMOTE_PATH="${REMOTE_PATH:-/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite}"
 #REMOTE_PATH="/home/vetternkraft/domains/smart.bodora.pl/public_python/pharmacy_prices.sqlite"
 
 cd "$PROJECT_DIR" || exit 1
