@@ -5,7 +5,7 @@ from pathlib import Path
 from services.price_validator import normalize_unit
 
 logger = logging.getLogger("gdziepolek")
-DB_PATH = Path("pharmacy_prices.sqlite")
+from core.config.config import DB_PATH
 
 
 def ensure_product_name(product_id, product_name):

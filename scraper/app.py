@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 # 🔧 dozwolony dostęp do core i services
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from services.db import DB_PATH
+from core.config.config import DB_PATH
 from datetime import datetime
 from flask import Flask, jsonify, render_template, send_from_directory, request
 from services.price_classifier import classify_price

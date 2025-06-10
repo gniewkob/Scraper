@@ -15,6 +15,7 @@ from core.browser import setup_browser
 from core.data_extractor import extract_pharmacy_data
 from core.bootstrap import ensure_schema, init_logging
 from core.config.urls import PRODUCT_NAMES, get_url_by_name
+from core.config.config import DB_PATH
 
 # 📁 Inicjalizacja logowania i schematu
 init_logging()

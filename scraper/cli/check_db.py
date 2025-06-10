@@ -9,6 +9,7 @@ import importlib.util
 import logging
 
 from core.bootstrap import init_logging, ensure_schema
+from core.config.config import DB_PATH
 
 # 📁 Ustawienie katalogu głównego projektu
 ROOT_DIR = Path(__file__).resolve().parents[1]

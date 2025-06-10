@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from core.config.urls import extract_product_id
 from services.db import insert_prices
+from core.config.config import DB_PATH
 
 logger = logging.getLogger("gdziepolek")
 

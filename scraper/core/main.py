@@ -19,6 +19,7 @@ from core.config.urls import URLS, extract_product_id
 from core.config.selectors import PHARMACY_ITEMS_SELECTORS
 from services.db import insert_prices
 from core.bootstrap import init_logging
+from core.config.config import DB_PATH
 
 logger = logging.getLogger("gdziepolek")
 

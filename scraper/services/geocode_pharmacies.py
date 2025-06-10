@@ -4,8 +4,7 @@ import requests
 import time
 from urllib.parse import quote
 from pathlib import Path
-
-DB_PATH = Path(__file__).resolve().parents[2] / "data" / "pharmacy_prices.sqlite"
+from core.config.config import DB_PATH
 
 def geocode_address(address):
 	"""Zwraca (lat, lon) dla podanego adresu albo (None, None) jeśli nie znalazł."""

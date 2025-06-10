@@ -8,6 +8,7 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
+from core.config.config import DB_PATH
 
 from core.bootstrap import init_logging, ensure_schema
 # 🔧 Dodaj główny katalog do sys.path
@@ -27,10 +28,6 @@ if schema_path.exists():
 else:
 	logger.warning("⚠️ Plik update_schema.py nie znaleziony. Upewnij się, że struktura bazy została przygotowana.")
 	ensure_schema()
-
-# 📦 Stała do ścieżki bazy
-DB_PATH = Path("pharmacy_prices.sqlite")
-
 
 def fetch_all_data(product_filter=None):
 	with sqlite3.connect(DB_PATH) as conn:

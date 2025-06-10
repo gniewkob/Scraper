@@ -8,7 +8,7 @@ from pathlib import Path
 logger = logging.getLogger("gdziepolek")
 logger.setLevel(logging.DEBUG)
 
-DB_PATH = Path(__file__).resolve().parents[1] / "pharmacy_prices.sqlite"
+from core.config.config import DB_PATH
 
 # Import narzędzi z core.config
 try:
