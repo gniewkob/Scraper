@@ -19,7 +19,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 pytest
 # lub: python main.py --scrape
-````
+```
 
 **Wyniki działania:**
 
