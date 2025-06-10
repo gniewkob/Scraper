@@ -61,7 +61,7 @@ Korzysta z bazy SQLite synchronizowanej powyżej.
 
 ### Panel administracyjny
 
-Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Wymaga on zalogowania hasłem podanym w zmiennej środowiskowej `ADMIN_PASSWORD` (domyślnie `admin`).
+Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Panel wymaga zalogowania, a formularz logowania znajduje się pod `/admin/login`. Hasło podawane jest w zmiennej środowiskowej `ADMIN_PASSWORD` (domyślnie `admin`).
 Hasło można ustawić np. tak:
 
 ```bash
@@ -75,6 +75,7 @@ Panel pozwala podejrzeć listę zapisanych alertów cenowych.
 ```bash
 alias workon_scraper="source ~/.virtualenvs/scraper/bin/activate"
 workon_scraper
+pip install -r requirements.txt  # m.in. python-multipart do obsługi formularzy
 ```
 
 ### Uruchomienie backendu:
@@ -128,7 +129,7 @@ GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
 * **Backend działa na porcie 61973** – aby udostępnić publicznie, ustaw reverse proxy w panelu MyDevil lub własnym Apache/nginx.
 * **Aby backend korzystał z najnowszych danych**, synchronizuj bazę po każdym scrapingu (rsync).
 * **Selenium/testy i pobieranie danych uruchamiaj wyłącznie lokalnie** (ze wsparciem X/Chrome).
-* **Wymagania backendu**: FastAPI, Uvicorn (`pip install -r requirements.txt`)
+* **Wymagania backendu**: FastAPI, Uvicorn, python-multipart (`pip install -r requirements.txt`)
 * **Wszystkie polecenia zakładają katalog główny:**
   `/home/vetternkraft/scraper_workspace/`
 
