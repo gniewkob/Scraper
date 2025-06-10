@@ -62,6 +62,7 @@ Korzysta z bazy SQLite synchronizowanej powyżej.
 ### Panel administracyjny
 
 Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Panel wymaga zalogowania, a formularz logowania znajduje się pod `/admin/login`. Hasło podawane jest w zmiennej środowiskowej `ADMIN_PASSWORD` (domyślnie `admin`).
+
 Hasło można ustawić np. tak:
 
 ```bash
