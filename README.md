@@ -18,15 +18,16 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pytest
-# lub: python main.py --scrape
+# or: python -m scraper.cli.scrape_all
 ```
 
 **Wyniki działania:**
 
 * Szczegółowe logi i raporty (HTML/console)
 * Zrzuty ekranu błędów (error\_screenshots/)
-* Dane w formie JSON oraz finalnie w bazie SQLite:
-  **`~/scraper_workspace/scraper/pharmacy_prices.sqlite`**
+* Dane w formie JSON oraz finalnie w bazie SQLite (`data/pharmacy_prices.sqlite`)
+* ChromeDriver dostarcza `webdriver-manager`, dlatego binarka nie jest w repozytorium
+* Baza `data/pharmacy_prices.sqlite` jest generowana podczas scrapingu
 
 ---
 
@@ -41,6 +42,14 @@ rsync -av ~/scraper_workspace/scraper/pharmacy_prices.sqlite \
 
 *Baza ląduje w katalogu `/home/vetternkraft/scraper_workspace/data/`.*
 
+Skrypt `scraper/scrape_and_sync.sh` automatyzuje ten proces.
+Zdalne dane możesz zmienić przez zmienne środowiskowe:
+
+* `REMOTE_USER` – nazwa użytkownika (domyślnie `vetternkraft`)
+* `REMOTE_HOST` – adres serwera (domyślnie `s0.mydevil.net`)
+* `REMOTE_PATH` – ścieżka do pliku na serwerze
+  (domyślnie `/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite`)
+
 ---
 
 ## 3. Backend Dashboard & API (na serwerze, MyDevil)
@@ -49,6 +58,17 @@ rsync -av ~/scraper_workspace/scraper/pharmacy_prices.sqlite \
 
 Aplikacja FastAPI udostępniająca REST API oraz dashboard (w przyszłości nowoczesny frontend).
 Korzysta z bazy SQLite synchronizowanej powyżej.
+
+### Panel administracyjny
+
+Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Wymaga on zalogowania hasłem podanym w zmiennej środowiskowej `ADMIN_PASSWORD` (domyślnie `admin`).
+Hasło można ustawić np. tak:
+
+```bash
+export ADMIN_PASSWORD="moje_super_haslo"
+```
+
+Panel pozwala podejrzeć listę zapisanych alertów cenowych.
 
 ### Aktywacja środowiska Python (virtualenv):
 
@@ -121,6 +141,15 @@ GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
 * [ ] Panel administracyjny (edycja produktów/ofert)
 * [ ] Alerty cenowe (email/SMS/webhook)
 * [ ] Publiczne API dla zewnętrznych aplikacji
+
+---
+
+## 8. Narzędzia developerskie
+
+Katalog `tools/` zawiera skrypty pomocnicze niewykorzystywane w środowisku
+produkcyjnym. Plik `cron_test.py` służy do diagnozowania konfiguracji cron oraz
+sprawdzenia, czy Selenium i Chrome działają poprawnie. Skrypt generuje logi z
+informacjami o systemie oraz wykonuje proste uruchomienie przeglądarki.
 
 ---
 
