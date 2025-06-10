@@ -155,11 +155,17 @@ informacjami o systemie oraz wykonuje proste uruchomienie przeglądarki.
 ## 9. Uruchamianie testów
 
 W katalogu projektu znajdują się testy Pytest dla scraperów i backendu.
+Najważniejsze testy API znajdują się w pliku `tests/test_backend.py`.
 Aby je uruchomić lokalnie, aktywuj środowisko i wykonaj:
 
 ```bash
 pip install -r requirements.txt
 python -m pytest
+```
+Można również uruchomić pojedynczy test, np.:
+
+```bash
+python -m pytest tests/test_backend.py
 ```
 
 ---

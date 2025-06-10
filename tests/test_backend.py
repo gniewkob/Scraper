@@ -1,3 +1,5 @@
+"""Tests for the FastAPI backend."""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -43,3 +45,4 @@ def test_get_cities(client):
     assert isinstance(cities, list)
     assert cities, 'Cities list should not be empty'
     assert isinstance(cities[0], str)
+
