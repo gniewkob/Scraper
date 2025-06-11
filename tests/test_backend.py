@@ -257,3 +257,44 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
     offers = resp.json()['offers']
     assert 'price_per_g' not in offers[0]
 
+
+def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, tmp_path):
+    db_file = tmp_path / "test.sqlite"
+    import sqlite3
+
+    conn = sqlite3.connect(db_file)
+    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
+    conn.execute(
+        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+    )
+    conn.execute(
+        "INSERT INTO products (product_id, name) VALUES (?, ?)",
+        ("p5", "CheapTen"),
+    )
+    conn.execute(
+        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (
+            "p5",
+            "Pharmacy",
+            "Addr",
+            70.0,
+            "g",
+            None,
+            "2023-01-01T00:00:00",
+            "Y",
+            "2023-01-01",
+            "",
+            0.0,
+            0.0,
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p5": 10}, raising=False)
+
+    resp = client.get('/api/product/CheapTen')
+    assert resp.status_code == 200
+    offers = resp.json()['offers']
+    assert 'price_per_g' not in offers[0]
