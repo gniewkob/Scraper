@@ -368,13 +368,18 @@ const alertForm = document.getElementById("alertForm");
 if (alertForm) {
   alertForm.onsubmit = async function (e) {
     e.preventDefault();
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    if (!email && !phone) {
+      document.getElementById("alertMessage").textContent = "Podaj e-mail lub telefon.";
+      return;
+    }
     const threshold = document.getElementById("threshold").value;
     const productName = alertProductSelect ? alertProductSelect.value : productSelect.value;
     const res = await fetch("/api/alerts/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, threshold, product_name: productName })
+      body: JSON.stringify({ email, phone, threshold, product_name: productName })
     });
     const data = await res.json();
     document.getElementById("alertMessage").textContent = data.status === "ok"

@@ -46,12 +46,13 @@ def update_schema():
 
 			# Alerty użytkownika (opcjonalnie)
 			c.execute("""
-				CREATE TABLE IF NOT EXISTS user_alerts (
-					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					product_id TEXT NOT NULL,
-					threshold REAL NOT NULL,
-					email TEXT
-				);
+                                CREATE TABLE IF NOT EXISTS user_alerts (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        product_id TEXT NOT NULL,
+                                        threshold REAL NOT NULL,
+                                        email TEXT,
+                                        phone TEXT
+                                );
 			""")
 
 			# Historia powiadomień (opcjonalnie)

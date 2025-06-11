@@ -405,10 +405,11 @@ def get_grouped_alerts(city: str = Query(None)):
 async def register_alert(request: Request):
     data = await request.json()
     email = data.get("email")
+    phone = data.get("phone")
     threshold = data.get("threshold")
     product_name = data.get("product_name")
 
-    if not email or threshold is None or not product_name:
+    if ((not email and not phone) or threshold is None or not product_name):
         return JSONResponse(
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
@@ -424,6 +425,7 @@ async def register_alert(request: Request):
     alerts.append(
         {
             "email": email,
+            "phone": phone,
             "threshold": threshold,
             "product_name": product_name,
             "created": datetime.now().isoformat(),

@@ -10,6 +10,7 @@ import os
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime
+from twilio.rest import Client
 from scraper.core.bootstrap import init_logging, ensure_schema
 from scraper.core.config.config import DB_PATH
 
@@ -39,6 +40,11 @@ SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
 SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", SMTP_USER)
+
+# 📱 Konfiguracja Twilio WhatsApp
+TWILIO_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+TWILIO_FROM = os.environ.get("TWILIO_WHATSAPP_FROM")
 
 
 def load_json(path, default):
@@ -72,6 +78,25 @@ def send_email(to_address: str, subject: str, body: str) -> bool:
     """
     if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
         logger.warning("⚠️ Brak konfiguracji SMTP – pomijam wysyłkę e-maila.")
+        return False
+
+
+def send_whatsapp(to_number: str, body: str) -> bool:
+    """Send a WhatsApp message using Twilio API."""
+    if not (TWILIO_SID and TWILIO_TOKEN and TWILIO_FROM):
+        logger.warning("⚠️ Brak konfiguracji Twilio – pomijam wysyłkę WhatsApp.")
+        return False
+    try:
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+        message = client.messages.create(
+            body=body,
+            from_=f"whatsapp:{TWILIO_FROM}" if not TWILIO_FROM.startswith("whatsapp:") else TWILIO_FROM,
+            to=f"whatsapp:{to_number}" if not to_number.startswith("whatsapp:") else to_number,
+        )
+        logger.info(f"📲 Wysłano WhatsApp do {to_number}: {message.sid}")
+        return True
+    except Exception as exc:
+        logger.error(f"❌ Błąd wysyłki WhatsApp do {to_number}: {exc}")
         return False
 
     msg = EmailMessage()
@@ -126,7 +151,8 @@ def check_alerts(alerts, current_prices, notified):
     for alert in alerts:
         product_id = alert.get("product_id")
         threshold = alert.get("threshold")
-        email = alert.get("email", "– brak e-maila –")
+        email = alert.get("email")
+        phone = alert.get("phone")
         prices = current_prices.get(product_id, [])
 
         for offer in prices:
@@ -145,7 +171,10 @@ def check_alerts(alerts, current_prices, notified):
                         f"Cena: {offer['price']} zł (limit {threshold} zł)\n"
                         f"Ważność: {offer['expiration_date'] or 'brak'}"
                     )
-                    send_email(email, subject, body)
+                    if email:
+                        send_email(email, subject, body)
+                    if phone:
+                        send_whatsapp(phone, body)
                     notified[key] = offer["fetched_at"]
                     any_triggered = True
                 break  # tylko pierwszy dopasowany alert
