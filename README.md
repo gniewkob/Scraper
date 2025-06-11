@@ -72,6 +72,21 @@ Panel pozwala podejrzeć listę zapisanych alertów cenowych.
 Użytkownik może zapisać się na alert cenowy z poziomu dashboardu,
 wskazując konkretny produkt oraz maksymalną cenę.
 
+Do wysyłki powiadomień służy skrypt `scraper/cli/check_alerts.py`. Uruchomiony
+cyklicznie (np. z crona) sprawdza aktualne ceny i wysyła e-mail, gdy oferta
+spełni podany próg. Konfiguracja SMTP odbywa się przez zmienne środowiskowe
+`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` oraz opcjonalnie
+`FROM_EMAIL`.
+
+Przykład użycia:
+
+```bash
+SMTP_HOST=smtp.example.com \
+SMTP_USER=u@example.com \
+SMTP_PASSWORD=sekret \
+python -m scraper.cli.check_alerts
+```
+
 ### Aktywacja środowiska Python (virtualenv):
 
 ```bash
@@ -142,7 +157,7 @@ GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
 * [ ] Nowoczesny frontend (React/Vue/Svelte)
 * [ ] Mapy i geolokalizacja (Leaflet.js, promień, marker najbliższej apteki)
 * [ ] Panel administracyjny (edycja produktów/ofert)
-* [ ] Alerty cenowe (email/SMS/webhook)
+* [x] Alerty cenowe (e-mail; SMS/webhook w planach)
 * [ ] Publiczne API dla zewnętrznych aplikacji
 
 ---
