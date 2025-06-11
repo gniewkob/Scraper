@@ -28,3 +28,6 @@ scraper/tests/
 
 # Baza
 data/
+
+# Uvicorn log
+uvicorn_scraper.log
