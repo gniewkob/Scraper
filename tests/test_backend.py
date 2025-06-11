@@ -215,8 +215,8 @@ def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
     resp = client.get('/api/product/CheapSize')
     assert resp.status_code == 200
     offers = resp.json()['offers']
-    assert 'price_per_g' in offers[0]
-    assert offers[0]['price'] == pytest.approx(10.0)
+    assert 'price_per_g' not in offers[0]
+    assert offers[0]['price'] == pytest.approx(50.0)
 
 
 def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch, tmp_path):
@@ -301,8 +301,8 @@ def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, 
     resp = client.get('/api/product/CheapTen')
     assert resp.status_code == 200
     offers = resp.json()['offers']
-    assert 'price_per_g' in offers[0]
-    assert offers[0]['price'] == pytest.approx(7.0)
+    assert 'price_per_g' not in offers[0]
+    assert offers[0]['price'] == pytest.approx(70.0)
 
 
 def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
