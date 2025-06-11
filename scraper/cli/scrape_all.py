@@ -20,45 +20,46 @@ init_logging()
 logger = logging.getLogger("gdziepolek")
 ensure_schema()
 
-def main(headless=False):
-        driver = setup_browser(headless=headless)
-	scraped = 0
 
-	try:
-		for idx, name in enumerate(PRODUCT_NAMES, start=1):
-			url = get_url_by_name(name)
-			if not url:
-				logger.warning(f"[{idx}] ⚠️ Pominięto (brak URL): {name}")
-				continue
+def main(headless: bool = False) -> None:
+    driver = setup_browser(headless=headless)
+    scraped = 0
 
-			logger.info(f"[{idx}] 🔍 Scraping: {name}")
-			try:
-				extract_pharmacy_data(driver, url)
-				logger.info(f"[{idx}] ✅ Gotowe: {name}")
-			except Exception as e:
-				logger.error(f"[{idx}] ❌ Błąd ekstrakcji – {e}")
+    try:
+        for idx, name in enumerate(PRODUCT_NAMES, start=1):
+            url = get_url_by_name(name)
+            if not url:
+                logger.warning(f"[{idx}] ⚠️ Pominięto (brak URL): {name}")
+                continue
 
-			scraped += 1
+            logger.info(f"[{idx}] 🔍 Scraping: {name}")
+            try:
+                extract_pharmacy_data(driver, url)
+                logger.info(f"[{idx}] ✅ Gotowe: {name}")
+            except Exception as e:
+                logger.error(f"[{idx}] ❌ Błąd ekstrakcji – {e}")
 
-			if scraped % 10 == 0:
-				logger.info("🔄 Restart przeglądarki dla stabilności...")
-				driver.quit()
-				time.sleep(2)
-                                driver = setup_browser(headless=headless)
+            scraped += 1
 
-			time.sleep(1.5)
+            if scraped % 10 == 0:
+                logger.info("🔄 Restart przeglądarki dla stabilności...")
+                driver.quit()
+                time.sleep(2)
+                driver = setup_browser(headless=headless)
 
-	finally:
-		driver.quit()
-		logger.info("🛑 Zakończono scraping.")
+            time.sleep(1.5)
+    finally:
+        driver.quit()
+        logger.info("🛑 Zakończono scraping.")
+
 
 if __name__ == "__main__":
-        parser = argparse.ArgumentParser(description="Scrape all pharmacy data")
-        parser.add_argument(
-                "--headless",
-                action="store_true",
-                help="Run browser in headless mode",
-        )
+    parser = argparse.ArgumentParser(description="Scrape all pharmacy data")
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="Run browser in headless mode",
+    )
 
-        args = parser.parse_args()
-        main(headless=args.headless)
+    args = parser.parse_args()
+    main(headless=args.headless)
