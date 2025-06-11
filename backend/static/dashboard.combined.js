@@ -10,6 +10,7 @@ let currentLimit = 10;
 let currentSort = 'price';
 let currentOrder = 'asc';
 let userLat = null, userLon = null, selectedRadius = 10;
+let map = null, userMarker = null, nearestMarker = null, radiusCircle = null;
 
 // --- INICJALIZACJA SELECTÓW PRODUKTÓW I MIAST ---
 const productSelect = document.getElementById("productSelect");
@@ -66,6 +67,9 @@ document.getElementById('radiusSelect').onchange = function() {
   selectedRadius = parseInt(this.value, 10);
   if (userLat && userLon) {
     loadProductData(currentProduct);
+    if (map && radiusCircle) {
+      radiusCircle.setRadius(selectedRadius * 1000);
+    }
   }
 };
 
@@ -80,6 +84,11 @@ document.getElementById('geoBtn').onclick = function() {
     // reset miasta - wybieramy tylko po geolokalizacji
     document.getElementById('citySelect').value = '';
     selectedCity = '';
+    if (!map) {
+      initMap(userLat, userLon);
+    } else {
+      map.setView([userLat, userLon], 13);
+    }
     loadProductData(currentProduct);
     loadGroupedAlerts();
     updateFilterInfo();
@@ -124,6 +133,9 @@ async function loadProductData(name) {
   renderPriceChart(data.trend, min, max);
   updateAlertBanner(data.trend, min);
   updateFilterInfo();
+  if (map && userLat && userLon) {
+    updateMap(data.offers);
+  }
 }
 
 // --- SORTOWANIE & PAGINACJA ---
@@ -364,6 +376,43 @@ function renderAllOffersTable(groups) {
       tbody.appendChild(row);
     });
   });
+}
+
+// --- MAPA Z LEAFLET ---
+function initMap(lat, lon) {
+  map = L.map('map').setView([lat, lon], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Twoja lokalizacja');
+  radiusCircle = L.circle([lat, lon], { radius: selectedRadius * 1000 }).addTo(map);
+}
+
+function updateMap(offers) {
+  if (!map) return;
+  userMarker.setLatLng([userLat, userLon]);
+  radiusCircle.setLatLng([userLat, userLon]);
+  radiusCircle.setRadius(selectedRadius * 1000);
+  let nearest = null;
+  let minDist = Infinity;
+  offers.forEach(o => {
+    if (o.pharmacy_lat && o.pharmacy_lon) {
+      const dist = map.distance([userLat, userLon], [o.pharmacy_lat, o.pharmacy_lon]);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = o;
+      }
+    }
+  });
+  if (!nearest) return;
+  if (nearestMarker) {
+    nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
+  } else {
+    nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+  }
+  nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
+  map.fitBounds(L.latLngBounds([userLat, userLon], [nearest.pharmacy_lat, nearest.pharmacy_lon]), { padding: [50, 50] });
 }
 
 // --- ALERTY MAILOWE (opcjonalnie, jeśli używasz) ---
