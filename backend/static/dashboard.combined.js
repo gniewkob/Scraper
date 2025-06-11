@@ -4,6 +4,7 @@ Chart.defaults.plugins.legend.labels.color = '#f1f1f1';
 
 // --- WYBÓR MIASTA ---
 let selectedCity = '';
+const CITY_ZOOM = 10;
 let currentProduct = '';
 let currentOffset = 0;
 let currentLimit = 10;
@@ -82,9 +83,9 @@ document.getElementById('citySelect').onchange = async function() {
       cityLat = coords.lat;
       cityLon = coords.lon;
       if (!map) {
-        initMap(cityLat, cityLon, false);
+        initMap(cityLat, cityLon, false, CITY_ZOOM);
       } else {
-        map.setView([cityLat, cityLon], 13);
+        map.setView([cityLat, cityLon], CITY_ZOOM);
       }
     }
   }
@@ -180,7 +181,7 @@ async function loadProductData(name) {
       lon = data.offers[0].pharmacy_lon;
     }
     if (lat && lon) {
-      initMap(lat, lon, !!(userLat && userLon));
+      initMap(lat, lon, !!(userLat && userLon), userLat && userLon ? 13 : CITY_ZOOM);
     }
   }
   if (map) {
@@ -429,8 +430,8 @@ function renderAllOffersTable(groups) {
 }
 
 // --- MAPA Z LEAFLET ---
-function initMap(lat, lon, showUser = true) {
-  map = L.map('map').setView([lat, lon], 13);
+function initMap(lat, lon, showUser = true, zoom = 13) {
+  map = L.map('map').setView([lat, lon], zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap'
