@@ -408,7 +408,7 @@ async def register_alert(request: Request):
     threshold = data.get("threshold")
     product_name = data.get("product_name")
 
-    if not email or not threshold:
+    if not email or threshold is None or not product_name:
         return JSONResponse(
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
