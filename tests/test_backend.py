@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.main import app
+import json
 
 
 @pytest.fixture(scope="module")
@@ -58,4 +59,21 @@ def test_alerts_grouped_city_filter(client):
 
     empty_groups = client.get('/api/alerts_grouped?city=NonexistentCity').json()
     assert empty_groups == []
+
+
+def test_register_alert_missing_field(client, monkeypatch, tmp_path):
+    monkeypatch.setattr('backend.main.ALERT_FILE', tmp_path / 'alerts.json', raising=False)
+    resp = client.post('/api/alerts/register', json={"email": "a@b.com", "threshold": 30})
+    assert resp.status_code == 400
+
+
+def test_register_alert_success(client, monkeypatch, tmp_path):
+    monkeypatch.setattr('backend.main.ALERT_FILE', tmp_path / 'alerts.json', raising=False)
+    data = {"email": "a@b.com", "threshold": 30, "product_name": "Test"}
+    resp = client.post('/api/alerts/register', json=data)
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
+    with open(tmp_path / 'alerts.json', 'r', encoding='utf-8') as f:
+        alerts = json.load(f)
+    assert alerts[-1]["email"] == "a@b.com"
 
