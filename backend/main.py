@@ -136,25 +136,30 @@ def get_product_by_name(
     sort_sql = sort if sort in allowed_sort else "price"
     order_sql = order if order in allowed_order else "asc"
 
-    query = "SELECT * FROM pharmacy_prices WHERE product_id = ?"
+    base_query = """
+        SELECT *,
+               ROW_NUMBER() OVER (
+                   PARTITION BY pharmacy_name, expiration
+                   ORDER BY datetime(fetched_at) DESC
+               ) AS rn
+        FROM pharmacy_prices
+        WHERE product_id = ?
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+    """
     params = [product_id]
 
     if city:
-        query += " AND (address LIKE ? OR address LIKE ?)"
+        base_query += " AND (address LIKE ? OR address LIKE ?)"
         params.append(f"%, {city}")
         params.append(f"% {city}")
 
-    query += f" ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
-    params += [limit, offset]
-    rows = conn.execute(query, params).fetchall()
+    query = f"SELECT * FROM ({base_query}) WHERE rn = 1 ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
+    query_params = params + [limit, offset]
+    rows = conn.execute(query, query_params).fetchall()
 
-    count_query = "SELECT COUNT(*) FROM pharmacy_prices WHERE product_id = ?"
-    count_params = [product_id]
-    if city:
-        count_query += " AND (address LIKE ? OR address LIKE ?)"
-        count_params.append(f"%, {city}")
-        count_params.append(f"% {city}")
-    total = conn.execute(count_query, count_params).fetchone()[0]
+    count_query = f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"
+    row_count = conn.execute(count_query, params).fetchone()
+    total = row_count[0] if row_count else 0
     conn.close()
 
     offers = []
@@ -236,6 +241,7 @@ def get_price_alerts():
         """
         SELECT * FROM pharmacy_prices
         WHERE price < 35 AND price >= 10
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
         ORDER BY price ASC
     """
     ).fetchall()
@@ -290,6 +296,7 @@ def get_filtered_alerts():
                 price = p.price AND
                 expiration = p.expiration
         )
+          AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
     """
     )
     rows = cur.fetchall()
@@ -337,12 +344,23 @@ def get_grouped_alerts(city: str = Query(None)):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    query = "SELECT * FROM pharmacy_prices WHERE price IS NOT NULL"
+    base_query = """
+        SELECT *,
+               ROW_NUMBER() OVER (
+                   PARTITION BY product_id, pharmacy_name, expiration, price
+                   ORDER BY datetime(fetched_at) DESC
+               ) AS rn
+        FROM pharmacy_prices
+        WHERE price IS NOT NULL
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+    """
     params = []
     if city:
-        query += " AND (address LIKE ? OR address LIKE ?)"
+        base_query += " AND (address LIKE ? OR address LIKE ?)"
         params.append(f"%, {city}")
         params.append(f"% {city}")
+
+    query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
     cur.execute(query, params)
     rows = cur.fetchall()
     conn.close()
