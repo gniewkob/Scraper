@@ -130,6 +130,7 @@ def test_price_per_g_returned(client, monkeypatch, tmp_path):
     assert resp.status_code == 200
     offers = resp.json()['offers']
     assert offers[0]['price_per_g'] == pytest.approx(15.0)
+    assert offers[0]['price'] == pytest.approx(15.0)
 
 
 def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
@@ -172,6 +173,7 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
     assert resp.status_code == 200
     offers = resp.json()['offers']
     assert offers[0]['price_per_g'] == pytest.approx(30.0)
+    assert offers[0]['price'] == pytest.approx(30.0)
 
 
 def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
@@ -214,6 +216,7 @@ def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
     assert resp.status_code == 200
     offers = resp.json()['offers']
     assert 'price_per_g' in offers[0]
+    assert offers[0]['price'] == pytest.approx(10.0)
 
 
 def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch, tmp_path):
@@ -256,6 +259,7 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
     assert resp.status_code == 200
     offers = resp.json()['offers']
     assert 'price_per_g' not in offers[0]
+    assert offers[0]['price'] == pytest.approx(80.0)
 
 
 def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, tmp_path):
@@ -298,6 +302,7 @@ def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, 
     assert resp.status_code == 200
     offers = resp.json()['offers']
     assert 'price_per_g' in offers[0]
+    assert offers[0]['price'] == pytest.approx(7.0)
 
 
 def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
@@ -340,3 +345,4 @@ def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
     assert resp.status_code == 200
     offers = resp.json()['offers']
     assert offers[0]['price_per_g'] == pytest.approx(20.0)
+    assert offers[0]['price'] == pytest.approx(20.0)
