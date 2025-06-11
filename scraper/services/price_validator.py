@@ -31,12 +31,14 @@ def parse_price_unit(price_str: str) -> tuple[float, str]:
     # 🛡️ Zabezpieczenie: wymuś string
     price_str = str(price_str).lower().replace(" ", "").replace("zl", "zł")
 
-    match = re.search(r'(\d+,\d+)\s*zł\s*/\s*(\w+)', price_str)
+    # dopasuj "56,00zł/g" lub "500zł/g" (bez spacji)
+    match = re.search(r'(\d+(?:,\d+)?)\s*zł\s*/?\s*(\w+)', price_str)
     if match:
         price = float(match.group(1).replace(",", "."))
         unit = match.group(2)
     else:
-        match = re.search(r'(\d+,\d+)', price_str)
+        # dopasuj cenę bez jednostki, np. "56,00zł" lub "500zł"
+        match = re.search(r'(\d+(?:,\d+)?)', price_str)
         if match:
             price = float(match.group(1).replace(",", "."))
 
