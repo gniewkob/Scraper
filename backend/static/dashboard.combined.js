@@ -10,7 +10,7 @@ let currentOffset = 0;
 let currentLimit = 10;
 let currentSort = 'price';
 let currentOrder = 'asc';
-let userLat = null, userLon = null, selectedRadius = 10;
+let userLat = null, userLon = null, selectedRadius = 20;
 let cityLat = null, cityLon = null;
 let map = null, userMarker = null, cityMarker = null, nearestMarker = null, radiusCircle = null, offerLayer = null;
 
