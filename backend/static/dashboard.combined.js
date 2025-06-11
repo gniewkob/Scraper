@@ -168,10 +168,11 @@ function renderCountInfo(total, limit, offset) {
 function renderTopOffers(offers) {
   const container = document.getElementById("productTable");
   container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
-    <thead><tr><th>Cena</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
+    <thead><tr><th>Cena</th><th>Cena/g</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
     ${offers.map(o => `
       <tr>
         <td>${o.price.toFixed(2)} zł</td>
+        <td>${o.price_per_g ? o.price_per_g.toFixed(2) + ' zł/g' : '–'}</td>
         <td>${o.pharmacy || "–"}</td>
         <td>${o.address || "–"}</td>
         <td>${o.map_url ? `<a href="${o.map_url}" target="_blank" class="btn btn-sm btn-outline-light">Mapa</a>` : "–"}</td>
@@ -303,7 +304,7 @@ async function loadGroupedAlerts() {
           <table class="table table-dark table-bordered m-0">
             <thead>
               <tr>
-                <th>Apteka</th><th>Miasto</th><th>Cena</th><th>Ważność</th><th>Status</th>
+                <th>Apteka</th><th>Miasto</th><th>Cena</th><th>Cena/g</th><th>Ważność</th><th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -319,6 +320,7 @@ async function loadGroupedAlerts() {
                 </td>
                 <td>${o.city || "–"}</td>
                 <td>${o.price.toFixed(2)} zł</td>
+                <td>${o.price_per_g ? o.price_per_g.toFixed(2) + ' zł/g' : '–'}</td>
                 <td>${o.expiration || "–"}</td>
                 <td>${o.short_expiry ? "❗ Krótka ważność" : o.fetched_at}</td>
               </tr>
@@ -356,6 +358,7 @@ function renderAllOffersTable(groups) {
         </td>
         <td>${o.city || "–"}</td>
         <td>${o.price.toFixed(2)} zł</td>
+        <td>${o.price_per_g ? o.price_per_g.toFixed(2) + ' zł/g' : '–'}</td>
         <td>${o.expiration || "–"}</td>
         <td>${o.short_expiry ? "❗ Krótka ważność" : o.fetched_at}</td>
         <td>${o.map_url ? `<a href="${o.map_url}" target="_blank" class="btn btn-sm btn-outline-light">Mapa</a>` : "–"}</td>
