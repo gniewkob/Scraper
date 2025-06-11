@@ -304,7 +304,7 @@ async function loadGroupedAlerts() {
           <table class="table table-dark table-bordered m-0">
             <thead>
               <tr>
-                <th>Apteka</th><th>Miasto</th><th>Cena</th><th>Ważność</th><th>Status</th>
+                <th>Apteka</th><th>Miasto</th><th>Cena (za 1 g)</th><th>Ważność</th><th>Status</th>
               </tr>
             </thead>
             <tbody>
