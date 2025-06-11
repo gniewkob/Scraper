@@ -130,18 +130,23 @@ uvicorn main:app --host 127.0.0.1 --port 61973
 
 ## 5. Dostępne endpointy API
 
-* `/api/offers?city=Miasto&product=Produkt&min_price=20&max_price=50`
-* `/api/products`
-* `/api/product/{nazwa_produktu}` – zwraca listę ofert oraz trend cenowy;
-  gdy jednostka zawiera ilość (np. `10g`) lub cena oferty wynosi co
-  najmniej 100 zł (a produkt ma zdefiniowaną wielkość w `PACKAGE_SIZES`),
-  dodatkowo pojawia się pole `price_per_g`
-* `/api/cities`
+* `/api/products` – lista dostępnych produktów
+* `/api/product/{nazwa_produktu}` – zwraca oferty, trend cenowy i TOP3;
+  obsługuje parametry `limit`, `offset`, `sort`, `order`, `city`, `lat`, `lon` i
+  `radius`. Gdy jednostka zawiera ilość (np. `10g`) lub cena oferty przekracza
+  100 zł (a produkt ma zdefiniowaną wielkość w `PACKAGE_SIZES`), pojawia się pole
+  `price_per_g`.
+* `/api/alerts` – aktualne najlepsze ceny
+* `/api/alerts_filtered` – unikalne oferty z najnowszych danych
+* `/api/alerts_grouped` – grupowanie alertów (opcjonalny parametr `city`)
+* `/api/alerts/register` – (POST) rejestracja alertu cenowego
+* `/api/alerts/list` – lista zapisanych alertów
+* `/api/cities` – lista wykrytych miast w bazie
 
 Przykład użycia:
 
 ```
-GET http://localhost:61973/api/offers?city=Warszawa&product=Ibuprofen
+GET http://localhost:61973/api/product/Paracetamol?limit=5&city=Warszawa
 ```
 
 ---
