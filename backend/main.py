@@ -198,7 +198,7 @@ def get_product_by_name(
                 if grams:
                     price_per_g = price / grams
 
-        if price_per_g is None:
+        if price_per_g is None and price >= 100:
             pkg = PACKAGE_SIZES.get(product_id)
             if pkg:
                 price_per_g = price / pkg
@@ -287,7 +287,7 @@ def get_price_alerts():
                 if grams:
                     price_per_g = price / grams
 
-        if price_per_g is None:
+        if price_per_g is None and price >= 100:
             pkg = PACKAGE_SIZES.get(row["product_id"])
             if pkg:
                 price_per_g = price / pkg
@@ -365,7 +365,7 @@ def get_filtered_alerts():
                 if grams:
                     price_per_g = price / grams
 
-        if price_per_g is None:
+        if price_per_g is None and price >= 100:
             pkg = PACKAGE_SIZES.get(row["product_id"])
             if pkg:
                 price_per_g = price / pkg
@@ -445,7 +445,7 @@ def get_grouped_alerts(city: str = Query(None)):
                 if grams:
                     price_per_g = price / grams
 
-        if price_per_g is None:
+        if price_per_g is None and price >= 100:
             pkg = PACKAGE_SIZES.get(row["product_id"])
             if pkg:
                 price_per_g = price / pkg

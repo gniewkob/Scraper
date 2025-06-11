@@ -133,9 +133,10 @@ uvicorn main:app --host 127.0.0.1 --port 61973
 * `/api/products` – lista dostępnych produktów
 * `/api/product/{nazwa_produktu}` – zwraca oferty, trend cenowy i TOP3;
   obsługuje parametry `limit`, `offset`, `sort`, `order`, `city`, `lat`, `lon` i
-  `radius`. Gdy jednostka zawiera ilość (np. `10g`) lub cena oferty przekracza
-  100 zł (a produkt ma zdefiniowaną wielkość w `PACKAGE_SIZES`), pojawia się pole
-  `price_per_g`.
+  `radius`. Gdy jednostka zawiera ilość (np. `10g`) albo cena oferty wynosi co
+  najmniej 100 zł i produkt ma zdefiniowany rozmiar w `PACKAGE_SIZES`, pole
+  `price_per_g` przedstawia cenę za gram. Przy niższych cenach bez jawnej
+  ilości `price_per_g` nie jest dodawane.
 * `/api/alerts` – aktualne najlepsze ceny
 * `/api/alerts_filtered` – unikalne oferty z najnowszych danych
 * `/api/alerts_grouped` – grupowanie alertów (opcjonalny parametr `city`)
