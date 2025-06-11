@@ -13,6 +13,7 @@ from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 
 from scraper.core.config.config import DB_PATH
+from scraper.core.config.urls import PACKAGE_SIZES
 
 ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 
@@ -196,6 +197,11 @@ def get_product_by_name(
                 grams = float(match.group(1).replace(",", "."))
                 if grams:
                     price_per_g = price / grams
+
+        if price_per_g is None:
+            pkg = PACKAGE_SIZES.get(product_id)
+            if pkg:
+                price_per_g = price / pkg
 
         offer = {
             "pharmacy": row["pharmacy_name"],

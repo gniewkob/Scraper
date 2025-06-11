@@ -46,6 +46,15 @@ for url in URLS:
 # 📋 Lista nazw do dropdowna
 PRODUCT_NAMES = list(PRODUCT_NAME_TO_URL.keys())
 
+# 🎁 Wielkości opakowań (w gramach) dla poszczególnych product_id
+# Służy do wyliczania ceny za gram, gdy jednostka nie podaje gramatury
+PACKAGE_SIZES = {
+    "100241": 10,
+    "100242": 1,
+    "119767": 10,
+    "119768": 10,
+}
+
 # 🔁 Pomocnicze funkcje
 def get_url_by_name(name: str) -> Optional[str]:
 	return PRODUCT_NAME_TO_URL.get(name)
