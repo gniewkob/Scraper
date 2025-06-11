@@ -167,17 +167,20 @@
 
   <div class="card p-3 mb-4">
 	<h3 class="card-title">🔔 Zapisz się na alert cenowy</h3>
-	<form id="alertForm" class="row g-3">
-	  <div class="col-md-6">
-		<input type="email" id="email" placeholder="Twój email" class="form-control" required>
-	  </div>
-	  <div class="col-md-4">
-		<input type="number" step="0.01" id="threshold" placeholder="Cena maksymalna (np. 32.00)" class="form-control" required>
-	  </div>
-	  <div class="col-md-2">
-		<button type="submit" class="btn btn-outline-light w-100">Zapisz alert</button>
-	  </div>
-	</form>
+        <form id="alertForm" class="row g-3">
+          <div class="col-md-4">
+                <input type="email" id="email" placeholder="Twój email" class="form-control" required>
+          </div>
+          <div class="col-md-4">
+                <select id="alertProductSelect" class="form-select" required></select>
+          </div>
+          <div class="col-md-3">
+                <input type="number" step="0.01" id="threshold" placeholder="Cena maksymalna" class="form-control" required>
+          </div>
+          <div class="col-md-1">
+                <button type="submit" class="btn btn-outline-light w-100">Zapisz alert</button>
+          </div>
+        </form>
 	<p id="alertMessage" class="text-success mt-2"></p>
   </div>
 </div>

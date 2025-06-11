@@ -13,21 +13,28 @@ let userLat = null, userLon = null, selectedRadius = 10;
 
 // --- INICJALIZACJA SELECTÓW PRODUKTÓW I MIAST ---
 const productSelect = document.getElementById("productSelect");
+const alertProductSelect = document.getElementById("alertProductSelect");
 
 // Ładowanie produktów
 async function loadProducts() {
   const res = await fetch("/api/products");
   const products = await res.json();
   productSelect.innerHTML = '';
+  if (alertProductSelect) alertProductSelect.innerHTML = '';
   products.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p.name;
-    opt.textContent = p.label;
-    productSelect.appendChild(opt);
+    const opt1 = document.createElement("option");
+    opt1.value = p.name;
+    opt1.textContent = p.label;
+    productSelect.appendChild(opt1);
+    if (alertProductSelect) {
+      const opt2 = opt1.cloneNode(true);
+      alertProductSelect.appendChild(opt2);
+    }
   });
   if (products.length > 0) {
     productSelect.value = products[0].name;
     currentProduct = products[0].name;
+    if (alertProductSelect) alertProductSelect.value = products[0].name;
     loadProductData(products[0].name);
   }
 }
@@ -357,7 +364,7 @@ if (alertForm) {
     e.preventDefault();
     const email = document.getElementById("email").value;
     const threshold = document.getElementById("threshold").value;
-    const productName = productSelect.value;
+    const productName = alertProductSelect ? alertProductSelect.value : productSelect.value;
     const res = await fetch("/api/alerts/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
