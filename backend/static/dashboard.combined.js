@@ -13,21 +13,28 @@ let userLat = null, userLon = null, selectedRadius = 10;
 
 // --- INICJALIZACJA SELECTÓW PRODUKTÓW I MIAST ---
 const productSelect = document.getElementById("productSelect");
+const alertProductSelect = document.getElementById("alertProductSelect");
 
 // Ładowanie produktów
 async function loadProducts() {
   const res = await fetch("/api/products");
   const products = await res.json();
   productSelect.innerHTML = '';
+  if (alertProductSelect) alertProductSelect.innerHTML = '';
   products.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p.name;
-    opt.textContent = p.label;
-    productSelect.appendChild(opt);
+    const opt1 = document.createElement("option");
+    opt1.value = p.name;
+    opt1.textContent = p.label;
+    productSelect.appendChild(opt1);
+    if (alertProductSelect) {
+      const opt2 = opt1.cloneNode(true);
+      alertProductSelect.appendChild(opt2);
+    }
   });
   if (products.length > 0) {
     productSelect.value = products[0].name;
     currentProduct = products[0].name;
+    if (alertProductSelect) alertProductSelect.value = products[0].name;
     loadProductData(products[0].name);
   }
 }
@@ -51,6 +58,7 @@ document.getElementById('citySelect').onchange = function() {
   selectedCity = this.value;
   currentOffset = 0;
   loadProductData(currentProduct);
+  loadGroupedAlerts();
   updateFilterInfo();
 };
 
@@ -73,6 +81,7 @@ document.getElementById('geoBtn').onclick = function() {
     document.getElementById('citySelect').value = '';
     selectedCity = '';
     loadProductData(currentProduct);
+    loadGroupedAlerts();
     updateFilterInfo();
   }, function() {
     alert("Nie udało się pobrać lokalizacji.");
@@ -159,10 +168,11 @@ function renderCountInfo(total, limit, offset) {
 function renderTopOffers(offers) {
   const container = document.getElementById("productTable");
   container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
-    <thead><tr><th>Cena</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
+    <thead><tr><th>Cena</th><th>Cena/g</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
     ${offers.map(o => `
       <tr>
         <td>${o.price.toFixed(2)} zł</td>
+        <td>${o.price_per_g ? o.price_per_g.toFixed(2) + ' zł/g' : '–'}</td>
         <td>${o.pharmacy || "–"}</td>
         <td>${o.address || "–"}</td>
         <td>${o.map_url ? `<a href="${o.map_url}" target="_blank" class="btn btn-sm btn-outline-light">Mapa</a>` : "–"}</td>
@@ -265,7 +275,11 @@ function updateAlertBanner(trendData, min) {
 // --- GROUPED OFFERS & ALL OFFERS TABLE ---
 let groupedOffersCache = [];
 async function loadGroupedAlerts() {
-  const res = await fetch("/api/alerts_grouped");
+  let url = "/api/alerts_grouped";
+  if (selectedCity) {
+    url += `?city=${encodeURIComponent(selectedCity)}`;
+  }
+  const res = await fetch(url);
   const groups = await res.json();
   groupedOffersCache = groups;
 
@@ -290,7 +304,7 @@ async function loadGroupedAlerts() {
           <table class="table table-dark table-bordered m-0">
             <thead>
               <tr>
-                <th>Apteka</th><th>Cena</th><th>Ważność</th><th>Status</th>
+                <th>Apteka</th><th>Miasto</th><th>Cena</th><th>Cena/g</th><th>Ważność</th><th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -304,7 +318,9 @@ async function loadGroupedAlerts() {
                     ${o.pharmacy}
                   </a>
                 </td>
+                <td>${o.city || "–"}</td>
                 <td>${o.price.toFixed(2)} zł</td>
+                <td>${o.price_per_g ? o.price_per_g.toFixed(2) + ' zł/g' : '–'}</td>
                 <td>${o.expiration || "–"}</td>
                 <td>${o.short_expiry ? "❗ Krótka ważność" : o.fetched_at}</td>
               </tr>
@@ -340,7 +356,9 @@ function renderAllOffersTable(groups) {
             ${o.pharmacy}
           </a>
         </td>
+        <td>${o.city || "–"}</td>
         <td>${o.price.toFixed(2)} zł</td>
+        <td>${o.price_per_g ? o.price_per_g.toFixed(2) + ' zł/g' : '–'}</td>
         <td>${o.expiration || "–"}</td>
         <td>${o.short_expiry ? "❗ Krótka ważność" : o.fetched_at}</td>
         <td>${o.map_url ? `<a href="${o.map_url}" target="_blank" class="btn btn-sm btn-outline-light">Mapa</a>` : "–"}</td>
@@ -355,13 +373,18 @@ const alertForm = document.getElementById("alertForm");
 if (alertForm) {
   alertForm.onsubmit = async function (e) {
     e.preventDefault();
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    if (!email && !phone) {
+      document.getElementById("alertMessage").textContent = "Podaj e-mail lub telefon.";
+      return;
+    }
     const threshold = document.getElementById("threshold").value;
-    const productName = productSelect.value;
+    const productName = alertProductSelect ? alertProductSelect.value : productSelect.value;
     const res = await fetch("/api/alerts/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, threshold, product_name: productName })
+      body: JSON.stringify({ email, phone, threshold, product_name: productName })
     });
     const data = await res.json();
     document.getElementById("alertMessage").textContent = data.status === "ok"

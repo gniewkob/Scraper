@@ -11,9 +11,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from core.config.urls import extract_product_id
-from services.db import insert_prices
-from core.config.config import DB_PATH
+from scraper.core.config.urls import extract_product_id
+from scraper.services.db import insert_prices
+from scraper.services.price_validator import parse_price_unit
+from scraper.core.config.config import DB_PATH
 
 logger = logging.getLogger("gdziepolek")
 
@@ -99,12 +100,11 @@ def extract_pharmacy_data(driver, url):
     
                     if price_text:
                         try:
-                            price_val = price_text.split(" ")[0].replace(",", ".").replace("zł", "").strip()
-                            price = float(price_val)
+                            price, unit = parse_price_unit(price_text)
                             offers.append({
                                 "expiration": last_expiration,
                                 "price": price,
-                                "unit": "g"
+                                "unit": unit
                             })
                             last_expiration = ""
                         except Exception as e:
@@ -119,12 +119,11 @@ def extract_pharmacy_data(driver, url):
                         expiration = "krótki termin"
     
                     try:
-                        price_val = price_text.split(" ")[0].replace(",", ".").replace("zł", "").strip()
-                        price = float(price_val)
+                        price, unit = parse_price_unit(price_text)
                         offers.append({
                             "expiration": expiration,
                             "price": price,
-                            "unit": "g"
+                            "unit": unit
                         })
                         last_expiration = ""
                     except Exception as e:

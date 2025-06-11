@@ -63,7 +63,6 @@ def admin_panel(request: Request):
     if not request.session.get("admin"):
         return RedirectResponse("/admin/login")
     require_admin(request)
-
     alerts = []
     if ALERT_FILE.exists():
         try:
@@ -137,25 +136,30 @@ def get_product_by_name(
     sort_sql = sort if sort in allowed_sort else "price"
     order_sql = order if order in allowed_order else "asc"
 
-    query = "SELECT * FROM pharmacy_prices WHERE product_id = ?"
+    base_query = """
+        SELECT *,
+               ROW_NUMBER() OVER (
+                   PARTITION BY pharmacy_name, expiration
+                   ORDER BY datetime(fetched_at) DESC
+               ) AS rn
+        FROM pharmacy_prices
+        WHERE product_id = ?
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+    """
     params = [product_id]
 
     if city:
-        query += " AND (address LIKE ? OR address LIKE ?)"
+        base_query += " AND (address LIKE ? OR address LIKE ?)"
         params.append(f"%, {city}")
         params.append(f"% {city}")
 
-    query += f" ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
-    params += [limit, offset]
-    rows = conn.execute(query, params).fetchall()
+    query = f"SELECT * FROM ({base_query}) WHERE rn = 1 ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
+    query_params = params + [limit, offset]
+    rows = conn.execute(query, query_params).fetchall()
 
-    count_query = "SELECT COUNT(*) FROM pharmacy_prices WHERE product_id = ?"
-    count_params = [product_id]
-    if city:
-        count_query += " AND (address LIKE ? OR address LIKE ?)"
-        count_params.append(f"%, {city}")
-        count_params.append(f"% {city}")
-    total = conn.execute(count_query, count_params).fetchone()[0]
+    count_query = f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"
+    row_count = conn.execute(count_query, params).fetchone()
+    total = row_count[0] if row_count else 0
     conn.close()
 
     offers = []
@@ -184,20 +188,30 @@ def get_product_by_name(
                 short_expiry = days_left <= 30
             except:
                 pass
-        offers.append(
-            {
-                "pharmacy": row["pharmacy_name"],
-                "address": row["address"],
-                "price": price,
-                "unit": row["unit"],
-                "expiration": expiration,
-                "fetched_at": fetched_at,
-                "short_expiry": short_expiry,
-                "map_url": row["map_url"] or "",
-                "pharmacy_lat": row["pharmacy_lat"],
-                "pharmacy_lon": row["pharmacy_lon"],
-            }
-        )
+        unit = row["unit"]
+        price_per_g = None
+        if unit:
+            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
+            if match:
+                grams = float(match.group(1).replace(",", "."))
+                if grams:
+                    price_per_g = price / grams
+
+        offer = {
+            "pharmacy": row["pharmacy_name"],
+            "address": row["address"],
+            "price": price,
+            "unit": unit,
+            "expiration": expiration,
+            "fetched_at": fetched_at,
+            "short_expiry": short_expiry,
+            "map_url": row["map_url"] or "",
+            "pharmacy_lat": row["pharmacy_lat"],
+            "pharmacy_lon": row["pharmacy_lon"],
+        }
+        if price_per_g is not None:
+            offer["price_per_g"] = price_per_g
+        offers.append(offer)
 
     # --- budujemy trend i top3 (POZA pętlą for) ---
     trend_data = []
@@ -237,6 +251,7 @@ def get_price_alerts():
         """
         SELECT * FROM pharmacy_prices
         WHERE price < 35 AND price >= 10
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
         ORDER BY price ASC
     """
     ).fetchall()
@@ -291,6 +306,7 @@ def get_filtered_alerts():
                 price = p.price AND
                 expiration = p.expiration
         )
+          AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
     """
     )
     rows = cur.fetchall()
@@ -334,11 +350,28 @@ def get_filtered_alerts():
 
 
 @app.get("/api/alerts_grouped", response_class=JSONResponse)
-def get_grouped_alerts():
+def get_grouped_alerts(city: str = Query(None)):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("SELECT * FROM pharmacy_prices WHERE price IS NOT NULL")
+    base_query = """
+        SELECT *,
+               ROW_NUMBER() OVER (
+                   PARTITION BY product_id, pharmacy_name, expiration, price
+                   ORDER BY datetime(fetched_at) DESC
+               ) AS rn
+        FROM pharmacy_prices
+        WHERE price IS NOT NULL
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+    """
+    params = []
+    if city:
+        base_query += " AND (address LIKE ? OR address LIKE ?)"
+        params.append(f"%, {city}")
+        params.append(f"% {city}")
+
+    query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
+    cur.execute(query, params)
     rows = cur.fetchall()
     conn.close()
 
@@ -359,6 +392,10 @@ def get_grouped_alerts():
             except:
                 pass
 
+        address = row["address"] or ""
+        city_match = address.split(",")[-1].strip() if "," in address else address
+        city = re.sub(r"^\d{2}-\d{3}\s*", "", city_match) if city_match else ""
+
         offer = {
             "pharmacy": row["pharmacy_name"],
             "price": float(row["price"]),
@@ -369,6 +406,7 @@ def get_grouped_alerts():
             "updated": row["updated"],
             "map_url": row["map_url"],
             "short_expiry": short_expiry,
+            "city": city,
         }
 
         grouped[row["product_id"]].append(offer)
@@ -400,10 +438,11 @@ def get_grouped_alerts():
 async def register_alert(request: Request):
     data = await request.json()
     email = data.get("email")
+    phone = data.get("phone")
     threshold = data.get("threshold")
     product_name = data.get("product_name")
 
-    if not email or not threshold:
+    if ((not email and not phone) or threshold is None or not product_name):
         return JSONResponse(
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
@@ -419,6 +458,7 @@ async def register_alert(request: Request):
     alerts.append(
         {
             "email": email,
+            "phone": phone,
             "threshold": threshold,
             "product_name": product_name,
             "created": datetime.now().isoformat(),
