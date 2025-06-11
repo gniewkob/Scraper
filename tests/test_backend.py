@@ -46,3 +46,16 @@ def test_get_cities(client):
     assert cities, 'Cities list should not be empty'
     assert isinstance(cities[0], str)
 
+
+def test_alerts_grouped_city_filter(client):
+    all_groups = client.get('/api/alerts_grouped').json()
+    assert isinstance(all_groups, list)
+
+    city = client.get('/api/cities').json()[0]
+    city_groups = client.get(f'/api/alerts_grouped?city={city}').json()
+    assert isinstance(city_groups, list)
+    assert len(city_groups) <= len(all_groups)
+
+    empty_groups = client.get('/api/alerts_grouped?city=NonexistentCity').json()
+    assert empty_groups == []
+
