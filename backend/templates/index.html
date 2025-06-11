@@ -9,6 +9,9 @@
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <!-- Leaflet.js CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
 	body {
 	  background-color: #121212;
@@ -73,14 +76,17 @@
 	.accordion-button:not(.collapsed)::after {
 	  transform: rotate(180deg);
 	}
-	canvas#priceTrendChart {
-	  background-color: #1e1e1e !important;
-	  border-radius: 10px;
-	  padding: 10px;
-	  height: 260px !important;
-	  max-height: 260px;
-	}
-	@media (max-width: 576px) {
+        canvas#priceTrendChart {
+          background-color: #1e1e1e !important;
+          border-radius: 10px;
+          padding: 10px;
+          height: 260px !important;
+          max-height: 260px;
+        }
+        #map {
+          height: 300px;
+        }
+        @media (max-width: 576px) {
 	  .table td, .table th {
 		font-size: 0.875rem;
 		padding: 0.25rem;
@@ -122,6 +128,11 @@
   </div>
 
   <div id="filterInfo" class="text-info mb-2"></div>
+
+  <div class="card p-3 mb-4">
+        <h2 class="card-title">🗺️ Najbliższa apteka</h2>
+        <div id="map"></div>
+  </div>
 
   <!-- <!-- SORTOWANIE I KOLEJNOŚĆ -->
   <!-- <div class="row mb-3">
