@@ -16,6 +16,7 @@ from scraper.core.config.config import DB_PATH
 from scraper.core.config.urls import PACKAGE_SIZES
 
 ALERT_FILE = Path(__file__).parent / "user_alerts.json"
+CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
@@ -561,3 +562,20 @@ def get_cities():
             if city:
                 cities.add(city)
     return sorted(cities)
+
+
+@app.get("/api/city_coords/{city}", response_class=JSONResponse)
+def get_city_coords(city: str):
+    if not CITY_COORDS_FILE.exists():
+        raise HTTPException(status_code=404, detail="Coordinates file missing")
+    try:
+        with open(CITY_COORDS_FILE, "r", encoding="utf-8") as f:
+            coords = json.load(f)
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to load coordinates")
+
+    for name, loc in coords.items():
+        if name.lower() == city.lower():
+            return {"lat": loc["lat"], "lon": loc["lon"]}
+
+    raise HTTPException(status_code=404, detail="City not found")

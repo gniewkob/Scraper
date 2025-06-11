@@ -58,10 +58,12 @@ async function loadCities() {
 
 async function geocodeCity(city) {
   try {
-    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`);
-    const data = await resp.json();
-    if (data && data[0]) {
-      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    const resp = await fetch(`/api/city_coords/${encodeURIComponent(city)}`);
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data && data.lat !== undefined && data.lon !== undefined) {
+        return { lat: parseFloat(data.lat), lon: parseFloat(data.lon) };
+      }
     }
   } catch (e) {
     console.error('Geocode error', e);
