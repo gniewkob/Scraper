@@ -64,9 +64,11 @@ def test_alerts_grouped_city_filter(client):
 @pytest.mark.parametrize(
     "data",
     [
-        {"threshold": 30, "product_name": "Test"},  # missing email
+        {"threshold": 30, "product_name": "Test"},  # missing email and phone
         {"email": "a@b.com", "product_name": "Test"},  # missing threshold
+        {"phone": "+48100100100", "product_name": "Test"},  # missing threshold
         {"email": "a@b.com", "threshold": 30},  # missing product_name
+        {"phone": "+48100100100", "threshold": 30},  # missing product_name
     ],
 )
 def test_register_alert_missing_field(client, monkeypatch, tmp_path, data):
@@ -79,11 +81,12 @@ def test_register_alert_missing_field(client, monkeypatch, tmp_path, data):
 
 def test_register_alert_success(client, monkeypatch, tmp_path):
     monkeypatch.setattr('backend.main.ALERT_FILE', tmp_path / 'alerts.json', raising=False)
-    data = {"email": "a@b.com", "threshold": 30, "product_name": "Test"}
+    data = {"email": "a@b.com", "phone": "+48100100100", "threshold": 30, "product_name": "Test"}
     resp = client.post('/api/alerts/register', json=data)
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
     with open(tmp_path / 'alerts.json', 'r', encoding='utf-8') as f:
         alerts = json.load(f)
     assert alerts[-1]["email"] == "a@b.com"
+    assert alerts[-1]["phone"] == "+48100100100"
 

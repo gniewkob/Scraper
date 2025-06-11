@@ -73,10 +73,11 @@ Użytkownik może zapisać się na alert cenowy z poziomu dashboardu,
 wskazując konkretny produkt oraz maksymalną cenę.
 
 Do wysyłki powiadomień służy skrypt `scraper/cli/check_alerts.py`. Uruchomiony
-cyklicznie (np. z crona) sprawdza aktualne ceny i wysyła e-mail, gdy oferta
-spełni podany próg. Konfiguracja SMTP odbywa się przez zmienne środowiskowe
-`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` oraz opcjonalnie
-`FROM_EMAIL`.
+cyklicznie (np. z crona) sprawdza aktualne ceny i wysyła e-mail lub wiadomość
+WhatsApp, gdy oferta spełni podany próg. Konfiguracja SMTP odbywa się przez
+zmienne środowiskowe `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`
+oraz opcjonalnie `FROM_EMAIL`. Dla WhatsApp używane jest Twilio – podaj
+`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` oraz `TWILIO_WHATSAPP_FROM`.
 
 Przykład użycia:
 
