@@ -166,7 +166,7 @@ GET http://localhost:61973/api/product/Paracetamol?limit=5&city=Warszawa
 ## 7. TODO / Plany rozwojowe
 
 * [ ] Nowoczesny frontend (React/Vue/Svelte)
-* [ ] Mapy i geolokalizacja (Leaflet.js, promień, marker najbliższej apteki)
+* [x] Mapy i geolokalizacja (Leaflet.js, promień, marker najbliższej apteki)
 * [ ] Panel administracyjny (edycja produktów/ofert)
 * [x] Alerty cenowe (e-mail; SMS/webhook w planach)
 * [ ] Publiczne API dla zewnętrznych aplikacji
