@@ -10,7 +10,7 @@ let currentLimit = 10;
 let currentSort = 'price';
 let currentOrder = 'asc';
 let userLat = null, userLon = null, selectedRadius = 10;
-let map = null, userMarker = null, nearestMarker = null, radiusCircle = null;
+let map = null, userMarker = null, nearestMarker = null, radiusCircle = null, offerLayer = null;
 
 // --- INICJALIZACJA SELECTÓW PRODUKTÓW I MIAST ---
 const productSelect = document.getElementById("productSelect");
@@ -58,6 +58,8 @@ async function loadCities() {
 document.getElementById('citySelect').onchange = function() {
   selectedCity = this.value;
   currentOffset = 0;
+  userLat = null;
+  userLon = null;
   loadProductData(currentProduct);
   loadGroupedAlerts();
   updateFilterInfo();
@@ -133,7 +135,19 @@ async function loadProductData(name) {
   renderPriceChart(data.trend, min, max);
   updateAlertBanner(data.trend, min);
   updateFilterInfo();
-  if (map && userLat && userLon) {
+
+  if (!map && data.offers.length) {
+    let lat = userLat;
+    let lon = userLon;
+    if ((!lat || !lon) && data.offers[0].pharmacy_lat && data.offers[0].pharmacy_lon) {
+      lat = data.offers[0].pharmacy_lat;
+      lon = data.offers[0].pharmacy_lon;
+    }
+    if (lat && lon) {
+      initMap(lat, lon, !!(userLat && userLon));
+    }
+  }
+  if (map) {
     updateMap(data.offers);
   }
 }
@@ -379,40 +393,75 @@ function renderAllOffersTable(groups) {
 }
 
 // --- MAPA Z LEAFLET ---
-function initMap(lat, lon) {
+function initMap(lat, lon, showUser = true) {
   map = L.map('map').setView([lat, lon], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
-  userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Twoja lokalizacja');
-  radiusCircle = L.circle([lat, lon], { radius: selectedRadius * 1000 }).addTo(map);
+  offerLayer = L.layerGroup().addTo(map);
+  if (showUser) {
+    userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Twoja lokalizacja');
+    radiusCircle = L.circle([lat, lon], { radius: selectedRadius * 1000 }).addTo(map);
+  }
 }
 
 function updateMap(offers) {
   if (!map) return;
-  userMarker.setLatLng([userLat, userLon]);
-  radiusCircle.setLatLng([userLat, userLon]);
-  radiusCircle.setRadius(selectedRadius * 1000);
-  let nearest = null;
-  let minDist = Infinity;
-  offers.forEach(o => {
-    if (o.pharmacy_lat && o.pharmacy_lon) {
-      const dist = map.distance([userLat, userLon], [o.pharmacy_lat, o.pharmacy_lon]);
-      if (dist < minDist) {
-        minDist = dist;
-        nearest = o;
-      }
+  if (offerLayer) offerLayer.clearLayers();
+
+  if (userLat && userLon) {
+    if (userMarker) {
+      userMarker.setLatLng([userLat, userLon]);
+    } else {
+      userMarker = L.marker([userLat, userLon]).addTo(map).bindPopup('Twoja lokalizacja');
     }
-  });
-  if (!nearest) return;
-  if (nearestMarker) {
-    nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
+    if (radiusCircle) {
+      radiusCircle.setLatLng([userLat, userLon]);
+      radiusCircle.setRadius(selectedRadius * 1000);
+    } else {
+      radiusCircle = L.circle([userLat, userLon], { radius: selectedRadius * 1000 }).addTo(map);
+    }
+    let nearest = null;
+    let minDist = Infinity;
+    offers.forEach(o => {
+      if (o.pharmacy_lat && o.pharmacy_lon) {
+        const dist = map.distance([userLat, userLon], [o.pharmacy_lat, o.pharmacy_lon]);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = o;
+        }
+      }
+    });
+    if (!nearest) return;
+    if (nearestMarker) {
+      nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
+    } else {
+      nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+    }
+    nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
+    map.fitBounds(L.latLngBounds([userLat, userLon], [nearest.pharmacy_lat, nearest.pharmacy_lon]), { padding: [50, 50] });
   } else {
-    nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+    nearestMarker && map.removeLayer(nearestMarker);
+    nearestMarker = null;
+    userMarker && map.removeLayer(userMarker);
+    userMarker = null;
+    radiusCircle && map.removeLayer(radiusCircle);
+    radiusCircle = null;
+
+    let hasMarkers = false;
+    offers.forEach(o => {
+      if (o.pharmacy_lat && o.pharmacy_lon) {
+        hasMarkers = true;
+        L.marker([o.pharmacy_lat, o.pharmacy_lon])
+          .addTo(offerLayer)
+          .bindPopup(`${o.pharmacy}<br>${((o.price_per_g ?? o.price).toFixed(2))} zł`);
+      }
+    });
+    if (hasMarkers) {
+      map.fitBounds(offerLayer.getBounds(), { padding: [50, 50] });
+    }
   }
-  nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
-  map.fitBounds(L.latLngBounds([userLat, userLon], [nearest.pharmacy_lat, nearest.pharmacy_lon]), { padding: [50, 50] });
 }
 
 // --- ALERTY MAILOWE (opcjonalnie, jeśli używasz) ---
