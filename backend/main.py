@@ -203,10 +203,11 @@ def get_product_by_name(
             if pkg:
                 price_per_g = price / pkg
 
+        display_price = price_per_g if price_per_g is not None else price
         offer = {
             "pharmacy": row["pharmacy_name"],
             "address": row["address"],
-            "price": price,
+            "price": display_price,
             "unit": unit,
             "expiration": expiration,
             "fetched_at": fetched_at,
@@ -266,6 +267,7 @@ def get_price_alerts():
     alerts = []
     now = datetime.now()
     for row in rows:
+        price = float(row["price"])
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
         short_expiry = False
@@ -276,19 +278,37 @@ def get_price_alerts():
             except:
                 pass
 
-        alerts.append(
-            {
-                "product_id": row["product_id"],
-                "product": row["product_id"],
-                "pharmacy": row["pharmacy_name"],
-                "price": float(row["price"]),
-                "unit": "g",
-                "expiration": expiration,
-                "fetched_at": fetched_at,
-                "short_expiry": short_expiry,
-                "map_url": row["map_url"],
-            }
-        )
+        unit = row["unit"]
+        price_per_g = None
+        if unit:
+            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
+            if match:
+                grams = float(match.group(1).replace(",", "."))
+                if grams:
+                    price_per_g = price / grams
+
+        if price_per_g is None:
+            pkg = PACKAGE_SIZES.get(row["product_id"])
+            if pkg:
+                price_per_g = price / pkg
+
+        display_price = price_per_g if price_per_g is not None else price
+
+        offer = {
+            "product_id": row["product_id"],
+            "product": row["product_id"],
+            "pharmacy": row["pharmacy_name"],
+            "price": display_price,
+            "unit": "g",
+            "expiration": expiration,
+            "fetched_at": fetched_at,
+            "short_expiry": short_expiry,
+            "map_url": row["map_url"],
+        }
+        if price_per_g is not None:
+            offer["price_per_g"] = price_per_g
+
+        alerts.append(offer)
 
     return alerts
 
@@ -336,21 +356,39 @@ def get_filtered_alerts():
             except:
                 pass
 
-        alerts.append(
-            {
-                "product_id": row["product_id"],
-                "product": row["product_id"],
-                "pharmacy": row["pharmacy_name"],
-                "price": float(row["price"]),
-                "unit": row["unit"],
-                "expiration": expiration,
-                "fetched_at": fetched_at,
-                "availability": row["availability"],
-                "updated": row["updated"],
-                "map_url": row["map_url"],
-                "short_expiry": short_expiry,
-            }
-        )
+        unit = row["unit"]
+        price_per_g = None
+        if unit:
+            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
+            if match:
+                grams = float(match.group(1).replace(",", "."))
+                if grams:
+                    price_per_g = price / grams
+
+        if price_per_g is None:
+            pkg = PACKAGE_SIZES.get(row["product_id"])
+            if pkg:
+                price_per_g = price / pkg
+
+        display_price = price_per_g if price_per_g is not None else price
+
+        offer = {
+            "product_id": row["product_id"],
+            "product": row["product_id"],
+            "pharmacy": row["pharmacy_name"],
+            "price": display_price,
+            "unit": row["unit"],
+            "expiration": expiration,
+            "fetched_at": fetched_at,
+            "availability": row["availability"],
+            "updated": row["updated"],
+            "map_url": row["map_url"],
+            "short_expiry": short_expiry,
+        }
+        if price_per_g is not None:
+            offer["price_per_g"] = price_per_g
+
+        alerts.append(offer)
 
     return alerts
 
@@ -398,13 +436,29 @@ def get_grouped_alerts(city: str = Query(None)):
             except:
                 pass
 
+        unit = row["unit"]
+        price_per_g = None
+        if unit:
+            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
+            if match:
+                grams = float(match.group(1).replace(",", "."))
+                if grams:
+                    price_per_g = price / grams
+
+        if price_per_g is None:
+            pkg = PACKAGE_SIZES.get(row["product_id"])
+            if pkg:
+                price_per_g = price / pkg
+
+        display_price = price_per_g if price_per_g is not None else price
+
         address = row["address"] or ""
         city_match = address.split(",")[-1].strip() if "," in address else address
         city = re.sub(r"^\d{2}-\d{3}\s*", "", city_match) if city_match else ""
 
         offer = {
             "pharmacy": row["pharmacy_name"],
-            "price": float(row["price"]),
+            "price": display_price,
             "unit": row["unit"],
             "expiration": expiration,
             "fetched_at": fetched_at,
@@ -414,6 +468,8 @@ def get_grouped_alerts(city: str = Query(None)):
             "short_expiry": short_expiry,
             "city": city,
         }
+        if price_per_g is not None:
+            offer["price_per_g"] = price_per_g
 
         grouped[row["product_id"]].append(offer)
 
