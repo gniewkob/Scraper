@@ -18,8 +18,10 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pytest
-# or: python -m scraper.cli.scrape_all
+# or: python -m scraper.cli.scrape_all --headless
 ```
+
+Dodaj flagę `--headless`, aby uruchomić scraper bez otwierania okna przeglądarki.
 
 **Wyniki działania:**
 

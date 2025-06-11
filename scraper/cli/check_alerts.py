@@ -80,6 +80,23 @@ def send_email(to_address: str, subject: str, body: str) -> bool:
         logger.warning("⚠️ Brak konfiguracji SMTP – pomijam wysyłkę e-maila.")
         return False
 
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = FROM_EMAIL or SMTP_USER
+    msg["To"] = to_address
+    msg.set_content(body)
+
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.send_message(msg)
+        logger.info(f"📧 Wysłano e-mail do {to_address}")
+        return True
+    except Exception as exc:
+        logger.error(f"❌ Błąd wysyłki e-maila do {to_address}: {exc}")
+        return False
+
 
 def send_whatsapp(to_number: str, body: str) -> bool:
     """Send a WhatsApp message using Twilio API."""
@@ -97,23 +114,6 @@ def send_whatsapp(to_number: str, body: str) -> bool:
         return True
     except Exception as exc:
         logger.error(f"❌ Błąd wysyłki WhatsApp do {to_number}: {exc}")
-        return False
-
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = FROM_EMAIL or SMTP_USER
-    msg["To"] = to_address
-    msg.set_content(body)
-
-    try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.send_message(msg)
-        logger.info(f"📧 Wysłano e-mail do {to_address}")
-        return True
-    except Exception as exc:
-        logger.error(f"❌ Błąd wysyłki e-maila do {to_address}: {exc}")
         return False
 
 
