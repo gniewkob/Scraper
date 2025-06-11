@@ -472,13 +472,14 @@ function updateMap(offers) {
         }
       }
     });
-    if (!nearest) return;
-    if (nearestMarker) {
-      nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
-    } else {
-      nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+    if (nearest) {
+      if (nearestMarker) {
+        nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
+      } else {
+        nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+      }
+      nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
     }
-    nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
     map.setView([userLat, userLon], 13);
   } else if (cityLat && cityLon) {
     userMarker && map.removeLayer(userMarker);
@@ -505,13 +506,14 @@ function updateMap(offers) {
         }
       }
     });
-    if (!nearest) return;
-    if (nearestMarker) {
-      nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
-    } else {
-      nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+    if (nearest) {
+      if (nearestMarker) {
+        nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
+      } else {
+        nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+      }
+      nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
     }
-    nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
     map.setView([cityLat, cityLon], CITY_ZOOM);
   } else {
     nearestMarker && map.removeLayer(nearestMarker);
