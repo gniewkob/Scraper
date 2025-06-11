@@ -200,7 +200,7 @@ def get_product_by_name(
 
         if price_per_g is None:
             pkg = PACKAGE_SIZES.get(product_id)
-            if pkg and price >= 100:
+            if pkg:
                 price_per_g = price / pkg
 
         offer = {
