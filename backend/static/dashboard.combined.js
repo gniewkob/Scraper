@@ -10,7 +10,8 @@ let currentLimit = 10;
 let currentSort = 'price';
 let currentOrder = 'asc';
 let userLat = null, userLon = null, selectedRadius = 10;
-let map = null, userMarker = null, nearestMarker = null, radiusCircle = null, offerLayer = null;
+let cityLat = null, cityLon = null;
+let map = null, userMarker = null, cityMarker = null, nearestMarker = null, radiusCircle = null, offerLayer = null;
 
 // --- INICJALIZACJA SELECTÓW PRODUKTÓW I MIAST ---
 const productSelect = document.getElementById("productSelect");
@@ -54,12 +55,39 @@ async function loadCities() {
   });
 }
 
+async function geocodeCity(city) {
+  try {
+    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`);
+    const data = await resp.json();
+    if (data && data[0]) {
+      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    }
+  } catch (e) {
+    console.error('Geocode error', e);
+  }
+  return null;
+}
+
 // Obsługa wyboru miasta
-document.getElementById('citySelect').onchange = function() {
+document.getElementById('citySelect').onchange = async function() {
   selectedCity = this.value;
   currentOffset = 0;
   userLat = null;
   userLon = null;
+  cityLat = null;
+  cityLon = null;
+  if (selectedCity) {
+    const coords = await geocodeCity(selectedCity);
+    if (coords) {
+      cityLat = coords.lat;
+      cityLon = coords.lon;
+      if (!map) {
+        initMap(cityLat, cityLon, false);
+      } else {
+        map.setView([cityLat, cityLon], 13);
+      }
+    }
+  }
   loadProductData(currentProduct);
   loadGroupedAlerts();
   updateFilterInfo();
@@ -67,7 +95,7 @@ document.getElementById('citySelect').onchange = function() {
 
 document.getElementById('radiusSelect').onchange = function() {
   selectedRadius = parseInt(this.value, 10);
-  if (userLat && userLon) {
+  if ((userLat && userLon) || (cityLat && cityLon)) {
     loadProductData(currentProduct);
     if (map && radiusCircle) {
       radiusCircle.setRadius(selectedRadius * 1000);
@@ -86,6 +114,8 @@ document.getElementById('geoBtn').onclick = function() {
     // reset miasta - wybieramy tylko po geolokalizacji
     document.getElementById('citySelect').value = '';
     selectedCity = '';
+    cityLat = null;
+    cityLon = null;
     if (!map) {
       initMap(userLat, userLon);
     } else {
@@ -113,6 +143,8 @@ function updateFilterInfo() {
   const product = productSelect.selectedOptions[0]?.textContent || '';
   if (userLat && userLon && selectedRadius) {
     info.textContent = `Filtr: ${selectedRadius} km od Twojej lokalizacji | Produkt: ${product}`;
+  } else if (cityLat && cityLon && selectedRadius && selectedCity) {
+    info.textContent = `Filtr: ${selectedRadius} km od miasta ${selectedCity} | Produkt: ${product}`;
   } else {
     const city = selectedCity ? `Miasto: ${selectedCity}` : "Wszystkie miasta";
     info.textContent = `Filtr: ${city} | Produkt: ${product}`;
@@ -124,7 +156,11 @@ async function loadProductData(name) {
   currentProduct = name;
   let url = `/api/product/${encodeURIComponent(name)}?limit=50&offset=0&sort=price&order=asc`;
   if (selectedCity) url += `&city=${encodeURIComponent(selectedCity)}`;
-  if (userLat && userLon && selectedRadius) url += `&lat=${userLat}&lon=${userLon}&radius=${selectedRadius}`;
+  if (userLat && userLon && selectedRadius) {
+    url += `&lat=${userLat}&lon=${userLon}&radius=${selectedRadius}`;
+  } else if (cityLat && cityLon && selectedRadius) {
+    url += `&lat=${cityLat}&lon=${cityLon}&radius=${selectedRadius}`;
+  }
   const res = await fetch(url);
   const data = await res.json();
   renderTopOffers(data.top3);
@@ -137,8 +173,8 @@ async function loadProductData(name) {
   updateFilterInfo();
 
   if (!map && data.offers.length) {
-    let lat = userLat;
-    let lon = userLon;
+    let lat = userLat ?? cityLat;
+    let lon = userLon ?? cityLon;
     if ((!lat || !lon) && data.offers[0].pharmacy_lat && data.offers[0].pharmacy_lon) {
       lat = data.offers[0].pharmacy_lat;
       lon = data.offers[0].pharmacy_lon;
@@ -441,11 +477,46 @@ function updateMap(offers) {
     }
     nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
     map.fitBounds(L.latLngBounds([userLat, userLon], [nearest.pharmacy_lat, nearest.pharmacy_lon]), { padding: [50, 50] });
+  } else if (cityLat && cityLon) {
+    userMarker && map.removeLayer(userMarker);
+    userMarker = null;
+    if (cityMarker) {
+      cityMarker.setLatLng([cityLat, cityLon]);
+    } else {
+      cityMarker = L.marker([cityLat, cityLon]).addTo(map).bindPopup(selectedCity);
+    }
+    if (radiusCircle) {
+      radiusCircle.setLatLng([cityLat, cityLon]);
+      radiusCircle.setRadius(selectedRadius * 1000);
+    } else {
+      radiusCircle = L.circle([cityLat, cityLon], { radius: selectedRadius * 1000 }).addTo(map);
+    }
+    let nearest = null;
+    let minDist = Infinity;
+    offers.forEach(o => {
+      if (o.pharmacy_lat && o.pharmacy_lon) {
+        const dist = map.distance([cityLat, cityLon], [o.pharmacy_lat, o.pharmacy_lon]);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = o;
+        }
+      }
+    });
+    if (!nearest) return;
+    if (nearestMarker) {
+      nearestMarker.setLatLng([nearest.pharmacy_lat, nearest.pharmacy_lon]);
+    } else {
+      nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
+    }
+    nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
+    map.fitBounds(L.latLngBounds([cityLat, cityLon], [nearest.pharmacy_lat, nearest.pharmacy_lon]), { padding: [50, 50] });
   } else {
     nearestMarker && map.removeLayer(nearestMarker);
     nearestMarker = null;
     userMarker && map.removeLayer(userMarker);
     userMarker = null;
+    cityMarker && map.removeLayer(cityMarker);
+    cityMarker = null;
     radiusCircle && map.removeLayer(radiusCircle);
     radiusCircle = null;
 
