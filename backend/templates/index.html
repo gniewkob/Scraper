@@ -154,33 +154,33 @@
 	  <button id="expandBtn" class="btn btn-outline-light btn-sm">Pokaż wszystkie okazje</button>
 	</div>
 	<div id="allOffersTable" class="table-responsive" style="display: none;">
-	  <table class="table table-dark table-bordered">
-		<thead>
-		  <tr>
-			<th>Produkt</th><th>Apteka</th><th>Cena</th><th>Ważność</th><th>Status</th><th>Mapa</th>
-		  </tr>
-		</thead>
-		<tbody id="allOffersBody"></tbody>
-	  </table>
-	</div>
+          <table class="table table-dark table-bordered">
+                <thead>
+                  <tr>
+                        <th>Produkt</th><th>Apteka</th><th>Miasto</th><th>Cena</th><th>Ważność</th><th>Status</th><th>Mapa</th>
+                  </tr>
+                </thead>
+                <tbody id="allOffersBody"></tbody>
+          </table>
+        </div>
   </div>
 
   <div class="card p-3 mb-4">
 	<h3 class="card-title">🔔 Zapisz się na alert cenowy</h3>
         <form id="alertForm" class="row g-3">
-          <div class="col-md-4">
+          <div class="col-12 col-md-3">
                 <input type="email" id="email" placeholder="Twój email" class="form-control">
           </div>
-          <div class="col-md-4">
+          <div class="col-12 col-md-3">
                 <input type="tel" id="phone" placeholder="Numer WhatsApp" class="form-control">
           </div>
-          <div class="col-md-4">
+          <div class="col-12 col-md-3">
                 <select id="alertProductSelect" class="form-select" required></select>
           </div>
-          <div class="col-md-3">
+          <div class="col-12 col-md-2">
                 <input type="number" step="0.01" id="threshold" placeholder="Cena maksymalna" class="form-control" required>
           </div>
-          <div class="col-md-1">
+          <div class="col-12 col-md-1">
                 <button type="submit" class="btn btn-outline-light w-100">Zapisz alert</button>
           </div>
         </form>
