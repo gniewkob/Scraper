@@ -130,6 +130,10 @@ This would help users understand if a current price is good in absolute terms an
 
 ### 4. Unit Price Normalization
 
+The backend also estimates the price per gram using predefined
+`PACKAGE_SIZES` when the scraped offer costs at least **100 zł** and no
+explicit gram value is present in the unit.
+
 Current classification is based on absolute price. Consider normalizing by unit:
 
 ```python
