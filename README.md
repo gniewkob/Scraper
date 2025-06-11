@@ -18,10 +18,8 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pytest
-# or: python -m scraper.cli.scrape_all --headless
+# or: python -m scraper.cli.scrape_all
 ```
-
-Dodaj flagę `--headless`, aby uruchomić scraper bez otwierania okna przeglądarki.
 
 **Wyniki działania:**
 
@@ -29,11 +27,6 @@ Dodaj flagę `--headless`, aby uruchomić scraper bez otwierania okna przegląda
 * Zrzuty ekranu błędów (error\_screenshots/)
 * Dane w formie JSON oraz finalnie w bazie SQLite (`data/pharmacy_prices.sqlite`)
 * ChromeDriver dostarcza `webdriver-manager`, dlatego binarka nie jest w repozytorium
-* Wymagana jest również zainstalowana przeglądarka **Google Chrome** lub
-  **Chromium** wraz z pasującym `chromedriver`. W środowisku Ubuntu można
-  pobrać oficjalny pakiet `.deb` ze strony Google i zainstalować go poleceniem
-  `dpkg -i google-chrome-stable_current_amd64.deb`, a następnie umieścić
-  `chromedriver` w katalogu znajdującym się w zmiennej `$PATH`.
 * Baza `data/pharmacy_prices.sqlite` jest generowana podczas scrapingu
 
 ---
