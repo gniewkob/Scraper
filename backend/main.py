@@ -364,6 +364,10 @@ def get_grouped_alerts(city: str = Query(None)):
             except:
                 pass
 
+        address = row["address"] or ""
+        city_match = address.split(",")[-1].strip() if "," in address else address
+        city = re.sub(r"^\d{2}-\d{3}\s*", "", city_match) if city_match else ""
+
         offer = {
             "pharmacy": row["pharmacy_name"],
             "price": float(row["price"]),
@@ -374,6 +378,7 @@ def get_grouped_alerts(city: str = Query(None)):
             "updated": row["updated"],
             "map_url": row["map_url"],
             "short_expiry": short_expiry,
+            "city": city,
         }
 
         grouped[row["product_id"]].append(offer)

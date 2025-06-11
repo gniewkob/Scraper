@@ -303,7 +303,7 @@ async function loadGroupedAlerts() {
           <table class="table table-dark table-bordered m-0">
             <thead>
               <tr>
-                <th>Apteka</th><th>Cena</th><th>Ważność</th><th>Status</th>
+                <th>Apteka</th><th>Miasto</th><th>Cena</th><th>Ważność</th><th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -317,6 +317,7 @@ async function loadGroupedAlerts() {
                     ${o.pharmacy}
                   </a>
                 </td>
+                <td>${o.city || "–"}</td>
                 <td>${o.price.toFixed(2)} zł</td>
                 <td>${o.expiration || "–"}</td>
                 <td>${o.short_expiry ? "❗ Krótka ważność" : o.fetched_at}</td>
@@ -353,6 +354,7 @@ function renderAllOffersTable(groups) {
             ${o.pharmacy}
           </a>
         </td>
+        <td>${o.city || "–"}</td>
         <td>${o.price.toFixed(2)} zł</td>
         <td>${o.expiration || "–"}</td>
         <td>${o.short_expiry ? "❗ Krótka ważność" : o.fetched_at}</td>
