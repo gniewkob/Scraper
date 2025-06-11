@@ -132,6 +132,8 @@ uvicorn main:app --host 127.0.0.1 --port 61973
 
 * `/api/offers?city=Miasto&product=Produkt&min_price=20&max_price=50`
 * `/api/products`
+* `/api/product/{nazwa_produktu}` – zwraca listę ofert oraz trend cenowy;
+  gdy jednostka zawiera ilość (np. `10g`), dodatkowo pojawia się pole `price_per_g`
 * `/api/cities`
 
 Przykład użycia:

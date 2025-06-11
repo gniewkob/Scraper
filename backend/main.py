@@ -188,20 +188,30 @@ def get_product_by_name(
                 short_expiry = days_left <= 30
             except:
                 pass
-        offers.append(
-            {
-                "pharmacy": row["pharmacy_name"],
-                "address": row["address"],
-                "price": price,
-                "unit": row["unit"],
-                "expiration": expiration,
-                "fetched_at": fetched_at,
-                "short_expiry": short_expiry,
-                "map_url": row["map_url"] or "",
-                "pharmacy_lat": row["pharmacy_lat"],
-                "pharmacy_lon": row["pharmacy_lon"],
-            }
-        )
+        unit = row["unit"]
+        price_per_g = None
+        if unit:
+            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
+            if match:
+                grams = float(match.group(1).replace(",", "."))
+                if grams:
+                    price_per_g = price / grams
+
+        offer = {
+            "pharmacy": row["pharmacy_name"],
+            "address": row["address"],
+            "price": price,
+            "unit": unit,
+            "expiration": expiration,
+            "fetched_at": fetched_at,
+            "short_expiry": short_expiry,
+            "map_url": row["map_url"] or "",
+            "pharmacy_lat": row["pharmacy_lat"],
+            "pharmacy_lon": row["pharmacy_lon"],
+        }
+        if price_per_g is not None:
+            offer["price_per_g"] = price_per_g
+        offers.append(offer)
 
     # --- budujemy trend i top3 (POZA pętlą for) ---
     trend_data = []
