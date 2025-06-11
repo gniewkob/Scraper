@@ -479,7 +479,7 @@ function updateMap(offers) {
       nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
     }
     nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
-    map.fitBounds(L.latLngBounds([userLat, userLon], [nearest.pharmacy_lat, nearest.pharmacy_lon]), { padding: [50, 50] });
+    map.setView([userLat, userLon], 13);
   } else if (cityLat && cityLon) {
     userMarker && map.removeLayer(userMarker);
     userMarker = null;
@@ -512,11 +512,7 @@ function updateMap(offers) {
       nearestMarker = L.marker([nearest.pharmacy_lat, nearest.pharmacy_lon]).addTo(map);
     }
     nearestMarker.bindPopup(`${nearest.pharmacy}<br>${((nearest.price_per_g ?? nearest.price).toFixed(2))} zł`);
-    if (radiusCircle) {
-      map.fitBounds(radiusCircle.getBounds(), { padding: [50, 50] });
-    } else {
-      map.setView([cityLat, cityLon], CITY_ZOOM);
-    }
+    map.setView([cityLat, cityLon], CITY_ZOOM);
   } else {
     nearestMarker && map.removeLayer(nearestMarker);
     nearestMarker = null;
