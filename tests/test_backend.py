@@ -48,6 +48,20 @@ def test_get_cities(client):
     assert isinstance(cities[0], str)
 
 
+def test_get_city_coords(client, monkeypatch, tmp_path):
+    coords_file = tmp_path / 'coords.json'
+    data = {"TestCity": {"lat": 1.23, "lon": 4.56}}
+    coords_file.write_text(json.dumps(data))
+    monkeypatch.setattr('backend.main.CITY_COORDS_FILE', coords_file, raising=False)
+
+    resp = client.get('/api/city_coords/TestCity')
+    assert resp.status_code == 200
+    assert resp.json() == {"lat": 1.23, "lon": 4.56}
+
+    resp = client.get('/api/city_coords/Unknown')
+    assert resp.status_code == 404
+
+
 def test_alerts_grouped_city_filter(client):
     all_groups = client.get('/api/alerts_grouped').json()
     assert isinstance(all_groups, list)
