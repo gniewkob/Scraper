@@ -7,6 +7,7 @@ import time
 import logging
 from pathlib import Path
 from datetime import datetime
+import argparse
 
 from scraper.core.browser import setup_browser
 from scraper.core.data_extractor import extract_pharmacy_data
@@ -19,8 +20,8 @@ init_logging()
 logger = logging.getLogger("gdziepolek")
 ensure_schema()
 
-def main():
-	driver = setup_browser()
+def main(headless=False):
+        driver = setup_browser(headless=headless)
 	scraped = 0
 
 	try:
@@ -43,7 +44,7 @@ def main():
 				logger.info("🔄 Restart przeglądarki dla stabilności...")
 				driver.quit()
 				time.sleep(2)
-				driver = setup_browser()
+                                driver = setup_browser(headless=headless)
 
 			time.sleep(1.5)
 
@@ -52,4 +53,12 @@ def main():
 		logger.info("🛑 Zakończono scraping.")
 
 if __name__ == "__main__":
-	main()
+        parser = argparse.ArgumentParser(description="Scrape all pharmacy data")
+        parser.add_argument(
+                "--headless",
+                action="store_true",
+                help="Run browser in headless mode",
+        )
+
+        args = parser.parse_args()
+        main(headless=args.headless)
