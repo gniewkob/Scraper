@@ -117,7 +117,8 @@ async function loadProductData(name) {
   const res = await fetch(url);
   const data = await res.json();
   renderTopOffers(data.top3);
-  const prices = data.trend.map(p => p.price);
+  // backend now returns price already normalized per gram
+  const prices = data.trend.map(p => parseFloat(p.price));
   const min = Math.min(...prices);
   const max = Math.max(...prices);
   renderPriceChart(data.trend, min, max);
@@ -203,7 +204,7 @@ function renderPriceChart(data, min, max) {
     type: 'line',
     data: {
       datasets: [{
-        label: 'Średnia cena dzienna [zł]',
+        label: 'Średnia cena dzienna [zł/g]',
         data: points,
         borderColor: '#4be2c2',
         backgroundColor: '#4be2c2',
@@ -241,7 +242,7 @@ function renderPriceChart(data, min, max) {
           suggestedMax: Math.ceil(max + 5),
           title: {
             display: true,
-            text: 'Cena [zł]',
+            text: 'Cena [zł/g]',
             color: '#f1f1f1'
           },
           ticks: {
@@ -263,9 +264,9 @@ function renderPriceChart(data, min, max) {
 // --- ALERT CENOWY NAJLEPSZA CENA ---
 const alertBanner = document.getElementById("alertBanner");
 function updateAlertBanner(trendData, min) {
-  const current = trendData[trendData.length - 1]?.price;
+  const current = parseFloat(trendData[trendData.length - 1]?.price);
   if (current <= min) {
-    alertBanner.innerHTML = `<div class="alert alert-success">📉 Obecna cena (${current.toFixed(2)} zł) jest najniższa w historii!</div>`;
+    alertBanner.innerHTML = `<div class="alert alert-success">📉 Obecna cena za 1 g (${current.toFixed(2)} zł) jest najniższa w historii!</div>`;
   } else {
     alertBanner.innerHTML = '';
   }
