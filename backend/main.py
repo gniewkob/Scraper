@@ -333,11 +333,17 @@ def get_filtered_alerts():
 
 
 @app.get("/api/alerts_grouped", response_class=JSONResponse)
-def get_grouped_alerts():
+def get_grouped_alerts(city: str = Query(None)):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("SELECT * FROM pharmacy_prices WHERE price IS NOT NULL")
+    query = "SELECT * FROM pharmacy_prices WHERE price IS NOT NULL"
+    params = []
+    if city:
+        query += " AND (address LIKE ? OR address LIKE ?)"
+        params.append(f"%, {city}")
+        params.append(f"% {city}")
+    cur.execute(query, params)
     rows = cur.fetchall()
     conn.close()
 

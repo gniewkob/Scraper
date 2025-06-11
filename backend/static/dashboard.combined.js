@@ -58,6 +58,7 @@ document.getElementById('citySelect').onchange = function() {
   selectedCity = this.value;
   currentOffset = 0;
   loadProductData(currentProduct);
+  loadGroupedAlerts();
   updateFilterInfo();
 };
 
@@ -80,6 +81,7 @@ document.getElementById('geoBtn').onclick = function() {
     document.getElementById('citySelect').value = '';
     selectedCity = '';
     loadProductData(currentProduct);
+    loadGroupedAlerts();
     updateFilterInfo();
   }, function() {
     alert("Nie udało się pobrać lokalizacji.");
@@ -272,7 +274,11 @@ function updateAlertBanner(trendData, min) {
 // --- GROUPED OFFERS & ALL OFFERS TABLE ---
 let groupedOffersCache = [];
 async function loadGroupedAlerts() {
-  const res = await fetch("/api/alerts_grouped");
+  let url = "/api/alerts_grouped";
+  if (selectedCity) {
+    url += `?city=${encodeURIComponent(selectedCity)}`;
+  }
+  const res = await fetch(url);
   const groups = await res.json();
   groupedOffersCache = groups;
 
