@@ -11,10 +11,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from core.config.urls import extract_product_id
-from services.db import insert_prices
-from services.price_validator import parse_price_unit
-from core.config.config import DB_PATH
+from scraper.core.config.urls import extract_product_id
+from scraper.services.db import insert_prices
+from scraper.services.price_validator import parse_price_unit
+from scraper.core.config.config import DB_PATH
 
 logger = logging.getLogger("gdziepolek")
 
