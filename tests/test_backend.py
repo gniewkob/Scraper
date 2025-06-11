@@ -61,10 +61,20 @@ def test_alerts_grouped_city_filter(client):
     assert empty_groups == []
 
 
-def test_register_alert_missing_field(client, monkeypatch, tmp_path):
+@pytest.mark.parametrize(
+    "data",
+    [
+        {"threshold": 30, "product_name": "Test"},  # missing email
+        {"email": "a@b.com", "product_name": "Test"},  # missing threshold
+        {"email": "a@b.com", "threshold": 30},  # missing product_name
+    ],
+)
+def test_register_alert_missing_field(client, monkeypatch, tmp_path, data):
     monkeypatch.setattr('backend.main.ALERT_FILE', tmp_path / 'alerts.json', raising=False)
-    resp = client.post('/api/alerts/register', json={"email": "a@b.com", "threshold": 30})
+    resp = client.post('/api/alerts/register', json=data)
     assert resp.status_code == 400
+    body = resp.json()
+    assert body.get("status") == "error"
 
 
 def test_register_alert_success(client, monkeypatch, tmp_path):
