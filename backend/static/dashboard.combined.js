@@ -135,6 +135,7 @@ async function loadProductData(name) {
   renderPriceChart(data.trend, min, max);
   updateAlertBanner(data.trend, min);
   updateFilterInfo();
+
   if (!map && data.offers.length) {
     let lat = userLat;
     let lon = userLon;
