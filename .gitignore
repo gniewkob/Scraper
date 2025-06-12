@@ -28,6 +28,7 @@ scraper/tests/
 
 # Baza
 data/
+data/pharmacy_prices.sqlite
 
 # Uvicorn log
 uvicorn_scraper.log
