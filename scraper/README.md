@@ -163,3 +163,28 @@ pytest -v --log-cli-level=DEBUG
 - JSON output for further processing
 - HTML reporting through pytest plugins
 - Cross-browser testing support (configurable in browser.py)
+
+## Synchronizing the SQLite database
+
+The script `scrape_and_sync.sh` can run the scraper, geocode addresses and upload the resulting `data/pharmacy_prices.sqlite` to a remote server.
+
+By default the upload uses `rsync` with the `--compress` and `--partial` options, sending only the differences:
+
+```bash
+./scrape_and_sync.sh
+```
+
+You can override the destination with environment variables:
+
+```bash
+REMOTE_USER=alice \
+REMOTE_HOST=example.org \
+REMOTE_PATH=/path/on/server/pharmacy_prices.sqlite \
+./scrape_and_sync.sh
+```
+
+If `rsync` is unavailable the script falls back to a compressed transfer using `gzip` and `scp`. The remote file will have the `.gz` extension and needs to be unpacked:
+
+```bash
+gunzip pharmacy_prices.sqlite.gz
+```
