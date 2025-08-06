@@ -12,7 +12,7 @@ from scraper.core.browser import setup_browser
 from scraper.core.data_extractor import extract_pharmacy_data
 from scraper.core.bootstrap import ensure_schema, init_logging
 from scraper.core.config.urls import PRODUCT_NAMES, get_url_by_name
-from scraper.core.config.config import DB_PATH
+from scraper.core.config.config import DB_PATH, DEFAULT_HEADLESS
 
 # 📁 Inicjalizacja logowania i schematu
 init_logging()
@@ -20,7 +20,7 @@ logger = logging.getLogger("gdziepolek")
 ensure_schema()
 
 def main():
-	driver = setup_browser()
+        driver = setup_browser(headless=DEFAULT_HEADLESS)
 	scraped = 0
 
 	try:
@@ -43,7 +43,7 @@ def main():
 				logger.info("🔄 Restart przeglądarki dla stabilności...")
 				driver.quit()
 				time.sleep(2)
-				driver = setup_browser()
+                                driver = setup_browser(headless=DEFAULT_HEADLESS)
 
 			time.sleep(1.5)
 
