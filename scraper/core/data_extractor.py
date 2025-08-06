@@ -14,7 +14,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from scraper.core.config.urls import extract_product_id
 from scraper.services.db import insert_prices
 from scraper.services.price_validator import parse_price_unit
-from scraper.core.config.config import DB_PATH
 
 logger = logging.getLogger("gdziepolek")
 
