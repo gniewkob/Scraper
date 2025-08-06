@@ -57,7 +57,24 @@ Zdalne dane możesz zmienić przez zmienne środowiskowe:
 **Katalog:** `/home/vetternkraft/scraper_workspace/backend/`
 
 Aplikacja FastAPI udostępniająca REST API oraz dashboard (w przyszłości nowoczesny frontend).
-Korzysta z bazy SQLite synchronizowanej powyżej.
+Domyślnie korzysta z bazy SQLite synchronizowanej powyżej, ale dzięki
+SQLAlchemy może łączyć się także z PostgreSQL/MySQL.
+
+### Konfiguracja bazy danych
+
+Połączenie do bazy definiują zmienne środowiskowe:
+
+- `DB_URL` – pełny URL (np. `postgresql://user:pass@host/db`).
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` – używane do
+  zbudowania `DB_URL`, jeśli nie podano go bezpośrednio.
+- `DB_POOL_SIZE` – rozmiar puli połączeń (domyślnie `5`).
+- `DB_MAX_OVERFLOW` – dodatkowe połączenia poza pulą (domyślnie `10`).
+
+Migracje schematu wykonywane są za pomocą Alembic:
+
+```bash
+alembic -c backend/alembic.ini upgrade head
+```
 
 ### Panel administracyjny
 
