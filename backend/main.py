@@ -5,15 +5,17 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
-import sqlite3
 import json
 import re
 from datetime import datetime
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 
-from scraper.core.config.config import DB_PATH
+from sqlalchemy import text
+
+from scraper.core.config.config import DB_PATH, DB_URL
 from scraper.core.config.urls import PACKAGE_SIZES
+from backend.db import get_engine as build_engine
 
 ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
@@ -28,6 +30,11 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
+
+def get_db_engine():
+    """Return shared SQLAlchemy engine respecting overrides for tests."""
+    return build_engine(DB_URL, DB_PATH)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -77,13 +84,15 @@ def admin_panel(request: Request):
 
 @app.get("/api/products", response_class=JSONResponse)
 def get_products():
-    conn = sqlite3.connect(DB_PATH)
-    rows = conn.execute("SELECT DISTINCT name FROM products").fetchall()
-    conn.close()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(text("SELECT DISTINCT name FROM products")).fetchall()
+
     results = []
     for row in rows:
+        name = row[0]
         label = (
-            row[0]
+            name
             .replace("Cannabis", "")
             .replace("Flos", "")
             .replace("Marihuana Lecznicza Medyczna", "")
@@ -91,7 +100,7 @@ def get_products():
             .strip()
             .title()
         )
-        results.append({"name": row[0], "label": label})
+        results.append({"name": name, "label": label})
     return results
 
 
@@ -124,11 +133,12 @@ def get_product_by_name(
     from urllib.parse import unquote
 
     decoded_name = unquote(product_name)
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    row = conn.execute(
-        "SELECT product_id FROM products WHERE name = ?", (decoded_name,)
-    ).fetchone()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        row = conn.execute(
+            text("SELECT product_id FROM products WHERE name = :name"),
+            {"name": decoded_name},
+        ).mappings().first()
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["product_id"]
@@ -145,24 +155,26 @@ def get_product_by_name(
                    ORDER BY datetime(fetched_at) DESC
                ) AS rn
         FROM pharmacy_prices
-        WHERE product_id = ?
+        WHERE product_id = :pid
           AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
     """
-    params = [product_id]
+    params = {"pid": product_id}
 
     if city:
-        base_query += " AND (address LIKE ? OR address LIKE ?)"
-        params.append(f"%, {city}")
-        params.append(f"% {city}")
+        base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
+        params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
-    query = f"SELECT * FROM ({base_query}) WHERE rn = 1 ORDER BY {sort_sql} {order_sql} LIMIT ? OFFSET ?"
-    query_params = params + [limit, offset]
-    rows = conn.execute(query, query_params).fetchall()
+    query = (
+        f"SELECT * FROM ({base_query}) WHERE rn = 1 ORDER BY {sort_sql} {order_sql} "
+        "LIMIT :limit OFFSET :offset"
+    )
+    query_params = {**params, "limit": limit, "offset": offset}
 
-    count_query = f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"
-    row_count = conn.execute(count_query, params).fetchone()
-    total = row_count[0] if row_count else 0
-    conn.close()
+    with engine.connect() as conn:
+        rows = conn.execute(text(query), query_params).mappings().all()
+        total = conn.execute(
+            text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
+        ).scalar()
 
     offers = []
     now = datetime.now()
@@ -253,17 +265,18 @@ def get_product_by_name(
 # --------- ALERTY I GRUPOWANIE ---------
 @app.get("/api/alerts", response_class=JSONResponse)
 def get_price_alerts():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    rows = conn.execute(
-        """
-        SELECT * FROM pharmacy_prices
-        WHERE price < 35 AND price >= 10
-          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
-        ORDER BY price ASC
-    """
-    ).fetchall()
-    conn.close()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT * FROM pharmacy_prices
+                WHERE price < 35 AND price >= 10
+                  AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+                ORDER BY price ASC
+                """
+            )
+        ).mappings().all()
 
     alerts = []
     now = datetime.now()
@@ -316,28 +329,26 @@ def get_price_alerts():
 
 @app.get("/api/alerts_filtered", response_class=JSONResponse)
 def get_filtered_alerts():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        SELECT *
-        FROM pharmacy_prices AS p
-        WHERE fetched_at = (
-            SELECT MAX(fetched_at)
-            FROM pharmacy_prices
-            WHERE
-                product_id = p.product_id AND
-                pharmacy_name = p.pharmacy_name AND
-                price = p.price AND
-                expiration = p.expiration
-        )
-          AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
-    """
-    )
-    rows = cur.fetchall()
-    conn.close()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT *
+                FROM pharmacy_prices AS p
+                WHERE fetched_at = (
+                    SELECT MAX(fetched_at)
+                    FROM pharmacy_prices
+                    WHERE
+                        product_id = p.product_id AND
+                        pharmacy_name = p.pharmacy_name AND
+                        price = p.price AND
+                        expiration = p.expiration
+                )
+                  AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+                """
+            )
+        ).mappings().all()
 
     alerts = []
     now = datetime.now()
@@ -396,9 +407,7 @@ def get_filtered_alerts():
 
 @app.get("/api/alerts_grouped", response_class=JSONResponse)
 def get_grouped_alerts(city: str = Query(None)):
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
+    engine = get_db_engine()
     base_query = """
         SELECT *,
                ROW_NUMBER() OVER (
@@ -409,16 +418,14 @@ def get_grouped_alerts(city: str = Query(None)):
         WHERE price IS NOT NULL
           AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
     """
-    params = []
+    params = {}
     if city:
-        base_query += " AND (address LIKE ? OR address LIKE ?)"
-        params.append(f"%, {city}")
-        params.append(f"% {city}")
+        base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
+        params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
-    cur.execute(query, params)
-    rows = cur.fetchall()
-    conn.close()
+    with engine.connect() as conn:
+        rows = conn.execute(text(query), params).mappings().all()
 
     grouped = defaultdict(list)
     now = datetime.now()
@@ -475,24 +482,24 @@ def get_grouped_alerts(city: str = Query(None)):
         grouped[row["product_id"]].append(offer)
 
     results = []
-    conn2 = sqlite3.connect(DB_PATH)  # Otwórz nowe połączenie tylko do pobierania nazw
-    for product_id, offers in grouped.items():
-        if not offers:
-            continue
-        row = conn2.execute(
-            "SELECT name FROM products WHERE product_id = ?", (product_id,)
-        ).fetchone()
-        name = row[0] if row else product_id
-        min_price = min(o["price"] for o in offers)
-        results.append(
-            {
-                "product_id": product_id,
-                "product": name,  # <- teraz jest przyjazna nazwa
-                "min_price": min_price,
-                "offers": sorted(offers, key=lambda x: x["price"]),
-            }
-        )
-    conn2.close()
+    with engine.connect() as conn2:
+        for product_id, offers in grouped.items():
+            if not offers:
+                continue
+            row = conn2.execute(
+                text("SELECT name FROM products WHERE product_id = :pid"),
+                {"pid": product_id},
+            ).first()
+            name = row[0] if row else product_id
+            min_price = min(o["price"] for o in offers)
+            results.append(
+                {
+                    "product_id": product_id,
+                    "product": name,
+                    "min_price": min_price,
+                    "offers": sorted(offers, key=lambda x: x["price"]),
+                }
+            )
     return results
 
 
@@ -548,17 +555,17 @@ def list_alerts():
 
 @app.get("/api/cities", response_class=JSONResponse)
 def get_cities():
-    conn = sqlite3.connect(DB_PATH)
-    rows = conn.execute(
-        "SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL AND address != ''"
-    ).fetchall()
-    conn.close()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL AND address != ''")
+        ).fetchall()
     cities = set()
     for (address,) in rows:
-        if "," in address:
-            city_part = address.split(",")[-1].strip()
+        if ',' in address:
+            city_part = address.split(',')[-1].strip()
             # Usuń kod pocztowy jeśli jest (np. "01-234 Warszawa" → "Warszawa")
-            city = re.sub(r"^\d{2}-\d{3}\s*", "", city_part)
+            city = re.sub(r'^\d{2}-\d{3}\s*', '', city_part)
             if city:
                 cities.add(city)
     return sorted(cities)

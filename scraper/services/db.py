@@ -1,63 +1,44 @@
-import sqlite3
+"""Utility helpers for persisting data via SQLAlchemy."""
+
+from __future__ import annotations
+
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Dict, Iterable
 
 import requests
-from scraper.services.price_validator import normalize_unit
+from sqlalchemy import text
 
+from backend.db import get_engine
 from scraper.core.config.config import DB_PATH, DB_URL, API_URL
+from scraper.services.price_validator import normalize_unit
 
 logger = logging.getLogger("gdziepolek")
 
-# Silnik SQLAlchemy dla zewnętrznych baz (Postgres/MySQL itp.)
-ENGINE: Optional[object] = None
-if DB_URL:
-    try:
-        from sqlalchemy import create_engine
-
-        ENGINE = create_engine(DB_URL)
-    except Exception as e:
-        logger.error(f"Nie udało się utworzyć silnika dla DB_URL={DB_URL}: {e}")
-        ENGINE = None
+# shared engine used for all DB operations
+ENGINE = get_engine(DB_URL, DB_PATH)
 
 
-def ensure_product_name(product_id, product_name):
-    """Zapisuje produkt jeśli nie istnieje.
-
-    Obsługuje lokalne SQLite, zewnętrzną bazę przez SQLAlchemy
-    oraz pomija zapis gdy dane wysyłane są do API.
-    """
+def ensure_product_name(product_id: str, product_name: str) -> None:
+    """Insert product if it does not exist."""
 
     if API_URL:
-        # Zakładamy, że API zajmuje się tworzeniem produktów
+        # API handles product creation
         return
 
-    if ENGINE:
-        from sqlalchemy import text
-
-        with ENGINE.begin() as conn:
-            try:
-                conn.execute(
-                    text("INSERT INTO products (product_id, name) VALUES (:id, :name)"),
-                    {"id": product_id, "name": product_name},
-                )
-            except Exception:
-                # Duplikat lub inny błąd – pomijamy
-                pass
-        return
-
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute(
-            "INSERT OR IGNORE INTO products (product_id, name) VALUES (?, ?)",
-            (product_id, product_name),
-        )
-        conn.commit()
+    with ENGINE.begin() as conn:
+        try:
+            conn.execute(
+                text("INSERT INTO products (product_id, name) VALUES (:id, :name)"),
+                {"id": product_id, "name": product_name},
+            )
+        except Exception:
+            # duplicate or other error – ignore
+            pass
 
 
-def insert_prices(entry: dict):
-    """Zapisuje oferty do lokalnej bazy, zewnętrznej bazy lub API."""
+def insert_prices(entry: Dict) -> None:
+    """Persist scraped offers to the configured backend or API."""
 
     offers = entry.get("offers", [])
     if not offers:
@@ -66,7 +47,6 @@ def insert_prices(entry: dict):
 
     now = datetime.now().isoformat(timespec="seconds")
 
-    # Wysyłka do API
     if API_URL:
         payload = entry.copy()
         payload["fetched_at"] = now
@@ -76,257 +56,145 @@ def insert_prices(entry: dict):
             logger.error(f"❌ Błąd wysyłki do API ({entry['name']}): {e}")
         return
 
-    # Zapis do zewnętrznej bazy przez SQLAlchemy
-    if ENGINE:
-        from sqlalchemy import text
-
-        with ENGINE.begin() as conn:
-            ensure_product_name(entry["product_id"], entry.get("product_name", entry["name"]))
-            for offer in offers:
-                price = offer.get("price")
-                unit = normalize_unit(offer.get("unit"))
-                expiration = offer.get("expiration")
-
-                try:
-                    conn.execute(
-                        text(
-                            """
-                            INSERT INTO pharmacy_prices (
-                                product_id, pharmacy_name, address, price, unit, expiration,
-                                availability, updated, fetched_at, map_url
-                            ) VALUES (:product_id, :pharmacy_name, :address, :price, :unit, :expiration,
-                                     :availability, :updated, :fetched_at, :map_url)
-                            """
-                        ),
-                        {
-                            "product_id": entry["product_id"],
-                            "pharmacy_name": entry["name"],
-                            "address": entry.get("address", ""),
-                            "price": float(price),
-                            "unit": unit,
-                            "expiration": expiration,
-                            "availability": entry.get("availability"),
-                            "updated": entry.get("updated"),
-                            "fetched_at": now,
-                            "map_url": entry.get("map_url", ""),
-                        },
-                    )
-                except Exception as e:
-                    logger.debug(
-                        f"ℹ️ Duplikat lub błąd przy zapisie do zewnętrznej bazy ({entry['name']}): {e}"
-                    )
+    if not should_insert_price(entry):
+        logger.debug(f"⏩ Pominięto {entry['name']} – brak zmian.")
         return
 
-    # Domyślna ścieżka – lokalny SQLite
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-
-        if not should_insert_price(entry):
-            logger.debug(f"⏩ Pominięto {entry['name']} – brak zmian.")
-            return
-
+    with ENGINE.begin() as conn:
+        ensure_product_name(entry["product_id"], entry.get("product_name", entry["name"]))
         for offer in offers:
             price = offer.get("price")
             unit = normalize_unit(offer.get("unit"))
             expiration = offer.get("expiration")
-
             try:
-                cur.execute(
-                    """
-                    INSERT OR IGNORE INTO pharmacy_prices (
-                        product_id, pharmacy_name, address, price, unit, expiration,
-                        availability, updated, fetched_at, map_url
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        entry["product_id"],
-                        entry["name"],
-                        entry.get("address", ""),
-                        float(price),
-                        unit,
-                        expiration,
-                        entry.get("availability"),
-                        entry.get("updated"),
-                        now,
-                        entry.get("map_url", ""),
+                conn.execute(
+                    text(
+                        """
+                        INSERT INTO pharmacy_prices (
+                            product_id, pharmacy_name, address, price, unit, expiration,
+                            availability, updated, fetched_at, map_url
+                        ) VALUES (
+                            :product_id, :pharmacy_name, :address, :price, :unit, :expiration,
+                            :availability, :updated, :fetched_at, :map_url
+                        )
+                        """
                     ),
+                    {
+                        "product_id": entry["product_id"],
+                        "pharmacy_name": entry["name"],
+                        "address": entry.get("address", ""),
+                        "price": float(price),
+                        "unit": unit,
+                        "expiration": expiration,
+                        "availability": entry.get("availability"),
+                        "updated": entry.get("updated"),
+                        "fetched_at": now,
+                        "map_url": entry.get("map_url", ""),
+                    },
+                )
+            except Exception as e:
+                logger.debug(
+                    f"ℹ️ Duplikat lub błąd przy zapisie do bazy ({entry['name']}): {e}"
                 )
 
-                if cur.rowcount == 0:
-                    logger.debug(
-                        f"ℹ️ Duplikat pominięty: {entry['name']} {price} zł ({expiration})"
-                    )
 
-            except Exception as e:
-                logger.error(f"❌ Błąd zapisu do bazy ({entry['name']}): {e}")
-                continue
-
-        conn.commit()
-
-
-def should_insert_price(entry: dict) -> bool:
-    """Sprawdza czy warto wstawić ofertę do bazy.
-
-    Dla zewnętrznych baz lub API zwraca zawsze True (decyzję o
-    duplikatach pozostawiamy po stronie celu).
-    """
+def should_insert_price(entry: Dict) -> bool:
+    """Check if offers for product should be inserted (avoid duplicates)."""
 
     offers = entry.get("offers", [])
-    if not offers:
-        return False
+    if not offers or API_URL:
+        return bool(offers)
 
-    if ENGINE or API_URL:
-        return True
-
-    with sqlite3.connect(DB_PATH) as conn:
-        cur = conn.cursor()
-
+    with ENGINE.connect() as conn:
         for offer in offers:
             price = offer.get("price")
             expiration = offer.get("expiration", "")
             unit = normalize_unit(offer.get("unit"))
-
-            cur.execute(
-                """
-                SELECT 1 FROM pharmacy_prices
-                WHERE product_id = ? AND pharmacy_name = ? AND address = ?
-                  AND price = ? AND expiration = ? AND unit = ?
-                LIMIT 1
-                """,
-                (
-                    entry["product_id"],
-                    entry["name"],
-                    entry.get("address", ""),
-                    price,
-                    expiration,
-                    unit,
+            result = conn.execute(
+                text(
+                    """
+                    SELECT 1 FROM pharmacy_prices
+                    WHERE product_id = :pid AND pharmacy_name = :ph AND address = :addr
+                      AND price = :price AND expiration = :exp AND unit = :unit
+                    LIMIT 1
+                    """
                 ),
-            )
+                {
+                    "pid": entry["product_id"],
+                    "ph": entry["name"],
+                    "addr": entry.get("address", ""),
+                    "price": price,
+                    "exp": expiration,
+                    "unit": unit,
+                },
+            ).first()
+            if result is None:
+                return True
+    return False
 
-            if cur.fetchone() is None:
-                return True  # nowa oferta
 
-    return False  # wszystko już w bazie
-
-
-def get_all_prices():
-    """Pobiera wszystkie ceny z odpowiedniego źródła."""
-
+def get_all_prices() -> Iterable[Dict]:
     if API_URL:
         resp = requests.get(API_URL)
         resp.raise_for_status()
         return resp.json()
 
-    if ENGINE:
-        from sqlalchemy import text
-
-        with ENGINE.connect() as conn:
-            result = conn.execute(
-                text("SELECT * FROM pharmacy_prices ORDER BY fetched_at DESC")
-            )
-            return [dict(row._mapping) for row in result]
-
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.row_factory = sqlite3.Row
-        return conn.execute(
-            "SELECT * FROM pharmacy_prices ORDER BY fetched_at DESC"
-        ).fetchall()
+    with ENGINE.connect() as conn:
+        result = conn.execute(
+            text("SELECT * FROM pharmacy_prices ORDER BY fetched_at DESC")
+        )
+        return [dict(row._mapping) for row in result]
 
 
-def get_prices_for_product(product_id: str):
+def get_prices_for_product(product_id: str) -> Iterable[Dict]:
     if API_URL:
         resp = requests.get(f"{API_URL}/{product_id}")
         resp.raise_for_status()
         return resp.json()
 
-    if ENGINE:
-        from sqlalchemy import text
-
-        with ENGINE.connect() as conn:
-            result = conn.execute(
-                text(
-                    """
-                    SELECT * FROM pharmacy_prices
-                    WHERE product_id = :pid
-                    ORDER BY price ASC
-                    """
-                ),
-                {"pid": product_id},
-            )
-            return [dict(row._mapping) for row in result]
-
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.row_factory = sqlite3.Row
-        return conn.execute(
-            """
-            SELECT * FROM pharmacy_prices
-            WHERE product_id = ?
-            ORDER BY price ASC
-            """,
-            (product_id,),
-        ).fetchall()
+    with ENGINE.connect() as conn:
+        result = conn.execute(
+            text(
+                """
+                SELECT * FROM pharmacy_prices
+                WHERE product_id = :pid
+                ORDER BY price ASC
+                """
+            ),
+            {"pid": product_id},
+        )
+        return [dict(row._mapping) for row in result]
 
 
-def get_trend_for_product(product_id: str):
-    if ENGINE:
-        from sqlalchemy import text
-
-        with ENGINE.connect() as conn:
-            result = conn.execute(
-                text(
-                    """
-                    SELECT fetched_at, price, expiration
-                    FROM pharmacy_prices
-                    WHERE product_id = :pid
-                    ORDER BY fetched_at ASC, price ASC
-                    """
-                ),
-                {"pid": product_id},
-            )
-            return [dict(row._mapping) for row in result]
-
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.row_factory = sqlite3.Row
-        return conn.execute(
-            """
-            SELECT fetched_at, price, expiration
-            FROM pharmacy_prices
-            WHERE product_id = ?
-            ORDER BY fetched_at ASC, price ASC
-            """,
-            (product_id,),
-        ).fetchall()
+def get_trend_for_product(product_id: str) -> Iterable[Dict]:
+    with ENGINE.connect() as conn:
+        result = conn.execute(
+            text(
+                """
+                SELECT fetched_at, price, expiration
+                FROM pharmacy_prices
+                WHERE product_id = :pid
+                ORDER BY fetched_at ASC, price ASC
+                """
+            ),
+            {"pid": product_id},
+        )
+        return [dict(row._mapping) for row in result]
 
 
-def get_top3_prices(product_id: str):
-    if ENGINE:
-        from sqlalchemy import text
+def get_top3_prices(product_id: str) -> Iterable[Dict]:
+    with ENGINE.connect() as conn:
+        result = conn.execute(
+            text(
+                """
+                SELECT *
+                FROM pharmacy_prices
+                WHERE product_id = :pid
+                ORDER BY price ASC
+                LIMIT 3
+                """
+            ),
+            {"pid": product_id},
+        )
+        return [dict(row._mapping) for row in result]
 
-        with ENGINE.connect() as conn:
-            result = conn.execute(
-                text(
-                    """
-                    SELECT *
-                    FROM pharmacy_prices
-                    WHERE product_id = :pid
-                    ORDER BY price ASC
-                    LIMIT 3
-                    """
-                ),
-                {"pid": product_id},
-            )
-            return [dict(row._mapping) for row in result]
-
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.row_factory = sqlite3.Row
-        return conn.execute(
-            """
-            SELECT *
-            FROM pharmacy_prices
-            WHERE product_id = ?
-            ORDER BY price ASC
-            LIMIT 3
-            """,
-            (product_id,),
-        ).fetchall()
