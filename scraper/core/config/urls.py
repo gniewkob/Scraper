@@ -3,6 +3,7 @@ from typing import Optional
 
 # 🔗 Lista wszystkich realnych URL-i produktów
 URLS = [
+	"https://www.gdziepolek.pl/produkty/131723/cannabis-flos-aurora-thc-27-cbd1-farm-gas-marihuana-lecznicza-medyczna/apteki/w-slaskim?pvid=297899#stacjonarne",
 	"https://www.gdziepolek.pl/produkty/119768/cannabis-flos-thc-20-cbd-1-aurora-pink-kush-marihuana-lecznicza-medyczna/apteki/w-slaskim?pvid=279313#stacjonarne",
 	"https://www.gdziepolek.pl/produkty/121591/cannabis-flos-thc-22-cbd-1-s-lab-marihuana-lecznicza-medyczna/apteki/w-slaskim?pvid=282135#stacjonarne",
 	"https://www.gdziepolek.pl/produkty/98013/cannabis-sativa-l-red-no-2-canopy-growth-jack-haze-marihuana-lecznicza-medyczna/apteki/w-slaskim?pvid=244917#stacjonarne",

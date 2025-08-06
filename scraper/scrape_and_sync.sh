@@ -8,8 +8,7 @@ GEOCODER="scraper.services.geocode_pharmacies"
 
 REMOTE_USER="${REMOTE_USER:-vetternkraft}"
 REMOTE_HOST="${REMOTE_HOST:-s0.mydevil.net}"
-REMOTE_PATH="${REMOTE_PATH:-/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite}"
-#REMOTE_PATH="/home/vetternkraft/domains/smart.bodora.pl/public_python/pharmacy_prices.sqlite"
+REMOTE_PATH="${REMOTE_PATH:-/home/vetternkraft/workspaces/scraper_workspace/data/pharmacy_prices.sqlite}"
 
 cd "$PROJECT_DIR" || exit 1
 
