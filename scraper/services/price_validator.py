@@ -1,5 +1,6 @@
 import re
 from typing import Optional, Tuple
+
 from selenium.webdriver.common.by import By
 
 def verify_price(element) -> Tuple[bool, Optional[str]]:
