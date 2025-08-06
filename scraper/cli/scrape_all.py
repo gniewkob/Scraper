@@ -8,6 +8,8 @@ import argparse
 import logging
 import os
 import time
+from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
 
 
 def parse_args():
@@ -21,7 +23,66 @@ def parse_args():
     parser.add_argument("--db-url", help="Pełny URL połączenia do bazy")
     parser.add_argument("--api-url", help="URL API do wysyłki danych")
     parser.add_argument("--headless", action="store_true", help="Wymuś tryb headless")
+    parser.add_argument("--workers", type=int, default=1, help="Liczba równoległych procesów")
     return parser.parse_args()
+
+
+def chunked(seq, n_chunks):
+    if n_chunks <= 0:
+        return [seq]
+    size = (len(seq) + n_chunks - 1) // n_chunks
+    return [seq[i:i + size] for i in range(0, len(seq), size)]
+
+
+def worker(products, db_url, headless):
+    os.environ["DB_URL"] = db_url
+    if db_url.startswith("sqlite:///"):
+        os.environ["DB_PATH"] = db_url.replace("sqlite:///", "")
+        os.environ["DB_TYPE"] = "sqlite"
+
+    from importlib import reload
+    from scraper.core.config import config as cfg
+    reload(cfg)
+
+    from scraper.core.bootstrap import ensure_schema, init_logging
+    from scraper.core.browser import setup_browser
+    from scraper.core.data_extractor import extract_pharmacy_data
+    from scraper.core.config.urls import get_url_by_name
+
+    init_logging()
+    logger = logging.getLogger("gdziepolek")
+    ensure_schema()
+
+    driver = setup_browser(headless=headless)
+    scraped = 0
+
+    try:
+        for idx, name in enumerate(products, start=1):
+            url = get_url_by_name(name)
+            if not url:
+                logger.warning(f"[{idx}] ⚠️ Pominięto (brak URL): {name}")
+                continue
+
+            logger.info(f"[{idx}] 🔍 Scraping: {name}")
+            try:
+                extract_pharmacy_data(driver, url)
+                logger.info(f"[{idx}] ✅ Gotowe: {name}")
+            except Exception as e:
+                logger.error(f"[{idx}] ❌ Błąd ekstrakcji – {e}")
+
+            scraped += 1
+
+            if scraped % 10 == 0:
+                logger.info("🔄 Restart przeglądarki dla stabilności...")
+                driver.quit()
+                time.sleep(2)
+                driver = setup_browser(headless=headless)
+
+            time.sleep(1.5)
+
+    finally:
+        driver.quit()
+        logger.info("🛑 Zakończono scraping w procesie.")
 
 
 def main():
@@ -47,47 +108,29 @@ def main():
     if args.headless:
         os.environ["HEADLESS"] = "true"
 
-    # Importy dopiero po ustawieniu zmiennych środowiskowych
-    from scraper.core.browser import setup_browser
-    from scraper.core.data_extractor import extract_pharmacy_data
-    from scraper.core.bootstrap import ensure_schema, init_logging
-    from scraper.core.config.urls import PRODUCT_NAMES, get_url_by_name
-    from scraper.core.config.config import DEFAULT_HEADLESS
+    from scraper.core.config.urls import PRODUCT_NAMES
+    from scraper.core.config.config import DB_URL, DB_PATH, DEFAULT_HEADLESS
 
-    init_logging()
-    logger = logging.getLogger("gdziepolek")
-    ensure_schema()
+    num_workers = max(1, args.workers)
+    num_workers = min(num_workers, len(PRODUCT_NAMES))
+    product_chunks = chunked(PRODUCT_NAMES, num_workers)
 
-    driver = setup_browser(headless=DEFAULT_HEADLESS)
-    scraped = 0
+    if DB_URL and not DB_URL.startswith("sqlite"):
+        db_urls = [DB_URL] * len(product_chunks)
+    else:
+        base_path = Path(DB_URL.replace("sqlite:///", "")) if DB_URL else Path(DB_PATH)
+        db_urls = []
+        for i in range(len(product_chunks)):
+            worker_path = base_path.parent / f"{base_path.stem}_worker_{i}{base_path.suffix}"
+            worker_path.parent.mkdir(parents=True, exist_ok=True)
+            db_urls.append(f"sqlite:///{worker_path}")
 
-    try:
-        for idx, name in enumerate(PRODUCT_NAMES, start=1):
-            url = get_url_by_name(name)
-            if not url:
-                logger.warning(f"[{idx}] ⚠️ Pominięto (brak URL): {name}")
-                continue
-
-            logger.info(f"[{idx}] 🔍 Scraping: {name}")
-            try:
-                extract_pharmacy_data(driver, url)
-                logger.info(f"[{idx}] ✅ Gotowe: {name}")
-            except Exception as e:
-                logger.error(f"[{idx}] ❌ Błąd ekstrakcji – {e}")
-
-            scraped += 1
-
-            if scraped % 10 == 0:
-                logger.info("🔄 Restart przeglądarki dla stabilności...")
-                driver.quit()
-                time.sleep(2)
-                driver = setup_browser(headless=DEFAULT_HEADLESS)
-
-            time.sleep(1.5)
-
-    finally:
-        driver.quit()
-        logger.info("🛑 Zakończono scraping.")
+    with ProcessPoolExecutor(max_workers=len(product_chunks)) as executor:
+        futures = []
+        for products, db_url in zip(product_chunks, db_urls):
+            futures.append(executor.submit(worker, products, db_url, DEFAULT_HEADLESS))
+        for f in futures:
+            f.result()
 
 
 if __name__ == "__main__":
