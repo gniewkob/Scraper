@@ -33,3 +33,6 @@ scraper/data/pharmacy_prices.sqlite
 
 # Uvicorn log
 uvicorn_scraper.log
+
+# Nova
+.nova
