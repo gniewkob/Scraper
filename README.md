@@ -245,6 +245,21 @@ Można również uruchomić pojedynczy test, np.:
 python -m pytest tests/test_backend.py
 ```
 
+## 10. GitHub Actions Deployment
+
+Repozytorium zawiera workflow `deploy.yml`, który uruchamia testy, buduje i publikuje obrazy Docker oraz aktualizuje serwer po wypchnięciu zmian do gałęzi `main`.
+
+Aby wdrożenie działało, w ustawieniach repozytorium dodaj następujące sekrety:
+
+- `REGISTRY` – adres rejestru obrazów (np. `ghcr.io/uzytkownik`),
+- `REGISTRY_USERNAME` i `REGISTRY_PASSWORD` – dane logowania do rejestru,
+- `DEPLOY_HOST` – adres serwera docelowego,
+- `DEPLOY_USER` – użytkownik SSH,
+- `DEPLOY_KEY` – klucz prywatny używany do logowania,
+- `DEPLOY_PATH` – katalog aplikacji na serwerze.
+
+W zależności od środowiska możesz dodać również `DEPLOY_PORT` lub inne zmienne wykorzystywane w skrypcie.
+
 ---
 
 **Masz pytania lub chcesz rozwinąć projekt?**
