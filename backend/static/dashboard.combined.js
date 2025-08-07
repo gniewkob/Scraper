@@ -1,6 +1,9 @@
 // Ustawienia Chart.js
-Chart.defaults.color = '#f1f1f1';
-Chart.defaults.plugins.legend.labels.color = '#f1f1f1';
+const css = getComputedStyle(document.body);
+const textColor = css.getPropertyValue('--text-color').trim();
+const borderColor = css.getPropertyValue('--border-color').trim();
+Chart.defaults.color = textColor;
+Chart.defaults.plugins.legend.labels.color = textColor;
 
 // --- WYBÓR MIASTA ---
 let selectedCity = '';
@@ -276,7 +279,7 @@ function renderCountInfo(total, limit, offset) {
 // --- TABELA OFERT ---
 function renderOffers(offers) {
   const container = document.getElementById("productTable");
-  container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
+  container.innerHTML = `<div class="table-responsive"><table class="table table-bordered">
     <thead><tr><th>Cena (za 1 g)</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
     ${offers.map(o => `
       <tr>
@@ -291,7 +294,7 @@ function renderOffers(offers) {
 function renderAllProductOffers(offers) {
   const container = document.getElementById("allOffersTable");
   if (!container) return;
-  container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
+  container.innerHTML = `<div class="table-responsive"><table class="table table-bordered">
     <thead><tr><th>Cena (za 1 g)</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
     ${offers.map(o => `
       <tr>
@@ -341,11 +344,11 @@ function renderPriceChart(data, min, max) {
       maintainAspectRatio: false,
       animation: { duration: 0 },
       plugins: {
-        legend: { labels: { color: '#f1f1f1' } },
+        legend: { labels: { color: textColor } },
         title: {
           display: true,
           text: 'Trend cen w czasie',
-          color: '#f1f1f1',
+          color: textColor,
           font: { size: 16 }
         }
       },
@@ -357,8 +360,8 @@ function renderPriceChart(data, min, max) {
             displayFormats: { day: 'dd.MM' },
             tooltipFormat: 'yyyy-MM-dd'
           },
-          ticks: { color: '#f1f1f1' },
-          grid: { color: '#444' }
+          ticks: { color: textColor },
+          grid: { color: borderColor }
         },
         y: {
           min: 0,
@@ -366,10 +369,10 @@ function renderPriceChart(data, min, max) {
           title: {
             display: true,
             text: 'Cena [zł/g]',
-            color: '#f1f1f1'
+            color: textColor
           },
           ticks: {
-            color: '#f1f1f1',
+            color: textColor,
             callback: function (value) {
               const rounded = Math.round(value * 100) / 100;
               return rounded % 1 === 0
@@ -377,7 +380,7 @@ function renderPriceChart(data, min, max) {
                 : `${rounded.toFixed(2).replace('.', ',')} zł`;
             }
           },
-          grid: { color: '#444' },
+          grid: { color: borderColor },
         }
       }
     }
@@ -417,8 +420,8 @@ async function loadGroupedAlerts() {
       panel.className = "accordion-item mb-2";
       panel.innerHTML = `
       <h2 class="accordion-header" id="heading-${productId}">
-        <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${productId}" aria-expanded="false" aria-controls="collapse-${productId}">
-          <a href="${group.offers[0].map_url || '#'}" target="_blank" class="text-decoration-none text-light">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${productId}" aria-expanded="false" aria-controls="collapse-${productId}">
+          <a href="${group.offers[0].map_url || '#'}" target="_blank" class="text-decoration-none">
             ${group.product}
           </a>
           <strong class="ms-2">${group.min_price.toFixed(2)} zł</strong>
@@ -426,7 +429,7 @@ async function loadGroupedAlerts() {
       </h2>
       <div id="collapse-${productId}" class="accordion-collapse collapse" aria-labelledby="heading-${productId}" data-bs-parent="#groupedOffersContainer">
         <div class="accordion-body p-0">
-          <table class="table table-dark table-bordered m-0">
+          <table class="table table-bordered m-0">
             <thead>
               <tr>
                 <th>Apteka</th><th>Miasto</th><th>Cena (za 1 g)</th><th>Ważność</th><th>Status</th>
@@ -439,7 +442,7 @@ async function loadGroupedAlerts() {
             ])).values()].map(o => `
               <tr class="${o.short_expiry && o.price < 30 ? "short-expiry good-deal" : o.short_expiry ? "short-expiry" : ""}">
                 <td>
-                  <a href="${o.map_url}" target="_blank" class="text-decoration-underline text-light">
+                  <a href="${o.map_url}" target="_blank" class="text-decoration-underline">
                     ${o.pharmacy}
                   </a>
                 </td>
@@ -481,7 +484,7 @@ function renderAllOffersTable(groups) {
       row.innerHTML = `
         <td>${group.product}</td>
         <td>
-          <a href="${o.map_url}" target="_blank" class="text-decoration-underline text-light">
+          <a href="${o.map_url}" target="_blank" class="text-decoration-underline">
             ${o.pharmacy}
           </a>
         </td>

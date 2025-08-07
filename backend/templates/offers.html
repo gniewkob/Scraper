@@ -9,20 +9,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <style>
-    body { background-color: #121212; color: #f1f1f1; }
-    .card, .table, .form-control, .form-label, .btn { background-color: #1e1e1e; color: #f1f1f1; }
-    .card { border: 1px solid #2c2c2c; }
-    .table th, .table td { vertical-align: middle; }
-    .btn-outline-light { color: #f1f1f1; border-color: #ccc; }
-    .btn-outline-light:hover { background-color: #1e1e1e; border-color: #f1f1f1; }
-  </style>
+  <link rel="stylesheet" href="/static/theme.css">
 </head>
 <body>
-<div id="loadingIndicator" class="spinner-border text-light" role="status" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:2000;">
+<script>document.body.classList.add(localStorage.getItem("theme") || "dark");</script>
+<div id="loadingIndicator" class="spinner-border" role="status" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:2000;">
   <span class="visually-hidden">Loading...</span>
 </div>
 <div class="container py-4">
+  <div class="text-end"><button id="themeToggle" class="btn btn-outline-light btn-sm">Zmień motyw</button></div>
   <h1 class="text-center mb-4">🌿 Wszystkie oferty</h1>
   <div class="row mb-3">
     <div class="col-md-4 mb-2 mb-md-0">
@@ -50,6 +45,7 @@
   <div id="countInfo" class="mb-2 text-muted"></div>
 </div>
 <script src="/static/dashboard.combined.js"></script>
+<script src="/static/theme.js"></script>
 <script>
 let currentProduct = '';
 let currentOffset = 0;
