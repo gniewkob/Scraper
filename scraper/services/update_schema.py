@@ -44,16 +44,31 @@ def update_schema():
 				);
 			""")
 
-			# Alerty użytkownika (opcjonalnie)
-			c.execute("""
+                        # Alerty użytkownika (opcjonalnie)
+                        c.execute("""
                                 CREATE TABLE IF NOT EXISTS user_alerts (
                                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         product_id TEXT NOT NULL,
                                         threshold REAL NOT NULL,
-                                        email TEXT,
-                                        phone TEXT
+                                        email_encrypted TEXT,
+                                        phone_encrypted TEXT,
+                                        created TEXT
                                 );
-			""")
+                        """)
+
+                        # Upewnij się, że istnieją kolumny dla zaszyfrowanych pól
+                        try:
+                                c.execute("ALTER TABLE user_alerts ADD COLUMN email_encrypted TEXT")
+                        except sqlite3.OperationalError:
+                                pass
+                        try:
+                                c.execute("ALTER TABLE user_alerts ADD COLUMN phone_encrypted TEXT")
+                        except sqlite3.OperationalError:
+                                pass
+                        try:
+                                c.execute("ALTER TABLE user_alerts ADD COLUMN created TEXT")
+                        except sqlite3.OperationalError:
+                                pass
 
 			# Historia powiadomień (opcjonalnie)
 			c.execute("""

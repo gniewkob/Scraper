@@ -16,8 +16,8 @@ from sqlalchemy import text
 from scraper.core.config.config import DB_PATH, DB_URL
 from scraper.core.config.urls import PACKAGE_SIZES
 from backend.db import get_engine as build_engine
+from scraper.utils.crypto import encrypt, decrypt
 
-ALERT_FILE = Path(__file__).parent / "user_alerts.json"
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
 STATIC_DIR = str(Path(__file__).parent / "static")
@@ -72,13 +72,31 @@ def admin_panel(request: Request):
     if not request.session.get("admin"):
         return RedirectResponse("/admin/login")
     require_admin(request)
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, p.name
+                FROM user_alerts ua
+                LEFT JOIN products p ON ua.product_id = p.product_id
+                ORDER BY ua.id DESC
+                """
+            )
+        ).mappings().all()
+
     alerts = []
-    if ALERT_FILE.exists():
-        try:
-            with open(ALERT_FILE, "r", encoding="utf-8") as f:
-                alerts = json.load(f)
-        except Exception:
-            alerts = []
+    for row in rows:
+        alerts.append(
+            {
+                "email": decrypt(row["email_encrypted"]),
+                "phone": decrypt(row["phone_encrypted"]),
+                "threshold": row["threshold"],
+                "product_name": row["name"] or row["product_id"],
+                "created": row["created"],
+            }
+        )
+
     return templates.TemplateResponse("admin.html", {"request": request, "alerts": alerts})
 
 
@@ -471,40 +489,65 @@ async def register_alert(request: Request):
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
 
-    alerts = []
-    if ALERT_FILE.exists():
-        try:
-            with open(ALERT_FILE, "r", encoding="utf-8") as f:
-                alerts = json.load(f)
-        except Exception:
-            alerts = []
-
-    alerts.append(
-        {
-            "email": email,
-            "phone": phone,
-            "threshold": threshold,
-            "product_name": product_name,
-            "created": datetime.now().isoformat(),
-        }
-    )
-
-    with open(ALERT_FILE, "w", encoding="utf-8") as f:
-        json.dump(alerts, f, indent=2, ensure_ascii=False)
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        row = conn.execute(
+            text("SELECT product_id FROM products WHERE name = :name"),
+            {"name": product_name},
+        ).first()
+        if not row:
+            return JSONResponse(
+                {"status": "error", "message": "Nieznany produkt"},
+                status_code=400,
+            )
+        conn.execute(
+            text(
+                """
+                INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created)
+                VALUES (:pid, :threshold, :email, :phone, :created)
+                """
+            ),
+            {
+                "pid": row[0],
+                "threshold": threshold,
+                "email": encrypt(email) if email else None,
+                "phone": encrypt(phone) if phone else None,
+                "created": datetime.now().isoformat(),
+            },
+        )
+        conn.commit()
 
     return {"status": "ok"}
 
 
 @app.get("/api/alerts/list", response_class=JSONResponse)
 def list_alerts():
-    if not ALERT_FILE.exists():
-        return []
-    try:
-        with open(ALERT_FILE, "r", encoding="utf-8") as f:
-            alerts = json.load(f)
-    except Exception:
-        alerts = []
-    return alerts
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, p.name
+                FROM user_alerts ua
+                LEFT JOIN products p ON ua.product_id = p.product_id
+                ORDER BY ua.id DESC
+                """
+            )
+        ).mappings().all()
+
+    results = []
+    for row in rows:
+        results.append(
+            {
+                "email": decrypt(row["email_encrypted"]),
+                "phone": decrypt(row["phone_encrypted"]),
+                "threshold": row["threshold"],
+                "product_name": row["name"] or row["product_id"],
+                "created": row["created"],
+                "product_id": row["product_id"],
+            }
+        )
+    return results
 
 
 @app.get("/api/cities", response_class=JSONResponse)

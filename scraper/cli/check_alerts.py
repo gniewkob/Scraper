@@ -12,6 +12,7 @@ from twilio.rest import Client
 from scraper.core.bootstrap import init_logging, ensure_schema
 from scraper.core.config.config import DB_PATH
 from scraper.cli.email_utils import send_email
+from scraper.utils.crypto import decrypt
 
 # 🔧 Inicjalizacja logowania
 init_logging()
@@ -30,7 +31,6 @@ else:
     ensure_schema()
 
 # 📦 Ścieżki
-ALERTS_FILE = Path("user_alerts.json")
 NOTIFIED_FILE = Path("notified_alerts.json")
 
 # 📱 Konfiguracja Twilio WhatsApp
@@ -52,7 +52,24 @@ def save_json(path, data):
 
 
 def load_alerts():
-    return load_json(ALERTS_FILE, [])
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT product_id, threshold, email_encrypted, phone_encrypted FROM user_alerts"
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    alerts = []
+    for pid, threshold, email_e, phone_e in rows:
+        alerts.append(
+            {
+                "product_id": pid,
+                "threshold": threshold,
+                "email": decrypt(email_e),
+                "phone": decrypt(phone_e),
+            }
+        )
+    return alerts
 
 
 def load_notified():
