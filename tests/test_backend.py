@@ -5,6 +5,8 @@ from fastapi.testclient import TestClient
 
 from backend.main import app
 import json
+import sqlite3
+from cryptography.fernet import Fernet
 
 
 @pytest.fixture(scope="module")
@@ -75,6 +77,26 @@ def test_alerts_grouped_city_filter(client):
     assert empty_groups == []
 
 
+@pytest.fixture()
+def alerts_db(tmp_path, monkeypatch):
+    db_file = tmp_path / "alerts.sqlite"
+    conn = sqlite3.connect(db_file)
+    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
+    conn.execute(
+        "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT)"
+    )
+    conn.execute("INSERT INTO products (product_id, name) VALUES ('p1', 'Test')")
+    conn.commit()
+    conn.close()
+    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
+    key = Fernet.generate_key().decode()
+    monkeypatch.setenv("ALERTS_FERNET_KEY", key)
+    return db_file
+
+
 @pytest.mark.parametrize(
     "data",
     [
@@ -85,22 +107,19 @@ def test_alerts_grouped_city_filter(client):
         {"phone": "+48100100100", "threshold": 30},  # missing product_name
     ],
 )
-def test_register_alert_missing_field(client, monkeypatch, tmp_path, data):
-    monkeypatch.setattr('backend.main.ALERT_FILE', tmp_path / 'alerts.json', raising=False)
+def test_register_alert_missing_field(client, alerts_db, data):
     resp = client.post('/api/alerts/register', json=data)
     assert resp.status_code == 400
     body = resp.json()
     assert body.get("status") == "error"
 
 
-def test_register_alert_success(client, monkeypatch, tmp_path):
-    monkeypatch.setattr('backend.main.ALERT_FILE', tmp_path / 'alerts.json', raising=False)
+def test_register_alert_success(client, alerts_db):
     data = {"email": "a@b.com", "phone": "+48100100100", "threshold": 30, "product_name": "Test"}
     resp = client.post('/api/alerts/register', json=data)
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
-    with open(tmp_path / 'alerts.json', 'r', encoding='utf-8') as f:
-        alerts = json.load(f)
+    alerts = client.get('/api/alerts/list').json()
     assert alerts[-1]["email"] == "a@b.com"
     assert alerts[-1]["phone"] == "+48100100100"
 
