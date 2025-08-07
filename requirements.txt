@@ -19,3 +19,4 @@ sqlalchemy>=1.4
 alembic
 cryptography
 bcrypt
+celery

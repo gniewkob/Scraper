@@ -22,5 +22,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . /app/scraper
 
-# Default command to run scraper
-CMD ["python", "-m", "scraper.cli.scrape_all"]
+# Default command now runs the Celery worker which waits for tasks
+CMD ["celery", "-A", "scraper.worker", "worker", "--loglevel=info"]
