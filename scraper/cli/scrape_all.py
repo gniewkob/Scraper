@@ -10,6 +10,9 @@ import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+from datetime import datetime
+
+from scraper.cli.email_utils import send_email
 
 
 def parse_args():
@@ -24,6 +27,7 @@ def parse_args():
     parser.add_argument("--api-url", help="URL API do wysyłki danych")
     parser.add_argument("--headless", action="store_true", help="Wymuś tryb headless")
     parser.add_argument("--workers", type=int, default=1, help="Liczba równoległych procesów")
+    parser.add_argument("--summary-email", help="Adres e-mail do wysyłki podsumowania")
     return parser.parse_args()
 
 
@@ -84,6 +88,7 @@ def worker(products, db_url, headless):
     finally:
         driver.quit()
         logger.info("🛑 Zakończono scraping w procesie.")
+    return scraped
 
 
 def main():
@@ -125,13 +130,45 @@ def main():
             worker_path = base_path.parent / f"{base_path.stem}_worker_{i}{base_path.suffix}"
             worker_path.parent.mkdir(parents=True, exist_ok=True)
             db_urls.append(f"sqlite:///{worker_path}")
+    from scraper.core.bootstrap import init_logging
+
+    init_logging()
+    logger = logging.getLogger("gdziepolek")
+
+    start_dt = datetime.now()
+    start_time = time.time()
 
     with ProcessPoolExecutor(max_workers=len(product_chunks)) as executor:
         futures = []
         for products, db_url in zip(product_chunks, db_urls):
             futures.append(executor.submit(worker, products, db_url, DEFAULT_HEADLESS))
-        for f in futures:
-            f.result()
+        total_scraped = sum(f.result() for f in futures)
+
+    end_dt = datetime.now()
+    runtime = time.time() - start_time
+
+    summary = (
+        f"Start: {start_dt.isoformat()}\n"
+        f"End: {end_dt.isoformat()}\n"
+        f"Runtime: {runtime:.2f}s\n"
+        f"Offers scraped: {total_scraped}"
+    )
+
+    logger.info(summary)
+
+    metrics_path = Path(__file__).resolve().parents[1] / "logs" / "scrape_metrics.log"
+    metrics_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(metrics_path, "a", encoding="utf-8") as mf:
+        mf.write(
+            f"{start_dt.isoformat()}, {end_dt.isoformat()}, {runtime:.2f}, {total_scraped}\n"
+        )
+
+    summary_email = args.summary_email or os.environ.get("SUMMARY_EMAIL")
+    if summary_email:
+        if not send_email(summary_email, "Scrape summary", summary):
+            logger.error("❌ Nie udało się wysłać podsumowania.")
+    else:
+        logger.warning("⚠️ Brak adresu e-mail do wysyłki podsumowania.")
 
 
 if __name__ == "__main__":
