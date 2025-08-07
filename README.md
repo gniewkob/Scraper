@@ -17,11 +17,12 @@ Przed uruchomieniem przygotuj plik `.env` w katalogu głównym projektu z wymaga
 ```
 DB_URL=postgresql://postgres:postgres@db:5432/pharmacy
 SECRET_KEY=devsecret
-ADMIN_PASSWORD_HASH=$2b$12$4mJalM78ipT/LhR17GCOy.j7CWiG2Pdd22caudlos8x4xPdkxY3e.
+ADMIN_PASSWORD_HASH=replace_with_bcrypt_hash
 CELERY_BROKER_URL=redis://redis:6379/0
 ```
 
 Podczas wdrożenia zastąp powyższe wartości odpowiednimi danymi dla swojego środowiska.
+Docker Compose wczyta je automatycznie z pliku `.env`, więc nie musisz modyfikować źródeł.
 
 Uruchomione zostaną cztery usługi:
 
