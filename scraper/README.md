@@ -71,6 +71,10 @@ Test parameters can be adjusted in the test files:
 - `TIMEOUT` - Wait time for elements to appear (default: 10 seconds)
 - `PHARMACY_ITEMS_SELECTOR` - CSS selector for pharmacy elements
 
+### Logging level
+
+Set the `SCRAPER_LOG_LEVEL` environment variable (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`) to control the scraper's verbosity. The default level is `ERROR`.
+
 ## Running Tests
 
 Run all tests:

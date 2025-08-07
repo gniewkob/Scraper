@@ -29,6 +29,9 @@ pytest
 * ChromeDriver dostarcza `webdriver-manager`, dlatego binarka nie jest w repozytorium
 * Baza `data/pharmacy_prices.sqlite` jest generowana podczas scrapingu
 
+**Poziom logowania:**
+Ustaw zmienną środowiskową `SCRAPER_LOG_LEVEL` (np. `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`), aby dostosować szczegółowość logów. Domyślnie `ERROR`.
+
 ---
 
 ## 2. Synchronizacja danych na serwer (rsync)
