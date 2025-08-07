@@ -1,13 +1,17 @@
 FROM python:3.11-slim AS builder
 
-WORKDIR /app
+WORKDIR /build
 
+# Build dependency wheels
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-COPY . /app/scraper
+RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
+
+# Copy the scraper source for the runtime image
+COPY . /src
 
 FROM python:3.11-slim
 
+# Install Chromium only in the runtime stage
 RUN apt-get update && apt-get install -y \
     chromium-driver \
     chromium \
@@ -20,7 +24,11 @@ ENV CHROME_BIN=/usr/bin/chromium \
 
 WORKDIR /app
 
-COPY --from=builder /install /usr/local
-COPY --from=builder /app/scraper /app/scraper
+# Install dependencies from the built wheels
+COPY --from=builder /wheels /wheels
+RUN pip install --no-cache /wheels/* && rm -rf /wheels
+
+# Copy only the application source code
+COPY --from=builder /src /app
 
 CMD ["celery", "-A", "scraper.worker", "worker", "--loglevel=info"]
