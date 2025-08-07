@@ -10,6 +10,8 @@ import re
 from datetime import datetime
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
+import secrets
+import logging
 
 from sqlalchemy import text
 
@@ -65,6 +67,21 @@ def mask_phone(phone):
     return f"{phone[:3]}***{phone[-3:]}"
 
 
+logger = logging.getLogger(__name__)
+
+
+def send_confirmation_email(email: str, token: str) -> None:
+    """Send confirmation token via email. Placeholder implementation."""
+    if email:
+        logger.info("Sending confirmation email to %s with token %s", email, token)
+
+
+def send_confirmation_sms(phone: str, token: str) -> None:
+    """Send confirmation token via SMS. Placeholder implementation."""
+    if phone:
+        logger.info("Sending confirmation SMS to %s with token %s", phone, token)
+
+
 @app.get("/admin/login", response_class=HTMLResponse)
 def admin_login_form(request: Request):
     return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
@@ -95,7 +112,7 @@ def admin_panel(request: Request):
         rows = conn.execute(
             text(
                 """
-                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, p.name
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                 FROM user_alerts ua
                 LEFT JOIN products p ON ua.product_id = p.product_id
                 ORDER BY ua.id DESC
@@ -507,6 +524,7 @@ async def register_alert(request: Request):
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
 
+    token = secrets.token_urlsafe(16)
     engine = get_db_engine()
     with engine.connect() as conn:
         row = conn.execute(
@@ -521,8 +539,8 @@ async def register_alert(request: Request):
         conn.execute(
             text(
                 """
-                INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created)
-                VALUES (:pid, :threshold, :email, :phone, :created)
+                INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
+                VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
                 """
             ),
             {
@@ -531,7 +549,38 @@ async def register_alert(request: Request):
                 "email": encrypt(email) if email else None,
                 "phone": encrypt(phone) if phone else None,
                 "created": datetime.now().isoformat(),
+                "token": token,
             },
+        )
+        conn.commit()
+
+    # send confirmation via email or SMS
+    if email:
+        send_confirmation_email(email, token)
+    if phone:
+        send_confirmation_sms(phone, token)
+
+    return {"status": "ok"}
+
+
+@app.post("/api/alerts/confirm", response_class=JSONResponse)
+async def confirm_alert(request: Request):
+    data = await request.json()
+    token = data.get("token")
+    if not token:
+        return JSONResponse({"status": "error", "message": "Brak tokenu"}, status_code=400)
+
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        row = conn.execute(
+            text("SELECT id FROM user_alerts WHERE token = :token"),
+            {"token": token},
+        ).first()
+        if not row:
+            return JSONResponse({"status": "error", "message": "Nieprawidłowy token"}, status_code=400)
+        conn.execute(
+            text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
+            {"id": row[0]},
         )
         conn.commit()
 
@@ -545,7 +594,7 @@ def list_alerts():
         rows = conn.execute(
             text(
                 """
-                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, p.name
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                 FROM user_alerts ua
                 LEFT JOIN products p ON ua.product_id = p.product_id
                 ORDER BY ua.id DESC
@@ -563,6 +612,7 @@ def list_alerts():
                 "product_name": row["name"] or row["product_id"],
                 "created": row["created"],
                 "product_id": row["product_id"],
+                "confirmed": bool(row["confirmed"]),
             }
         )
     return results

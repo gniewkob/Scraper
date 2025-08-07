@@ -52,7 +52,9 @@ def update_schema():
                                         threshold REAL NOT NULL,
                                         email_encrypted TEXT,
                                         phone_encrypted TEXT,
-                                        created TEXT
+                                        created TEXT,
+                                        token TEXT,
+                                        confirmed INTEGER DEFAULT 0
                                 );
                         """)
 
@@ -69,11 +71,19 @@ def update_schema():
                                 c.execute("ALTER TABLE user_alerts ADD COLUMN created TEXT")
                         except sqlite3.OperationalError:
                                 pass
+                        try:
+                                c.execute("ALTER TABLE user_alerts ADD COLUMN token TEXT")
+                        except sqlite3.OperationalError:
+                                pass
+                        try:
+                                c.execute("ALTER TABLE user_alerts ADD COLUMN confirmed INTEGER DEFAULT 0")
+                        except sqlite3.OperationalError:
+                                pass
 
-			# Historia powiadomień (opcjonalnie)
-			c.execute("""
-				CREATE TABLE IF NOT EXISTS notified_alerts (
-					key TEXT PRIMARY KEY,
+                        # Historia powiadomień (opcjonalnie)
+                        c.execute("""
+                                CREATE TABLE IF NOT EXISTS notified_alerts (
+                                        key TEXT PRIMARY KEY,
 					fetched_at TEXT NOT NULL
 				);
 			""")
