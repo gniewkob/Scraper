@@ -4,6 +4,28 @@
 
 ---
 
+## Quick start with Docker Compose
+
+Zarówno lokalnie jak i podczas wdrożenia cały stos uruchomisz poleceniem:
+
+```bash
+docker-compose up --build
+```
+
+Uruchomione zostaną trzy usługi:
+
+* **backend** – FastAPI dostępne pod `http://localhost:8000`
+* **scraper** – moduł Selenium wykonujący pobieranie danych
+* **db** – baza PostgreSQL do przechowywania wyników
+
+Aby uruchomić kontenery w tle (np. w środowisku produkcyjnym), użyj:
+
+```bash
+docker-compose up -d
+```
+
+---
+
 ## 1. Scraper & Test Automation (lokalnie, Mac/PC)
 
 **Katalog:** `/home/vetternkraft/scraper_workspace/scraper/`
