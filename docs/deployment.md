@@ -45,6 +45,31 @@ to a bare Git repository that checks out the code and restarts the containers.
 - A message broker for Celery.  Redis is used in the examples below and can be
   provided by services like AWS ElastiCache.
 
+## Configuring an external database
+
+To use a managed database instead of the optional local PostgreSQL container:
+
+1. Provision a PostgreSQL instance with your cloud provider (for example,
+   create an **AWS RDS** database).
+2. Allow network access from your backend and scraper services to the instance
+   (e.g. by adjusting security groups or firewall rules).
+3. Note the host, port, database name, username and password of the instance.
+4. Set the `DB_URL` environment variable in your `.env` file or deployment
+   configuration:
+   ```bash
+   DB_URL=postgresql://<user>:<password>@<host>:<port>/<database>
+   ```
+5. When using Docker Compose, start only the services you need. The `db`
+   service is placed in a separate profile so it is not started by default:
+   ```bash
+   docker compose up backend scraper redis
+   # or include the local database with
+   docker compose --profile db up
+   ```
+
+All backend and scraper instances will use the same external database,
+enabling them to be scaled independently.
+
 ## Kubernetes example
 
 ```
