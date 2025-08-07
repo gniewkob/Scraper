@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard cen leków</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <!-- Leaflet.js CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="/static/base.css">
+</head>
+<body>
+<script>document.body.classList.add(localStorage.getItem("theme") || "dark");</script>
+<div id="loadingIndicator" class="spinner-border" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+<div class="container py-4">
+  <div class="text-end"><button id="themeToggle" class="btn btn-outline-light btn-sm">Zmień motyw</button></div>
+  <h1 class="text-center mb-4">🌿 Dashboard cen medycznej marihuany</h1>
+
+  <div class="row mb-3">
+	<div class="col-md-6 mb-2 mb-md-0">
+	  <label for="productSelect" class="form-label">Wybierz produkt:</label>
+	  <select id="productSelect" class="form-select"></select>
+	</div>
+	<div class="col-md-6">
+	  <label for="citySelect" class="form-label">Miasto:</label>
+	  <select id="citySelect" class="form-select">
+		<option value="">Wszystkie miasta...</option>
+	  </select>
+	</div>
+  </div>
+<div class="row mb-3">
+	<div class="col-auto">
+	  <button id="geoBtn" class="btn btn-outline-light btn-sm">Użyj mojej lokalizacji</button>
+	</div>
+	<div class="col-auto">
+	  <select id="radiusSelect" class="form-select form-select-sm">
+		<option value="5">5 km</option>
+                <option value="10">10 km</option>
+                <option value="20" selected>20 km</option>
+		<option value="50">50 km</option>
+	  </select>
+	</div>
+  </div>
+
+  <div id="filterInfo" class="text-info mb-2"></div>
+
+  <div class="card p-3 mb-4">
+        <h2 class="card-title">🗺️ Najbliższa apteka</h2>
+        <div id="map"></div>
+  </div>
+
+  <!-- SORTOWANIE I KOLEJNOŚĆ -->
+  <div class="row mb-3">
+        <div class="col-auto">
+          <label for="sortSelect" class="form-label">Sortuj po:</label>
+          <select id="sortSelect" class="form-select form-select-sm">
+                <option value="price">Cena</option>
+                <option value="expiration">Ważność</option>
+                <option value="fetched_at">Data pobrania</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <label for="orderSelect" class="form-label">Kolejność:</label>
+          <select id="orderSelect" class="form-select form-select-sm">
+                <option value="asc">Rosnąco</option>
+                <option value="desc">Malejąco</option>
+          </select>
+        </div>
+  </div>
+
+  <div class="card p-3 mb-4">
+        <h2 class="card-title">💎 Najtańsze oferty</h2>
+        <!-- TODO: Rozważyć dedykowany modal lub podstronę 'Wszystkie oferty' z pełną paginacją i sortowaniem -->
+        <div id="productTable"></div>
+        <!-- PAGINACJA I LICZNIK -->
+        <div id="pagination" class="my-3"></div>
+        <div id="countInfo" class="mb-2 text-muted"></div>
+        <div class="d-flex justify-content-end">
+          <a href="/offers.html" class="btn btn-outline-light btn-sm">Zobacz wszystkie oferty</a>
+        </div>
+  </div>
+
+  <div class="card p-3 mb-4">
+        <h2 class="card-title">📈 Trend cen wg daty</h2>
+          <canvas id="priceTrendChart" height="300"></canvas>
+	<div id="alertBanner" class="mt-2"></div>
+  </div>
+
+  <div class="card p-3 mb-4">
+	<h2 class="card-title">🟢 Okazje cenowe (dziś)</h2>
+	<div class="mb-2 text-muted small">
+	  <span class="legend-box short-expiry" title="Krótki termin ważności (≤ 30 dni)"></span> Krótki termin &nbsp;&nbsp;
+	  <span class="legend-box short-expiry good-deal" data-bs-toggle="tooltip" title="Krótki termin + atrakcyjna cena (< 30 zł)"></span> Atrakcyjna okazja
+	</div>
+	<div id="groupedOffersContainer" class="accordion"></div>
+	<div class="d-flex justify-content-end mb-2">
+	  <button id="expandBtn" class="btn btn-outline-light btn-sm">Pokaż wszystkie okazje</button>
+	</div>
+          <div id="allOffersTable" class="table-responsive hidden">
+          <table class="table table-bordered">
+                <thead>
+                  <tr>
+                        <th>Produkt</th><th>Apteka</th><th>Miasto</th><th>Cena (za 1 g)</th><th>Ważność</th><th>Status</th><th>Mapa</th>
+                  </tr>
+                </thead>
+                <tbody id="allOffersBody"></tbody>
+          </table>
+        </div>
+  </div>
+
+  <div class="card p-3 mb-4">
+	<h3 class="card-title">🔔 Zapisz się na alert cenowy</h3>
+        <form id="alertForm" class="row g-3">
+          <div class="col-12 col-md-3">
+                <input type="email" id="email" placeholder="Twój email" class="form-control">
+          </div>
+          <div class="col-12 col-md-3">
+                <input type="tel" id="phone" placeholder="Numer WhatsApp" class="form-control">
+          </div>
+          <div class="col-12 col-md-3">
+                <select id="alertProductSelect" class="form-select" required></select>
+          </div>
+          <div class="col-12 col-md-2">
+                <input type="number" step="0.01" id="threshold" placeholder="Cena maksymalna" class="form-control" required>
+          </div>
+          <div class="col-12 col-md-1">
+                <button type="submit" class="btn btn-save w-100">Zapisz alert</button>
+          </div>
+        </form>
+	<p id="alertMessage" class="text-success mt-2"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/dashboard.combined.js"></script>
+<script src="/static/theme.js"></script>
+</body>
+</html>
