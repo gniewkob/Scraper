@@ -47,6 +47,24 @@ def require_admin(request: Request):
         raise HTTPException(status_code=401)
 
 
+def mask_email(email):
+    """Return a masked version of an email address for display."""
+    if not email or "@" not in email:
+        return email or ""
+    local, domain = email.split("@", 1)
+    visible = local[:4]
+    return f"{visible}***@{domain}"
+
+
+def mask_phone(phone):
+    """Return a masked version of a phone number for display."""
+    if not phone:
+        return ""
+    if len(phone) <= 6:
+        return phone
+    return f"{phone[:3]}***{phone[-3:]}"
+
+
 @app.get("/admin/login", response_class=HTMLResponse)
 def admin_login_form(request: Request):
     return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
@@ -89,8 +107,8 @@ def admin_panel(request: Request):
     for row in rows:
         alerts.append(
             {
-                "email": decrypt(row["email_encrypted"]),
-                "phone": decrypt(row["phone_encrypted"]),
+                "email": mask_email(decrypt(row["email_encrypted"])),
+                "phone": mask_phone(decrypt(row["phone_encrypted"])),
                 "threshold": row["threshold"],
                 "product_name": row["name"] or row["product_id"],
                 "created": row["created"],
