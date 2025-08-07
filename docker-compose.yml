@@ -2,6 +2,8 @@ version: '3.9'
 services:
   db:
     image: postgres:15
+    profiles:
+      - db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -17,7 +19,6 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
       - redis
     ports:
       - "8000:8000"
@@ -28,7 +29,6 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
       - redis
 volumes:
   postgres_data:
