@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pharmacy
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DB_URL: postgresql://postgres:postgres@db:5432/pharmacy
+      SECRET_KEY: devsecret
+      ADMIN_PASSWORD_HASH: "$2b$12$4mJalM78ipT/LhR17GCOy.j7CWiG2Pdd22caudlos8x4xPdkxY3e."
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+  scraper:
+    build:
+      context: ./scraper
+      dockerfile: Dockerfile
+    environment:
+      DB_URL: postgresql://postgres:postgres@db:5432/pharmacy
+    depends_on:
+      - db
+volumes:
+  postgres_data:
