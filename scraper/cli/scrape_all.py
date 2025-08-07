@@ -46,8 +46,8 @@ def worker(products, db_url, headless):
 
     from scraper.core.bootstrap import ensure_schema, init_logging
     from scraper.core.browser import setup_browser
-    from scraper.core.data_extractor import extract_pharmacy_data
-    from scraper.core.config.urls import get_url_by_name
+    from scraper.core.main import scrape_product
+    from scraper.core.config.urls import get_url_by_name, extract_product_id
 
     init_logging()
     logger = logging.getLogger("gdziepolek")
@@ -65,7 +65,8 @@ def worker(products, db_url, headless):
 
             logger.info(f"[{idx}] 🔍 Scraping: {name}")
             try:
-                extract_pharmacy_data(driver, url)
+                product_id = extract_product_id(url)
+                scrape_product(driver, url, product_id)
                 logger.info(f"[{idx}] ✅ Gotowe: {name}")
             except Exception as e:
                 logger.error(f"[{idx}] ❌ Błąd ekstrakcji – {e}")

@@ -126,7 +126,7 @@ has_price, price_text = verify_price(element)
 Extracts complete pharmacy information from webpage elements:
 ```python
 from modules.data_extractor import extract_pharmacy_data
-pharmacy_data = extract_pharmacy_data(element)
+pharmacy_data = extract_pharmacy_data(element, product_id=123)
 ```
 
 ## Troubleshooting
