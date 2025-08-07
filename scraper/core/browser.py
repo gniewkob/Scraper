@@ -1,7 +1,9 @@
 import logging
 import platform
 import subprocess
+import random
 from typing import Optional
+from urllib.parse import urlparse
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -12,6 +14,8 @@ from selenium.common.exceptions import WebDriverException, SessionNotCreatedExce
 
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
+
+from scraper.core.config.config import PROXIES
 
 # 🔇 Wyciszenie komunikatów webdriver-managera
 logging.getLogger("WDM").setLevel(logging.CRITICAL)
@@ -26,6 +30,22 @@ FALLBACK_CHROME_DRIVER_VERSIONS = [
     "120.0.6099.109", "119.0.6045.105", "118.0.5993.70",
     "117.0.5938.92", "116.0.5845.96", "115.0.5790.102", "114.0.5735.90"
 ]
+
+USER_AGENTS = [
+    # Popular desktop user agents for rotation
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:117.0) Gecko/20100101 Firefox/117.0",
+]
+
+
+def get_random_proxy() -> Optional[str]:
+    """Return a random proxy from configuration if available."""
+    if PROXIES:
+        proxy = random.choice(PROXIES)
+        logger.info(f"Using proxy: {proxy}")
+        return proxy
+    return None
 
 def get_chrome_version():
     try:
@@ -86,6 +106,13 @@ def setup_chrome_browser(headless=False, specific_version=None):
     options.add_argument("--log-level=3")
     options.add_argument("--silent")
 
+    ua = random.choice(USER_AGENTS)
+    options.add_argument(f"--user-agent={ua}")
+
+    proxy = get_random_proxy()
+    if proxy:
+        options.add_argument(f"--proxy-server={proxy}")
+
     # Dodaj poniższy argument, żeby okno otwierało się poza ekranem
     options.add_argument("--window-position=-32000,0")
     
@@ -140,6 +167,24 @@ def setup_firefox_browser(headless=False):
     options = FirefoxOptions()
     if headless:
         options.add_argument("--headless")
+
+    ua = random.choice(USER_AGENTS)
+    options.set_preference("general.useragent.override", ua)
+
+    proxy = get_random_proxy()
+    if proxy:
+        parsed = urlparse(proxy)
+        if parsed.hostname and parsed.port:
+            options.set_preference("network.proxy.type", 1)
+            if parsed.scheme.startswith("socks"):
+                options.set_preference("network.proxy.socks", parsed.hostname)
+                options.set_preference("network.proxy.socks_port", parsed.port)
+            else:
+                options.set_preference("network.proxy.http", parsed.hostname)
+                options.set_preference("network.proxy.http_port", parsed.port)
+                options.set_preference("network.proxy.ssl", parsed.hostname)
+                options.set_preference("network.proxy.ssl_port", parsed.port)
+            options.set_preference("network.proxy.no_proxies_on", "")
 
     try:
         driver = webdriver.Firefox(

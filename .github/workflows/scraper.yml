@@ -1,0 +1,26 @@
+name: Scheduled Scraper
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build scraper image
+        run: docker build -t scraper ./scraper
+
+      - name: Run scraper
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+        run: |
+          docker run --rm \
+            -e DATABASE_URL \
+            -e API_TOKEN \
+            scraper \
+            python -m scraper.cli.scrape_all

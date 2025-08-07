@@ -17,46 +17,75 @@ let map = null, userMarker = null, cityMarker = null, nearestMarker = null, radi
 // --- INICJALIZACJA SELECTÓW PRODUKTÓW I MIAST ---
 const productSelect = document.getElementById("productSelect");
 const alertProductSelect = document.getElementById("alertProductSelect");
+const loadingIndicator = document.getElementById('loadingIndicator');
+let loadingCounter = 0;
+function showLoading() {
+  loadingCounter++;
+  loadingIndicator.style.display = 'block';
+  document.body.classList.add('loading');
+}
+function hideLoading() {
+  loadingCounter = Math.max(loadingCounter - 1, 0);
+  if (loadingCounter === 0) {
+    loadingIndicator.style.display = 'none';
+    document.body.classList.remove('loading');
+  }
+}
 
 // Ładowanie produktów
 async function loadProducts() {
-  const res = await fetch("/api/products");
-  const products = await res.json();
-  productSelect.innerHTML = '';
-  if (alertProductSelect) alertProductSelect.innerHTML = '';
-  products.forEach(p => {
-    const opt1 = document.createElement("option");
-    opt1.value = p.name;
-    opt1.textContent = p.label;
-    productSelect.appendChild(opt1);
-    if (alertProductSelect) {
-      const opt2 = opt1.cloneNode(true);
-      alertProductSelect.appendChild(opt2);
+  showLoading();
+  try {
+    const res = await fetch("/api/products");
+    const products = await res.json();
+    productSelect.innerHTML = '';
+    if (alertProductSelect) alertProductSelect.innerHTML = '';
+    products.forEach(p => {
+      const opt1 = document.createElement("option");
+      opt1.value = p.name;
+      opt1.textContent = p.label;
+      productSelect.appendChild(opt1);
+      if (alertProductSelect) {
+        const opt2 = opt1.cloneNode(true);
+        alertProductSelect.appendChild(opt2);
+      }
+    });
+    if (products.length > 0) {
+      productSelect.value = products[0].name;
+      currentProduct = products[0].name;
+      if (alertProductSelect) alertProductSelect.value = products[0].name;
+      loadProductData(products[0].name);
     }
-  });
-  if (products.length > 0) {
-    productSelect.value = products[0].name;
-    currentProduct = products[0].name;
-    if (alertProductSelect) alertProductSelect.value = products[0].name;
-    loadProductData(products[0].name);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    hideLoading();
   }
 }
 
 // Ładowanie miast
 async function loadCities() {
-  const res = await fetch("/api/cities");
-  const cities = await res.json();
-  const sel = document.getElementById('citySelect');
-  sel.innerHTML = '<option value="">Wszystkie miasta...</option>';
-  cities.forEach(city => {
-    const o = document.createElement('option');
-    o.value = city;
-    o.textContent = city;
-    sel.appendChild(o);
-  });
+  showLoading();
+  try {
+    const res = await fetch("/api/cities");
+    const cities = await res.json();
+    const sel = document.getElementById('citySelect');
+    sel.innerHTML = '<option value="">Wszystkie miasta...</option>';
+    cities.forEach(city => {
+      const o = document.createElement('option');
+      o.value = city;
+      o.textContent = city;
+      sel.appendChild(o);
+    });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    hideLoading();
+  }
 }
 
 async function geocodeCity(city) {
+  showLoading();
   try {
     const resp = await fetch(`/api/city_coords/${encodeURIComponent(city)}`);
     if (resp.ok) {
@@ -67,6 +96,8 @@ async function geocodeCity(city) {
     }
   } catch (e) {
     console.error('Geocode error', e);
+  } finally {
+    hideLoading();
   }
   return null;
 }
@@ -156,52 +187,64 @@ function updateFilterInfo() {
 
 // --- GŁÓWNE ŁADOWANIE DANYCH PRODUKTU Z FILTREM MIASTA ---
 async function loadProductData(name) {
-  currentProduct = name;
-  let url = `/api/product/${encodeURIComponent(name)}?limit=50&offset=0&sort=price&order=asc`;
-  if (selectedCity) url += `&city=${encodeURIComponent(selectedCity)}`;
-  if (userLat && userLon && selectedRadius) {
-    url += `&lat=${userLat}&lon=${userLon}&radius=${selectedRadius}`;
-  } else if (cityLat && cityLon && selectedRadius) {
-    url += `&lat=${cityLat}&lon=${cityLon}&radius=${selectedRadius}`;
-  }
-  const res = await fetch(url);
-  const data = await res.json();
-  renderTopOffers(data.top3);
-  // backend now returns price already normalized per gram
-  const prices = data.trend.map(p => parseFloat(p.price));
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  renderPriceChart(data.trend, min, max);
-  updateAlertBanner(data.trend, min);
-  updateFilterInfo();
+  showLoading();
+  try {
+    currentProduct = name;
+    let url = `/api/product/${encodeURIComponent(name)}?limit=${currentLimit}&offset=${currentOffset}`;
+    url += `&sort=${currentSort}&order=${currentOrder}`;
+    if (selectedCity) url += `&city=${encodeURIComponent(selectedCity)}`;
+    if (userLat && userLon && selectedRadius) {
+      url += `&lat=${userLat}&lon=${userLon}&radius=${selectedRadius}`;
+    } else if (cityLat && cityLon && selectedRadius) {
+      url += `&lat=${cityLat}&lon=${cityLon}&radius=${selectedRadius}`;
+    }
+    const res = await fetch(url);
+    const data = await res.json();
+    currentLimit = data.limit;
+    currentOffset = data.offset;
+    renderOffers(data.offers);
+    renderPagination(data.total, data.limit, data.offset);
+    renderCountInfo(data.total, data.limit, data.offset);
+    // backend now returns price already normalized per gram
+    const prices = data.trend.map(p => parseFloat(p.price));
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    renderPriceChart(data.trend, min, max);
+    updateAlertBanner(data.trend, min);
+    updateFilterInfo();
 
-  if (!map && data.offers.length) {
-    let lat = userLat ?? cityLat;
-    let lon = userLon ?? cityLon;
-    if ((!lat || !lon) && data.offers[0].pharmacy_lat && data.offers[0].pharmacy_lon) {
-      lat = data.offers[0].pharmacy_lat;
-      lon = data.offers[0].pharmacy_lon;
+    if (!map && data.offers.length) {
+      let lat = userLat ?? cityLat;
+      let lon = userLon ?? cityLon;
+      if ((!lat || !lon) && data.offers[0].pharmacy_lat && data.offers[0].pharmacy_lon) {
+        lat = data.offers[0].pharmacy_lat;
+        lon = data.offers[0].pharmacy_lon;
+      }
+      if (lat && lon) {
+        initMap(lat, lon, !!(userLat && userLon), userLat && userLon ? 13 : CITY_ZOOM);
+      }
     }
-    if (lat && lon) {
-      initMap(lat, lon, !!(userLat && userLon), userLat && userLon ? 13 : CITY_ZOOM);
+    if (map) {
+      updateMap(data.offers);
     }
-  }
-  if (map) {
-    updateMap(data.offers);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    hideLoading();
   }
 }
 
 // --- SORTOWANIE & PAGINACJA ---
-// document.getElementById('sortSelect').onchange = function() {
-//   currentSort = this.value;
-//   currentOffset = 0;
-//   loadProductData(currentProduct);
-// };
-// document.getElementById('orderSelect').onchange = function() {
-//   currentOrder = this.value;
-//   currentOffset = 0;
-//   loadProductData(currentProduct);
-// };
+document.getElementById('sortSelect').onchange = function() {
+  currentSort = this.value;
+  currentOffset = 0;
+  loadProductData(currentProduct);
+};
+document.getElementById('orderSelect').onchange = function() {
+  currentOrder = this.value;
+  currentOffset = 0;
+  loadProductData(currentProduct);
+};
 
 function renderPagination(total, limit, offset) {
   const totalPages = Math.ceil(total / limit);
@@ -230,9 +273,24 @@ function renderCountInfo(total, limit, offset) {
   countInfo.textContent = `Wyświetlasz ${first}–${last} z ${total} ofert`;
 }
 
-// --- 3 NAJTAŃSZE OFERTY ---
-function renderTopOffers(offers) {
+// --- TABELA OFERT ---
+function renderOffers(offers) {
   const container = document.getElementById("productTable");
+  container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
+    <thead><tr><th>Cena (za 1 g)</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
+    ${offers.map(o => `
+      <tr>
+        <td>${((o.price_per_g ?? o.price).toFixed(2))} zł</td>
+        <td>${o.pharmacy || "–"}</td>
+        <td>${o.address || "–"}</td>
+        <td>${o.map_url ? `<a href="${o.map_url}" target="_blank" class="btn btn-sm btn-outline-light">Mapa</a>` : "–"}</td>
+      </tr>`).join("")}
+    </tbody></table></div>`;
+}
+
+function renderAllProductOffers(offers) {
+  const container = document.getElementById("allOffersTable");
+  if (!container) return;
   container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
     <thead><tr><th>Cena (za 1 g)</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
     ${offers.map(o => `
@@ -340,22 +398,24 @@ function updateAlertBanner(trendData, min) {
 // --- GROUPED OFFERS & ALL OFFERS TABLE ---
 let groupedOffersCache = [];
 async function loadGroupedAlerts() {
-  let url = "/api/alerts_grouped";
-  if (selectedCity) {
-    url += `?city=${encodeURIComponent(selectedCity)}`;
-  }
-  const res = await fetch(url);
-  const groups = await res.json();
-  groupedOffersCache = groups;
+  showLoading();
+  try {
+    let url = "/api/alerts_grouped";
+    if (selectedCity) {
+      url += `?city=${encodeURIComponent(selectedCity)}`;
+    }
+    const res = await fetch(url);
+    const groups = await res.json();
+    groupedOffersCache = groups;
 
-  const container = document.getElementById("groupedOffersContainer");
-  container.innerHTML = "";
+    const container = document.getElementById("groupedOffersContainer");
+    container.innerHTML = "";
 
-  groups.forEach((group, i) => {
-    const productId = `accordion-${i}`;
-    const panel = document.createElement("div");
-    panel.className = "accordion-item mb-2";
-    panel.innerHTML = `
+    groups.forEach((group, i) => {
+      const productId = `accordion-${i}`;
+      const panel = document.createElement("div");
+      panel.className = "accordion-item mb-2";
+      panel.innerHTML = `
       <h2 class="accordion-header" id="heading-${productId}">
         <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${productId}" aria-expanded="false" aria-controls="collapse-${productId}">
           <a href="${group.offers[0].map_url || '#'}" target="_blank" class="text-decoration-none text-light">
@@ -394,8 +454,13 @@ async function loadGroupedAlerts() {
         </div>
       </div>
     `;
-    container.appendChild(panel);
-  });
+      container.appendChild(panel);
+    });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    hideLoading();
+  }
 }
 
 function renderAllOffersTable(groups) {
@@ -553,15 +618,23 @@ if (alertForm) {
     }
     const threshold = document.getElementById("threshold").value;
     const productName = alertProductSelect ? alertProductSelect.value : productSelect.value;
-    const res = await fetch("/api/alerts/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, phone, threshold, product_name: productName })
-    });
-    const data = await res.json();
-    document.getElementById("alertMessage").textContent = data.status === "ok"
-      ? "Alert został zapisany!"
-      : (data.message || "Błąd zapisu alertu.");
+    showLoading();
+    try {
+      const res = await fetch("/api/alerts/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, phone, threshold, product_name: productName })
+      });
+      const data = await res.json();
+      document.getElementById("alertMessage").textContent = data.status === "ok"
+        ? "Alert został zapisany!"
+        : (data.message || "Błąd zapisu alertu.");
+    } catch (err) {
+      console.error(err);
+      document.getElementById("alertMessage").textContent = "Błąd zapisu alertu.";
+    } finally {
+      hideLoading();
+    }
   };
 }
 

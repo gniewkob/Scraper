@@ -36,3 +36,6 @@ uvicorn_scraper.log
 
 # Nova
 .nova
+
+# User alerts
+**/user_alerts.json*

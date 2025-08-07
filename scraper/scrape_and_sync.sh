@@ -38,8 +38,16 @@ if [ -f "$SQLITE" ]; then
 	# Opcjonalnie, test importu:
 	# python3 -c "from core.config.config import DB_PATH; print('DB_PATH:', DB_PATH)"
         python3 -m $GEOCODER
-	echo "📤 Sending database..."
-	scp "$SQLITE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
+        echo "📤 Sending database..."
+        if command -v rsync >/dev/null 2>&1; then
+            rsync -av --compress --partial "$SQLITE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH"
+        else
+            echo "ℹ️ rsync not found, using gzip + scp"
+            COMPRESSED_DB="${SQLITE}.gz"
+            gzip -c "$SQLITE" > "$COMPRESSED_DB"
+            scp "$COMPRESSED_DB" "$REMOTE_USER@$REMOTE_HOST:${REMOTE_PATH}.gz"
+            rm -f "$COMPRESSED_DB"
+        fi
 else
-	echo "❌ No SQLite database found."
+        echo "❌ No SQLite database found."
 fi

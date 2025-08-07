@@ -75,8 +75,10 @@ def scrape_product(driver, url, product_id):
 
 			offers.append(data)
 			insert_prices(data)
-			cheapest_offer = min(data["offers"], key=lambda x: float(x["price"].replace(",", ".")))
-			logger.info(f"✅ Oferta {i+1}: {data['name']} – {cheapest_offer['price']} zł / {cheapest_offer['unit']}")
+                        cheapest_offer = min(data["offers"], key=lambda x: x["price"])
+                        logger.info(
+                            f"✅ Oferta {i+1}: {data['name']} – {cheapest_offer['price']} zł / {cheapest_offer['unit']}"
+                        )
 		except Exception as e:
 			logger.error(f"❌ Błąd podczas przetwarzania oferty {i+1}: {e}")
 			with open(debug_dir / f"oferta_{i+1}_exception.html", "w", encoding="utf-8") as f:
@@ -110,7 +112,7 @@ def main(product_id):
 
 	flattened = []
 	for entry in all_offers:
-		cheapest = min(entry["offers"], key=lambda x: float(x["price"].replace(",", ".")))
+                cheapest = min(entry["offers"], key=lambda x: x["price"])
 		flattened.append({
 			"name": entry["name"],
 			"href": entry["href"],
@@ -123,7 +125,7 @@ def main(product_id):
 			"product_id": entry["product_id"]
 		})
 
-	top_3 = sorted(flattened, key=lambda x: float(x["price"].replace(",", ".")))[:3]
+        top_3 = sorted(flattened, key=lambda x: x["price"])[:3]
 
 	output_path, _ = get_output_paths(product_id)
 	with open(output_path, "w", encoding="utf-8") as f:
