@@ -86,11 +86,23 @@
         #map {
           height: 300px;
         }
+        #loadingIndicator {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 2000;
+          display: none;
+        }
+        body.loading .container {
+          opacity: 0.5;
+          pointer-events: none;
+        }
         @media (max-width: 576px) {
-	  .table td, .table th {
-		font-size: 0.875rem;
-		padding: 0.25rem;
-	  }
+          .table td, .table th {
+                font-size: 0.875rem;
+                padding: 0.25rem;
+          }
 	  .accordion-button {
 		font-size: 1rem;
 	  }
@@ -98,6 +110,9 @@
   </style>
 </head>
 <body>
+<div id="loadingIndicator" class="spinner-border text-light" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
 <div class="container py-4">
   <h1 class="text-center mb-4">🌿 Dashboard cen medycznej marihuany</h1>
 
