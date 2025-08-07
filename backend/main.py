@@ -118,6 +118,36 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 
+def compute_price_info(price, unit, product_id, expiration, now=None):
+    """Compute helper values for price information."""
+    if now is None:
+        now = datetime.now()
+
+    short_expiry = False
+    if expiration:
+        try:
+            days_left = (datetime.fromisoformat(expiration) - now).days
+            short_expiry = days_left <= 30
+        except Exception:
+            pass
+
+    price_per_g = None
+    if unit:
+        match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
+        if match:
+            grams = float(match.group(1).replace(",", "."))
+            if grams:
+                price_per_g = price / grams
+
+    if price_per_g is None and price >= 100:
+        pkg = PACKAGE_SIZES.get(product_id)
+        if pkg:
+            price_per_g = price / pkg
+
+    display_price = price_per_g if price_per_g is not None else price
+    return price_per_g, display_price, short_expiry
+
+
 @app.get("/api/product/{product_name}", response_class=JSONResponse)
 def get_product_by_name(
     product_name: str,
@@ -195,28 +225,10 @@ def get_product_by_name(
                 continue
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
-        short_expiry = False
-        if expiration:
-            try:
-                days_left = (datetime.fromisoformat(expiration) - now).days
-                short_expiry = days_left <= 30
-            except:
-                pass
         unit = row["unit"]
-        price_per_g = None
-        if unit:
-            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
-            if match:
-                grams = float(match.group(1).replace(",", "."))
-                if grams:
-                    price_per_g = price / grams
-
-        if price_per_g is None and price >= 100:
-            pkg = PACKAGE_SIZES.get(product_id)
-            if pkg:
-                price_per_g = price / pkg
-
-        display_price = price_per_g if price_per_g is not None else price
+        price_per_g, display_price, short_expiry = compute_price_info(
+            price, unit, product_id, expiration, now
+        )
         offer = {
             "pharmacy": row["pharmacy_name"],
             "address": row["address"],
@@ -284,29 +296,10 @@ def get_price_alerts():
         price = float(row["price"])
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
-        short_expiry = False
-        if expiration:
-            try:
-                days_left = (datetime.fromisoformat(expiration) - now).days
-                short_expiry = days_left <= 30
-            except:
-                pass
-
         unit = row["unit"]
-        price_per_g = None
-        if unit:
-            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
-            if match:
-                grams = float(match.group(1).replace(",", "."))
-                if grams:
-                    price_per_g = price / grams
-
-        if price_per_g is None and price >= 100:
-            pkg = PACKAGE_SIZES.get(row["product_id"])
-            if pkg:
-                price_per_g = price / pkg
-
-        display_price = price_per_g if price_per_g is not None else price
+        price_per_g, display_price, short_expiry = compute_price_info(
+            price, unit, row["product_id"], expiration, now
+        )
 
         offer = {
             "product_id": row["product_id"],
@@ -359,30 +352,10 @@ def get_filtered_alerts():
             continue
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
-        short_expiry = False
-
-        if expiration:
-            try:
-                days_left = (datetime.fromisoformat(expiration) - now).days
-                short_expiry = days_left <= 30
-            except:
-                pass
-
         unit = row["unit"]
-        price_per_g = None
-        if unit:
-            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
-            if match:
-                grams = float(match.group(1).replace(",", "."))
-                if grams:
-                    price_per_g = price / grams
-
-        if price_per_g is None and price >= 100:
-            pkg = PACKAGE_SIZES.get(row["product_id"])
-            if pkg:
-                price_per_g = price / pkg
-
-        display_price = price_per_g if price_per_g is not None else price
+        price_per_g, display_price, short_expiry = compute_price_info(
+            price, unit, row["product_id"], expiration, now
+        )
 
         offer = {
             "product_id": row["product_id"],
@@ -436,29 +409,10 @@ def get_grouped_alerts(city: str = Query(None)):
             continue
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
-        short_expiry = False
-        if expiration:
-            try:
-                days_left = (datetime.fromisoformat(expiration) - now).days
-                short_expiry = days_left <= 30
-            except:
-                pass
-
         unit = row["unit"]
-        price_per_g = None
-        if unit:
-            match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
-            if match:
-                grams = float(match.group(1).replace(",", "."))
-                if grams:
-                    price_per_g = price / grams
-
-        if price_per_g is None and price >= 100:
-            pkg = PACKAGE_SIZES.get(row["product_id"])
-            if pkg:
-                price_per_g = price / pkg
-
-        display_price = price_per_g if price_per_g is not None else price
+        price_per_g, display_price, short_expiry = compute_price_info(
+            price, unit, row["product_id"], expiration, now
+        )
 
         address = row["address"] or ""
         city_match = address.split(",")[-1].strip() if "," in address else address
@@ -522,7 +476,7 @@ async def register_alert(request: Request):
         try:
             with open(ALERT_FILE, "r", encoding="utf-8") as f:
                 alerts = json.load(f)
-        except:
+        except Exception:
             alerts = []
 
     alerts.append(
@@ -548,7 +502,7 @@ def list_alerts():
     try:
         with open(ALERT_FILE, "r", encoding="utf-8") as f:
             alerts = json.load(f)
-    except:
+    except Exception:
         alerts = []
     return alerts
 
