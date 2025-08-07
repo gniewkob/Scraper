@@ -288,6 +288,21 @@ function renderOffers(offers) {
     </tbody></table></div>`;
 }
 
+function renderAllProductOffers(offers) {
+  const container = document.getElementById("allOffersTable");
+  if (!container) return;
+  container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
+    <thead><tr><th>Cena (za 1 g)</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
+    ${offers.map(o => `
+      <tr>
+        <td>${((o.price_per_g ?? o.price).toFixed(2))} zł</td>
+        <td>${o.pharmacy || "–"}</td>
+        <td>${o.address || "–"}</td>
+        <td>${o.map_url ? `<a href="${o.map_url}" target="_blank" class="btn btn-sm btn-outline-light">Mapa</a>` : "–"}</td>
+      </tr>`).join("")}
+    </tbody></table></div>`;
+}
+
 // --- CHART: TREND CEN ---
 const priceTrendChartCtx = document.getElementById("priceTrendChart").getContext("2d");
 let priceChart;
