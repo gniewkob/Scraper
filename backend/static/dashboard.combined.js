@@ -1,9 +1,35 @@
 // Ustawienia Chart.js
-const css = getComputedStyle(document.body);
-const textColor = css.getPropertyValue('--text-color').trim();
-const borderColor = css.getPropertyValue('--border-color').trim();
-Chart.defaults.color = textColor;
-Chart.defaults.plugins.legend.labels.color = textColor;
+function applyChartDefaults() {
+  const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+  const color = theme === 'dark' ? '#fff' : '#000';
+  Chart.defaults.color = color;
+  Chart.defaults.plugins.legend.labels.color = color;
+}
+
+function updateCharts() {
+  if (Chart.instances) {
+    const instances = Chart.instances;
+    if (typeof instances.forEach === 'function') {
+      instances.forEach(chart => chart.update());
+    } else {
+      Object.values(instances).forEach(chart => chart.update());
+    }
+  }
+}
+
+// Apply defaults based on current theme
+applyChartDefaults();
+
+// Reapply defaults and update charts when theme toggles
+const themeToggle = document.getElementById('themeToggle');
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    setTimeout(() => {
+      applyChartDefaults();
+      updateCharts();
+    }, 0);
+  });
+}
 
 // --- WYBÓR MIASTA ---
 let selectedCity = '';
