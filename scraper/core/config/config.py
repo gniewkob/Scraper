@@ -36,3 +36,12 @@ PAGE_LOAD_TIMEOUT = 20
 
 # Domyślny tryb uruchomienia przeglądarki (możesz nadpisać w main.py przez CLI)
 DEFAULT_HEADLESS = os.getenv("HEADLESS", "false").lower() in {"1", "true", "yes"}
+
+# Lista proxy (np. "http://host1:port1,http://host2:port2") lub ścieżka do pliku z proxy
+PROXY_FILE = os.getenv("PROXY_FILE")
+if PROXY_FILE and Path(PROXY_FILE).exists():
+    with open(PROXY_FILE, "r", encoding="utf-8") as pf:
+        PROXIES = [line.strip() for line in pf if line.strip()]
+else:
+    proxy_env = os.getenv("PROXY_LIST", "")
+    PROXIES = [p.strip() for p in proxy_env.split(",") if p.strip()]

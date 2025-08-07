@@ -8,6 +8,7 @@ import argparse
 import logging
 import os
 import time
+import random
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from datetime import datetime
@@ -83,7 +84,7 @@ def worker(products, db_url, headless):
                 time.sleep(2)
                 driver = setup_browser(headless=headless)
 
-            time.sleep(1.5)
+            time.sleep(random.uniform(1, 3))
 
     finally:
         driver.quit()
