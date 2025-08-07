@@ -81,12 +81,19 @@ alembic -c backend/alembic.ini upgrade head
 
 ### Panel administracyjny
 
-Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Panel wymaga zalogowania, a formularz logowania znajduje się pod `/admin/login`. Hasło podawane jest w zmiennej środowiskowej `ADMIN_PASSWORD` (domyślnie `admin`).
-Hasło można ustawić np. tak:
+Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Panel wymaga zalogowania, a formularz logowania znajduje się pod `/admin/login`. Hasz hasła administracyjnego musi znajdować się w zmiennej środowiskowej `ADMIN_PASSWORD_HASH`.
+
+Przykład wygenerowania i ustawienia hasza hasła:
 
 ```bash
-export ADMIN_PASSWORD="moje_super_haslo"
+python - <<'PY'
+import bcrypt
+print(bcrypt.hashpw(b"moje_super_haslo", bcrypt.gensalt()).decode())
+PY
+export ADMIN_PASSWORD_HASH="wklej_tutaj_wygenerowany_hasz"
 ```
+
+Dodatkowo aplikacja wymaga ustawienia klucza sesji w zmiennej `SECRET_KEY`. Obie wartości powinny być ustawione na bezpieczne przed wdrożeniem.
 
 Panel pozwala podejrzeć listę zapisanych alertów cenowych.
 Użytkownik może zapisać się na alert cenowy z poziomu dashboardu,
