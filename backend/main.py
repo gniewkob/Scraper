@@ -71,15 +71,30 @@ logger = logging.getLogger(__name__)
 
 
 def send_confirmation_email(email: str, token: str) -> None:
-    """Send confirmation token via email. Placeholder implementation."""
+    """Send confirmation token via email. Placeholder implementation.
+
+    In the real system this would dispatch an email containing a link the
+    user can follow to confirm the alert.  For now we just log the target
+    address and generated URL so tests can assert the behaviour without
+    sending actual messages.
+    """
     if email:
-        logger.info("Sending confirmation email to %s with token %s", email, token)
+        confirm_url = f"https://example.com/confirm?token={token}"
+        logger.info(
+            "Sending confirmation email to %s with link %s", email, confirm_url
+        )
 
 
 def send_confirmation_sms(phone: str, token: str) -> None:
-    """Send confirmation token via SMS. Placeholder implementation."""
+    """Send confirmation token via SMS. Placeholder implementation.
+
+    For SMS we keep the message concise and only log the token, but the link
+    could equally be sent here depending on the SMS gateway used.
+    """
     if phone:
-        logger.info("Sending confirmation SMS to %s with token %s", phone, token)
+        logger.info(
+            "Sending confirmation SMS to %s with token %s", phone, token
+        )
 
 
 @app.get("/admin/login", response_class=HTMLResponse)
