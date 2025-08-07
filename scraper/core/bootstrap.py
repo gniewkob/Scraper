@@ -1,12 +1,15 @@
 # core/bootstrap.py
 import importlib.util
+import os
 import sys
 import logging
 from pathlib import Path
 from datetime import datetime
 
-# 🔧 Zmienna sterująca poziomem logowania (zmień na logging.DEBUG, INFO, WARNING, ERROR, CRITICAL)
-LOG_LEVEL = logging.ERROR  # 🔁 Zmieniasz tutaj i działa wszędzie
+# Determine log level from environment with fallback to ERROR
+LOG_LEVEL = getattr(
+    logging, os.getenv("SCRAPER_LOG_LEVEL", "ERROR").upper(), logging.ERROR
+)
 
 def ensure_schema():
 	schema_path = Path(__file__).resolve().parents[1] / "services" / "update_schema.py"
