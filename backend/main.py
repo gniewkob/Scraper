@@ -12,6 +12,7 @@ from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 import secrets
 import logging
+import bcrypt
 
 from sqlalchemy import text
 
@@ -25,8 +26,13 @@ CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "change_me")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin")
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY environment variable is required")
+
+ADMIN_PASSWORD_HASH = os.environ.get("ADMIN_PASSWORD_HASH")
+if not ADMIN_PASSWORD_HASH:
+    raise RuntimeError("ADMIN_PASSWORD_HASH environment variable is required")
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
@@ -105,10 +111,13 @@ def admin_login_form(request: Request):
 @app.post("/admin/login", response_class=HTMLResponse)
 async def admin_login(request: Request):
     form = await request.form()
-    if form.get("password") == ADMIN_PASSWORD:
+    password = form.get("password", "")
+    if bcrypt.checkpw(password.encode(), ADMIN_PASSWORD_HASH.encode()):
         request.session["admin"] = True
         return RedirectResponse("/admin", status_code=302)
-    return templates.TemplateResponse("admin_login.html", {"request": request, "error": "Błędne hasło"})
+    return templates.TemplateResponse(
+        "admin_login.html", {"request": request, "error": "Błędne hasło"}
+    )
 
 
 @app.get("/admin/logout")
