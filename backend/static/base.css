@@ -1,4 +1,4 @@
-/* Theme variables and shared styles */
+/* Theme variables and shared base styles */
 .light {
   --bg-color: #ffffff;
   --text-color: #212529;
@@ -128,8 +128,8 @@ canvas#priceTrendChart {
   background-color: var(--price-chart-bg) !important;
   border-radius: 10px;
   padding: 10px;
-  height: 260px !important;
-  max-height: 260px;
+  height: 300px !important;
+  max-height: 300px;
 }
 
 #map {
@@ -142,6 +142,10 @@ canvas#priceTrendChart {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2000;
+  display: none;
+}
+
+.hidden {
   display: none;
 }
 
