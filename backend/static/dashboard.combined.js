@@ -190,7 +190,8 @@ async function loadProductData(name) {
   showLoading();
   try {
     currentProduct = name;
-    let url = `/api/product/${encodeURIComponent(name)}?limit=50&offset=0&sort=price&order=asc`;
+    let url = `/api/product/${encodeURIComponent(name)}?limit=50&offset=0`;
+    url += `&sort=${currentSort}&order=${currentOrder}`;
     if (selectedCity) url += `&city=${encodeURIComponent(selectedCity)}`;
     if (userLat && userLon && selectedRadius) {
       url += `&lat=${userLat}&lon=${userLon}&radius=${selectedRadius}`;
@@ -230,16 +231,16 @@ async function loadProductData(name) {
 }
 
 // --- SORTOWANIE & PAGINACJA ---
-// document.getElementById('sortSelect').onchange = function() {
-//   currentSort = this.value;
-//   currentOffset = 0;
-//   loadProductData(currentProduct);
-// };
-// document.getElementById('orderSelect').onchange = function() {
-//   currentOrder = this.value;
-//   currentOffset = 0;
-//   loadProductData(currentProduct);
-// };
+document.getElementById('sortSelect').onchange = function() {
+  currentSort = this.value;
+  currentOffset = 0;
+  loadProductData(currentProduct);
+};
+document.getElementById('orderSelect').onchange = function() {
+  currentOrder = this.value;
+  currentOffset = 0;
+  loadProductData(currentProduct);
+};
 
 function renderPagination(total, limit, offset) {
   const totalPages = Math.ceil(total / limit);
