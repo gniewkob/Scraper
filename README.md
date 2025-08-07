@@ -12,17 +12,22 @@ Zarówno lokalnie jak i podczas wdrożenia cały stos uruchomisz poleceniem:
 docker-compose up --build
 ```
 
-Uruchomione zostaną trzy usługi:
+Uruchomione zostaną cztery usługi:
 
 * **backend** – FastAPI dostępne pod `http://localhost:8000`
-* **scraper** – moduł Selenium wykonujący pobieranie danych
+* **scraper** – pracownik Celery oczekujący na zadania scrapingu
 * **db** – baza PostgreSQL do przechowywania wyników
+* **redis** – broker wiadomości wykorzystywany przez Celery
 
 Aby uruchomić kontenery w tle (np. w środowisku produkcyjnym), użyj:
 
 ```bash
 docker-compose up -d
 ```
+
+Zadania scrapingu trafiają do kolejki Celery, dzięki czemu kontener `scraper`
+można skalować niezależnie od backendu. Przykładową konfigurację Kubernetes
+znajdziesz w pliku [docs/deployment.md](docs/deployment.md).
 
 ---
 
@@ -87,13 +92,18 @@ SQLAlchemy może łączyć się także z PostgreSQL/MySQL.
 
 ### Konfiguracja bazy danych
 
-Połączenie do bazy definiują zmienne środowiskowe:
+Połączenie do bazy definiują zmienne środowiskowe (priorytet ma `DB_URL`):
 
-- `DB_URL` – pełny URL (np. `postgresql://user:pass@host/db`).
+- `DB_URL` – pełny URL bazy. Wskazując np. instancję **AWS RDS** można używać
+  zdalnej bazy zamiast lokalnego SQLite:
+  `postgresql://user:pass@rds.amazonaws.com:5432/pharmacy`.
 - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` – używane do
   zbudowania `DB_URL`, jeśli nie podano go bezpośrednio.
 - `DB_POOL_SIZE` – rozmiar puli połączeń (domyślnie `5`).
 - `DB_MAX_OVERFLOW` – dodatkowe połączenia poza pulą (domyślnie `10`).
+
+Jeśli `DB_URL` nie jest ustawiony, aplikacja automatycznie korzysta z pliku
+SQLite wskazanego przez `DB_PATH`.
 
 Migracje schematu wykonywane są za pomocą Alembic:
 
