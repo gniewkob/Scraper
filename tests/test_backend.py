@@ -83,7 +83,7 @@ def alerts_db(tmp_path, monkeypatch):
     conn = sqlite3.connect(db_file)
     conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT)"
+        "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT, token TEXT, confirmed INTEGER DEFAULT 0)"
     )
     conn.execute("INSERT INTO products (product_id, name) VALUES ('p1', 'Test')")
     conn.commit()
@@ -119,9 +119,29 @@ def test_register_alert_success(client, alerts_db):
     resp = client.post('/api/alerts/register', json=data)
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
-    alerts = client.get('/api/alerts/list').json()
-    assert alerts[-1]["email"] == "a@b.com"
-    assert alerts[-1]["phone"] == "+48100100100"
+
+    conn = sqlite3.connect(alerts_db)
+    alert_id, token, confirmed = conn.execute(
+        "SELECT id, token, confirmed FROM user_alerts ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    conn.close()
+    assert confirmed == 0
+
+    resp = client.post('/api/alerts/confirm', json={"token": token})
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
+
+    conn = sqlite3.connect(alerts_db)
+    confirmed, email_e, phone_e = conn.execute(
+        "SELECT confirmed, email_encrypted, phone_encrypted FROM user_alerts WHERE id=?",
+        (alert_id,),
+    ).fetchone()
+    conn.close()
+    from scraper.utils.crypto import decrypt
+
+    assert confirmed == 1
+    assert decrypt(email_e) == "a@b.com"
+    assert decrypt(phone_e) == "+48100100100"
 
 
 def test_price_per_g_returned(client, monkeypatch, tmp_path):

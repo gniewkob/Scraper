@@ -55,7 +55,7 @@ def load_alerts():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT product_id, threshold, email_encrypted, phone_encrypted FROM user_alerts"
+        "SELECT product_id, threshold, email_encrypted, phone_encrypted FROM user_alerts WHERE confirmed = 1"
     )
     rows = cursor.fetchall()
     conn.close()
