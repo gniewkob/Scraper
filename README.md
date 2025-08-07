@@ -12,6 +12,17 @@ Zarówno lokalnie jak i podczas wdrożenia cały stos uruchomisz poleceniem:
 docker-compose up --build
 ```
 
+Przed uruchomieniem przygotuj plik `.env` w katalogu głównym projektu z wymaganymi zmiennymi środowiskowymi:
+
+```
+DB_URL=postgresql://postgres:postgres@db:5432/pharmacy
+SECRET_KEY=devsecret
+ADMIN_PASSWORD_HASH=$2b$12$4mJalM78ipT/LhR17GCOy.j7CWiG2Pdd22caudlos8x4xPdkxY3e.
+CELERY_BROKER_URL=redis://redis:6379/0
+```
+
+Podczas wdrożenia zastąp powyższe wartości odpowiednimi danymi dla swojego środowiska.
+
 Uruchomione zostaną cztery usługi:
 
 * **backend** – FastAPI dostępne pod `http://localhost:8000`
