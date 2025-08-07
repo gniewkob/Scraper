@@ -190,7 +190,7 @@ async function loadProductData(name) {
   showLoading();
   try {
     currentProduct = name;
-    let url = `/api/product/${encodeURIComponent(name)}?limit=50&offset=0`;
+    let url = `/api/product/${encodeURIComponent(name)}?limit=${currentLimit}&offset=${currentOffset}`;
     url += `&sort=${currentSort}&order=${currentOrder}`;
     if (selectedCity) url += `&city=${encodeURIComponent(selectedCity)}`;
     if (userLat && userLon && selectedRadius) {
@@ -200,7 +200,11 @@ async function loadProductData(name) {
     }
     const res = await fetch(url);
     const data = await res.json();
-    renderTopOffers(data.top3);
+    currentLimit = data.limit;
+    currentOffset = data.offset;
+    renderOffers(data.offers);
+    renderPagination(data.total, data.limit, data.offset);
+    renderCountInfo(data.total, data.limit, data.offset);
     // backend now returns price already normalized per gram
     const prices = data.trend.map(p => parseFloat(p.price));
     const min = Math.min(...prices);
@@ -269,8 +273,8 @@ function renderCountInfo(total, limit, offset) {
   countInfo.textContent = `Wyświetlasz ${first}–${last} z ${total} ofert`;
 }
 
-// --- 3 NAJTAŃSZE OFERTY ---
-function renderTopOffers(offers) {
+// --- TABELA OFERT ---
+function renderOffers(offers) {
   const container = document.getElementById("productTable");
   container.innerHTML = `<div class="table-responsive"><table class="table table-dark table-bordered">
     <thead><tr><th>Cena (za 1 g)</th><th>Apteka</th><th>Adres</th><th>Mapa</th></tr></thead><tbody>
