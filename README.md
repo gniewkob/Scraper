@@ -267,6 +267,11 @@ Można również uruchomić pojedynczy test, np.:
 python -m pytest tests/test_backend.py
 ```
 
+Testy korzystające z Playwright są domyślnie pomijane lokalnie i uruchamiane
+wyłącznie w CI. Środowisko CI ustawia zmienną `CI=true`, dzięki czemu te testy
+zostają wykonane. Aby uruchomić je ręcznie, ustaw tę zmienną i doinstaluj
+dodatkowe zależności z `requirements-ci.txt` wraz z przeglądarkami Playwright.
+
 ## 10. GitHub Actions Deployment
 
 Repozytorium zawiera workflow `deploy.yml`, który uruchamia testy, buduje i publikuje obrazy Docker oraz aktualizuje serwer po wypchnięciu zmian do gałęzi `main`.

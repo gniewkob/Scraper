@@ -54,6 +54,7 @@ def test_selenium_headed(target_url: str, min_offers: int) -> None:
         driver.quit()
 
 
+@pytest.mark.skipif(not os.getenv("CI"), reason="Playwright tests run only in CI")
 @pytest.mark.parametrize("target_url,min_offers", [(TARGET_URL, MIN_OFFERS)])
 def test_playwright_headed(target_url: str, min_offers: int) -> None:
     p_sync = pytest.importorskip("playwright.sync_api")
@@ -98,6 +99,7 @@ def test_playwright_headed(target_url: str, min_offers: int) -> None:
         assert item["expires_at"]
 
 
+@pytest.mark.skipif(not os.getenv("CI"), reason="Playwright tests run only in CI")
 @pytest.mark.parametrize("target_url,min_offers", [(TARGET_URL, MIN_OFFERS)])
 def test_xhr_capture_then_fetch(target_url: str, min_offers: int) -> None:
     p_sync = pytest.importorskip("playwright.sync_api")
