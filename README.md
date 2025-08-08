@@ -267,10 +267,8 @@ Można również uruchomić pojedynczy test, np.:
 python -m pytest tests/test_backend.py
 ```
 
-Testy korzystające z Playwright są domyślnie pomijane lokalnie i uruchamiane
-wyłącznie w CI. Środowisko CI ustawia zmienną `CI=true`, dzięki czemu te testy
-zostają wykonane. Aby uruchomić je ręcznie, ustaw tę zmienną i doinstaluj
-dodatkowe zależności z `requirements-ci.txt` wraz z przeglądarkami Playwright.
+Testy korzystające z Playwright są pomijane lokalnie i uruchamiane
+wyłącznie w CI (`CI=true`). Lokalna instalacja Playwright nie jest wymagana.
 
 ## 10. GitHub Actions Deployment
 
@@ -297,16 +295,17 @@ Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
 
 ### Lokalna weryfikacja linków
 
-Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Wymaga pakietu Playwright (instalowanego domyślnie jedynie w środowisku CI) i nie uruchomi się lokalnie na FreeBSD. Aby uruchomić skrypt lokalnie, doinstaluj dodatkowe zależności:
+Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Korzysta z Playwright, który jest instalowany wyłącznie w środowisku CI i nie uruchomi się lokalnie na FreeBSD. Jeśli chcesz wykonać skrypt lokalnie, zainstaluj wymagane zależności we własnym zakresie.
 
 ```bash
 pip install -r requirements.txt
-# Playwright jest instalowany tylko w CI; aby uruchomić testy lokalnie:
-pip install -r requirements-ci.txt
-playwright install --with-deps chromium
 TARGET_URL=https://twoja-strona.pl python scripts/verify_product_urls.py
 # lub: python scripts/verify_product_urls.py https://twoja-strona.pl
 ```
+
+### Konfiguracja Playwright w CI
+
+W środowisku CI dodatkowe pakiety są instalowane z `requirements-ci.txt`, a przeglądarki przez `playwright install --with-deps chromium`. Zmienna środowiskowa `CI=true` powoduje, że testy Playwright zostają uruchomione automatycznie. Lokalnie Playwright nie jest wymagany.
 
 ### Ręczne wywołanie workflow `scrape-matrix`
 
