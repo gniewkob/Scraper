@@ -3,7 +3,13 @@ import sys
 from pathlib import Path
 from urllib.parse import urljoin
 
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:  # pragma: no cover - import guard
+    sys.stderr.write(
+        "Skrypt wymaga pakietu 'playwright'. Zainstaluj go poleceniem 'pip install playwright'.\n"
+    )
+    sys.exit(1)
 
 
 CONFIG_FILE = Path(__file__).resolve().parents[1] / "config" / "products.env"

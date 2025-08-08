@@ -292,7 +292,7 @@ Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
 
 ### Lokalna weryfikacja linków
 
-Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Playwright jest instalowany jedynie w środowisku CI, dlatego aby uruchomić skrypt lokalnie, doinstaluj dodatkowe zależności:
+Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Wymaga pakietu Playwright (instalowanego domyślnie jedynie w środowisku CI) i nie uruchomi się lokalnie na FreeBSD. Aby uruchomić skrypt lokalnie, doinstaluj dodatkowe zależności:
 
 ```bash
 pip install -r requirements.txt
