@@ -35,8 +35,7 @@ jobs:
       - name: Install dependencies
         if: matrix.variant != 'selenium_xvfb'
         run: |
-          pip install -r requirements.txt
-          pip install pytest playwright httpx
+          pip install -r requirements.txt -r requirements-ci.txt
           playwright install --with-deps chromium
 
       - name: Run Playwright headed tests

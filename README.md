@@ -292,11 +292,12 @@ Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
 
 ### Lokalna weryfikacja linków
 
-Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Aby go uruchomić lokalnie:
+Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Playwright jest instalowany jedynie w środowisku CI, dlatego aby uruchomić skrypt lokalnie, doinstaluj dodatkowe zależności:
 
 ```bash
 pip install -r requirements.txt
-pip install playwright
+# Playwright jest instalowany tylko w CI; aby uruchomić testy lokalnie:
+pip install -r requirements-ci.txt
 playwright install --with-deps chromium
 TARGET_URL=https://twoja-strona.pl python scripts/verify_product_urls.py
 # lub: python scripts/verify_product_urls.py https://twoja-strona.pl
