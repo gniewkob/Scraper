@@ -3,11 +3,11 @@ FROM python:3.11-slim AS builder
 WORKDIR /build
 
 # Build dependency wheels
-COPY requirements.txt .
+COPY scraper/requirements.txt ./requirements.txt
 RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
 
 # Copy the scraper source for the runtime image
-COPY . /src
+COPY scraper /src/scraper
 
 FROM python:3.11-slim
 
@@ -29,6 +29,7 @@ COPY --from=builder /wheels /wheels
 RUN pip install --no-cache /wheels/* && rm -rf /wheels
 
 # Copy only the application source code
-COPY --from=builder /src /app
+COPY --from=builder /src/scraper /app/scraper
+COPY backend /app/backend
 
 CMD ["celery", "-A", "scraper.worker", "worker", "--loglevel=info"]
