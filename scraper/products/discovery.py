@@ -1,0 +1,43 @@
+from typing import List, Dict
+
+from playwright.sync_api import sync_playwright
+
+CATEGORY_URL = "https://www.gdziepolek.pl/kategorie/susz-i-ekstrakt-marihuany-medycznej"
+PRODUCT_URL_BASE = "https://www.gdziepolek.pl"
+
+
+def discover_products() -> List[Dict[str, str]]:
+    """Return a list of products discovered on the category page."""
+    with sync_playwright() as p:
+        browser = p.firefox.launch(headless=False)
+        context = browser.new_context(ignore_https_errors=True)
+        page = context.new_page()
+        page.goto(CATEGORY_URL)
+
+        load_more_selector = "button:has-text('Pokaż więcej'), button:has-text('Załaduj więcej')"
+        for _ in range(100):
+            button = page.locator(load_more_selector)
+            if not button.count():
+                break
+            try:
+                button.first.click()
+                page.wait_for_load_state("networkidle")
+            except Exception:
+                break
+
+        links = page.query_selector_all("a[href^='/produkty/']")
+        products: Dict[str, Dict[str, str]] = {}
+        for link in links:
+            href = link.get_attribute("href") or ""
+            slug = href.split("/produkty/")[-1].strip("/")
+            if not slug or slug in products:
+                continue
+            name = (link.inner_text() or "").strip()
+            products[slug] = {
+                "name": name,
+                "slug": slug,
+                "base_url": f"{PRODUCT_URL_BASE}/produkty/{slug}",
+            }
+
+        browser.close()
+        return list(products.values())
