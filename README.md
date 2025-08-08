@@ -288,3 +288,32 @@ W zależności od środowiska możesz dodać również `DEPLOY_PORT` lub inne zm
 Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
 
 ---
+## 11. Weryfikacja adresów i workflow `scrape-matrix`
+
+### Lokalna weryfikacja linków
+
+Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Aby go uruchomić lokalnie:
+
+```bash
+pip install -r requirements.txt
+pip install playwright
+playwright install --with-deps chromium
+TARGET_URL=https://twoja-strona.pl python scripts/verify_product_urls.py
+# lub: python scripts/verify_product_urls.py https://twoja-strona.pl
+```
+
+### Ręczne wywołanie workflow `scrape-matrix`
+
+W GitHub Actions dostępny jest workflow `scrape-matrix`, uruchamiający testy z `tests/test_scrape_matrix.py`. Workflow można wyzwolić ręcznie przez interfejs GitHub (Actions → `scrape-matrix` → *Run workflow*) lub poleceniem:
+
+```bash
+gh workflow run scrape-matrix
+```
+
+Workflow korzysta z sekretów:
+
+- `TARGET_URL` – adres strony z ofertami do weryfikacji,
+- `MIN_OFFERS` (opcjonalnie) – minimalna liczba oczekiwanych ofert.
+
+Testy zarówno w workflow, jak i w lokalnym skrypcie są **tylko odczytowe** i nie zapisują żadnych danych w bazie.
+
