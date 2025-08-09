@@ -35,6 +35,7 @@ def _default_fetch(url: str) -> str:
         )
         page = context.new_page()
         page.goto(url)
+        page.wait_for_response(lambda r: re.search(r"(offers|results)", r.url))
         page.wait_for_load_state("networkidle")
         content = page.content()
         context.close()
