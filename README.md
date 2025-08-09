@@ -86,6 +86,9 @@ python -m scraper.cli.scrape_all --headless --db-url sqlite:///data/pharmacy_pri
 
 Wyniki: `data/pharmacy_prices.sqlite`, logi w `scraper/logs/`, podsumowanie w `scraper/logs/scrape_metrics.log`.
 
+Argumenty CLI:
+- `--headless` – uruchamia przeglądarkę bez GUI (można też ustawić zmienną środowiskową `HEADLESS`).
+
 ### 3.4. Backend + UI
 
 ```bash

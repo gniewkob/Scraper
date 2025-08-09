@@ -97,56 +97,61 @@ def scrape_product(driver, url, product_id):
 
 	return offers
 
-def main(product_id):
-	init_logging()  # 🔥 Aktywuj centralne logowanie
-	create_logs_dir()
-	filtered_urls = filter_urls_by_product(URLS, product_id)
-	logger.info(f"🧪 URLs po filtrze: {filtered_urls}")
+def main(product_id, headless=False):
+        init_logging()  # 🔥 Aktywuj centralne logowanie
+        create_logs_dir()
+        filtered_urls = filter_urls_by_product(URLS, product_id)
+        logger.info(f"🧪 URLs po filtrze: {filtered_urls}")
 
-	if not filtered_urls:
-		logger.warning(f"⚠️ Brak URLi dla produktu {product_id}")
-		return
+        if not filtered_urls:
+                logger.warning(f"⚠️ Brak URLi dla produktu {product_id}")
+                return
 
-	driver = setup_browser(headless=False)
+        driver = setup_browser(headless=headless)
 
-	all_offers = []
-	try:
-		for url in filtered_urls:
-			offers = scrape_product(driver, url, product_id)
-			all_offers.extend(offers)
-	finally:
-		driver.quit()
+        all_offers = []
+        try:
+                for url in filtered_urls:
+                        offers = scrape_product(driver, url, product_id)
+                        all_offers.extend(offers)
+        finally:
+                driver.quit()
 
-	if not all_offers:
-		logger.warning(f"⚠️ Brak poprawnych ofert dla Produkt_{product_id}.")
-		return
+        if not all_offers:
+                logger.warning(f"⚠️ Brak poprawnych ofert dla Produkt_{product_id}.")
+                return
 
-	flattened = []
-	for entry in all_offers:
+        flattened = []
+        for entry in all_offers:
                 cheapest = min(entry["offers"], key=lambda x: x["price"])
-		flattened.append({
-			"name": entry["name"],
-			"href": entry["href"],
-			"address": entry["address"],
-			"availability": entry["availability"],
-			"updated": entry["updated"],
-			"price": cheapest["price"],
-			"unit": cheapest["unit"],
-			"expiration": cheapest["expiration"],
-			"product_id": entry["product_id"]
-		})
+                flattened.append({
+                        "name": entry["name"],
+                        "href": entry["href"],
+                        "address": entry["address"],
+                        "availability": entry["availability"],
+                        "updated": entry["updated"],
+                        "price": cheapest["price"],
+                        "unit": cheapest["unit"],
+                        "expiration": cheapest["expiration"],
+                        "product_id": entry["product_id"]
+                })
 
         top_3 = sorted(flattened, key=lambda x: x["price"])[:3]
 
-	output_path, _ = get_output_paths(product_id)
-	with open(output_path, "w", encoding="utf-8") as f:
-		json.dump(top_3, f, ensure_ascii=False, indent=2)
+        output_path, _ = get_output_paths(product_id)
+        with open(output_path, "w", encoding="utf-8") as f:
+                json.dump(top_3, f, ensure_ascii=False, indent=2)
 
-	logger.info(f"\n💾 Zapisano {len(top_3)} najtańsze oferty do: {output_path}")
+        logger.info(f"\n💾 Zapisano {len(top_3)} najtańsze oferty do: {output_path}")
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser()
-	parser.add_argument("--product", required=True, help="ID produktu do scrapowania")
-	args = parser.parse_args()
-	logger.info("🚀 START main.py")
-	main(args.product)
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--product", required=True, help="ID produktu do scrapowania")
+        parser.add_argument("--headless", action="store_true", help="Uruchom w trybie headless")
+        args = parser.parse_args()
+
+        headless_env = os.getenv("HEADLESS", "false").lower() in {"1", "true", "yes"}
+        headless = args.headless or headless_env
+
+        logger.info("🚀 START main.py")
+        main(args.product, headless=headless)
