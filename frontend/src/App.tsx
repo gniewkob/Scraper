@@ -15,8 +15,8 @@ interface Offer {
   map_url?: string;
   pharmacy_lat?: number;
   pharmacy_lon?: number;
-  price_bucket?: string;
-  is_historical_low?: boolean;
+  price_bucket: string;
+  is_historical_low: boolean;
 }
 
 interface TrendPoint {
@@ -56,7 +56,18 @@ function App() {
     fetch(`/api/product/${encodeURIComponent(product)}?${params}`)
       .then((r) => r.json())
       .then((data) => {
-        setOffers(data.offers || []);
+        const fetchedOffers: Offer[] = ((data.offers as Offer[]) || []).map((o) => ({
+          price: o.price,
+          price_per_g: o.price_per_g,
+          pharmacy: o.pharmacy,
+          address: o.address,
+          map_url: o.map_url,
+          pharmacy_lat: o.pharmacy_lat,
+          pharmacy_lon: o.pharmacy_lon,
+          price_bucket: o.price_bucket,
+          is_historical_low: o.is_historical_low,
+        }));
+        setOffers(fetchedOffers);
         setTrend(data.trend || []);
         setTotal(data.total || 0);
       })
