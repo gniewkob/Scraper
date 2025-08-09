@@ -5,7 +5,6 @@ import SortControls from './components/SortControls';
 import OffersTable from './components/OffersTable';
 import Pagination from './components/Pagination';
 import PriceTrendChart from './components/PriceTrendChart';
-import MapView from './components/MapView';
 import './index.css';
 
 interface Offer {
@@ -18,11 +17,16 @@ interface Offer {
   pharmacy_lon?: number;
 }
 
+interface TrendPoint {
+  fetched_at: string;
+  price: string;
+}
+
 function App() {
   const [product, setProduct] = useState('');
   const [city, setCity] = useState('');
   const [offers, setOffers] = useState<Offer[]>([]);
-  const [trend, setTrend] = useState<any[]>([]);
+  const [trend, setTrend] = useState<TrendPoint[]>([]);
   const [sort, setSort] = useState('price');
   const [order, setOrder] = useState('asc');
   const [total, setTotal] = useState(0);
@@ -90,17 +94,6 @@ function App() {
           setOffset(0);
         }}
       />
-      <div className="card p-3 mb-4">
-        <h2 className="card-title">🗺️ Najbliższa apteka</h2>
-        <MapView
-          offers={offers}
-          center={
-            offers.length && offers[0].pharmacy_lat && offers[0].pharmacy_lon
-              ? [offers[0].pharmacy_lat, offers[0].pharmacy_lon]
-              : undefined
-          }
-        />
-      </div>
       <div className="card p-3 mb-4">
         <h2 className="card-title">💎 Najtańsze oferty</h2>
         <OffersTable offers={offers} />
