@@ -175,6 +175,11 @@ def setup_firefox_browser(headless=False):
     options.set_preference("intl.accept_languages", DEFAULT_LOCALE)
     options.add_argument(f"--width={DEFAULT_WIDTH}")
     options.add_argument(f"--height={DEFAULT_HEIGHT}")
+    # Disable Firefox automation flag to mimic regular browser
+    options.set_preference("dom.webdriver.enabled", False)
+    # Remove remaining automation flags
+    options.set_preference("useAutomationExtension", False)
+
 
     proxy = get_random_proxy()
     if proxy:
@@ -195,6 +200,10 @@ def setup_firefox_browser(headless=False):
         driver = webdriver.Firefox(
             service=FirefoxService(GeckoDriverManager().install()),
             options=options
+        )
+        # Align behavior with Chrome by hiding webdriver attribute
+        driver.execute_script(
+            "Object.defineProperty(navigator, 'webdriver', { get: () => undefined });"
         )
         logger.info("Successfully initialized Firefox WebDriver")
         return driver
