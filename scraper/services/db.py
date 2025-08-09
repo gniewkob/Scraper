@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Dict, Iterable
 
 import requests
-from sqlalchemy import text
+from sqlalchemy import bindparam, text
 
 from backend.db import get_engine
 from scraper.core.config.config import DB_PATH, DB_URL, API_URL
@@ -17,6 +17,68 @@ logger = logging.getLogger("gdziepolek")
 
 # shared engine used for all DB operations
 ENGINE = get_engine(DB_URL, DB_PATH)
+
+__all__ = [
+    "ensure_product_name",
+    "insert_prices",
+    "should_insert_price",
+    "get_all_prices",
+    "get_prices_for_product",
+    "get_trend_for_product",
+    "get_top3_prices",
+    "sync_products",
+]
+
+
+def sync_products(discovered: Iterable[dict]) -> None:
+    """Synchronise product table with *discovered* entries.
+
+    Each ``dict`` in ``discovered`` must contain ``slug`` and ``name`` keys.
+    Existing rows are updated while new ones are inserted with current
+    timestamps. Products not present in ``discovered`` are marked as inactive
+    but their history is preserved.
+    """
+
+    if API_URL:
+        # Remote API is the source of truth – nothing to do.
+        return
+
+    now = datetime.now()
+    seen_slugs = set()
+
+    with ENGINE.begin() as conn:
+        for item in discovered:
+            slug = item.get("slug")
+            name = item.get("name")
+            if not slug or not name:
+                continue
+            seen_slugs.add(slug)
+
+            result = conn.execute(
+                text(
+                    "UPDATE products SET name=:name, last_seen=:now, active=1 "
+                    "WHERE slug=:slug"
+                ),
+                {"name": name, "now": now, "slug": slug},
+            )
+            if result.rowcount == 0:
+                conn.execute(
+                    text(
+                        "INSERT INTO products (slug, name, active, first_seen, last_seen) "
+                        "VALUES (:slug, :name, 1, :now, :now)"
+                    ),
+                    {"slug": slug, "name": name, "now": now},
+                )
+
+        if seen_slugs:
+            conn.execute(
+                text("UPDATE products SET active=0 WHERE slug NOT IN :slugs").bindparams(
+                    bindparam("slugs", expanding=True)
+                ),
+                {"slugs": list(seen_slugs)},
+            )
+        else:
+            conn.execute(text("UPDATE products SET active=0"))
 
 
 def ensure_product_name(product_id: str, product_name: str) -> None:
