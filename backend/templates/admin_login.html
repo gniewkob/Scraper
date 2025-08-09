@@ -13,6 +13,7 @@
   <div class="text-end"><button id="themeToggle" class="btn btn-outline-light btn-sm">Zmień motyw</button></div>
   <h1 class="mb-4">Logowanie administratora</h1>
   <form method="post" class="mb-3">
+    <input type="hidden" name="csrf-token" value="{{ csrf_token }}">
     <div class="mb-3">
       <input type="password" name="password" class="form-control" placeholder="Hasło" required>
     </div>
