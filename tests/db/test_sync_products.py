@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import create_engine, text
 
 from scraper.services import db as db_services
@@ -69,6 +71,14 @@ def test_sync_products_activation_and_pharmacy_prices_untouched():
         assert row["active"] == 1
         assert row["first_seen"] is not None
         assert row["last_seen"] is not None
+        first_seen = datetime.fromisoformat(row["first_seen"])
+        if first_seen.tzinfo is None:
+            first_seen = first_seen.replace(tzinfo=timezone.utc)
+        last_seen = datetime.fromisoformat(row["last_seen"])
+        if last_seen.tzinfo is None:
+            last_seen = last_seen.replace(tzinfo=timezone.utc)
+        assert first_seen.tzinfo == timezone.utc
+        assert last_seen.tzinfo == timezone.utc
 
     # Insert an existing price entry
     with engine.begin() as conn:
