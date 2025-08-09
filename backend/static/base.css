@@ -129,10 +129,6 @@ canvas {
   max-height: 200px;
 }
 
-#map {
-  height: 300px;
-}
-
 #loadingIndicator {
   position: fixed;
   top: 50%;
