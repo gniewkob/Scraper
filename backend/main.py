@@ -138,7 +138,8 @@ def admin_panel(request: Request):
                 """
                 SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                 FROM user_alerts ua
-                LEFT JOIN products p ON ua.product_id = p.slug
+                LEFT JOIN products p ON ua.product_id = p.id
+                WHERE p.active = 1
                 ORDER BY ua.id DESC
                 """
             )
@@ -163,11 +164,14 @@ def admin_panel(request: Request):
 def get_products():
     engine = get_db_engine()
     with engine.connect() as conn:
-        rows = conn.execute(text("SELECT DISTINCT name FROM products")).fetchall()
+        rows = conn.execute(
+            text("SELECT id, name FROM products WHERE active = 1")
+        ).mappings().all()
 
     results = []
     for row in rows:
-        name = row[0]
+        pid = row["id"]
+        name = row["name"]
         label = (
             name
             .replace("Cannabis", "")
@@ -177,7 +181,7 @@ def get_products():
             .strip()
             .title()
         )
-        results.append({"name": name, "label": label})
+        results.append({"id": pid, "name": name, "label": label})
     return results
 
 
@@ -217,7 +221,7 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
                 price_per_g = price / grams
 
     if price_per_g is None and price >= 100:
-        pkg = PACKAGE_SIZES.get(product_id)
+        pkg = PACKAGE_SIZES.get(str(product_id))
         if pkg:
             price_per_g = price / pkg
 
@@ -243,13 +247,12 @@ def get_product_by_name(
     engine = get_db_engine()
     with engine.connect() as conn:
         row = conn.execute(
-            text("SELECT id, slug FROM products WHERE name = :name"),
+            text("SELECT id FROM products WHERE name = :name AND active = 1"),
             {"name": decoded_name},
         ).mappings().first()
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
-    product_slug = row["slug"]
 
     allowed_sort = {"price", "expiration", "fetched_at"}
     allowed_order = {"asc", "desc"}
@@ -305,7 +308,7 @@ def get_product_by_name(
         fetched_at = row["fetched_at"]
         unit = row["unit"]
         price_per_g, display_price, short_expiry = compute_price_info(
-            price, unit, product_slug, expiration, now
+            price, unit, product_id, expiration, now
         )
         offer = {
             "pharmacy": row["pharmacy_name"],
@@ -360,10 +363,13 @@ def get_price_alerts():
         rows = conn.execute(
             text(
                 """
-                SELECT * FROM pharmacy_prices
-                WHERE price < 35 AND price >= 10
-                  AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
-                ORDER BY price ASC
+                SELECT p.*
+                FROM pharmacy_prices p
+                JOIN products pr ON p.product_id = pr.id
+                WHERE pr.active = 1
+                  AND p.price < 35 AND p.price >= 10
+                  AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+                ORDER BY p.price ASC
                 """
             )
         ).mappings().all()
@@ -405,18 +411,19 @@ def get_filtered_alerts():
         rows = conn.execute(
             text(
                 """
-                SELECT p.*, pr.slug, pr.name
+                SELECT p.*, pr.id as product_id, pr.name
                 FROM pharmacy_prices AS p
                 LEFT JOIN products pr ON p.product_id = pr.id
-                WHERE fetched_at = (
-                    SELECT MAX(fetched_at)
-                    FROM pharmacy_prices
-                    WHERE
-                        product_id = p.product_id AND
-                        pharmacy_name = p.pharmacy_name AND
-                        price = p.price AND
-                        expiration = p.expiration
-                )
+                WHERE pr.active = 1
+                  AND fetched_at = (
+                      SELECT MAX(fetched_at)
+                      FROM pharmacy_prices
+                      WHERE
+                          product_id = p.product_id AND
+                          pharmacy_name = p.pharmacy_name AND
+                          price = p.price AND
+                          expiration = p.expiration
+                  )
                   AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
                 """
             )
@@ -433,12 +440,12 @@ def get_filtered_alerts():
         fetched_at = row["fetched_at"]
         unit = row["unit"]
         price_per_g, display_price, short_expiry = compute_price_info(
-            price, unit, row["slug"], expiration, now
+            price, unit, row["product_id"], expiration, now
         )
 
         offer = {
-            "product_id": row["slug"],
-            "product": row["name"] or row["slug"],
+            "product_id": row["product_id"],
+            "product": row["name"] or row["product_id"],
             "pharmacy": row["pharmacy_name"],
             "price": display_price,
             "unit": row["unit"],
@@ -461,7 +468,7 @@ def get_filtered_alerts():
 def get_grouped_alerts(city: str = Query(None)):
     engine = get_db_engine()
     base_query = """
-        SELECT p.*, pr.slug, pr.name,
+        SELECT p.*, pr.id as product_id, pr.name,
                ROW_NUMBER() OVER (
                    PARTITION BY p.product_id, p.pharmacy_name, p.expiration, p.price
                    ORDER BY datetime(p.fetched_at) DESC
@@ -469,6 +476,7 @@ def get_grouped_alerts(city: str = Query(None)):
         FROM pharmacy_prices p
         LEFT JOIN products pr ON p.product_id = pr.id
         WHERE p.price IS NOT NULL
+          AND pr.active = 1
           AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
     """
     params = {}
@@ -492,7 +500,7 @@ def get_grouped_alerts(city: str = Query(None)):
         fetched_at = row["fetched_at"]
         unit = row["unit"]
         price_per_g, display_price, short_expiry = compute_price_info(
-            price, unit, row["slug"], expiration, now
+            price, unit, row["product_id"], expiration, now
         )
 
         address = row["address"] or ""
@@ -514,19 +522,19 @@ def get_grouped_alerts(city: str = Query(None)):
         if price_per_g is not None:
             offer["price_per_g"] = price_per_g
 
-        slug = row["slug"] or ""
-        grouped[slug].append(offer)
-        names[slug] = row["name"] or slug
+        pid = row["product_id"]
+        grouped[pid].append(offer)
+        names[pid] = row["name"] or pid
 
     results = []
-    for slug, offers in grouped.items():
+    for pid, offers in grouped.items():
         if not offers:
             continue
         min_price = min(o["price"] for o in offers)
         results.append(
             {
-                "product_id": slug,
-                "product": names.get(slug, slug),
+                "product_id": pid,
+                "product": names.get(pid, pid),
                 "min_price": min_price,
                 "offers": sorted(offers, key=lambda x: x["price"]),
             }
@@ -552,7 +560,7 @@ async def register_alert(request: Request):
     engine = get_db_engine()
     with engine.connect() as conn:
         row = conn.execute(
-            text("SELECT slug FROM products WHERE name = :name"),
+            text("SELECT id FROM products WHERE name = :name AND active = 1"),
             {"name": product_name},
         ).first()
         if not row:
@@ -620,7 +628,8 @@ def list_alerts():
                 """
                 SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                 FROM user_alerts ua
-                LEFT JOIN products p ON ua.product_id = p.slug
+                LEFT JOIN products p ON ua.product_id = p.id
+                WHERE p.active = 1
                 ORDER BY ua.id DESC
                 """
             )
