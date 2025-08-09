@@ -124,12 +124,9 @@ canvas {
   padding: 10px;
 }
 
-canvas#priceTrendChart {
-  background-color: var(--price-chart-bg) !important;
-  border-radius: 10px;
-  padding: 10px;
-  height: 300px !important;
-  max-height: 300px;
+.price-trend-canvas {
+  background-color: var(--price-chart-bg);
+  max-height: 200px;
 }
 
 #map {

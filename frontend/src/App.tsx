@@ -32,9 +32,14 @@ function App() {
   const [total, setTotal] = useState(0);
   const [offset, setOffset] = useState(0);
   const limit = 50;
+  const [chartOpen, setChartOpen] = useState(true);
 
   useEffect(() => {
     document.body.classList.add(localStorage.getItem('theme') || 'dark');
+  }, []);
+
+  useEffect(() => {
+    setChartOpen(window.innerWidth > 576);
   }, []);
 
   useEffect(() => {
@@ -102,9 +107,26 @@ function App() {
           Wyświetlasz {offset + 1}–{Math.min(offset + limit, total)} z {total} ofert
         </div>
       </div>
-      <div className="card p-3 mb-4">
-        <h2 className="card-title">📈 Trend cen wg daty</h2>
-        <PriceTrendChart data={trend} />
+      <div className="accordion mb-4" id="trendAccordion">
+        <div className="accordion-item">
+          <h2 className="accordion-header" id="headingTrend">
+            <button
+              className={`accordion-button ${chartOpen ? '' : 'collapsed'}`}
+              type="button"
+              onClick={() => setChartOpen(!chartOpen)}
+            >
+              📈 Trend cen wg daty
+            </button>
+          </h2>
+          <div className={`accordion-collapse collapse ${chartOpen ? 'show' : ''}`}
+            aria-labelledby="headingTrend"
+            data-bs-parent="#trendAccordion"
+          >
+            <div className="accordion-body">
+              <PriceTrendChart data={trend} className="price-trend-canvas" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
