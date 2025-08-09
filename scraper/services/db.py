@@ -29,7 +29,7 @@ def ensure_product_name(product_id: str, product_name: str) -> None:
     with ENGINE.begin() as conn:
         try:
             conn.execute(
-                text("INSERT INTO products (product_id, name) VALUES (:id, :name)"),
+                text("INSERT INTO products (slug, name) VALUES (:id, :name)"),
                 {"id": product_id, "name": product_name},
             )
         except Exception:

@@ -138,7 +138,7 @@ def admin_panel(request: Request):
                 """
                 SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                 FROM user_alerts ua
-                LEFT JOIN products p ON ua.product_id = p.product_id
+                LEFT JOIN products p ON ua.product_id = p.slug
                 ORDER BY ua.id DESC
                 """
             )
@@ -243,12 +243,13 @@ def get_product_by_name(
     engine = get_db_engine()
     with engine.connect() as conn:
         row = conn.execute(
-            text("SELECT product_id FROM products WHERE name = :name"),
+            text("SELECT id, slug FROM products WHERE name = :name"),
             {"name": decoded_name},
         ).mappings().first()
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
-    product_id = row["product_id"]
+    product_id = row["id"]
+    product_slug = row["slug"]
 
     allowed_sort = {"price", "expiration", "fetched_at"}
     allowed_order = {"asc", "desc"}
@@ -304,7 +305,7 @@ def get_product_by_name(
         fetched_at = row["fetched_at"]
         unit = row["unit"]
         price_per_g, display_price, short_expiry = compute_price_info(
-            price, unit, product_id, expiration, now
+            price, unit, product_slug, expiration, now
         )
         offer = {
             "pharmacy": row["pharmacy_name"],
@@ -518,7 +519,7 @@ def get_grouped_alerts(city: str = Query(None)):
             if not offers:
                 continue
             row = conn2.execute(
-                text("SELECT name FROM products WHERE product_id = :pid"),
+                text("SELECT name FROM products WHERE slug = :pid"),
                 {"pid": product_id},
             ).first()
             name = row[0] if row else product_id
@@ -552,7 +553,7 @@ async def register_alert(request: Request):
     engine = get_db_engine()
     with engine.connect() as conn:
         row = conn.execute(
-            text("SELECT product_id FROM products WHERE name = :name"),
+            text("SELECT slug FROM products WHERE name = :name"),
             {"name": product_name},
         ).first()
         if not row:
@@ -620,7 +621,7 @@ def list_alerts():
                 """
                 SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                 FROM user_alerts ua
-                LEFT JOIN products p ON ua.product_id = p.product_id
+                LEFT JOIN products p ON ua.product_id = p.slug
                 ORDER BY ua.id DESC
                 """
             )

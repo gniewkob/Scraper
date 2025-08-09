@@ -54,9 +54,9 @@ def get_offers(city: Optional[str] = None, product: Optional[str] = None,
     engine = get_engine()
     query = (
         "SELECT p.pharmacy_name, p.address, p.price, p.unit, p.expiration, p.map_url,"
-        "       p.product_id, pr.name as product_name "
+        "       pr.slug as product_id, pr.name as product_name "
         "FROM pharmacy_prices p "
-        "LEFT JOIN products pr ON p.product_id = pr.product_id "
+        "LEFT JOIN products pr ON p.product_id = pr.id "
         "WHERE 1=1"
     )
     params = {}
@@ -84,7 +84,7 @@ def get_products():
     engine = get_engine()
     with engine.connect() as conn:
         rows = conn.execute(
-            text("SELECT product_id, name FROM products")
+            text("SELECT slug as product_id, name FROM products")
         ).mappings().all()
     return [dict(row) for row in rows]
 
