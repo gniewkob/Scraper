@@ -1,4 +1,5 @@
-from typing import List, Dict
+import os
+from typing import List, Dict, Optional
 
 from playwright.sync_api import sync_playwright
 
@@ -8,10 +9,13 @@ CATEGORY_URL = "https://www.gdziepolek.pl/kategorie/susz-i-ekstrakt-marihuany-me
 PRODUCT_URL_BASE = "https://www.gdziepolek.pl"
 
 
-def discover_products() -> List[Dict[str, str]]:
+def discover_products(headless: Optional[bool] = None) -> List[Dict[str, str]]:
     """Return a list of products discovered on the category page."""
+    if headless is None:
+        headless_env = os.getenv("HEADLESS", "true")
+        headless = headless_env.lower() == "true"
     with sync_playwright() as p:
-        browser = p.firefox.launch(headless=False)
+        browser = p.firefox.launch(headless=headless)
         context = browser.new_context(ignore_https_errors=True)
         page = context.new_page()
         page.goto(CATEGORY_URL)
