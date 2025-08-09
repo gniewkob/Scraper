@@ -8,7 +8,10 @@ from sqlalchemy import engine_from_config, pool
 config = context.config
 
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    try:
+        fileConfig(config.config_file_name)
+    except Exception:
+        pass
 
 from backend.db import get_engine
 

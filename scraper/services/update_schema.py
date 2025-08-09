@@ -19,30 +19,34 @@ def update_schema():
 			logger.info("🔧 Tworzenie lub aktualizacja tabel...")
 
 			# Główna tabela z cenami
-			c.execute("""
-				CREATE TABLE IF NOT EXISTS pharmacy_prices (
-					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					product_id TEXT NOT NULL,
-					pharmacy_name TEXT NOT NULL,
-					address TEXT,
-					price REAL,
-					unit TEXT,
-					expiration TEXT,
-					fetched_at TEXT,
-					availability TEXT,
-					updated TEXT,
-					map_url TEXT,
-					UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-				);
-			""")
+                        c.execute("""
+                                CREATE TABLE IF NOT EXISTS pharmacy_prices (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        product_id INTEGER NOT NULL,
+                                        pharmacy_name TEXT NOT NULL,
+                                        address TEXT,
+                                        price REAL,
+                                        unit TEXT,
+                                        expiration TEXT,
+                                        fetched_at TEXT,
+                                        availability TEXT,
+                                        updated TEXT,
+                                        map_url TEXT,
+                                        UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+                                );
+                        """)
 
 			# Produkty
-			c.execute("""
-				CREATE TABLE IF NOT EXISTS products (
-					product_id TEXT PRIMARY KEY,
-					name TEXT NOT NULL
-				);
-			""")
+                        c.execute("""
+                                CREATE TABLE IF NOT EXISTS products (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        slug TEXT UNIQUE NOT NULL,
+                                        name TEXT NOT NULL,
+                                        active INTEGER NOT NULL DEFAULT 1,
+                                        first_seen TEXT,
+                                        last_seen TEXT
+                                );
+                        """)
 
                         # Alerty użytkownika (opcjonalnie)
                         c.execute("""
@@ -109,7 +113,7 @@ def update_schema():
 				try:
 					product_id = extract_product_id(url)
 					name = get_product_name(product_id)
-					c.execute("INSERT OR IGNORE INTO products (product_id, name) VALUES (?, ?)", (product_id, name))
+                                        c.execute("INSERT OR IGNORE INTO products (slug, name, active) VALUES (?, ?, 1)", (product_id, name))
 					inserted += c.rowcount
 				except Exception as e:
 					logger.warning(f"⚠️ Błąd przy migracji produktu z URL: {url} → {e}")
