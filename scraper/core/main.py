@@ -37,11 +37,16 @@ def filter_urls_by_product(urls, product_id):
 def scrape_product(driver, url, product_id):
 	logger.info(f"🔍 Scraping: Produkt_{product_id} ({product_id})")
 	logger.info(f"🌐 Ładuję stronę: {url}")
-	driver.get(url)
+        driver.get(url)
 
-	if "#stacjonarne" in url:
-		driver.execute_script("location.href = '#stacjonarne';")
-		time.sleep(1.5)
+        if "#stacjonarne" in url:
+                driver.execute_script("location.href = '#stacjonarne';")
+                time.sleep(1.5)
+
+        # Scroll to the bottom to trigger lazy-loaded content and ensure
+        # all offers are rendered before we start searching for them.
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+        time.sleep(0.5)
 
 	try:
 		WebDriverWait(driver, 15).until(
@@ -64,9 +69,12 @@ def scrape_product(driver, url, product_id):
 	offers = []
 	_, debug_dir = get_output_paths(product_id)
 
-	for i, el in enumerate(pharmacy_elements):
-		try:
-			data = extract_pharmacy_data(el, product_id=product_id)
+        for i, el in enumerate(pharmacy_elements):
+                try:
+                        # Some elements load asynchronously; scrolling them into view
+                        # avoids stale or detached element errors during extraction.
+                        el.location_once_scrolled_into_view()
+                        data = extract_pharmacy_data(el, product_id=product_id)
 			if not data:
 				logger.warning(f"✖ Oferta {i+1}: pominięta — niepoprawne dane.")
 				with open(debug_dir / f"oferta_{i+1}_invalid.html", "w", encoding="utf-8") as f:
