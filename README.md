@@ -1,324 +1,227 @@
-# Pharmacy Price Verification & Dashboard
+# Scraper – pełny przewodnik (dev/prod/CI)
 
-**Kompleksowe rozwiązanie do automatycznego scrapingu, weryfikacji i prezentacji cen leków oraz ofert aptek.**
-
----
-
-## Quick start with Docker Compose
-
-Zarówno lokalnie jak i podczas wdrożenia cały stos uruchomisz poleceniem:
-
-```bash
-docker-compose up --build
-```
-
-Przed uruchomieniem przygotuj plik `.env` w katalogu głównym projektu z wymaganymi zmiennymi środowiskowymi:
-
-```
-DB_URL=postgresql://postgres:postgres@db:5432/pharmacy
-SECRET_KEY=devsecret
-ADMIN_PASSWORD_HASH=replace_with_bcrypt_hash
-CELERY_BROKER_URL=redis://redis:6379/0
-```
-
-Podczas wdrożenia zastąp powyższe wartości odpowiednimi danymi dla swojego środowiska.
-Docker Compose wczyta je automatycznie z pliku `.env`, więc nie musisz modyfikować źródeł.
-
-Uruchomione zostaną cztery usługi:
-
-* **backend** – FastAPI dostępne pod `http://localhost:8000`
-* **scraper** – pracownik Celery oczekujący na zadania scrapingu
-* **db** – baza PostgreSQL do przechowywania wyników
-* **redis** – broker wiadomości wykorzystywany przez Celery
-
-Aby uruchomić kontenery w tle (np. w środowisku produkcyjnym), użyj:
-
-```bash
-docker-compose up -d
-```
-
-Zadania scrapingu trafiają do kolejki Celery, dzięki czemu kontener `scraper`
-można skalować niezależnie od backendu. Przykładową konfigurację Kubernetes
-znajdziesz w pliku [docs/deployment.md](docs/deployment.md).
+> **Cel:** Po jednorazowym przeczytaniu każdy nowy dev/agent potrafi uruchomić lokalny scraper, backend i interfejs z danymi – bez dodatkowych pytań.
 
 ---
 
-## 1. Scraper & Test Automation (lokalnie, Mac/PC)
+## 1. Architektura
 
-**Katalog:** `/home/vetternkraft/scraper_workspace/scraper/`
+```
+Scraper  ──→  Baza danych  ──→  Backend API  ──→  Frontend
+(Selenium/Playwright)    (SQLite/PostgreSQL)   (FastAPI)      (React/HTML)
+```
 
-Modularny framework Selenium do pobierania i walidacji ofert aptecznych, obsługujący dynamiczne strony (renderowane JS).  
-Zawiera automatyczne testy Pytest, logowanie, zrzuty ekranu i raportowanie wyników.
+1. **Scraper** pobiera oferty z portali (domyślnie URL-e z `scraper/core/config/urls.py`), zapisuje je do bazy lokalnej lub zdalnej.
+2. **Baza danych** (domyślnie `data/pharmacy_prices.sqlite`) przechowuje historię cen oraz listę produktów.
+3. **Backend API** (FastAPI) udostępnia REST i szablony HTML, zasilając interfejs.
+4. **Frontend** (React lub „legacy” w `/backend/templates`) renderuje dashboard i wykresy cen.
 
-**Uruchamianie:**
+---
+
+## 2. Konfiguracja środowiska
+
+### Minimalny plik `.env` (w katalogu głównym)
+
+```env
+# DB
+DB_URL=sqlite:///data/pharmacy_prices.sqlite
+# lub postgresql://user:pass@host:port/pharmacy
+
+# Frontend/Backend
+SECRET_KEY=zmień_mnie
+ADMIN_PASSWORD_HASH=<bcrypt_hash_hasła_admina>
+
+# Scraper
+HEADLESS=true         # uruchamiaj przeglądarkę bez GUI
+```
+
+### Pozostałe zmienne (opcjonalne)
+
+| Nazwa             | Opis                                                                                 |
+|-------------------|---------------------------------------------------------------------------------------|
+| `DB_PATH`         | Ścieżka do pliku SQLite (gdy nie podasz `DB_URL`)                                     |
+| `DB_TYPE`         | `sqlite`, `postgresql`, `mysql`, `api`                                                |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | parametry budowania `DB_URL`                   |
+| `API_URL`         | zamiast bazy – wysyłka danych do zewnętrznego API                                     |
+| `SUMMARY_EMAIL`   | adres do wysłania krótkiego podsumowania pracy scrapera                               |
+| `CELERY_BROKER_URL` | broker dla kontenera `scraper` w Dockerze (np. `redis://redis:6379/0`)              |
+
+### Tunel SSH do PostgreSQL (MyDevil)
+
+Jeśli baza PostgreSQL działa na serwerze MyDevil:
+
 ```bash
-cd ~/scraper_workspace/scraper/
+ssh -L 5432:127.0.0.1:5432 user@s0.mydevil.net
+# w innym oknie
+export DB_URL=postgresql://pguser:pgpass@localhost:5432/pharmacy
+```
+
+Tymczasowy tunel przekieruje lokalny port 5432 na serwer.
+
+---
+
+## 3. Uruchomienie lokalne
+
+### 3.1. Wymagania
+
+- Python 3.10+
+- Node.js (tylko przy pracy z front-endem React)
+- Chrome/Chromium z zainstalowanymi bibliotekami systemowymi
+
+### 3.2. Instalacja zależności i Playwright
+
+```bash
 python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pytest
-# or: python -m scraper.cli.scrape_all
+source venv/bin/activate    # Windows: venv\Scripts\activate
+pip install -r requirements.txt -r requirements-ci.txt
+playwright install --with-deps chromium
 ```
 
-**Wyniki działania:**
+### 3.3. Scraper (CLI)
 
-* Szczegółowe logi i raporty (HTML/console)
-* Zrzuty ekranu błędów (error\_screenshots/)
-* Dane w formie JSON oraz finalnie w bazie SQLite (`data/pharmacy_prices.sqlite`)
-* ChromeDriver dostarcza `webdriver-manager`, dlatego binarka nie jest w repozytorium
-* Baza `data/pharmacy_prices.sqlite` jest generowana podczas scrapingu
+```bash
+# zapis do SQLite
+python -m scraper.cli.scrape_all --headless --db-url sqlite:///data/pharmacy_prices.sqlite
+```
 
-**Poziom logowania:**
-Ustaw zmienną środowiskową `SCRAPER_LOG_LEVEL` (np. `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`), aby dostosować szczegółowość logów. Domyślnie `ERROR`.
+Wyniki: `data/pharmacy_prices.sqlite`, logi w `scraper/logs/`, podsumowanie w `scraper/logs/scrape_metrics.log`.
+
+### 3.4. Backend + UI
+
+```bash
+export SECRET_KEY=devsecret
+export ADMIN_PASSWORD_HASH=<bcrypt_hash>
+uvicorn backend.main:app --reload --port 8000
+```
+
+Otwórz `http://localhost:8000` – pojawi się panel z listą ofert, mapą i trendem cenowym.  
+*Jeśli w bazie brak danych, najpierw uruchom scraper.*
 
 ---
 
-## 2. Synchronizacja danych na serwer (rsync)
+## 4. Docker
 
-Po zakończeniu scrapingu/testów, **baza SQLite** jest przesyłana na serwer:
+W pełni zautomatyzowane środowisko (backend, scraper worker, PostgreSQL, Redis):
 
 ```bash
-rsync -av ~/scraper_workspace/scraper/pharmacy_prices.sqlite \
-  vetternkraft@server:/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite
+cp .env.example .env   # uzupełnij wymagane wartości
+docker-compose up --build
+# produkcyjnie:
+# docker-compose up -d
 ```
 
-*Baza ląduje w katalogu `/home/vetternkraft/scraper_workspace/data/`.*
+Serwisy:
 
-Skrypt `scraper/scrape_and_sync.sh` automatyzuje ten proces.
-Zdalne dane możesz zmienić przez zmienne środowiskowe:
-
-* `REMOTE_USER` – nazwa użytkownika (domyślnie `vetternkraft`)
-* `REMOTE_HOST` – adres serwera (domyślnie `s0.mydevil.net`)
-* `REMOTE_PATH` – ścieżka do pliku na serwerze
-  (domyślnie `/home/vetternkraft/scraper_workspace/data/pharmacy_prices.sqlite`)
+| Kontener   | Funkcja                                          |
+|------------|--------------------------------------------------|
+| `backend`  | FastAPI na porcie `8000`                         |
+| `scraper`  | Celery worker pobierający zadania                |
+| `db`       | PostgreSQL                                      |
+| `redis`    | broker wiadomości                                |
 
 ---
 
-## 3. Backend Dashboard & API (na serwerze, MyDevil)
+## 5. CI / GitHub Actions
 
-**Katalog:** `/home/vetternkraft/scraper_workspace/backend/`
-
-Aplikacja FastAPI udostępniająca REST API oraz dashboard (w przyszłości nowoczesny frontend).
-Domyślnie korzysta z bazy SQLite synchronizowanej powyżej, ale dzięki
-SQLAlchemy może łączyć się także z PostgreSQL/MySQL.
-
-### Konfiguracja bazy danych
-
-Połączenie do bazy definiują zmienne środowiskowe (priorytet ma `DB_URL`):
-
-- `DB_URL` – pełny URL bazy. Wskazując np. instancję **AWS RDS** można używać
-  zdalnej bazy zamiast lokalnego SQLite:
-  `postgresql://user:pass@rds.amazonaws.com:5432/pharmacy`.
-- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` – używane do
-  zbudowania `DB_URL`, jeśli nie podano go bezpośrednio.
-- `DB_POOL_SIZE` – rozmiar puli połączeń (domyślnie `5`).
-- `DB_MAX_OVERFLOW` – dodatkowe połączenia poza pulą (domyślnie `10`).
-
-Jeśli `DB_URL` nie jest ustawiony, aplikacja automatycznie korzysta z pliku
-SQLite wskazanego przez `DB_PATH`.
-
-Migracje schematu wykonywane są za pomocą Alembic:
-
-```bash
-alembic -c backend/alembic.ini upgrade head
-```
-
-### Panel administracyjny
-
-Po uruchomieniu backendu dostępny jest prosty panel pod adresem `/admin`. Panel wymaga zalogowania, a formularz logowania znajduje się pod `/admin/login`. Hasz hasła administracyjnego musi znajdować się w zmiennej środowiskowej `ADMIN_PASSWORD_HASH`.
-
-Przykład wygenerowania i ustawienia hasza hasła:
-
-```bash
-python - <<'PY'
-import bcrypt
-print(bcrypt.hashpw(b"moje_super_haslo", bcrypt.gensalt()).decode())
-PY
-export ADMIN_PASSWORD_HASH="wklej_tutaj_wygenerowany_hasz"
-```
-
-Dodatkowo aplikacja wymaga ustawienia klucza sesji w zmiennej `SECRET_KEY`. Obie wartości powinny być ustawione na bezpieczne przed wdrożeniem.
-
-Panel pozwala podejrzeć listę zapisanych alertów cenowych.
-Użytkownik może zapisać się na alert cenowy z poziomu dashboardu,
-wskazując konkretny produkt oraz maksymalną cenę.
-
-Do wysyłki powiadomień służy skrypt `scraper/cli/check_alerts.py`. Uruchomiony
-cyklicznie (np. z crona) sprawdza aktualne ceny i wysyła e-mail lub wiadomość
-WhatsApp, gdy oferta spełni podany próg. Konfiguracja SMTP odbywa się przez
-zmienne środowiskowe `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`
-oraz opcjonalnie `FROM_EMAIL`. Dla WhatsApp używane jest Twilio – podaj
-`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` oraz `TWILIO_WHATSAPP_FROM`.
-
-Przykład użycia:
-
-```bash
-SMTP_HOST=smtp.example.com \
-SMTP_USER=u@example.com \
-SMTP_PASSWORD=sekret \
-python -m scraper.cli.check_alerts
-```
-
-### Aktywacja środowiska Python (virtualenv):
-
-```bash
-alias workon_scraper="source ~/.virtualenvs/scraper/bin/activate"
-workon_scraper
-pip install -r requirements.txt  # m.in. python-multipart do obsługi formularzy
-```
-
-### Uruchomienie backendu:
-
-```bash
-cd ~/scraper_workspace/backend/
-uvicorn main:app --host 127.0.0.1 --port 61973
-```
-
-* Domyślna ścieżka do bazy: `../data/pharmacy_prices.sqlite`
-* Aplikacja nasłuchuje tylko na localhost (reverse proxy polecane do wystawienia na domenę).
+- `deploy.yml` – testy, budowa obrazów Docker i (opcjonalne) wdrożenie na serwer.
+- `scrape-matrix.yml` – testuje scraper (Playwright) dla wielu kombinacji wejściowych.
+- Sekrety wymagane przez `deploy.yml`: `REGISTRY`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_KEY`, `DEPLOY_PATH`.
 
 ---
 
-## 4. Struktura katalogów projektu
+## 6. Dynamiczna lista produktów i kryteria aktywności
 
-```
-/home/vetternkraft/scraper_workspace/
-├── backend/         # FastAPI, API, dashboard
-│   ├── main.py
-│   ├── db.py
-│   └── __init__.py
-├── scraper/         # Selenium scraper, testy, moduły
-│   ├── main.py
-│   └── ...
-├── data/            # Baza SQLite (synchronizowana)
-│   └── pharmacy_prices.sqlite
-├── requirements.txt # Główne wymagania backendu (FastAPI, uvicorn, itp.)
-├── README.md
-└── ...
-```
+1. **Źródło prawdy:** `scraper/core/config/urls.py` zawiera listę URL‑i produktów.
+2. **Podczas scrapingu** `services.db.sync_products()`:
+   - dodaje nowe rekordy do tabeli `products`,
+   - ustawia `active=True` dla wykrytych produktów,
+   - oznacza `active=False` te, których w danym przebiegu nie znaleziono.
+3. **Backend** (`/api/products`) zwraca wyłącznie produkty `active=1`. Dzięki temu UI automatycznie podaje aktualną listę bez edycji kodu.
+4. **Reaktywacja produktu** – wystarczy ponownie dodać URL do listy lub wysłać odpowiedni wpis przez API.
 
 ---
 
-## 5. Dostępne endpointy API
+## 7. Interpretacja `summary.txt`
 
-* `/api/products` – lista dostępnych produktów
-* `/api/product/{nazwa_produktu}` – zwraca oferty, trend cenowy i TOP3;
-  obsługuje parametry `limit`, `offset`, `sort`, `order`, `city`, `lat`, `lon` i
-  `radius`. Gdy jednostka zawiera ilość (np. `10g`) albo cena oferty wynosi co
-  najmniej 100 zł i produkt ma zdefiniowany rozmiar w `PACKAGE_SIZES`, pole
-  `price_per_g` przedstawia cenę za gram. Przy niższych cenach bez jawnej
-  ilości `price_per_g` nie jest dodawane.
-* `/api/alerts` – aktualne najlepsze ceny
-* `/api/alerts_filtered` – unikalne oferty z najnowszych danych
-* `/api/alerts_grouped` – grupowanie alertów (opcjonalny parametr `city`)
-* `/api/alerts/register` – (POST) rejestracja alertu cenowego
-* `/api/alerts/list` – lista zapisanych alertów
-* `/api/cities` – lista wykrytych miast w bazie
-
-Przykład użycia:
+Po każdym uruchomieniu `scrape_all` tworzony jest tekstowy raport:
 
 ```
-GET http://localhost:61973/api/product/Paracetamol?limit=5&city=Warszawa
+Start: 2024-05-15T12:00:00
+End:   2024-05-15T12:05:42
+Runtime: 342.10s
+Offers scraped: 128
 ```
+
+- **Start / End** – znaczniki czasu rozpoczęcia i zakończenia.
+- **Runtime** – czas wykonania w sekundach.
+- **Offers scraped** – liczba unikalnych ofert zapisanych do bazy.
+
+Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisywany do `scraper/logs/scrape_metrics.log`. Możesz wysłać go mailem ustawiając `SUMMARY_EMAIL`.
 
 ---
 
-## 6. FAQ i wskazówki
+## 8. Wyłączenie wykresu / włączenie etykiet
 
-* **Backend działa na porcie 61973** – aby udostępnić publicznie, ustaw reverse proxy w panelu MyDevil lub własnym Apache/nginx.
-* **Aby backend korzystał z najnowszych danych**, synchronizuj bazę po każdym scrapingu (rsync).
-* **Selenium/testy i pobieranie danych uruchamiaj wyłącznie lokalnie** (ze wsparciem X/Chrome).
-* **Wymagania backendu**: FastAPI, Uvicorn, python-multipart (`pip install -r requirements.txt`)
-* **Wszystkie polecenia zakładają katalog główny:**
-  `/home/vetternkraft/scraper_workspace/`
+### Wersja React (`frontend/`)
 
----
+- W `src/App.tsx` wykres znajduje się w akordeonie:
+  ```tsx
+  <PriceTrendChart data={trend} className="price-trend-canvas" />
+  ```
+  - **Wyłączenie**: usuń powyższą linię lub ustaw `chartOpen` na `false`.
+- W `src/components/PriceTrendChart.tsx` można włączyć etykiety/dział legendy:
+  ```ts
+  options: {
+    plugins: {
+      legend: { display: true },          // etykiety serii
+      // tooltip, dataLabels itp. wg potrzeb
+    },
+  }
+  ```
+  Przy potrzeby wyświetlania wartości nad punktami doinstaluj `chartjs-plugin-datalabels`.
 
-## 7. TODO / Plany rozwojowe
+### Wersja legacy (`backend/templates/index_legacy.html`)
 
-* [ ] Nowoczesny frontend (React/Vue/Svelte)
-* [x] Mapy i geolokalizacja (Leaflet.js, promień, marker najbliższej apteki)
-* [ ] Panel administracyjny (edycja produktów/ofert)
-* [x] Alerty cenowe (e-mail; SMS/webhook w planach)
-* [ ] Publiczne API dla zewnętrznych aplikacji
-
----
-
-## 8. Narzędzia developerskie
-
-Katalog `tools/` zawiera skrypty pomocnicze niewykorzystywane w środowisku
-produkcyjnym. Plik `cron_test.py` służy do diagnozowania konfiguracji cron oraz
-sprawdzenia, czy Selenium i Chrome działają poprawnie. Skrypt generuje logi z
-informacjami o systemie oraz wykonuje proste uruchomienie przeglądarki.
-
-## 9. Uruchamianie testów
-
-W katalogu projektu znajdują się testy Pytest dla scraperów i backendu.
-Najważniejsze testy API znajdują się w pliku `tests/test_backend.py`.
-Aby je uruchomić lokalnie, aktywuj środowisko i wykonaj:
-
-```bash
-pip install -r requirements.txt
-python -m pytest
-```
-Można również uruchomić pojedynczy test, np.:
-
-```bash
-python -m pytest tests/test_backend.py
-```
-
-Testy korzystające z Playwright są pomijane lokalnie i uruchamiane
-wyłącznie w CI (`CI=true`). Lokalna instalacja Playwright nie jest wymagana.
-
-## 10. GitHub Actions Deployment
-
-Repozytorium zawiera workflow `deploy.yml`, który uruchamia testy, buduje i publikuje obrazy Docker oraz aktualizuje serwer po wypchnięciu zmian do gałęzi `main`.
-
-Aby wdrożenie działało, w ustawieniach repozytorium dodaj następujące sekrety:
-
-- `REGISTRY` – adres rejestru obrazów (np. `ghcr.io/uzytkownik`),
-- `REGISTRY_USERNAME` i `REGISTRY_PASSWORD` – dane logowania do rejestru,
-- `DEPLOY_HOST` – adres serwera docelowego,
-- `DEPLOY_USER` – użytkownik SSH,
-- `DEPLOY_KEY` – klucz prywatny używany do logowania,
-- `DEPLOY_PATH` – katalog aplikacji na serwerze.
-
-W zależności od środowiska możesz dodać również `DEPLOY_PORT` lub inne zmienne wykorzystywane w skrypcie.
+- Komentarz/usuń `<canvas id="priceTrendChart">` aby ukryć wykres.
+- Etykiety osi i legendę konfiguruje funkcja `renderPriceChart` w `backend/static/dashboard.combined.js`.
 
 ---
 
-**Masz pytania lub chcesz rozwinąć projekt?**
-Odezwij się przez GitHub/e-mail lub zgłoś issue w repozytorium!
+## 9. Checklista wdrożenia na MyDevil
+
+### Backend (FastAPI + reverse proxy)
+
+1. **Katalog na serwerze**: `~/scraper_workspace/backend/`.
+2. Stwórz i aktywuj wirtualne środowisko, zainstaluj `pip install -r requirements.txt`.
+3. Ustaw w `.env` zmienne (`SECRET_KEY`, `ADMIN_PASSWORD_HASH`, `DB_URL` wskazujący na SQLite lub PostgreSQL).
+4. Uruchom `uvicorn` w tle (np. `restart_uvicorn.sh` + cron `@reboot`).
+5. W panelu MyDevil ustaw **reverse proxy** do portu backendu (`http://localhost:8000` → subdomena).
+
+### Scraper (CI lub lokalny cron)
+
+**Opcja CI:**
+
+- GitHub Action uruchamia `python -m scraper.cli.scrape_all`.
+- Po zakończeniu plik bazy (lub eksport JSON) wysyłany na serwer:
+  ```bash
+  rsync -av data/pharmacy_prices.sqlite user@server:/home/user/scraper_workspace/data/
+  ```
+- Klucz SSH dodaj do sekretów repozytorium.
+
+**Opcja lokalna:**
+
+1. Na swoim komputerze `./scraper/scrape_and_sync.sh`.
+2. Skrypt synchronizuje bazę na serwer przez `rsync` lub `scp`.
+3. Jeżeli baza na serwerze to PostgreSQL, przed scraperem otwórz tunel:
+   `ssh -L 5432:127.0.0.1:5432 user@s0.mydevil.net` i ustaw `DB_URL` na lokalny port.
 
 ---
-## 11. Weryfikacja adresów i workflow `scrape-matrix`
 
-### Lokalna weryfikacja linków
+## 10. Oczekiwana weryfikacja (acceptance)
 
-Skrypt `scripts/verify_product_urls.py` porównuje konfigurację produktów z zawartością strony docelowej. Korzysta z Playwright, który jest instalowany wyłącznie w środowisku CI i nie uruchomi się lokalnie na FreeBSD. Jeśli chcesz wykonać skrypt lokalnie, zainstaluj wymagane zależności we własnym zakresie.
+1. **Świeży QA** klonuje repo.
+2. Wykonuje kroki z sekcji 3 (instalacja zależności, `playwright install`, uruchomienie scrapera).
+3. Uruchamia backend (`uvicorn`) i otwiera `http://localhost:8000`.
+4. Widzi w UI listę produktów, tabelę ofert, mapę oraz – jeśli nie wyłączył – wykres trendu.
 
-```bash
-pip install -r requirements.txt
-TARGET_URL=https://twoja-strona.pl python scripts/verify_product_urls.py
-# lub: python scripts/verify_product_urls.py https://twoja-strona.pl
-```
-
-### Konfiguracja Playwright w CI
-
-W środowisku CI dodatkowe pakiety są instalowane z `requirements-ci.txt`, a przeglądarki przez `playwright install --with-deps chromium`. Zmienna środowiskowa `CI=true` powoduje, że testy Playwright zostają uruchomione automatycznie. Lokalnie Playwright nie jest wymagany.
-
-### Ręczne wywołanie workflow `scrape-matrix`
-
-W GitHub Actions dostępny jest workflow `scrape-matrix`, uruchamiający testy z `tests/test_scrape_matrix.py`. Workflow można wyzwolić ręcznie przez interfejs GitHub (Actions → `scrape-matrix` → *Run workflow*) lub poleceniem:
-
-```bash
-gh workflow run scrape-matrix
-```
-
-Workflow korzysta z sekretów:
-
-- `TARGET_URL` – adres strony z ofertami do weryfikacji,
-- `MIN_OFFERS` (opcjonalnie) – minimalna liczba oczekiwanych ofert.
-
-Testy zarówno w workflow, jak i w lokalnym skrypcie są **tylko odczytowe** i nie zapisują żadnych danych w bazie.
-
+Po przejściu powyższych kroków cały system działa lokalnie z realnymi danymi.
