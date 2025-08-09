@@ -240,6 +240,7 @@ def get_product_by_name(
     lat: float = Query(None),
     lon: float = Query(None),
     radius: float = Query(None),
+    min_price: float = Query(None, ge=0),
 ):
     from urllib.parse import unquote
 
@@ -267,9 +268,14 @@ def get_product_by_name(
                ) AS rn
         FROM pharmacy_prices
         WHERE product_id = :pid
+          AND price IS NOT NULL
           AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
     """
     params = {"pid": product_id}
+
+    if min_price is not None:
+        base_query += " AND price >= :min_price"
+        params["min_price"] = min_price
 
     if city:
         base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
@@ -294,6 +300,8 @@ def get_product_by_name(
     for row in rows:
         price = float(row["price"])
         if price < MINIMUM_DISPLAY_PRICE:
+            continue
+        if min_price is not None and price < min_price:
             continue
         # --- Filtr promień od lokalizacji użytkownika ---
         if lat is not None and lon is not None and radius is not None:
@@ -342,6 +350,11 @@ def get_product_by_name(
         if key not in seen_top3_keys and len(top3) < 3:
             top3.append(offer)
             seen_top3_keys.add(key)
+
+    try:
+        trend_data.sort(key=lambda x: datetime.fromisoformat(x["fetched_at"]))
+    except Exception:
+        trend_data.sort(key=lambda x: x["fetched_at"])
 
     return {
         "offers": offers,
