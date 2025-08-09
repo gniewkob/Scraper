@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import random
 import re
 import urllib.parse
 from typing import Callable, List
@@ -12,6 +13,7 @@ from backend.models import Product
 from scraper.products.urls import build_regional_url
 from scraper.services.db import insert_prices, ENGINE
 from scraper.services.price_validator import parse_price_unit
+from scraper.core.constants import USER_AGENTS, DEFAULT_LOCALE, DEFAULT_VIEWPORT
 
 logger = logging.getLogger("gdziepolek")
 
@@ -23,13 +25,19 @@ def _default_fetch(url: str) -> str:
     as ``#stacjonarne`` are fully loaded before the HTML is captured.
     """
     from playwright.sync_api import sync_playwright
-
+    
     with sync_playwright() as p:  # pragma: no cover - network/browser side effect
         browser = p.firefox.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(
+            user_agent=random.choice(USER_AGENTS),
+            locale=DEFAULT_LOCALE,
+            viewport=DEFAULT_VIEWPORT,
+        )
+        page = context.new_page()
         page.goto(url)
         page.wait_for_load_state("networkidle")
         content = page.content()
+        context.close()
         browser.close()
     return content
 

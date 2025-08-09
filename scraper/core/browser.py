@@ -16,6 +16,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 
 from scraper.core.config.config import PROXIES
+from scraper.core.constants import (
+    USER_AGENTS,
+    DEFAULT_LOCALE,
+    DEFAULT_WINDOW_SIZE,
+    DEFAULT_WIDTH,
+    DEFAULT_HEIGHT,
+)
 
 # 🔇 Wyciszenie komunikatów webdriver-managera
 logging.getLogger("WDM").setLevel(logging.CRITICAL)
@@ -29,13 +36,6 @@ FALLBACK_CHROME_DRIVER_VERSIONS = [
     "132.0.5230.25", "122.0.6261.94", "121.0.6167.85",
     "120.0.6099.109", "119.0.6045.105", "118.0.5993.70",
     "117.0.5938.92", "116.0.5845.96", "115.0.5790.102", "114.0.5735.90"
-]
-
-USER_AGENTS = [
-    # Popular desktop user agents for rotation
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:117.0) Gecko/20100101 Firefox/117.0",
 ]
 
 
@@ -105,6 +105,8 @@ def setup_chrome_browser(headless=False, specific_version=None):
     options.add_experimental_option("useAutomationExtension", False)
     options.add_argument("--log-level=3")
     options.add_argument("--silent")
+    options.add_argument(f"--lang={DEFAULT_LOCALE}")
+    options.add_argument(f"--window-size={DEFAULT_WINDOW_SIZE}")
 
     ua = random.choice(USER_AGENTS)
     options.add_argument(f"--user-agent={ua}")
@@ -170,6 +172,9 @@ def setup_firefox_browser(headless=False):
 
     ua = random.choice(USER_AGENTS)
     options.set_preference("general.useragent.override", ua)
+    options.set_preference("intl.accept_languages", DEFAULT_LOCALE)
+    options.add_argument(f"--width={DEFAULT_WIDTH}")
+    options.add_argument(f"--height={DEFAULT_HEIGHT}")
 
     proxy = get_random_proxy()
     if proxy:
