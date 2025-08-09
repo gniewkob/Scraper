@@ -405,8 +405,9 @@ def get_filtered_alerts():
         rows = conn.execute(
             text(
                 """
-                SELECT *
+                SELECT p.*, pr.slug, pr.name
                 FROM pharmacy_prices AS p
+                LEFT JOIN products pr ON p.product_id = pr.id
                 WHERE fetched_at = (
                     SELECT MAX(fetched_at)
                     FROM pharmacy_prices
@@ -432,12 +433,12 @@ def get_filtered_alerts():
         fetched_at = row["fetched_at"]
         unit = row["unit"]
         price_per_g, display_price, short_expiry = compute_price_info(
-            price, unit, row["product_id"], expiration, now
+            price, unit, row["slug"], expiration, now
         )
 
         offer = {
-            "product_id": row["product_id"],
-            "product": row["product_id"],
+            "product_id": row["slug"],
+            "product": row["name"] or row["slug"],
             "pharmacy": row["pharmacy_name"],
             "price": display_price,
             "unit": row["unit"],
@@ -460,18 +461,19 @@ def get_filtered_alerts():
 def get_grouped_alerts(city: str = Query(None)):
     engine = get_db_engine()
     base_query = """
-        SELECT *,
+        SELECT p.*, pr.slug, pr.name,
                ROW_NUMBER() OVER (
-                   PARTITION BY product_id, pharmacy_name, expiration, price
-                   ORDER BY datetime(fetched_at) DESC
+                   PARTITION BY p.product_id, p.pharmacy_name, p.expiration, p.price
+                   ORDER BY datetime(p.fetched_at) DESC
                ) AS rn
-        FROM pharmacy_prices
-        WHERE price IS NOT NULL
-          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+        FROM pharmacy_prices p
+        LEFT JOIN products pr ON p.product_id = pr.id
+        WHERE p.price IS NOT NULL
+          AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
     """
     params = {}
     if city:
-        base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
+        base_query += " AND (p.address LIKE :city1 OR p.address LIKE :city2)"
         params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
@@ -479,6 +481,7 @@ def get_grouped_alerts(city: str = Query(None)):
         rows = conn.execute(text(query), params).mappings().all()
 
     grouped = defaultdict(list)
+    names = {}
     now = datetime.now()
 
     for row in rows:
@@ -489,7 +492,7 @@ def get_grouped_alerts(city: str = Query(None)):
         fetched_at = row["fetched_at"]
         unit = row["unit"]
         price_per_g, display_price, short_expiry = compute_price_info(
-            price, unit, row["product_id"], expiration, now
+            price, unit, row["slug"], expiration, now
         )
 
         address = row["address"] or ""
@@ -511,27 +514,23 @@ def get_grouped_alerts(city: str = Query(None)):
         if price_per_g is not None:
             offer["price_per_g"] = price_per_g
 
-        grouped[row["product_id"]].append(offer)
+        slug = row["slug"] or ""
+        grouped[slug].append(offer)
+        names[slug] = row["name"] or slug
 
     results = []
-    with engine.connect() as conn2:
-        for product_id, offers in grouped.items():
-            if not offers:
-                continue
-            row = conn2.execute(
-                text("SELECT name FROM products WHERE slug = :pid"),
-                {"pid": product_id},
-            ).first()
-            name = row[0] if row else product_id
-            min_price = min(o["price"] for o in offers)
-            results.append(
-                {
-                    "product_id": product_id,
-                    "product": name,
-                    "min_price": min_price,
-                    "offers": sorted(offers, key=lambda x: x["price"]),
-                }
-            )
+    for slug, offers in grouped.items():
+        if not offers:
+            continue
+        min_price = min(o["price"] for o in offers)
+        results.append(
+            {
+                "product_id": slug,
+                "product": names.get(slug, slug),
+                "min_price": min_price,
+                "offers": sorted(offers, key=lambda x: x["price"]),
+            }
+        )
     return results
 
 

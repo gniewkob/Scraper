@@ -9,9 +9,65 @@ import sqlite3
 from cryptography.fernet import Fernet
 
 
-@pytest.fixture(scope="module")
-def client():
-    """Create a TestClient for the FastAPI app."""
+@pytest.fixture()
+def client(tmp_path_factory, monkeypatch):
+    """Create a TestClient for the FastAPI app with a temp database."""
+    db_file = tmp_path_factory.mktemp("data") / "test.sqlite"
+    conn = sqlite3.connect(db_file)
+    conn.execute(
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1,
+            first_seen TEXT,
+            last_seen TEXT
+        )
+        """
+    )
+    conn.execute(
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
+    )
+    conn.execute(
+        "INSERT INTO products (id, slug, name) VALUES (1, 'p0', 'Sample')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Main St, 00-001 SampleCity', 100.0, '10g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
+    )
+    conn.commit()
+    conn.close()
+
+    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
+
     with TestClient(app) as c:
         yield c
 
@@ -81,11 +137,22 @@ def test_alerts_grouped_city_filter(client):
 def alerts_db(tmp_path, monkeypatch):
     db_file = tmp_path / "alerts.sqlite"
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
+    conn.execute(
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1,
+            first_seen TEXT,
+            last_seen TEXT
+        )
+        """
+    )
     conn.execute(
         "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT, token TEXT, confirmed INTEGER DEFAULT 0)"
     )
-    conn.execute("INSERT INTO products (product_id, name) VALUES ('p1', 'Test')")
+    conn.execute("INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'Test')")
     conn.commit()
     conn.close()
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
@@ -149,35 +216,56 @@ def test_price_per_g_returned(client, monkeypatch, tmp_path):
     import sqlite3
 
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO products (product_id, name) VALUES (?, ?)",
-        ("p1", "TestProduct"),
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "p1",
-            "Pharmacy",
-            "Addr",
-            150.0,
-            "10g",
-            None,
-            "2023-01-01T00:00:00",
-            "Y",
-            "2023-01-01",
-            "",
-            0.0,
-            0.0,
-        ),
+        "INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'TestProduct')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Addr', 150.0, '10g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
     )
     conn.commit()
     conn.close()
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/TestProduct')
     assert resp.status_code == 200
@@ -191,36 +279,57 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
     import sqlite3
 
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO products (product_id, name) VALUES (?, ?)",
-        ("p2", "SizeProduct"),
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "p2",
-            "Pharmacy",
-            "Addr",
-            150.0,
-            "g",
-            None,
-            "2023-01-01T00:00:00",
-            "Y",
-            "2023-01-01",
-            "",
-            0.0,
-            0.0,
-        ),
+        "INSERT INTO products (id, slug, name) VALUES (1, 'p2', 'SizeProduct')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Addr', 150.0, 'g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
     )
     conn.commit()
     conn.close()
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
     monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p2": 5}, raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/SizeProduct')
     assert resp.status_code == 200
@@ -234,36 +343,57 @@ def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
     import sqlite3
 
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO products (product_id, name) VALUES (?, ?)",
-        ("p3", "CheapSize"),
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "p3",
-            "Pharmacy",
-            "Addr",
-            50.0,
-            "g",
-            None,
-            "2023-01-01T00:00:00",
-            "Y",
-            "2023-01-01",
-            "",
-            0.0,
-            0.0,
-        ),
+        "INSERT INTO products (id, slug, name) VALUES (1, 'p3', 'CheapSize')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Addr', 50.0, 'g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
     )
     conn.commit()
     conn.close()
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
     monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p3": 5}, raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/CheapSize')
     assert resp.status_code == 200
@@ -277,36 +407,57 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
     import sqlite3
 
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO products (product_id, name) VALUES (?, ?)",
-        ("p4", "NoQtyLow"),
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "p4",
-            "Pharmacy",
-            "Addr",
-            80.0,
-            "g",
-            None,
-            "2023-01-01T00:00:00",
-            "Y",
-            "2023-01-01",
-            "",
-            0.0,
-            0.0,
-        ),
+        "INSERT INTO products (id, slug, name) VALUES (1, 'p4', 'NoQtyLow')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Addr', 80.0, 'g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
     )
     conn.commit()
     conn.close()
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
     monkeypatch.setattr('backend.main.PACKAGE_SIZES', {}, raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/NoQtyLow')
     assert resp.status_code == 200
@@ -320,36 +471,57 @@ def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, 
     import sqlite3
 
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO products (product_id, name) VALUES (?, ?)",
-        ("p5", "CheapTen"),
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "p5",
-            "Pharmacy",
-            "Addr",
-            70.0,
-            "g",
-            None,
-            "2023-01-01T00:00:00",
-            "Y",
-            "2023-01-01",
-            "",
-            0.0,
-            0.0,
-        ),
+        "INSERT INTO products (id, slug, name) VALUES (1, 'p5', 'CheapTen')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Addr', 70.0, 'g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
     )
     conn.commit()
     conn.close()
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
     monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p5": 10}, raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/CheapTen')
     assert resp.status_code == 200
@@ -363,36 +535,57 @@ def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
     import sqlite3
 
     conn = sqlite3.connect(db_file)
-    conn.execute("CREATE TABLE products (product_id TEXT PRIMARY KEY, name TEXT NOT NULL)")
     conn.execute(
-        "CREATE TABLE pharmacy_prices (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, pharmacy_name TEXT NOT NULL, address TEXT, price REAL, unit TEXT, expiration TEXT, fetched_at TEXT, availability TEXT, updated TEXT, map_url TEXT, pharmacy_lat REAL, pharmacy_lon REAL, UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at))"
+        """
+        CREATE TABLE products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO products (product_id, name) VALUES (?, ?)",
-        ("121591", "S-Lab22")
+        """
+        CREATE TABLE pharmacy_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            pharmacy_name TEXT NOT NULL,
+            address TEXT,
+            price REAL,
+            unit TEXT,
+            expiration TEXT,
+            fetched_at TEXT,
+            availability TEXT,
+            updated TEXT,
+            map_url TEXT,
+            pharmacy_lat REAL,
+            pharmacy_lon REAL,
+            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
+        )
+        """
     )
     conn.execute(
-        "INSERT INTO pharmacy_prices (product_id, pharmacy_name, address, price, unit, expiration, fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "121591",
-            "Pharmacy",
-            "Addr",
-            200.0,
-            "g",
-            None,
-            "2023-01-01T00:00:00",
-            "Y",
-            "2023-01-01",
-            "",
-            0.0,
-            0.0,
-        ),
+        "INSERT INTO products (id, slug, name) VALUES (1, '121591', 'S-Lab22')"
+    )
+    conn.execute(
+        """
+        INSERT INTO pharmacy_prices (
+            product_id, pharmacy_name, address, price, unit, expiration,
+            fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
+        ) VALUES (
+            1, 'Pharmacy', 'Addr', 200.0, 'g', NULL,
+            '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
+        )
+        """
     )
     conn.commit()
     conn.close()
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
     monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"121591": 10}, raising=False)
+    from backend import db as backend_db
+    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/S-Lab22')
     assert resp.status_code == 200
