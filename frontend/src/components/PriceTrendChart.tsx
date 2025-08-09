@@ -20,19 +20,23 @@ interface TrendPoint {
 
 interface Props {
   data: TrendPoint[];
+  className?: string;
 }
 
-export default function PriceTrendChart({ data }: Props) {
+export default function PriceTrendChart({ data, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return;
-    const prices = data.map((d) => parseFloat(d.price));
+    const sorted = [...data].sort(
+      (a, b) => new Date(a.fetched_at).getTime() - new Date(b.fetched_at).getTime()
+    );
+    const prices = sorted.map((d) => parseFloat(d.price));
     const chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: data.map((d) => d.fetched_at),
+        labels: sorted.map((d) => d.fetched_at),
         datasets: [
           {
             label: 'Cena',
@@ -51,5 +55,5 @@ export default function PriceTrendChart({ data }: Props) {
     return () => chart.destroy();
   }, [data]);
 
-  return <canvas ref={canvasRef} height={300}></canvas>;
+  return <canvas ref={canvasRef} className={className} style={{ height: 180 }} />;
 }
