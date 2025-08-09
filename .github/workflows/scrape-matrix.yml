@@ -105,18 +105,41 @@ jobs:
       - name: Create summary
         run: |
           python <<'PY'
-import json, glob, os
+import glob
+import json
+import os
+
+# load metrics from all runners
 metrics = []
 for path in glob.glob('metrics/*/metrics_*.json'):
     with open(path) as f:
         data = json.load(f)
     runner = os.path.basename(path)[8:-5]
-    data.setdefault('runner', runner)
+    data['runner'] = runner
     metrics.append(data)
-with open('summary.txt', 'w') as f:
-    json.dump(metrics, f)
-best = max(metrics, key=lambda m: (m.get('products_found', 0), m.get('fields_non_null_pct', 0)))
+
+# determine best runner
+best = max(
+    metrics,
+    key=lambda m: (m.get('products_found', 0), m.get('fields_non_null_pct', 0)),
+)
 print(f"BEST: {best['runner']}")
+
+# build a markdown table
+keys = sorted({k for m in metrics for k in m.keys() if k != 'runner'})
+header = ['runner'] + keys
+lines = [
+    '| ' + ' | '.join(header) + ' |',
+    '| ' + ' | '.join(['---'] * len(header)) + ' |',
+]
+for m in metrics:
+    row = [m['runner']] + [str(m.get(k, '')) for k in keys]
+    lines.append('| ' + ' | '.join(row) + ' |')
+lines.append('')
+lines.append(f"BEST: {best['runner']}")
+
+with open('summary.txt', 'w') as f:
+    f.write('\n'.join(lines))
 PY
 
       - name: Upload summary
