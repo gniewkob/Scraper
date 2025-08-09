@@ -14,6 +14,7 @@ from scraper.products.urls import build_regional_url
 from scraper.services.db import insert_prices, ENGINE
 from scraper.services.price_validator import parse_price_unit
 from scraper.core.constants import USER_AGENTS, DEFAULT_LOCALE, DEFAULT_VIEWPORT
+from scraper.utils.retry import retry_on_timeout
 
 logger = logging.getLogger("gdziepolek")
 
@@ -34,12 +35,18 @@ def _default_fetch(url: str) -> str:
             viewport=DEFAULT_VIEWPORT,
         )
         page = context.new_page()
-        page.goto(url)
-        page.wait_for_response(lambda r: re.search(r"(offers|results)", r.url))
-        page.wait_for_load_state("networkidle")
-        content = page.content()
-        context.close()
-        browser.close()
+
+        def load_page() -> None:
+            page.goto(url)
+            page.wait_for_response(lambda r: re.search(r"(offers|results)", r.url))
+            page.wait_for_load_state("networkidle")
+
+        try:
+            retry_on_timeout(load_page)
+            content = page.content()
+        finally:
+            context.close()
+            browser.close()
     return content
 
 

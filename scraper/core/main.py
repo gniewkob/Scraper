@@ -11,6 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from scraper.utils.retry import retry_on_timeout
 from scraper.core.browser import setup_browser
 from scraper.core.data_extractor import extract_pharmacy_data
 from scraper.core.config.urls import URLS, extract_product_id
@@ -48,13 +49,15 @@ def scrape_product(driver, url, product_id):
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
         time.sleep(0.5)
 
-	try:
-		WebDriverWait(driver, 15).until(
-			EC.presence_of_all_elements_located((By.CSS_SELECTOR, "li.MuiListItem-root"))
-		)
-	except TimeoutException:
-		logger.warning("❌ Timeout – nie znaleziono ofert aptek.")
-		return []
+        try:
+                retry_on_timeout(
+                        lambda: WebDriverWait(driver, 15).until(
+                                EC.presence_of_all_elements_located((By.CSS_SELECTOR, "li.MuiListItem-root"))
+                        )
+                )
+        except TimeoutException:
+                logger.warning("❌ Timeout – nie znaleziono ofert aptek.")
+                return []
 
 	pharmacy_elements = []
 	for selector in PHARMACY_ITEMS_SELECTORS:
