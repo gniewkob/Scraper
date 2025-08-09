@@ -78,7 +78,7 @@ def test_get_products(client):
     products = response.json()
     assert isinstance(products, list)
     assert products, 'Product list should not be empty'
-    assert {'name', 'label'} <= set(products[0].keys())
+    assert {'id', 'name', 'label'} <= set(products[0].keys())
 
 
 def test_get_product_by_name(client):
@@ -150,7 +150,7 @@ def alerts_db(tmp_path, monkeypatch):
         """
     )
     conn.execute(
-        "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT, token TEXT, confirmed INTEGER DEFAULT 0)"
+        "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT, token TEXT, confirmed INTEGER DEFAULT 0)"
     )
     conn.execute("INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'Test')")
     conn.commit()
@@ -221,7 +221,8 @@ def test_price_per_g_returned(client, monkeypatch, tmp_path):
         CREATE TABLE products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1
         )
         """
     )
@@ -284,7 +285,8 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
         CREATE TABLE products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1
         )
         """
     )
@@ -327,7 +329,7 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
     monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p2": 5}, raising=False)
+    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"1": 5}, raising=False)
     from backend import db as backend_db
     backend_db._ENGINE_CACHE.clear()
 
@@ -348,7 +350,8 @@ def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
         CREATE TABLE products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1
         )
         """
     )
@@ -391,7 +394,7 @@ def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
     monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p3": 5}, raising=False)
+    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"1": 5}, raising=False)
     from backend import db as backend_db
     backend_db._ENGINE_CACHE.clear()
 
@@ -412,7 +415,8 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
         CREATE TABLE products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1
         )
         """
     )
@@ -476,7 +480,8 @@ def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, 
         CREATE TABLE products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1
         )
         """
     )
@@ -519,7 +524,7 @@ def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, 
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
     monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"p5": 10}, raising=False)
+    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"1": 10}, raising=False)
     from backend import db as backend_db
     backend_db._ENGINE_CACHE.clear()
 
@@ -540,7 +545,8 @@ def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
         CREATE TABLE products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL
+            name TEXT NOT NULL,
+            active INTEGER DEFAULT 1
         )
         """
     )
@@ -565,7 +571,7 @@ def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
         """
     )
     conn.execute(
-        "INSERT INTO products (id, slug, name) VALUES (1, '121591', 'S-Lab22')"
+        "INSERT INTO products (id, slug, name) VALUES (121591, '121591', 'S-Lab22')"
     )
     conn.execute(
         """
@@ -573,7 +579,7 @@ def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
             product_id, pharmacy_name, address, price, unit, expiration,
             fetched_at, availability, updated, map_url, pharmacy_lat, pharmacy_lon
         ) VALUES (
-            1, 'Pharmacy', 'Addr', 200.0, 'g', NULL,
+            121591, 'Pharmacy', 'Addr', 200.0, 'g', NULL,
             '2023-01-01T00:00:00', 'Y', '2023-01-01', '', 0.0, 0.0
         )
         """
