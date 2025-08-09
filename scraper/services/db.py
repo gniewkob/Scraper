@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Iterable
 
 import requests
@@ -45,7 +45,7 @@ def sync_products(discovered: Iterable[dict]) -> None:
         # Remote API is the source of truth – nothing to do.
         return
 
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     seen_slugs = set()
 
     with Session(ENGINE) as session:
