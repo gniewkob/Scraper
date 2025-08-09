@@ -4,6 +4,8 @@ interface Offer {
   pharmacy?: string;
   address?: string;
   map_url?: string;
+  price_bucket?: string;
+  is_historical_low?: boolean;
 }
 
 interface Props {

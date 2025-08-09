@@ -15,6 +15,8 @@ interface Offer {
   map_url?: string;
   pharmacy_lat?: number;
   pharmacy_lon?: number;
+  price_bucket?: string;
+  is_historical_low?: boolean;
 }
 
 interface TrendPoint {
