@@ -96,7 +96,7 @@ def main() -> None:
 
     # Optional price stats update
     try:  # pragma: no cover - optional dependency
-        from scraper.services.stats import update_price_stats  # type: ignore
+        from scraper.services.db import update_price_stats  # type: ignore
     except Exception:  # pragma: no cover - optional dependency
         update_price_stats = None  # type: ignore
     if update_price_stats:

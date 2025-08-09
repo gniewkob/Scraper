@@ -29,6 +29,7 @@ __all__ = [
     "get_trend_for_product",
     "get_top3_prices",
     "sync_products",
+    "update_price_stats",
 ]
 
 
@@ -261,4 +262,72 @@ def get_top3_prices(product_id: str) -> Iterable[Dict]:
             {"pid": product_id},
         )
         return [dict(row._mapping) for row in result]
+
+
+def update_price_stats() -> Dict[str, Dict[str, float]]:
+    """Aggregate price statistics and persist them."""
+
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    stats: Dict[str, Dict[str, float]] = {}
+
+    with ENGINE.begin() as conn:
+        conn.execute(
+            text(
+                """
+                CREATE TABLE IF NOT EXISTS price_stats (
+                    product_id TEXT PRIMARY KEY,
+                    min_price REAL,
+                    max_price REAL,
+                    avg_price REAL,
+                    updated_at TEXT
+                )
+                """
+            )
+        )
+
+        result = conn.execute(
+            text(
+                """
+                SELECT product_id,
+                       MIN(price) AS min_price,
+                       MAX(price) AS max_price,
+                       AVG(price) AS avg_price
+                FROM pharmacy_prices
+                GROUP BY product_id
+                """
+            )
+        )
+
+        for row in result.mappings():
+            pid = row["product_id"]
+            stats[pid] = {
+                "min_price": row["min_price"],
+                "max_price": row["max_price"],
+                "avg_price": row["avg_price"],
+            }
+            conn.execute(
+                text(
+                    """
+                    INSERT INTO price_stats (
+                        product_id, min_price, max_price, avg_price, updated_at
+                    ) VALUES (
+                        :product_id, :min_price, :max_price, :avg_price, :updated_at
+                    )
+                    ON CONFLICT(product_id) DO UPDATE SET
+                        min_price=excluded.min_price,
+                        max_price=excluded.max_price,
+                        avg_price=excluded.avg_price,
+                        updated_at=excluded.updated_at
+                    """
+                ),
+                {
+                    "product_id": pid,
+                    "min_price": row["min_price"],
+                    "max_price": row["max_price"],
+                    "avg_price": row["avg_price"],
+                    "updated_at": now,
+                },
+            )
+
+    return stats
 
