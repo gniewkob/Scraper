@@ -2,6 +2,8 @@ from typing import List, Dict
 
 from playwright.sync_api import sync_playwright
 
+from .urls import build_regional_url
+
 CATEGORY_URL = "https://www.gdziepolek.pl/kategorie/susz-i-ekstrakt-marihuany-medycznej"
 PRODUCT_URL_BASE = "https://www.gdziepolek.pl"
 
@@ -33,10 +35,13 @@ def discover_products() -> List[Dict[str, str]]:
             if not slug or slug in products:
                 continue
             name = (link.inner_text() or "").strip()
+            base_url = f"{PRODUCT_URL_BASE}/produkty/{slug}"
+            pvid = link.get_attribute("data-pvid") or link.get_attribute("pvid")
             products[slug] = {
                 "name": name,
                 "slug": slug,
-                "base_url": f"{PRODUCT_URL_BASE}/produkty/{slug}",
+                "base_url": base_url,
+                "regional_url": build_regional_url(base_url, pvid=pvid),
             }
 
         browser.close()

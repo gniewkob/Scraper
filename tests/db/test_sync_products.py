@@ -45,8 +45,18 @@ def test_sync_products_activation_and_pharmacy_prices_untouched():
 
     # Initial sync inserts products
     initial = [
-        {"slug": "prod1", "name": "Product 1"},
-        {"slug": "prod2", "name": "Product 2"},
+        {
+            "slug": "prod1",
+            "name": "Product 1",
+            "base_url": "https://example.com/prod1",
+            "regional_url": "https://example.com/prod1/region",
+        },
+        {
+            "slug": "prod2",
+            "name": "Product 2",
+            "base_url": "https://example.com/prod2",
+            "regional_url": "https://example.com/prod2/region",
+        },
     ]
     db_services.sync_products(initial)
 
@@ -77,7 +87,16 @@ def test_sync_products_activation_and_pharmacy_prices_untouched():
         ).mappings().all()
 
     # Sync again with one product removed
-    db_services.sync_products([{ "slug": "prod2", "name": "Product 2" }])
+    db_services.sync_products(
+        [
+            {
+                "slug": "prod2",
+                "name": "Product 2",
+                "base_url": "https://example.com/prod2",
+                "regional_url": "https://example.com/prod2/region",
+            }
+        ]
+    )
 
     with engine.connect() as conn:
         prod1_active = conn.execute(

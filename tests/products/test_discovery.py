@@ -15,3 +15,4 @@ def test_discover_products() -> None:
         assert item["name"]
         assert item["slug"]
         assert item["base_url"] == f"https://www.gdziepolek.pl/produkty/{item['slug']}"
+        assert item["regional_url"].startswith(f"{item['base_url'].rstrip('/')}/apteki/")
