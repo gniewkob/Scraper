@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build scraper image
-        run: docker build -t scraper ./scraper
+        run: docker build -t scraper -f scraper/Dockerfile .
 
       - name: Run scraper
         env:
