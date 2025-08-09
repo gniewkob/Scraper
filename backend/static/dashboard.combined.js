@@ -527,6 +527,7 @@ function renderAllOffersTable(groups) {
 
 // --- MAPA Z LEAFLET ---
 function initMap(lat, lon, showUser = true, zoom = 13) {
+  if (typeof L === 'undefined') return;
   map = L.map('map').setView([lat, lon], zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -540,7 +541,7 @@ function initMap(lat, lon, showUser = true, zoom = 13) {
 }
 
 function updateMap(offers) {
-  if (!map) return;
+  if (typeof L === 'undefined' || !map) return;
   if (offerLayer) offerLayer.clearLayers();
 
   if (userLat && userLon) {

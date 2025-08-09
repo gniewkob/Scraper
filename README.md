@@ -94,7 +94,7 @@ export ADMIN_PASSWORD_HASH=<bcrypt_hash>
 uvicorn backend.main:app --reload --port 8000
 ```
 
-Otwórz `http://localhost:8000` – pojawi się panel z listą ofert, mapą i trendem cenowym.  
+Otwórz `http://localhost:8000` – pojawi się panel z listą ofert i trendem cenowym.
 *Jeśli w bazie brak danych, najpierw uruchom scraper.*
 
 ---
@@ -222,6 +222,6 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 1. **Świeży QA** klonuje repo.
 2. Wykonuje kroki z sekcji 3 (instalacja zależności, `playwright install`, uruchomienie scrapera).
 3. Uruchamia backend (`uvicorn`) i otwiera `http://localhost:8000`.
-4. Widzi w UI listę produktów, tabelę ofert, mapę oraz – jeśli nie wyłączył – wykres trendu.
+4. Widzi w UI listę produktów, tabelę ofert oraz – jeśli nie wyłączył – wykres trendu.
 
 Po przejściu powyższych kroków cały system działa lokalnie z realnymi danymi.
