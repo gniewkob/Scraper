@@ -20,6 +20,7 @@ from scraper.core.config.config import DB_PATH, DB_URL
 from scraper.core.config.urls import PACKAGE_SIZES
 from backend.db import get_engine as build_engine
 from scraper.utils.crypto import encrypt, decrypt
+from scraper.services.price_classifier import PriceClassifier
 
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
@@ -254,6 +255,7 @@ def get_product_by_name(
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
+    classifier = PriceClassifier(DB_PATH)
 
     allowed_sort = {"price", "expiration", "fetched_at"}
     allowed_order = {"asc", "desc"}
@@ -332,6 +334,24 @@ def get_product_by_name(
         }
         if price_per_g is not None:
             offer["price_per_g"] = price_per_g
+        try:
+            classification_data = classifier.classify_price(
+                str(product_id), str(price), unit or ""
+            )
+            bucket_map = {
+                "🔥 super okazja": "super_okazja",
+                "okazja": "okazja",
+                "normalna cena": "normalnie",
+                "drogo": "drogo",
+            }
+            classification = classification_data.get("classification", "")
+            offer["price_bucket"] = bucket_map.get(classification, "unknown")
+            offer["is_historical_low"] = classification_data.get(
+                "is_historical_low", False
+            )
+        except Exception:
+            offer["price_bucket"] = "unknown"
+            offer["is_historical_low"] = False
         offers.append(offer)
 
     # --- budujemy trend i top3 (POZA pętlą for) ---

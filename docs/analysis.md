@@ -51,6 +51,7 @@ The `update_schema.py` script handles database schema migrations, adding new col
   - drogo (expensive): ≥ 40 PLN
 
 These thresholds are specifically calibrated for medical cannabis products in the Polish market, providing users with quick visual indicators of relative value compared to typical market prices.
+Each offer returned by the `/api/product/{name}` endpoint now includes a `price_bucket` field based on this classification and an `is_historical_low` flag when the price matches historical lows.
 
 ### 4. Web Interface (FastAPI Application)
 
