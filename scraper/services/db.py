@@ -7,9 +7,11 @@ from datetime import datetime
 from typing import Dict, Iterable
 
 import requests
-from sqlalchemy import bindparam, text
+from sqlalchemy import select, text, update
+from sqlalchemy.orm import Session
 
 from backend.db import get_engine
+from backend.models import Product
 from scraper.core.config.config import DB_PATH, DB_URL, API_URL
 from scraper.services.price_validator import normalize_unit
 
@@ -46,7 +48,7 @@ def sync_products(discovered: Iterable[dict]) -> None:
     now = datetime.now()
     seen_slugs = set()
 
-    with ENGINE.begin() as conn:
+    with Session(ENGINE) as session:
         for item in discovered:
             slug = item.get("slug")
             name = item.get("name")
@@ -54,31 +56,33 @@ def sync_products(discovered: Iterable[dict]) -> None:
                 continue
             seen_slugs.add(slug)
 
-            result = conn.execute(
-                text(
-                    "UPDATE products SET name=:name, last_seen=:now, active=1 "
-                    "WHERE slug=:slug"
-                ),
-                {"name": name, "now": now, "slug": slug},
-            )
-            if result.rowcount == 0:
-                conn.execute(
-                    text(
-                        "INSERT INTO products (slug, name, active, first_seen, last_seen) "
-                        "VALUES (:slug, :name, 1, :now, :now)"
-                    ),
-                    {"slug": slug, "name": name, "now": now},
+            product = session.execute(
+                select(Product).where(Product.slug == slug)
+            ).scalar_one_or_none()
+            if product:
+                product.name = name
+                product.last_seen = now
+                product.active = True
+            else:
+                session.add(
+                    Product(
+                        slug=slug,
+                        name=name,
+                        active=True,
+                        first_seen=now,
+                        last_seen=now,
+                    )
                 )
 
         if seen_slugs:
-            conn.execute(
-                text("UPDATE products SET active=0 WHERE slug NOT IN :slugs").bindparams(
-                    bindparam("slugs", expanding=True)
-                ),
-                {"slugs": list(seen_slugs)},
+            session.execute(
+                update(Product)
+                .where(Product.slug.notin_(list(seen_slugs)))
+                .values(active=False)
             )
         else:
-            conn.execute(text("UPDATE products SET active=0"))
+            session.execute(update(Product).values(active=False))
+        session.commit()
 
 
 def ensure_product_name(product_id: str, product_name: str) -> None:
@@ -88,15 +92,13 @@ def ensure_product_name(product_id: str, product_name: str) -> None:
         # API handles product creation
         return
 
-    with ENGINE.begin() as conn:
-        try:
-            conn.execute(
-                text("INSERT INTO products (slug, name) VALUES (:id, :name)"),
-                {"id": product_id, "name": product_name},
-            )
-        except Exception:
-            # duplicate or other error – ignore
-            pass
+    with Session(ENGINE) as session:
+        product = session.execute(
+            select(Product).where(Product.slug == product_id)
+        ).scalar_one_or_none()
+        if product is None:
+            session.add(Product(slug=product_id, name=product_name))
+            session.commit()
 
 
 def insert_prices(entry: Dict) -> None:

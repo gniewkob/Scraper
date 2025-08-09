@@ -6,8 +6,11 @@ import os
 import re
 from typing import Dict, Optional
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, select, text
 from sqlalchemy.engine import Engine
+from sqlalchemy.orm import Session
+
+from .models import Product
 
 # Connection pooling settings can be tweaked via environment variables
 POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "5"))
@@ -79,14 +82,14 @@ def get_offers(city: Optional[str] = None, product: Optional[str] = None,
 
 
 def get_products():
-    """Return all products as dictionaries."""
+    """Return all active products as dictionaries."""
 
     engine = get_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text("SELECT id, name FROM products WHERE active = 1")
-        ).mappings().all()
-    return [dict(row) for row in rows]
+    with Session(engine) as session:
+        rows = session.execute(
+            select(Product.id, Product.name).where(Product.active == True)  # noqa: E712
+        ).all()
+    return [{"id": pid, "name": name} for pid, name in rows]
 
 
 def get_cities():
