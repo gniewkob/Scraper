@@ -7,6 +7,26 @@ import pytest
 TARGET_URL = os.getenv("TARGET_URL")
 MIN_OFFERS = int(os.getenv("MIN_OFFERS", 5))
 
+FIELDS = ["product", "pharmacy", "price", "expires_at"]
+
+
+def write_metrics(runner: str, records: list[dict]) -> None:
+    offers_total = len(records)
+    products_found = sum(1 for r in records if all(r.get(f) for f in FIELDS))
+    non_null = sum(bool(r.get(f)) for r in records for f in FIELDS)
+    total_possible = offers_total * len(FIELDS)
+    fields_non_null_pct = (non_null / total_possible * 100) if total_possible else 0.0
+    Path(f"metrics_{runner}.json").write_text(
+        json.dumps(
+            {
+                "offers_total": offers_total,
+                "products_found": products_found,
+                "fields_non_null_pct": fields_non_null_pct,
+            }
+        ),
+        encoding="utf-8",
+    )
+
 
 @pytest.mark.parametrize("target_url,min_offers", [(TARGET_URL, MIN_OFFERS)])
 def test_selenium_headed(target_url: str, min_offers: int) -> None:
@@ -44,6 +64,7 @@ def test_selenium_headed(target_url: str, min_offers: int) -> None:
                 )
             except Exception:
                 continue
+        write_metrics(os.getenv("RUNNER", "selenium_headed"), scraped)
         assert len(scraped) >= min_offers
         for item in scraped:
             assert item["product"]
@@ -91,6 +112,7 @@ def test_playwright_headed(target_url: str, min_offers: int) -> None:
                 )
         browser.close()
 
+    write_metrics(os.getenv("RUNNER", "playwright_headed"), scraped)
     assert len(scraped) >= min_offers
     for item in scraped:
         assert item["product"]
@@ -127,6 +149,7 @@ def test_xhr_capture_then_fetch(target_url: str, min_offers: int) -> None:
     Path("xhr.json").write_text(json.dumps(data), encoding="utf-8")
 
     offers = data if isinstance(data, list) else data.get("offers") or data.get("items") or []
+    write_metrics(os.getenv("RUNNER", "xhr_capture_then_fetch"), offers)
     assert isinstance(offers, list)
     assert len(offers) >= min_offers
     first = offers[0]
