@@ -27,6 +27,7 @@ export default function PriceTrendChart({ data, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (data.length === 0) return;
     const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return;
     const sorted = [...data].sort(
@@ -47,6 +48,7 @@ export default function PriceTrendChart({ data, className }: Props) {
         ],
       },
       options: {
+        responsive: true,
         scales: {
           x: { type: 'time' },
         },
@@ -54,6 +56,9 @@ export default function PriceTrendChart({ data, className }: Props) {
     });
     return () => chart.destroy();
   }, [data]);
+  if (data.length === 0) {
+    return <div className={className}>Brak danych</div>;
+  }
 
   return <canvas ref={canvasRef} className={className} style={{ height: 180 }} />;
 }

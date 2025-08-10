@@ -41,7 +41,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setChartOpen(window.innerWidth > 576);
+    const handleResize = () => setChartOpen(window.innerWidth > 576);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
