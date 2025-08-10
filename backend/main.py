@@ -13,6 +13,9 @@ from math import radians, cos, sin, asin, sqrt
 import secrets
 import logging
 import bcrypt
+from twilio.rest import Client
+
+from scraper.cli.email_utils import send_email
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -181,30 +184,43 @@ logger = logging.getLogger(__name__)
 
 
 def send_confirmation_email(email: str, token: str) -> None:
-    """Send confirmation token via email. Placeholder implementation.
+    """Send confirmation token via e-mail using SMTP settings.
 
-    In the real system this would dispatch an email containing a link the
-    user can follow to confirm the alert.  For now we just log the target
-    address and generated URL so tests can assert the behaviour without
-    sending actual messages.
+    Credentials are read from the environment via ``scraper.cli.email_utils``.
+    If configuration is missing or sending fails, an error is logged but no
+    exception is raised.
     """
-    if email:
-        confirm_url = f"https://example.com/confirm?token={token}"
-        logger.info(
-            "Sending confirmation email to %s with link %s", email, confirm_url
-        )
+    if not email:
+        return
+    confirm_url = f"https://example.com/confirm?token={token}"
+    subject = "Confirm your alert"
+    body = f"Please confirm your alert by visiting {confirm_url}"
+    logger.info("Sending confirmation email to %s with link %s", email, confirm_url)
+    if not send_email(email, subject, body):
+        logger.warning("Failed to send confirmation email to %s", email)
 
 
 def send_confirmation_sms(phone: str, token: str) -> None:
-    """Send confirmation token via SMS. Placeholder implementation.
+    """Send confirmation token via SMS using Twilio API.
 
-    For SMS we keep the message concise and only log the token, but the link
-    could equally be sent here depending on the SMS gateway used.
+    Twilio credentials are taken from environment variables ``TWILIO_ACCOUNT_SID``,
+    ``TWILIO_AUTH_TOKEN`` and ``TWILIO_SMS_FROM``. Missing configuration or
+    sending errors are logged but do not raise exceptions.
     """
-    if phone:
-        logger.info(
-            "Sending confirmation SMS to %s with token %s", phone, token
-        )
+    if not phone:
+        return
+    account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+    auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
+    from_number = os.environ.get("TWILIO_SMS_FROM")
+    if not (account_sid and auth_token and from_number):
+        logger.warning("Twilio credentials not configured; skipping SMS to %s", phone)
+        return
+    try:
+        client = Client(account_sid, auth_token)
+        client.messages.create(body=f"Your confirmation token: {token}", from_=from_number, to=phone)
+        logger.info("Sent confirmation SMS to %s", phone)
+    except Exception as exc:  # pragma: no cover - network failures
+        logger.error("Failed to send confirmation SMS to %s: %s", phone, exc)
 
 
 def login_page(request: Request, error: str | None = None):
