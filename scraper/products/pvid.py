@@ -1,7 +1,11 @@
 from __future__ import annotations
 from typing import Optional
 
-from playwright.sync_api import Page
+try:  # pragma: no cover - optional dependency for type hints
+    from playwright.sync_api import Page
+except Exception:  # pragma: no cover - fallback when playwright is absent
+    class Page:  # type: ignore
+        pass
 
 
 def extract_pvid(page: Page) -> Optional[str]:
