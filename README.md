@@ -45,6 +45,8 @@ HEADLESS=true         # uruchamiaj przeglądarkę bez GUI
 | `API_URL`         | zamiast bazy – wysyłka danych do zewnętrznego API                                     |
 | `SUMMARY_EMAIL`   | adres do wysłania krótkiego podsumowania pracy scrapera                               |
 | `CELERY_BROKER_URL` | broker dla kontenera `scraper` w Dockerze (np. `redis://redis:6379/0`)              |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `FROM_EMAIL` | konfiguracja serwera SMTP dla wysyłki e-maili |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_SMS_FROM` | dane logowania do Twilio do wysyłki SMS        |
 
 ### Tunel SSH do PostgreSQL (MyDevil)
 
