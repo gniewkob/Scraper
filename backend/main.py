@@ -7,7 +7,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 import secrets
@@ -320,12 +320,17 @@ def haversine(lat1, lon1, lat2, lon2):
 def compute_price_info(price, unit, product_id, expiration, now=None):
     """Compute helper values for price information."""
     if now is None:
-        now = datetime.now()
+        now = datetime.now(tz=timezone.utc)
+    elif now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
 
     short_expiry = False
     if expiration:
         try:
-            days_left = (datetime.fromisoformat(expiration) - now).days
+            expiry_dt = datetime.fromisoformat(expiration)
+            if expiry_dt.tzinfo is None:
+                expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
+            days_left = (expiry_dt - now).days
             short_expiry = days_left <= 30
         except Exception:
             pass
@@ -414,7 +419,7 @@ async def get_product_by_name(
     total = result_total.scalar()
 
     offers = []
-    now = datetime.now()
+    now = datetime.now(tz=timezone.utc)
     MINIMUM_DISPLAY_PRICE = 10
 
     for row in rows:
@@ -525,7 +530,7 @@ async def get_price_alerts(session: AsyncSession = Depends(get_db)):
     rows = result.mappings().all()
 
     alerts = []
-    now = datetime.now()
+    now = datetime.now(tz=timezone.utc)
     for row in rows:
         price = float(row["price"])
         expiration = row["expiration"]
@@ -579,7 +584,7 @@ async def get_filtered_alerts(session: AsyncSession = Depends(get_db)):
     rows = result.mappings().all()
 
     alerts = []
-    now = datetime.now()
+    now = datetime.now(tz=timezone.utc)
 
     for row in rows:
         price = float(row["price"])
@@ -640,7 +645,7 @@ async def get_grouped_alerts(
 
     grouped = defaultdict(list)
     names = {}
-    now = datetime.now()
+    now = datetime.now(tz=timezone.utc)
 
     for row in rows:
         price = float(row["price"])
