@@ -15,6 +15,8 @@ import logging
 import bcrypt
 
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from typing import AsyncGenerator
 
 from pydantic_settings import BaseSettings
 from fastapi_csrf_protect import CsrfProtect
@@ -30,11 +32,53 @@ try:
     from scraper.services.price_classifier import PriceClassifier
 except ModuleNotFoundError:  # pragma: no cover - fallback for tests
     class PriceClassifier:  # type: ignore
-        def __init__(self, *args, **kwargs):
-            pass
+        def __init__(self, db_path: str, *args, **kwargs):
+            self.db_path = db_path
 
-        def classify_price(self, *args, **kwargs):
-            return {}
+        def classify_price(self, product_id: str, price: str, unit: str):
+            import sqlite3
+
+            conn = sqlite3.connect(self.db_path)
+            try:
+                cur = conn.execute(
+                    "SELECT product_type FROM product_type_mapping WHERE product_id = ?",
+                    (product_id,),
+                )
+                row = cur.fetchone()
+                product_type = row[0] if row else "default"
+
+                cur = conn.execute(
+                    "SELECT super_deal, deal, normal FROM price_thresholds WHERE product_type = ?",
+                    (product_type,),
+                )
+                thresh = cur.fetchone()
+                classification = ""
+                if thresh:
+                    p = float(price)
+                    super_deal, deal, normal = thresh
+                    if p <= super_deal:
+                        classification = "🔥 super okazja"
+                    elif p <= deal:
+                        classification = "okazja"
+                    elif p <= normal:
+                        classification = "normalna cena"
+                    else:
+                        classification = "drogo"
+
+                cur = conn.execute(
+                    "SELECT min_price FROM price_statistics WHERE product = ?",
+                    (product_id,),
+                )
+                hist = cur.fetchone()
+                is_low = False
+                if hist:
+                    try:
+                        is_low = float(price) <= float(hist[0])
+                    except Exception:
+                        is_low = False
+                return {"classification": classification, "is_historical_low": is_low}
+            finally:
+                conn.close()
 
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
@@ -79,6 +123,13 @@ async def csrf_middleware(request: Request, call_next):
 def get_db_engine():
     """Return shared SQLAlchemy engine respecting overrides for tests."""
     return build_engine(DB_URL, DB_PATH)
+
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    engine = get_db_engine()
+    session_factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with session_factory() as session:
+        yield session
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -173,23 +224,24 @@ def admin_logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-def admin_panel(request: Request):
+async def admin_panel(
+    request: Request, session: AsyncSession = Depends(get_db)
+):
     if not request.session.get("admin"):
         return RedirectResponse("/admin/login")
     require_admin(request)
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text(
-                """
-                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
-                FROM user_alerts ua
-                LEFT JOIN products p ON ua.product_id = p.id
-                WHERE p.active = 1
-                ORDER BY ua.id DESC
-                """
-            )
-        ).mappings().all()
+    result = await session.execute(
+        text(
+            """
+            SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
+            FROM user_alerts ua
+            LEFT JOIN products p ON ua.product_id = p.id
+            WHERE p.active = 1
+            ORDER BY ua.id DESC
+            """
+        )
+    )
+    rows = result.mappings().all()
 
     alerts = []
     for row in rows:
@@ -207,12 +259,11 @@ def admin_panel(request: Request):
 
 
 @app.get("/api/products", response_class=JSONResponse)
-def get_products():
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text("SELECT id, name FROM products WHERE active = 1")
-        ).mappings().all()
+async def get_products(session: AsyncSession = Depends(get_db)):
+    result = await session.execute(
+        text("SELECT id, name FROM products WHERE active = 1")
+    )
+    rows = result.mappings().all()
 
     results = []
     for row in rows:
@@ -276,7 +327,7 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
 
 
 @app.get("/api/product/{product_name}", response_class=JSONResponse)
-def get_product_by_name(
+async def get_product_by_name(
     product_name: str,
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
@@ -287,16 +338,16 @@ def get_product_by_name(
     lon: float = Query(None),
     radius: float = Query(None),
     min_price: float = Query(None, ge=0),
+    session: AsyncSession = Depends(get_db),
 ):
     from urllib.parse import unquote
 
     decoded_name = unquote(product_name)
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        row = conn.execute(
-            text("SELECT id FROM products WHERE name = :name AND active = 1"),
-            {"name": decoded_name},
-        ).mappings().first()
+    result = await session.execute(
+        text("SELECT id FROM products WHERE name = :name AND active = 1"),
+        {"name": decoded_name},
+    )
+    row = result.mappings().first()
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
@@ -334,11 +385,12 @@ def get_product_by_name(
     )
     query_params = {**params, "limit": limit, "offset": offset}
 
-    with engine.connect() as conn:
-        rows = conn.execute(text(query), query_params).mappings().all()
-        total = conn.execute(
-            text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
-        ).scalar()
+    result = await session.execute(text(query), query_params)
+    rows = result.mappings().all()
+    result_total = await session.execute(
+        text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
+    )
+    total = result_total.scalar()
 
     offers = []
     now = datetime.now()
@@ -435,22 +487,21 @@ def get_product_by_name(
 
 # --------- ALERTY I GRUPOWANIE ---------
 @app.get("/api/alerts", response_class=JSONResponse)
-def get_price_alerts():
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text(
-                """
-                SELECT p.*
-                FROM pharmacy_prices p
-                JOIN products pr ON p.product_id = pr.id
-                WHERE pr.active = 1
-                  AND p.price < 35 AND p.price >= 10
-                  AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
-                ORDER BY p.price ASC
-                """
-            )
-        ).mappings().all()
+async def get_price_alerts(session: AsyncSession = Depends(get_db)):
+    result = await session.execute(
+        text(
+            """
+            SELECT p.*
+            FROM pharmacy_prices p
+            JOIN products pr ON p.product_id = pr.id
+            WHERE pr.active = 1
+              AND p.price < 35 AND p.price >= 10
+              AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+            ORDER BY p.price ASC
+            """
+        )
+    )
+    rows = result.mappings().all()
 
     alerts = []
     now = datetime.now()
@@ -483,29 +534,28 @@ def get_price_alerts():
 
 
 @app.get("/api/alerts_filtered", response_class=JSONResponse)
-def get_filtered_alerts():
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text(
-                """
-                SELECT p.*, pr.id as product_id, pr.name
-                FROM pharmacy_prices AS p
-                LEFT JOIN products pr ON p.product_id = pr.id
-                WHERE pr.active = 1
-                  AND fetched_at = (
-                      SELECT MAX(fetched_at)
-                      FROM pharmacy_prices
-                      WHERE
-                          product_id = p.product_id AND
-                          pharmacy_name = p.pharmacy_name AND
-                          price = p.price AND
-                          expiration = p.expiration
-                  )
-                  AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
-                """
-            )
-        ).mappings().all()
+async def get_filtered_alerts(session: AsyncSession = Depends(get_db)):
+    result = await session.execute(
+        text(
+            """
+            SELECT p.*, pr.id as product_id, pr.name
+            FROM pharmacy_prices AS p
+            LEFT JOIN products pr ON p.product_id = pr.id
+            WHERE pr.active = 1
+              AND fetched_at = (
+                  SELECT MAX(fetched_at)
+                  FROM pharmacy_prices
+                  WHERE
+                      product_id = p.product_id AND
+                      pharmacy_name = p.pharmacy_name AND
+                      price = p.price AND
+                      expiration = p.expiration
+              )
+              AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+            """
+        )
+    )
+    rows = result.mappings().all()
 
     alerts = []
     now = datetime.now()
@@ -543,8 +593,9 @@ def get_filtered_alerts():
 
 
 @app.get("/api/alerts_grouped", response_class=JSONResponse)
-def get_grouped_alerts(city: str = Query(None)):
-    engine = get_db_engine()
+async def get_grouped_alerts(
+    city: str = Query(None), session: AsyncSession = Depends(get_db)
+):
     base_query = """
         SELECT p.*, pr.id as product_id, pr.name,
                ROW_NUMBER() OVER (
@@ -563,8 +614,8 @@ def get_grouped_alerts(city: str = Query(None)):
         params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
-    with engine.connect() as conn:
-        rows = conn.execute(text(query), params).mappings().all()
+    result = await session.execute(text(query), params)
+    rows = result.mappings().all()
 
     grouped = defaultdict(list)
     names = {}
@@ -622,7 +673,9 @@ def get_grouped_alerts(city: str = Query(None)):
 
 # --------- ALERTY: rejestracja i lista ---------
 @app.post("/api/alerts/register", response_class=JSONResponse)
-async def register_alert(request: Request):
+async def register_alert(
+    request: Request, session: AsyncSession = Depends(get_db)
+):
     data = await request.json()
     email = data.get("email")
     phone = data.get("phone")
@@ -635,34 +688,33 @@ async def register_alert(request: Request):
         )
 
     token = secrets.token_urlsafe(16)
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        row = conn.execute(
-            text("SELECT id FROM products WHERE name = :name AND active = 1"),
-            {"name": product_name},
-        ).first()
-        if not row:
-            return JSONResponse(
-                {"status": "error", "message": "Nieznany produkt"},
-                status_code=400,
-            )
-        conn.execute(
-            text(
-                """
-                INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
-                VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
-                """
-            ),
-            {
-                "pid": row[0],
-                "threshold": threshold,
-                "email": encrypt(email) if email else None,
-                "phone": encrypt(phone) if phone else None,
-                "created": datetime.now().isoformat(),
-                "token": token,
-            },
+    result = await session.execute(
+        text("SELECT id FROM products WHERE name = :name AND active = 1"),
+        {"name": product_name},
+    )
+    row = result.first()
+    if not row:
+        return JSONResponse(
+            {"status": "error", "message": "Nieznany produkt"},
+            status_code=400,
         )
-        conn.commit()
+    await session.execute(
+        text(
+            """
+            INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
+            VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
+            """
+        ),
+        {
+            "pid": row[0],
+            "threshold": threshold,
+            "email": encrypt(email) if email else None,
+            "phone": encrypt(phone) if phone else None,
+            "created": datetime.now().isoformat(),
+            "token": token,
+        },
+    )
+    await session.commit()
 
     # send confirmation via email or SMS
     if email:
@@ -674,44 +726,46 @@ async def register_alert(request: Request):
 
 
 @app.post("/api/alerts/confirm", response_class=JSONResponse)
-async def confirm_alert(request: Request):
+async def confirm_alert(
+    request: Request, session: AsyncSession = Depends(get_db)
+):
     data = await request.json()
     token = data.get("token")
     if not token:
         return JSONResponse({"status": "error", "message": "Brak tokenu"}, status_code=400)
 
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        row = conn.execute(
-            text("SELECT id FROM user_alerts WHERE token = :token"),
-            {"token": token},
-        ).first()
-        if not row:
-            return JSONResponse({"status": "error", "message": "Nieprawidłowy token"}, status_code=400)
-        conn.execute(
-            text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
-            {"id": row[0]},
+    result = await session.execute(
+        text("SELECT id FROM user_alerts WHERE token = :token"),
+        {"token": token},
+    )
+    row = result.first()
+    if not row:
+        return JSONResponse(
+            {"status": "error", "message": "Nieprawidłowy token"}, status_code=400
         )
-        conn.commit()
+    await session.execute(
+        text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
+        {"id": row[0]},
+    )
+    await session.commit()
 
     return {"status": "ok"}
 
 
 @app.get("/api/alerts/list", response_class=JSONResponse)
-def list_alerts():
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text(
-                """
-                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
-                FROM user_alerts ua
-                LEFT JOIN products p ON ua.product_id = p.id
-                WHERE p.active = 1
-                ORDER BY ua.id DESC
-                """
-            )
-        ).mappings().all()
+async def list_alerts(session: AsyncSession = Depends(get_db)):
+    result = await session.execute(
+        text(
+            """
+            SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
+            FROM user_alerts ua
+            LEFT JOIN products p ON ua.product_id = p.id
+            WHERE p.active = 1
+            ORDER BY ua.id DESC
+            """
+        )
+    )
+    rows = result.mappings().all()
 
     results = []
     for row in rows:
@@ -730,12 +784,13 @@ def list_alerts():
 
 
 @app.get("/api/cities", response_class=JSONResponse)
-def get_cities():
-    engine = get_db_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text("SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL AND address != ''")
-        ).fetchall()
+async def get_cities(session: AsyncSession = Depends(get_db)):
+    result = await session.execute(
+        text(
+            "SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL AND address != ''"
+        )
+    )
+    rows = result.fetchall()
     cities = set()
     for (address,) in rows:
         if ',' in address:

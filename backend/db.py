@@ -6,9 +6,9 @@ import os
 import re
 from typing import Dict, Optional
 
-from sqlalchemy import create_engine, select, text
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session
+from sqlalchemy import select, text
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+
 
 from .models import Product
 
@@ -17,11 +17,11 @@ POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "5"))
 MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "10"))
 
 # cache of engines keyed by URL so modules can share a single instance
-_ENGINE_CACHE: Dict[str, Engine] = {}
+_ENGINE_CACHE: Dict[str, AsyncEngine] = {}
 
 
-def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> Engine:
-    """Return a shared SQLAlchemy :class:`Engine`.
+def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> AsyncEngine:
+    """Return a shared SQLAlchemy :class:`AsyncEngine`.
 
     The URL can be provided directly via ``db_url`` or built from ``db_path``.
     When neither is supplied the values from ``scraper.core.config.config`` are
@@ -36,9 +36,12 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> E
             db_path = db_path or cfg.DB_PATH
             db_url = f"sqlite:///{db_path}"
 
+    if db_url.startswith("sqlite://") and not db_url.startswith("sqlite+aiosqlite://"):
+        db_url = db_url.replace("sqlite://", "sqlite+aiosqlite://", 1)
+
     engine = _ENGINE_CACHE.get(db_url)
     if engine is None:
-        engine = create_engine(
+        engine = create_async_engine(
             db_url,
             pool_pre_ping=True,
             pool_size=POOL_SIZE,
@@ -50,8 +53,12 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> E
     return engine
 
 
-def get_offers(city: Optional[str] = None, product: Optional[str] = None,
-               min_price: Optional[float] = None, max_price: Optional[float] = None):
+async def get_offers(
+    city: Optional[str] = None,
+    product: Optional[str] = None,
+    min_price: Optional[float] = None,
+    max_price: Optional[float] = None,
+) -> list[dict]:
     """Fetch offers from the database with optional filters."""
 
     engine = get_engine()
@@ -76,30 +83,31 @@ def get_offers(city: Optional[str] = None, product: Optional[str] = None,
         query += " AND p.price <= :max_price"
         params["max_price"] = max_price
 
-    with engine.connect() as conn:
-        rows = conn.execute(text(query), params).mappings().all()
+    async with engine.connect() as conn:
+        rows = (await conn.execute(text(query), params)).mappings().all()
     return [dict(row) for row in rows]
 
 
-def get_products():
+async def get_products() -> list[dict[str, str]]:
     """Return all active products as dictionaries."""
 
     engine = get_engine()
-    with Session(engine) as session:
-        rows = session.execute(
-            select(Product.id, Product.name).where(Product.active == True)  # noqa: E712
+    session_factory = async_sessionmaker(engine, expire_on_commit=False)
+    async with session_factory() as session:
+        rows = (
+            await session.execute(
+                select(Product.id, Product.name).where(Product.active == True)  # noqa: E712
+            )
         ).all()
     return [{"id": pid, "name": name} for pid, name in rows]
 
 
-def get_cities():
+async def get_cities() -> list[str]:
     """Extract unique city names from pharmacy addresses."""
 
     engine = get_engine()
-    with engine.connect() as conn:
-        rows = conn.execute(
-            text("SELECT DISTINCT address FROM pharmacy_prices")
-        ).all()
+    async with engine.connect() as conn:
+        rows = (await conn.execute(text("SELECT DISTINCT address FROM pharmacy_prices"))).all()
 
     cities = set()
     city_regex = re.compile(r"\d{2}-\d{3}\s+([\wąćęłńóśźżA-Z]+)", re.IGNORECASE)
