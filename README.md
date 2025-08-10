@@ -100,6 +100,8 @@ uvicorn backend.main:app --reload --port 8000
 Otwórz `http://localhost:8000` – pojawi się panel z listą ofert i trendem cenowym.
 *Jeśli w bazie brak danych, najpierw uruchom scraper.*
 
+**Statyczne zasoby:** Pliki CSS/JS w szablonach (Bootstrap, Chart.js, Leaflet) są pobierane z CDN z atrybutami `integrity` i `crossorigin`. Jeśli wolisz trzymać je lokalnie (np. do pracy offline), umieść je w katalogu `backend/static/` i zaktualizuj odwołania w szablonach.
+
 ---
 
 ## 4. Docker
