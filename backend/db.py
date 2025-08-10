@@ -63,8 +63,10 @@ async def get_offers(
     product: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
+    limit: int = 100,
+    offset: int = 0,
 ) -> list[dict]:
-    """Fetch offers from the database with optional filters."""
+    """Fetch offers from the database with optional filters and pagination."""
 
     engine = get_engine()
     query = (
@@ -87,6 +89,9 @@ async def get_offers(
     if max_price is not None:
         query += " AND p.price <= :max_price"
         params["max_price"] = max_price
+
+    query += " LIMIT :limit OFFSET :offset"
+    params.update({"limit": limit, "offset": offset})
 
     async with engine.connect() as conn:
         rows = (await conn.execute(text(query), params)).mappings().all()
