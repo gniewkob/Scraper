@@ -115,7 +115,8 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 @app.middleware("http")
 async def csrf_middleware(request: Request, call_next):
     if request.url.path == "/admin/login" and request.method == "POST":
-        request._form = await request.form()
+        # store the form data on the request.state instead of the private attribute
+        request.state.form = await request.form()
     response = await call_next(request)
     return response
 
@@ -205,7 +206,11 @@ def admin_login_form(request: Request):
 
 @app.post("/admin/login", response_class=HTMLResponse)
 async def admin_login(request: Request, csrf_protect: CsrfProtect = Depends()):
-    form = request._form
+    # Retrieve form data stored by the middleware; fall back to parsing the
+    # request directly if it was not set to avoid AttributeError.
+    form = getattr(request.state, "form", None)
+    if form is None:
+        form = await request.form()
     try:
         await csrf_protect.validate_csrf(request)
     except Exception:
