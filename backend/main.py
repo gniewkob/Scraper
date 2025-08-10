@@ -16,7 +16,7 @@ import bcrypt
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Optional
 
 from pydantic_settings import BaseSettings
 from fastapi_csrf_protect import CsrfProtect
@@ -79,6 +79,22 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for tests
                 return {"classification": classification, "is_historical_low": is_low}
             finally:
                 conn.close()
+
+
+_price_classifier: Optional[PriceClassifier] = None
+
+
+def get_price_classifier() -> PriceClassifier:
+    """Return a shared PriceClassifier instance.
+
+    Recreates the classifier if the database path has changed to ensure tests
+    can override ``DB_PATH`` and still get a valid instance.
+    """
+
+    global _price_classifier
+    if _price_classifier is None or getattr(_price_classifier, "db_path", None) != DB_PATH:
+        _price_classifier = PriceClassifier(DB_PATH)
+    return _price_classifier
 
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
@@ -343,6 +359,7 @@ async def get_product_by_name(
     lon: float = Query(None),
     radius: float = Query(None),
     min_price: float = Query(None, ge=0),
+    classifier: PriceClassifier = Depends(get_price_classifier),
     session: AsyncSession = Depends(get_db),
 ):
     from urllib.parse import unquote
@@ -356,7 +373,6 @@ async def get_product_by_name(
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
-    classifier = PriceClassifier(DB_PATH)
 
     allowed_sort = {"price", "expiration", "fetched_at"}
     allowed_order = {"asc", "desc"}
