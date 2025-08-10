@@ -41,6 +41,11 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
 
     engine = _ENGINE_CACHE.get(db_url)
     if engine is None:
+        # Dispose any previously cached engine to close old connections
+        for cached_engine in _ENGINE_CACHE.values():
+            cached_engine.dispose()
+        _ENGINE_CACHE.clear()
+
         engine = create_async_engine(
             db_url,
             pool_pre_ping=True,
@@ -48,8 +53,8 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
             max_overflow=MAX_OVERFLOW,
             future=True,
         )
-        _ENGINE_CACHE.clear()
-        _ENGINE_CACHE[db_url] = engine
+
+        _ENGINE_CACHE[db_url] = engine  # cache fresh engine after cleanup
     return engine
 
 
