@@ -13,6 +13,7 @@ def render_app() -> str:
         "const offers=[{price:10,price_bucket:'super_okazja',is_historical_low:true},{price:25,price_bucket:'okazja',is_historical_low:false}];"
         "let idx=0;"
         "React.useState=(init)=>{"
+        " if(idx===0){idx++;return ['test',()=>{}];}"
         " if(idx===2){idx++;return [offers,()=>{}];}"
         " if(idx===3){idx++;return [[],()=>{}];}"
         " if(idx===6){idx++;return [offers.length,()=>{}];}"
