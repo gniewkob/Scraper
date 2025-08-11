@@ -195,7 +195,9 @@ async def get_products():
     engine = get_db_engine()
     async with engine.connect() as conn:
         rows = (
-            await conn.execute(text("SELECT DISTINCT id, name FROM products"))
+            await conn.execute(
+                text("SELECT DISTINCT id, name FROM products WHERE active = 1")
+            )
         ).fetchall()
 
     results = []
