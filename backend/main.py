@@ -19,6 +19,12 @@ from sqlalchemy import text
 from scraper.core.config.config import DB_PATH, DB_URL
 from backend.db import get_engine as build_engine, get_cities as fetch_cities
 from scraper.utils.crypto import decrypt, _get_fernet
+from .config import (
+    EMAIL_MASK_VISIBLE_CHARS,
+    PHONE_MASK_MIN_LENGTH,
+    PHONE_MASK_VISIBLE_PREFIX,
+    PHONE_MASK_VISIBLE_SUFFIX,
+)
 from .routes.utils import compute_price_info
 
 STATIC_DIR = str(Path(__file__).parent / "static")
@@ -101,7 +107,7 @@ def mask_email(email):
     if not email or "@" not in email:
         return email or ""
     local, domain = email.split("@", 1)
-    visible = local[:4]
+    visible = local[:EMAIL_MASK_VISIBLE_CHARS]
     return f"{visible}***@{domain}"
 
 
@@ -109,9 +115,12 @@ def mask_phone(phone):
     """Return a masked version of a phone number for display."""
     if not phone:
         return ""
-    if len(phone) <= 6:
+    if len(phone) <= PHONE_MASK_MIN_LENGTH:
         return phone
-    return f"{phone[:3]}***{phone[-3:]}"
+    return (
+        f"{phone[:PHONE_MASK_VISIBLE_PREFIX]}***"
+        f"{phone[-PHONE_MASK_VISIBLE_SUFFIX:]}"
+    )
 
 
 @app.get("/api/cities")
