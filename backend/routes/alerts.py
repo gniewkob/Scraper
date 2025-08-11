@@ -12,21 +12,11 @@ from sqlalchemy import text
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_engine
 from .utils import compute_price_info
+from backend.main import send_confirmation_email, send_confirmation_sms
 
 router = APIRouter()
 
 logger = logging.getLogger(__name__)
-
-
-def send_confirmation_email(email: str, token: str) -> None:
-    if email:
-        confirm_url = f"https://example.com/confirm?token={token}"
-        logger.info("Sending confirmation email to %s with link %s", email, confirm_url)
-
-
-def send_confirmation_sms(phone: str, token: str) -> None:
-    if phone:
-        logger.info("Sending confirmation SMS to %s with token %s", phone, token)
 
 
 @router.get("/api/alerts", response_class=JSONResponse)
@@ -259,10 +249,17 @@ async def register_alert(request: Request):
         )
         await conn.commit()
 
-    if email:
-        send_confirmation_email(email, token)
-    if phone:
-        send_confirmation_sms(phone, token)
+    email_ok = send_confirmation_email(email, token) if email else True
+    sms_ok = send_confirmation_sms(phone, token) if phone else True
+
+    if not (email_ok and sms_ok):
+        problems = []
+        if email and not email_ok:
+            problems.append("e-maila")
+        if phone and not sms_ok:
+            problems.append("SMS")
+        message = "Nie udało się wysłać " + " oraz ".join(problems)
+        return JSONResponse({"status": "error", "message": message}, status_code=500)
 
     return {"status": "ok"}
 
