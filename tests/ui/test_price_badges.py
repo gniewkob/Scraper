@@ -10,7 +10,7 @@ def render_app() -> str:
         "globalThis.React = React;"
         "import ReactDOMServer from 'react-dom/server';"
         "import App from './src/App.tsx';"
-        "const offers=[{price:10,price_bucket:'super_okazja',is_historical_low:true},{price:25,price_bucket:'okazja',is_historical_low:false}];"
+        "const offers=[{price:10,price_bucket:'super_okazja',is_historical_low:true},{price:25,price_bucket:'okazja',is_historical_low:false},{price:40,price_bucket:'normalna',is_historical_low:false}];"
         "let idx=0;"
         "React.useState=(init)=>{"
         " if(idx===0){idx++;return ['test',()=>{}];}"
@@ -34,4 +34,4 @@ def render_app() -> str:
 def test_price_badges_labels():
     html = render_app()
     labels = re.findall(r'data-testid="price-badge">([^<]+)<', html)
-    assert labels == ['🔥', '💰']
+    assert labels == ['🔥', '💰', '😐']

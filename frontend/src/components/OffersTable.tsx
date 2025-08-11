@@ -16,7 +16,7 @@ export default function OffersTable({ offers }: Props) {
   const bucketIcons: Record<string, string> = {
     super_okazja: '🔥',
     okazja: '💰',
-    normalnie: '😐',
+    normalna: '😐',
     drogo: '💸',
     unknown: '❓',
   };
