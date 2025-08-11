@@ -20,11 +20,16 @@ interface Offer {
   is_historical_low: boolean;
 }
 
+interface TrendPoint {
+  fetched_at: string;
+  price: string;
+}
+
 function App() {
   const [product, setProduct] = useState('');
   const [city, setCity] = useState('');
   const [offers, setOffers] = useState<Offer[]>([]);
-  const [trend, setTrend] = useState<any[]>([]);
+  const [trend, setTrend] = useState<TrendPoint[]>([]);
   const [sort, setSort] = useState('price');
   const [order, setOrder] = useState('asc');
   const [total, setTotal] = useState(0);
