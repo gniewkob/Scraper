@@ -1,4 +1,6 @@
 import os
+import json
+from typing import Optional
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -15,12 +17,14 @@ import bcrypt
 from sqlalchemy import text
 
 from scraper.core.config.config import DB_PATH, DB_URL
-from backend.db import get_engine as build_engine
+from backend.db import get_engine as build_engine, get_cities as fetch_cities
 from scraper.utils.crypto import decrypt, _get_fernet
 from .routes.utils import compute_price_info
 
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
+CITY_COORDS_FILE = Path(__file__).resolve().parent / "data" / "city_coords.json"
+_CITY_COORDS_CACHE: Optional[dict] = None
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 if not SECRET_KEY:
@@ -41,11 +45,10 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-from .routes import alerts, products, cities
+from .routes import alerts, products
 
 app.include_router(products.router)
 app.include_router(alerts.router)
-app.include_router(cities.router)
 
 
 def get_db_engine():
@@ -109,6 +112,33 @@ def mask_phone(phone):
     if len(phone) <= 6:
         return phone
     return f"{phone[:3]}***{phone[-3:]}"
+
+
+@app.get("/api/cities")
+async def get_cities_endpoint():
+    """Return list of unique city names using shared helper."""
+    return await fetch_cities()
+
+
+@app.get("/api/city_coords/{city}")
+def get_city_coords(city: str):
+    """Return latitude/longitude for a given city from cached file."""
+    global _CITY_COORDS_CACHE
+
+    if _CITY_COORDS_CACHE is None:
+        if not CITY_COORDS_FILE.exists():
+            raise HTTPException(status_code=404, detail="Coordinates file missing")
+        try:
+            with open(CITY_COORDS_FILE, "r", encoding="utf-8") as f:
+                _CITY_COORDS_CACHE = json.load(f)
+        except Exception:
+            raise HTTPException(status_code=500, detail="Failed to load coordinates")
+
+    for name, loc in _CITY_COORDS_CACHE.items():
+        if name.lower() == city.lower():
+            return {"lat": loc["lat"], "lon": loc["lon"]}
+
+    raise HTTPException(status_code=404, detail="City not found")
 
 
 
