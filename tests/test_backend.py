@@ -95,6 +95,10 @@ def test_get_product_by_name(client):
         assert 'price_bucket' in first
         assert 'is_historical_low' in first
         assert isinstance(first['is_historical_low'], bool)
+    if data.get('top3'):
+        top_first = data['top3'][0]
+        assert 'price_bucket' in top_first
+        assert 'is_historical_low' in top_first
 
 
 def test_get_product_not_found(client):
