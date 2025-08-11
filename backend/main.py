@@ -261,14 +261,12 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
             pass
 
     price_per_g = None
-    if unit:
-        match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit)
-        if match:
-            grams = float(match.group(1).replace(",", "."))
-            if grams:
-                price_per_g = price / grams
-
-    if price_per_g is None and price >= 100:
+    match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit or "")
+    if match:
+        grams = float(match.group(1).replace(",", "."))
+        if grams:
+            price_per_g = price / grams
+    else:
         pkg = PACKAGE_SIZES.get(str(product_id))
         if pkg:
             price_per_g = price / pkg
