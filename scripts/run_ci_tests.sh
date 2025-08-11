@@ -2,5 +2,10 @@
 set -euo pipefail
 
 playwright install --with-deps firefox
-(cd frontend && npm ci)
+
+# Install frontend dependencies before running tests
+cd frontend
+npm ci
+cd ..
+
 pytest -vv
