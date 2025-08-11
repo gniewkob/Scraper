@@ -42,6 +42,14 @@ function App() {
     document.body.classList.add(localStorage.getItem('theme') || 'dark');
   }, []);
 
+  const toggleTheme = () => {
+    const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.body.classList.remove(current);
+    document.body.classList.add(next);
+    localStorage.setItem('theme', next);
+  };
+
   useEffect(() => {
     if (!product) {
       setOffers([]);
@@ -83,7 +91,7 @@ function App() {
 
   return (
     <div className="container py-4">
-      <div className="text-end"><button id="themeToggle" className="btn btn-outline-light btn-sm">Zmień motyw</button></div>
+      <div className="text-end"><button id="themeToggle" onClick={toggleTheme} className="btn btn-outline-light btn-sm">Zmień motyw</button></div>
       <h1 className="text-center mb-4">🌿 Dashboard cen medycznej marihuany</h1>
       
       {error && (
