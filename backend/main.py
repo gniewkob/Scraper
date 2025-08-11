@@ -12,7 +12,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 import secrets
@@ -227,14 +227,35 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 def compute_price_info(price, unit, product_id, expiration, now=None):
-    """Compute helper values for price information."""
+    """Compute helper values for price information.
+
+    Parameters
+    ----------
+    price : float
+        Price of the product.
+    unit : str
+        Unit information containing weight in grams, e.g. ``"100 g"``.
+    product_id : int
+        Identifier of the product used for package size lookups.
+    expiration : str
+        ISO formatted expiration date. May be timezone-aware or naive.
+    now : datetime | None
+        Current time used for expiry comparison. If naive it is assumed
+        to be in UTC.
+    """
+
     if now is None:
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
+    elif now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
 
     short_expiry = False
     if expiration:
         try:
-            days_left = (datetime.fromisoformat(expiration) - now).days
+            exp_dt = datetime.fromisoformat(expiration)
+            if exp_dt.tzinfo is None:
+                exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+            days_left = (exp_dt - now).days
             short_expiry = days_left <= 30
         except Exception:
             pass
