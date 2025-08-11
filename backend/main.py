@@ -26,6 +26,8 @@ from scraper.core.config.urls import PACKAGE_SIZES
 from backend.db import get_engine as build_engine
 from scraper.utils.crypto import encrypt, decrypt
 
+from .schemas import ProductOffersResponse
+
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
 STATIC_DIR = str(Path(__file__).parent / "static")
@@ -360,7 +362,12 @@ async def get_historical_low(conn, product_id):
         return None
 
 
-@app.get("/api/product/{product_name}", response_class=JSONResponse)
+@app.get(
+    "/api/product/{product_name}",
+    response_class=JSONResponse,
+    response_model=ProductOffersResponse,
+    response_model_exclude_none=True,
+)
 async def get_product_by_name(
     product_name: str,
     limit: int = Query(50, ge=1, le=100),
