@@ -345,7 +345,7 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
     assert offers[0]['price'] == pytest.approx(30.0)
 
 
-def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
+def test_price_per_g_from_small_price(client, monkeypatch, tmp_path):
     db_file = tmp_path / "test.sqlite"
     import sqlite3
 
@@ -406,8 +406,8 @@ def test_price_per_g_not_from_small_price(client, monkeypatch, tmp_path):
     resp = client.get('/api/product/CheapSize')
     assert resp.status_code == 200
     offers = resp.json()['offers']
-    assert 'price_per_g' not in offers[0]
-    assert offers[0]['price'] == pytest.approx(50.0)
+    assert offers[0]['price_per_g'] == pytest.approx(10.0)
+    assert offers[0]['price'] == pytest.approx(10.0)
 
 
 def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch, tmp_path):
@@ -475,7 +475,7 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
     assert offers[0]['price'] == pytest.approx(80.0)
 
 
-def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, tmp_path):
+def test_price_per_g_added_below_100_with_package_size(client, monkeypatch, tmp_path):
     db_file = tmp_path / "test.sqlite"
     import sqlite3
 
@@ -536,8 +536,8 @@ def test_price_per_g_not_added_below_100_with_package_size(client, monkeypatch, 
     resp = client.get('/api/product/CheapTen')
     assert resp.status_code == 200
     offers = resp.json()['offers']
-    assert 'price_per_g' not in offers[0]
-    assert offers[0]['price'] == pytest.approx(70.0)
+    assert offers[0]['price_per_g'] == pytest.approx(7.0)
+    assert offers[0]['price'] == pytest.approx(7.0)
 
 
 def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
