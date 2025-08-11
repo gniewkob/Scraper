@@ -47,7 +47,10 @@ def client(tmp_path_factory, monkeypatch):
         """
     )
     conn.execute(
-        "INSERT INTO products (id, slug, name) VALUES (1, 'p0', 'Sample')"
+        "INSERT INTO products (id, slug, name, active) VALUES (1, 'p0', 'Sample', 1)"
+    )
+    conn.execute(
+        "INSERT INTO products (id, slug, name, active) VALUES (2, 'p_inactive', 'Inactive', 0)"
     )
     conn.execute(
         """
@@ -79,6 +82,9 @@ def test_get_products(client):
     assert isinstance(products, list)
     assert products, 'Product list should not be empty'
     assert {'id', 'name', 'label'} <= set(products[0].keys())
+    names = {p['name'] for p in products}
+    assert 'Sample' in names
+    assert 'Inactive' not in names
 
 
 def test_get_product_by_name(client):
