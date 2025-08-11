@@ -269,12 +269,97 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
                 price_per_g = price / grams
 
     if price_per_g is None and price >= 100:
-        pkg = PACKAGE_SIZES.get(product_id)
+        pkg = PACKAGE_SIZES.get(str(product_id))
         if pkg:
             price_per_g = price / pkg
 
     display_price = price_per_g if price_per_g is not None else price
     return price_per_g, display_price, short_expiry
+
+
+async def get_price_thresholds(conn, product_id):
+    """Fetch price bucket thresholds for a product.
+
+    The function looks up the product's type in the optional
+    ``product_type_mapping`` table and then retrieves the latest
+    thresholds for that type from ``price_thresholds``. If the tables are
+    missing or no thresholds are found, ``None`` is returned.
+    """
+
+    product_type = "default"
+    try:
+        row = await conn.execute(
+            text(
+                "SELECT product_type FROM product_type_mapping WHERE product_id = :pid"
+            ),
+            {"pid": str(product_id)},
+        )
+        mapping = row.mappings().first()
+        if mapping and mapping.get("product_type"):
+            product_type = mapping["product_type"]
+    except Exception:
+        return None
+
+    try:
+        row = await conn.execute(
+            text(
+                """
+                SELECT super_deal, deal, normal
+                FROM price_thresholds
+                WHERE product_type = :ptype
+                ORDER BY datetime(updated_at) DESC
+                LIMIT 1
+                """
+            ),
+            {"ptype": product_type},
+        )
+        return row.mappings().first()
+    except Exception:
+        return None
+
+
+def classify_price_bucket(price, thresholds):
+    """Classify ``price`` into a price bucket using thresholds.
+
+    Returns one of ``super_okazja``, ``okazja``, ``normalna``,
+    ``drogo`` or ``unknown`` when thresholds are missing.
+    """
+
+    if not thresholds:
+        return "unknown"
+
+    try:
+        if price < thresholds["super_deal"]:
+            return "super_okazja"
+        if price < thresholds["deal"]:
+            return "okazja"
+        if price < thresholds["normal"]:
+            return "normalna"
+        return "drogo"
+    except Exception:
+        return "unknown"
+
+
+async def get_historical_low(conn, product_id):
+    """Return historical lowest price for a product if available."""
+
+    try:
+        row = await conn.execute(
+            text(
+                """
+                SELECT min_price
+                FROM price_statistics
+                WHERE product = :pid
+                ORDER BY datetime(calculated_at) DESC
+                LIMIT 1
+                """
+            ),
+            {"pid": str(product_id)},
+        )
+        result = row.mappings().first()
+        return result["min_price"] if result else None
+    except Exception:
+        return None
 
 
 @app.get("/api/product/{product_name}", response_class=JSONResponse)
@@ -330,7 +415,6 @@ async def get_product_by_name(
         "LIMIT :limit OFFSET :offset"
     )
     query_params = {**params, "limit": limit, "offset": offset}
-
     async with engine.connect() as conn:
         rows = (
             await conn.execute(text(query), query_params)
@@ -340,6 +424,8 @@ async def get_product_by_name(
                 text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
             )
         ).scalar()
+        thresholds = await get_price_thresholds(conn, product_id)
+        min_price = await get_historical_low(conn, product_id)
 
     offers = []
     now = datetime.now()
@@ -378,6 +464,10 @@ async def get_product_by_name(
         }
         if price_per_g is not None:
             offer["price_per_g"] = price_per_g
+        offer["price_bucket"] = classify_price_bucket(display_price, thresholds)
+        offer["is_historical_low"] = bool(
+            min_price is not None and abs(display_price - float(min_price)) < 1e-9
+        )
         offers.append(offer)
 
     # --- budujemy trend i top3 (POZA pętlą for) ---
