@@ -126,7 +126,15 @@ def test_get_city_coords(client, monkeypatch, tmp_path):
     data = {"TestCity": {"lat": 1.23, "lon": 4.56}}
     coords_file.write_text(json.dumps(data))
     monkeypatch.setattr('backend.main.CITY_COORDS_FILE', coords_file, raising=False)
+    # reset cache
+    monkeypatch.setattr('backend.main._CITY_COORDS_CACHE', None, raising=False)
 
+    resp = client.get('/api/city_coords/TestCity')
+    assert resp.status_code == 200
+    assert resp.json() == {"lat": 1.23, "lon": 4.56}
+
+    # Modify file to ensure cached data is used
+    coords_file.write_text(json.dumps({"TestCity": {"lat": 9.99, "lon": 8.88}}))
     resp = client.get('/api/city_coords/TestCity')
     assert resp.status_code == 200
     assert resp.json() == {"lat": 1.23, "lon": 4.56}
