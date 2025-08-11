@@ -5,7 +5,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, JSONResponse, Query, Request
+from fastapi import APIRouter, Query, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from scraper.utils.crypto import encrypt, decrypt

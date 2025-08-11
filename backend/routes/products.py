@@ -1,4 +1,5 @@
-from fastapi import APIRouter, JSONResponse, Query
+from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from urllib.parse import unquote
 from datetime import datetime

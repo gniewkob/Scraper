@@ -112,13 +112,23 @@ def test_get_product_not_found(client):
     assert response.status_code == 404
 
 
-def test_get_cities(client):
+def test_get_cities(client, monkeypatch):
+    import asyncio
+    import backend.main as main
+    from backend import db as backend_db
+
+    engine = main.get_db_engine()
+    monkeypatch.setattr(backend_db, 'get_engine', lambda db_url=None, db_path=None: engine)
+
     response = client.get('/api/cities')
     assert response.status_code == 200
     cities = response.json()
     assert isinstance(cities, list)
     assert cities, 'Cities list should not be empty'
     assert isinstance(cities[0], str)
+
+    cities_direct = asyncio.run(backend_db.get_cities())
+    assert cities_direct == cities
 
 
 def test_get_city_coords(client, monkeypatch, tmp_path):
