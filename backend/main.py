@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from typing import Optional
 from dotenv import load_dotenv
 
@@ -26,6 +27,8 @@ from .config import (
     PHONE_MASK_VISIBLE_SUFFIX,
 )
 from .routes.utils import compute_price_info
+from twilio.rest import Client
+from scraper.cli.email_utils import send_email
 
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
@@ -50,6 +53,41 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
+TWILIO_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+TWILIO_FROM = os.environ.get("TWILIO_WHATSAPP_FROM")
+
+logger = logging.getLogger(__name__)
+
+def send_confirmation_email(email: str, token: str) -> bool:
+    if not email:
+        return False
+    confirm_url = f"https://example.com/confirm?token={token}"
+    subject = "Potwierdzenie alertu cenowego"
+    body = f"Kliknij link, aby potwierdzić alert: {confirm_url}"
+    return send_email(email, subject, body)
+
+def send_confirmation_sms(phone: str, token: str) -> bool:
+    if not phone:
+        return False
+    if not (TWILIO_SID and TWILIO_TOKEN and TWILIO_FROM):
+        logger.warning("Twilio configuration missing; skipping SMS to %s", phone)
+        return False
+    confirm_url = f"https://example.com/confirm?token={token}"
+    body = f"Potwierdź alert: {confirm_url}"
+    try:
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+        message = client.messages.create(
+            body=body,
+            from_=f"whatsapp:{TWILIO_FROM}" if not TWILIO_FROM.startswith("whatsapp:") else TWILIO_FROM,
+            to=f"whatsapp:{phone}" if not phone.startswith("whatsapp:") else phone,
+        )
+        logger.info("Sent confirmation WhatsApp to %s: %s", phone, message.sid)
+        return True
+    except Exception as exc:
+        logger.error("Failed to send confirmation WhatsApp to %s: %s", phone, exc)
+        return False
 
 from .routes import alerts, products
 
