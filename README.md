@@ -68,7 +68,7 @@ Tymczasowy tunel przekieruje lokalny port 5432 na serwer.
 
 - Python 3.10+
 - Node.js (tylko przy pracy z front-endem React)
-- Chrome/Chromium z zainstalowanymi bibliotekami systemowymi
+- Firefox z zainstalowanymi bibliotekami systemowymi
 
 ### 3.2. Instalacja zależności i Playwright
 
@@ -76,7 +76,7 @@ Tymczasowy tunel przekieruje lokalny port 5432 na serwer.
 python -m venv venv
 source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt -r requirements-ci.txt
-playwright install --with-deps chromium
+playwright install --with-deps firefox
 ```
 
 ### 3.3. Scraper (CLI)

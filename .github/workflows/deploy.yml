@@ -34,7 +34,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt -r requirements-ci.txt
-          playwright install --with-deps chromium
 
       - name: Run scraper integration tests
         run: bash scripts/run_ci_tests.sh

@@ -39,7 +39,6 @@ jobs:
         if: matrix.variant != 'selenium_xvfb'
         run: |
           pip install -r requirements.txt -r requirements-ci.txt
-          playwright install --with-deps chromium
           playwright install --with-deps firefox
 
       - name: Run Playwright headed tests

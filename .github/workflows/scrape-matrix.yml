@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt -r requirements-ci.txt
-          playwright install --with-deps chromium
+          playwright install --with-deps firefox
 
       - name: Run Playwright tests
         run: pytest tests/test_playwright_headed.py
@@ -78,7 +78,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt -r requirements-ci.txt
-          playwright install --with-deps chromium
+          playwright install --with-deps firefox
 
       - name: Run XHR capture tests
         run: pytest tests/test_xhr_capture.py
