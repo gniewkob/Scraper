@@ -1,103 +1,30 @@
 import os
-from fastapi import FastAPI, Query, Request, HTTPException, Depends
-from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+from fastapi import FastAPI, Query, Request, HTTPException
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 import secrets
 import logging
 import bcrypt
-from twilio.rest import Client
-
-from scraper.cli.email_utils import send_email
 
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from typing import AsyncGenerator, Optional
-
-from pydantic_settings import BaseSettings
-from fastapi_csrf_protect import CsrfProtect
 
 from scraper.core.config.config import DB_PATH, DB_URL
-try:
-    from scraper.core.config.urls import PACKAGE_SIZES
-except ModuleNotFoundError:  # pragma: no cover - fallback for tests
-    PACKAGE_SIZES = {}
+from scraper.core.config.urls import PACKAGE_SIZES
 from backend.db import get_engine as build_engine
 from scraper.utils.crypto import encrypt, decrypt
-try:
-    from scraper.services.price_classifier import PriceClassifier
-except ModuleNotFoundError:  # pragma: no cover - fallback for tests
-    class PriceClassifier:  # type: ignore
-        def __init__(self, db_path: str, *args, **kwargs):
-            self.db_path = db_path
-
-        def classify_price(self, product_id: str, price: str, unit: str):
-            import sqlite3
-
-            conn = sqlite3.connect(self.db_path)
-            try:
-                cur = conn.execute(
-                    "SELECT product_type FROM product_type_mapping WHERE product_id = ?",
-                    (product_id,),
-                )
-                row = cur.fetchone()
-                product_type = row[0] if row else "default"
-
-                cur = conn.execute(
-                    "SELECT super_deal, deal, normal FROM price_thresholds WHERE product_type = ?",
-                    (product_type,),
-                )
-                thresh = cur.fetchone()
-                classification = ""
-                if thresh:
-                    p = float(price)
-                    super_deal, deal, normal = thresh
-                    if p <= super_deal:
-                        classification = "🔥 super okazja"
-                    elif p <= deal:
-                        classification = "okazja"
-                    elif p <= normal:
-                        classification = "normalna cena"
-                    else:
-                        classification = "drogo"
-
-                cur = conn.execute(
-                    "SELECT min_price FROM price_statistics WHERE product = ?",
-                    (product_id,),
-                )
-                hist = cur.fetchone()
-                is_low = False
-                if hist:
-                    try:
-                        is_low = float(price) <= float(hist[0])
-                    except Exception:
-                        is_low = False
-                return {"classification": classification, "is_historical_low": is_low}
-            finally:
-                conn.close()
-
-
-_price_classifier: Optional[PriceClassifier] = None
-
-
-def get_price_classifier() -> PriceClassifier:
-    """Return a shared PriceClassifier instance.
-
-    Recreates the classifier if the database path has changed to ensure tests
-    can override ``DB_PATH`` and still get a valid instance.
-    """
-
-    global _price_classifier
-    if _price_classifier is None or getattr(_price_classifier, "db_path", None) != DB_PATH:
-        _price_classifier = PriceClassifier(DB_PATH)
-    return _price_classifier
 
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
 
@@ -112,32 +39,10 @@ ADMIN_PASSWORD_HASH = os.environ.get("ADMIN_PASSWORD_HASH")
 if not ADMIN_PASSWORD_HASH:
     raise RuntimeError("ADMIN_PASSWORD_HASH environment variable is required")
 
-class CsrfSettings(BaseSettings):
-    secret_key: str = SECRET_KEY
-    token_location: str = "body"
-    token_key: str = "csrf-token"
-
-
-@CsrfProtect.load_config
-def get_csrf_config():
-    return CsrfSettings()
-
-
-csrf = CsrfProtect()
-
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
-
-
-@app.middleware("http")
-async def csrf_middleware(request: Request, call_next):
-    if request.url.path == "/admin/login" and request.method == "POST":
-        # store the form data on the request.state instead of the private attribute
-        request.state.form = await request.form()
-    response = await call_next(request)
-    return response
 
 
 def get_db_engine():
@@ -145,16 +50,31 @@ def get_db_engine():
     return build_engine(DB_URL, DB_PATH)
 
 
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    engine = get_db_engine()
-    session_factory = async_sessionmaker(engine, expire_on_commit=False)
-    async with session_factory() as session:
-        yield session
-
-
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+# Routes to serve Leaflet marker images from root path (for compatibility)
+@app.get("/distmarker-icon-2x.png")
+def get_distmarker_icon_2x():
+    return FileResponse(Path(STATIC_DIR) / "distmarker-icon-2x.png", media_type="image/png")
+
+@app.get("/distmarker-shadow.png") 
+def get_distmarker_shadow():
+    return FileResponse(Path(STATIC_DIR) / "distmarker-shadow.png", media_type="image/png")
+
+@app.get("/marker-icon.png")
+def get_marker_icon():
+    return FileResponse(Path(STATIC_DIR) / "marker-icon.png", media_type="image/png")
+
+@app.get("/marker-icon-2x.png")
+def get_marker_icon_2x():
+    return FileResponse(Path(STATIC_DIR) / "marker-icon-2x.png", media_type="image/png")
+
+@app.get("/marker-shadow.png")
+def get_marker_shadow():
+    return FileResponse(Path(STATIC_DIR) / "marker-shadow.png", media_type="image/png")
 
 
 def require_admin(request: Request):
@@ -184,74 +104,47 @@ logger = logging.getLogger(__name__)
 
 
 def send_confirmation_email(email: str, token: str) -> None:
-    """Send confirmation token via e-mail using SMTP settings.
+    """Send confirmation token via email. Placeholder implementation.
 
-    Credentials are read from the environment via ``scraper.cli.email_utils``.
-    If configuration is missing or sending fails, an error is logged but no
-    exception is raised.
+    In the real system this would dispatch an email containing a link the
+    user can follow to confirm the alert.  For now we just log the target
+    address and generated URL so tests can assert the behaviour without
+    sending actual messages.
     """
-    if not email:
-        return
-    confirm_url = f"https://example.com/confirm?token={token}"
-    subject = "Confirm your alert"
-    body = f"Please confirm your alert by visiting {confirm_url}"
-    logger.info("Sending confirmation email to %s with link %s", email, confirm_url)
-    if not send_email(email, subject, body):
-        logger.warning("Failed to send confirmation email to %s", email)
+    if email:
+        confirm_url = f"https://example.com/confirm?token={token}"
+        logger.info(
+            "Sending confirmation email to %s with link %s", email, confirm_url
+        )
 
 
 def send_confirmation_sms(phone: str, token: str) -> None:
-    """Send confirmation token via SMS using Twilio API.
+    """Send confirmation token via SMS. Placeholder implementation.
 
-    Twilio credentials are taken from environment variables ``TWILIO_ACCOUNT_SID``,
-    ``TWILIO_AUTH_TOKEN`` and ``TWILIO_SMS_FROM``. Missing configuration or
-    sending errors are logged but do not raise exceptions.
+    For SMS we keep the message concise and only log the token, but the link
+    could equally be sent here depending on the SMS gateway used.
     """
-    if not phone:
-        return
-    account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-    auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
-    from_number = os.environ.get("TWILIO_SMS_FROM")
-    if not (account_sid and auth_token and from_number):
-        logger.warning("Twilio credentials not configured; skipping SMS to %s", phone)
-        return
-    try:
-        client = Client(account_sid, auth_token)
-        client.messages.create(body=f"Your confirmation token: {token}", from_=from_number, to=phone)
-        logger.info("Sent confirmation SMS to %s", phone)
-    except Exception as exc:  # pragma: no cover - network failures
-        logger.error("Failed to send confirmation SMS to %s: %s", phone, exc)
-
-
-def login_page(request: Request, error: str | None = None):
-    token, signed = csrf.generate_csrf_tokens()
-    context = {"request": request, "error": error, "csrf_token": token}
-    response = templates.TemplateResponse("admin_login.html", context)
-    csrf.set_csrf_cookie(signed, response)
-    return response
+    if phone:
+        logger.info(
+            "Sending confirmation SMS to %s with token %s", phone, token
+        )
 
 
 @app.get("/admin/login", response_class=HTMLResponse)
 def admin_login_form(request: Request):
-    return login_page(request)
+    return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
 
 
 @app.post("/admin/login", response_class=HTMLResponse)
-async def admin_login(request: Request, csrf_protect: CsrfProtect = Depends()):
-    # Retrieve form data stored by the middleware; fall back to parsing the
-    # request directly if it was not set to avoid AttributeError.
-    form = getattr(request.state, "form", None)
-    if form is None:
-        form = await request.form()
-    try:
-        await csrf_protect.validate_csrf(request)
-    except Exception:
-        return login_page(request, error="Nieprawidłowy token CSRF")
+async def admin_login(request: Request):
+    form = await request.form()
     password = form.get("password", "")
     if bcrypt.checkpw(password.encode(), ADMIN_PASSWORD_HASH.encode()):
         request.session["admin"] = True
         return RedirectResponse("/admin", status_code=302)
-    return login_page(request, error="Błędne hasło")
+    return templates.TemplateResponse(
+        "admin_login.html", {"request": request, "error": "Błędne hasło"}
+    )
 
 
 @app.get("/admin/logout")
@@ -261,24 +154,22 @@ def admin_logout(request: Request):
 
 
 @app.get("/admin", response_class=HTMLResponse)
-async def admin_panel(
-    request: Request, session: AsyncSession = Depends(get_db)
-):
+def admin_panel(request: Request):
     if not request.session.get("admin"):
         return RedirectResponse("/admin/login")
     require_admin(request)
-    result = await session.execute(
-        text(
-            """
-            SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
-            FROM user_alerts ua
-            LEFT JOIN products p ON ua.product_id = p.id
-            WHERE p.active = 1
-            ORDER BY ua.id DESC
-            """
-        )
-    )
-    rows = result.mappings().all()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
+                FROM user_alerts ua
+                LEFT JOIN products p ON ua.product_id = p.product_id
+                ORDER BY ua.id DESC
+                """
+            )
+        ).mappings().all()
 
     alerts = []
     for row in rows:
@@ -296,16 +187,14 @@ async def admin_panel(
 
 
 @app.get("/api/products", response_class=JSONResponse)
-async def get_products(session: AsyncSession = Depends(get_db)):
-    result = await session.execute(
-        text("SELECT id, name FROM products WHERE active = 1")
-    )
-    rows = result.mappings().all()
+def get_products():
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(text("SELECT DISTINCT name FROM products")).fetchall()
 
     results = []
     for row in rows:
-        pid = row["id"]
-        name = row["name"]
+        name = row[0]
         label = (
             name
             .replace("Cannabis", "")
@@ -315,7 +204,7 @@ async def get_products(session: AsyncSession = Depends(get_db)):
             .strip()
             .title()
         )
-        results.append({"id": pid, "name": name, "label": label})
+        results.append({"name": name, "label": label})
     return results
 
 
@@ -336,17 +225,12 @@ def haversine(lat1, lon1, lat2, lon2):
 def compute_price_info(price, unit, product_id, expiration, now=None):
     """Compute helper values for price information."""
     if now is None:
-        now = datetime.now(tz=timezone.utc)
-    elif now.tzinfo is None:
-        now = now.replace(tzinfo=timezone.utc)
+        now = datetime.now()
 
     short_expiry = False
     if expiration:
         try:
-            expiry_dt = datetime.fromisoformat(expiration)
-            if expiry_dt.tzinfo is None:
-                expiry_dt = expiry_dt.replace(tzinfo=timezone.utc)
-            days_left = (expiry_dt - now).days
+            days_left = (datetime.fromisoformat(expiration) - now).days
             short_expiry = days_left <= 30
         except Exception:
             pass
@@ -360,7 +244,7 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
                 price_per_g = price / grams
 
     if price_per_g is None and price >= 100:
-        pkg = PACKAGE_SIZES.get(str(product_id))
+        pkg = PACKAGE_SIZES.get(product_id)
         if pkg:
             price_per_g = price / pkg
 
@@ -369,7 +253,7 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
 
 
 @app.get("/api/product/{product_name}", response_class=JSONResponse)
-async def get_product_by_name(
+def get_product_by_name(
     product_name: str,
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
@@ -379,21 +263,19 @@ async def get_product_by_name(
     lat: float = Query(None),
     lon: float = Query(None),
     radius: float = Query(None),
-    min_price: float = Query(None, ge=0),
-    classifier: PriceClassifier = Depends(get_price_classifier),
-    session: AsyncSession = Depends(get_db),
 ):
     from urllib.parse import unquote
 
     decoded_name = unquote(product_name)
-    result = await session.execute(
-        text("SELECT id FROM products WHERE name = :name AND active = 1"),
-        {"name": decoded_name},
-    )
-    row = result.mappings().first()
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        row = conn.execute(
+            text("SELECT product_id FROM products WHERE name = :name"),
+            {"name": decoded_name},
+        ).mappings().first()
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
-    product_id = row["id"]
+    product_id = row["product_id"]
 
     allowed_sort = {"price", "expiration", "fetched_at"}
     allowed_order = {"asc", "desc"}
@@ -408,14 +290,9 @@ async def get_product_by_name(
                ) AS rn
         FROM pharmacy_prices
         WHERE product_id = :pid
-          AND price IS NOT NULL
           AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
     """
     params = {"pid": product_id}
-
-    if min_price is not None:
-        base_query += " AND price >= :min_price"
-        params["min_price"] = min_price
 
     if city:
         base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
@@ -427,22 +304,19 @@ async def get_product_by_name(
     )
     query_params = {**params, "limit": limit, "offset": offset}
 
-    result = await session.execute(text(query), query_params)
-    rows = result.mappings().all()
-    result_total = await session.execute(
-        text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
-    )
-    total = result_total.scalar()
+    with engine.connect() as conn:
+        rows = conn.execute(text(query), query_params).mappings().all()
+        total = conn.execute(
+            text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
+        ).scalar()
 
     offers = []
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now()
     MINIMUM_DISPLAY_PRICE = 10
 
     for row in rows:
         price = float(row["price"])
         if price < MINIMUM_DISPLAY_PRICE:
-            continue
-        if min_price is not None and price < min_price:
             continue
         # --- Filtr promień od lokalizacji użytkownika ---
         if lat is not None and lon is not None and radius is not None:
@@ -473,24 +347,6 @@ async def get_product_by_name(
         }
         if price_per_g is not None:
             offer["price_per_g"] = price_per_g
-        try:
-            classification_data = classifier.classify_price(
-                str(product_id), str(price), unit or ""
-            )
-            bucket_map = {
-                "🔥 super okazja": "super_okazja",
-                "okazja": "okazja",
-                "normalna cena": "normalnie",
-                "drogo": "drogo",
-            }
-            classification = classification_data.get("classification", "")
-            offer["price_bucket"] = bucket_map.get(classification, "unknown")
-            offer["is_historical_low"] = classification_data.get(
-                "is_historical_low", False
-            )
-        except Exception:
-            offer["price_bucket"] = "unknown"
-            offer["is_historical_low"] = False
         offers.append(offer)
 
     # --- budujemy trend i top3 (POZA pętlą for) ---
@@ -510,11 +366,6 @@ async def get_product_by_name(
             top3.append(offer)
             seen_top3_keys.add(key)
 
-    try:
-        trend_data.sort(key=lambda x: datetime.fromisoformat(x["fetched_at"]))
-    except Exception:
-        trend_data.sort(key=lambda x: x["fetched_at"])
-
     return {
         "offers": offers,
         "total": total,
@@ -529,24 +380,22 @@ async def get_product_by_name(
 
 # --------- ALERTY I GRUPOWANIE ---------
 @app.get("/api/alerts", response_class=JSONResponse)
-async def get_price_alerts(session: AsyncSession = Depends(get_db)):
-    result = await session.execute(
-        text(
-            """
-            SELECT p.*
-            FROM pharmacy_prices p
-            JOIN products pr ON p.product_id = pr.id
-            WHERE pr.active = 1
-              AND p.price < 35 AND p.price >= 10
-              AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
-            ORDER BY p.price ASC
-            """
-        )
-    )
-    rows = result.mappings().all()
+def get_price_alerts():
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT * FROM pharmacy_prices
+                WHERE price < 35 AND price >= 10
+                  AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+                ORDER BY price ASC
+                """
+            )
+        ).mappings().all()
 
     alerts = []
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now()
     for row in rows:
         price = float(row["price"])
         expiration = row["expiration"]
@@ -576,31 +425,30 @@ async def get_price_alerts(session: AsyncSession = Depends(get_db)):
 
 
 @app.get("/api/alerts_filtered", response_class=JSONResponse)
-async def get_filtered_alerts(session: AsyncSession = Depends(get_db)):
-    result = await session.execute(
-        text(
-            """
-            SELECT p.*, pr.id as product_id, pr.name
-            FROM pharmacy_prices AS p
-            LEFT JOIN products pr ON p.product_id = pr.id
-            WHERE pr.active = 1
-              AND fetched_at = (
-                  SELECT MAX(fetched_at)
-                  FROM pharmacy_prices
-                  WHERE
-                      product_id = p.product_id AND
-                      pharmacy_name = p.pharmacy_name AND
-                      price = p.price AND
-                      expiration = p.expiration
-              )
-              AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
-            """
-        )
-    )
-    rows = result.mappings().all()
+def get_filtered_alerts():
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT *
+                FROM pharmacy_prices AS p
+                WHERE fetched_at = (
+                    SELECT MAX(fetched_at)
+                    FROM pharmacy_prices
+                    WHERE
+                        product_id = p.product_id AND
+                        pharmacy_name = p.pharmacy_name AND
+                        price = p.price AND
+                        expiration = p.expiration
+                )
+                  AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+                """
+            )
+        ).mappings().all()
 
     alerts = []
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now()
 
     for row in rows:
         price = float(row["price"])
@@ -615,7 +463,7 @@ async def get_filtered_alerts(session: AsyncSession = Depends(get_db)):
 
         offer = {
             "product_id": row["product_id"],
-            "product": row["name"] or row["product_id"],
+            "product": row["product_id"],
             "pharmacy": row["pharmacy_name"],
             "price": display_price,
             "unit": row["unit"],
@@ -635,33 +483,29 @@ async def get_filtered_alerts(session: AsyncSession = Depends(get_db)):
 
 
 @app.get("/api/alerts_grouped", response_class=JSONResponse)
-async def get_grouped_alerts(
-    city: str = Query(None), session: AsyncSession = Depends(get_db)
-):
+def get_grouped_alerts(city: str = Query(None)):
+    engine = get_db_engine()
     base_query = """
-        SELECT p.*, pr.id as product_id, pr.name,
+        SELECT *,
                ROW_NUMBER() OVER (
-                   PARTITION BY p.product_id, p.pharmacy_name, p.expiration, p.price
-                   ORDER BY datetime(p.fetched_at) DESC
+                   PARTITION BY product_id, pharmacy_name, expiration, price
+                   ORDER BY datetime(fetched_at) DESC
                ) AS rn
-        FROM pharmacy_prices p
-        LEFT JOIN products pr ON p.product_id = pr.id
-        WHERE p.price IS NOT NULL
-          AND pr.active = 1
-          AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+        FROM pharmacy_prices
+        WHERE price IS NOT NULL
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
     """
     params = {}
     if city:
-        base_query += " AND (p.address LIKE :city1 OR p.address LIKE :city2)"
+        base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
         params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
-    result = await session.execute(text(query), params)
-    rows = result.mappings().all()
+    with engine.connect() as conn:
+        rows = conn.execute(text(query), params).mappings().all()
 
     grouped = defaultdict(list)
-    names = {}
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now()
 
     for row in rows:
         price = float(row["price"])
@@ -693,31 +537,33 @@ async def get_grouped_alerts(
         if price_per_g is not None:
             offer["price_per_g"] = price_per_g
 
-        pid = row["product_id"]
-        grouped[pid].append(offer)
-        names[pid] = row["name"] or pid
+        grouped[row["product_id"]].append(offer)
 
     results = []
-    for pid, offers in grouped.items():
-        if not offers:
-            continue
-        min_price = min(o["price"] for o in offers)
-        results.append(
-            {
-                "product_id": pid,
-                "product": names.get(pid, pid),
-                "min_price": min_price,
-                "offers": sorted(offers, key=lambda x: x["price"]),
-            }
-        )
+    with engine.connect() as conn2:
+        for product_id, offers in grouped.items():
+            if not offers:
+                continue
+            row = conn2.execute(
+                text("SELECT name FROM products WHERE product_id = :pid"),
+                {"pid": product_id},
+            ).first()
+            name = row[0] if row else product_id
+            min_price = min(o["price"] for o in offers)
+            results.append(
+                {
+                    "product_id": product_id,
+                    "product": name,
+                    "min_price": min_price,
+                    "offers": sorted(offers, key=lambda x: x["price"]),
+                }
+            )
     return results
 
 
 # --------- ALERTY: rejestracja i lista ---------
 @app.post("/api/alerts/register", response_class=JSONResponse)
-async def register_alert(
-    request: Request, session: AsyncSession = Depends(get_db)
-):
+async def register_alert(request: Request):
     data = await request.json()
     email = data.get("email")
     phone = data.get("phone")
@@ -730,33 +576,34 @@ async def register_alert(
         )
 
     token = secrets.token_urlsafe(16)
-    result = await session.execute(
-        text("SELECT id FROM products WHERE name = :name AND active = 1"),
-        {"name": product_name},
-    )
-    row = result.first()
-    if not row:
-        return JSONResponse(
-            {"status": "error", "message": "Nieznany produkt"},
-            status_code=400,
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        row = conn.execute(
+            text("SELECT product_id FROM products WHERE name = :name"),
+            {"name": product_name},
+        ).first()
+        if not row:
+            return JSONResponse(
+                {"status": "error", "message": "Nieznany produkt"},
+                status_code=400,
+            )
+        conn.execute(
+            text(
+                """
+                INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
+                VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
+                """
+            ),
+            {
+                "pid": row[0],
+                "threshold": threshold,
+                "email": encrypt(email) if email else None,
+                "phone": encrypt(phone) if phone else None,
+                "created": datetime.now().isoformat(),
+                "token": token,
+            },
         )
-    await session.execute(
-        text(
-            """
-            INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
-            VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
-            """
-        ),
-        {
-            "pid": row[0],
-            "threshold": threshold,
-            "email": encrypt(email) if email else None,
-            "phone": encrypt(phone) if phone else None,
-            "created": datetime.now().isoformat(),
-            "token": token,
-        },
-    )
-    await session.commit()
+        conn.commit()
 
     # send confirmation via email or SMS
     if email:
@@ -768,46 +615,43 @@ async def register_alert(
 
 
 @app.post("/api/alerts/confirm", response_class=JSONResponse)
-async def confirm_alert(
-    request: Request, session: AsyncSession = Depends(get_db)
-):
+async def confirm_alert(request: Request):
     data = await request.json()
     token = data.get("token")
     if not token:
         return JSONResponse({"status": "error", "message": "Brak tokenu"}, status_code=400)
 
-    result = await session.execute(
-        text("SELECT id FROM user_alerts WHERE token = :token"),
-        {"token": token},
-    )
-    row = result.first()
-    if not row:
-        return JSONResponse(
-            {"status": "error", "message": "Nieprawidłowy token"}, status_code=400
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        row = conn.execute(
+            text("SELECT id FROM user_alerts WHERE token = :token"),
+            {"token": token},
+        ).first()
+        if not row:
+            return JSONResponse({"status": "error", "message": "Nieprawidłowy token"}, status_code=400)
+        conn.execute(
+            text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
+            {"id": row[0]},
         )
-    await session.execute(
-        text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
-        {"id": row[0]},
-    )
-    await session.commit()
+        conn.commit()
 
     return {"status": "ok"}
 
 
 @app.get("/api/alerts/list", response_class=JSONResponse)
-async def list_alerts(session: AsyncSession = Depends(get_db)):
-    result = await session.execute(
-        text(
-            """
-            SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
-            FROM user_alerts ua
-            LEFT JOIN products p ON ua.product_id = p.id
-            WHERE p.active = 1
-            ORDER BY ua.id DESC
-            """
-        )
-    )
-    rows = result.mappings().all()
+def list_alerts():
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                """
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
+                FROM user_alerts ua
+                LEFT JOIN products p ON ua.product_id = p.product_id
+                ORDER BY ua.id DESC
+                """
+            )
+        ).mappings().all()
 
     results = []
     for row in rows:
@@ -826,13 +670,12 @@ async def list_alerts(session: AsyncSession = Depends(get_db)):
 
 
 @app.get("/api/cities", response_class=JSONResponse)
-async def get_cities(session: AsyncSession = Depends(get_db)):
-    result = await session.execute(
-        text(
-            "SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL AND address != ''"
-        )
-    )
-    rows = result.fetchall()
+def get_cities():
+    engine = get_db_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL AND address != ''")
+        ).fetchall()
     cities = set()
     for (address,) in rows:
         if ',' in address:
@@ -859,3 +702,16 @@ def get_city_coords(city: str):
             return {"lat": loc["lat"], "lon": loc["lon"]}
 
     raise HTTPException(status_code=404, detail="City not found")
+
+# Routes for /images/ path (used by compiled React component)
+@app.get("/images/marker-icon.png")
+def get_images_marker_icon():
+    return FileResponse(Path(STATIC_DIR) / "images" / "marker-icon.png", media_type="image/png")
+
+@app.get("/images/marker-icon-2x.png")
+def get_images_marker_icon_2x():
+    return FileResponse(Path(STATIC_DIR) / "images" / "marker-icon-2x.png", media_type="image/png")
+
+@app.get("/images/marker-shadow.png")
+def get_images_marker_shadow():
+    return FileResponse(Path(STATIC_DIR) / "images" / "marker-shadow.png", media_type="image/png")

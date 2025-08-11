@@ -5,6 +5,7 @@ import SortControls from './components/SortControls';
 import OffersTable from './components/OffersTable';
 import Pagination from './components/Pagination';
 import PriceTrendChart from './components/PriceTrendChart';
+import MapView from './components/MapView';
 import './index.css';
 
 interface Offer {
@@ -15,40 +16,37 @@ interface Offer {
   map_url?: string;
   pharmacy_lat?: number;
   pharmacy_lon?: number;
-  price_bucket: string;
-  is_historical_low: boolean;
-}
-
-interface TrendPoint {
-  fetched_at: string;
-  price: string;
 }
 
 function App() {
   const [product, setProduct] = useState('');
   const [city, setCity] = useState('');
   const [offers, setOffers] = useState<Offer[]>([]);
-  const [trend, setTrend] = useState<TrendPoint[]>([]);
+  const [trend, setTrend] = useState<any[]>([]);
   const [sort, setSort] = useState('price');
   const [order, setOrder] = useState('asc');
   const [total, setTotal] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const limit = 50;
-  const [chartOpen, setChartOpen] = useState(true);
 
   useEffect(() => {
     document.body.classList.add(localStorage.getItem('theme') || 'dark');
   }, []);
 
   useEffect(() => {
-    const handleResize = () => setChartOpen(window.innerWidth > 576);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (!product) return;
+    if (!product) {
+      setOffers([]);
+      setTrend([]);
+      setTotal(0);
+      setError(null);
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    
     const params = new URLSearchParams({
       limit: String(limit),
       offset: String(offset),
@@ -56,31 +54,37 @@ function App() {
       order,
     });
     if (city) params.append('city', city);
+    
     fetch(`/api/product/${encodeURIComponent(product)}?${params}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status} - ${r.statusText}`);
+        return r.json();
+      })
       .then((data) => {
-        const fetchedOffers: Offer[] = ((data.offers as Offer[]) || []).map((o) => ({
-          price: o.price,
-          price_per_g: o.price_per_g,
-          pharmacy: o.pharmacy,
-          address: o.address,
-          map_url: o.map_url,
-          pharmacy_lat: o.pharmacy_lat,
-          pharmacy_lon: o.pharmacy_lon,
-          price_bucket: o.price_bucket,
-          is_historical_low: o.is_historical_low,
-        }));
-        setOffers(fetchedOffers);
+        setOffers(data.offers || []);
         setTrend(data.trend || []);
         setTotal(data.total || 0);
       })
-      .catch((e) => console.error('product error', e));
+      .catch((e) => {
+        console.error('product error', e);
+        setError(`Błąd podczas ładowania danych: ${e.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [product, city, sort, order, offset]);
 
   return (
     <div className="container py-4">
       <div className="text-end"><button id="themeToggle" className="btn btn-outline-light btn-sm">Zmień motyw</button></div>
       <h1 className="text-center mb-4">🌿 Dashboard cen medycznej marihuany</h1>
+      
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+      
       <div className="row mb-3">
         <div className="col-md-6 mb-2 mb-md-0">
           <label className="form-label">Wybierz produkt:</label>
@@ -103,47 +107,65 @@ function App() {
           />
         </div>
       </div>
-      <SortControls
-        sort={sort}
-        order={order}
-        onSortChange={(s) => {
-          setSort(s);
-          setOffset(0);
-        }}
-        onOrderChange={(o) => {
-          setOrder(o);
-          setOffset(0);
-        }}
-      />
-      <div className="card p-3 mb-4">
-        <h2 className="card-title">💎 Najtańsze oferty</h2>
-        <OffersTable offers={offers} />
-        <Pagination total={total} limit={limit} offset={offset} onChange={setOffset} />
-        <div id="countInfo" className="mb-2 text-muted">
-          Wyświetlasz {offset + 1}–{Math.min(offset + limit, total)} z {total} ofert
-        </div>
-      </div>
-      <div className="accordion mb-4" id="trendAccordion">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="headingTrend">
-            <button
-              className={`accordion-button ${chartOpen ? '' : 'collapsed'}`}
-              type="button"
-              onClick={() => setChartOpen(!chartOpen)}
-            >
-              📈 Trend cen wg daty
-            </button>
-          </h2>
-          <div className={`accordion-collapse collapse ${chartOpen ? 'show' : ''}`}
-            aria-labelledby="headingTrend"
-            data-bs-parent="#trendAccordion"
-          >
-            <div className="accordion-body">
-              <PriceTrendChart data={trend} className="price-trend-canvas" />
+      
+      {product && (
+        <>
+          <SortControls
+            sort={sort}
+            order={order}
+            onSortChange={(s) => {
+              setSort(s);
+              setOffset(0);
+            }}
+            onOrderChange={(o) => {
+              setOrder(o);
+              setOffset(0);
+            }}
+          />
+          
+          {loading && (
+            <div className="text-center my-4">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Ładowanie...</span>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+          )}
+          
+          {!loading && offers.length > 0 && (
+            <>
+              <div className="card p-3 mb-4">
+                <h2 className="card-title">🗺️ Najbliższa apteka</h2>
+                <MapView
+                  offers={offers}
+                  center={
+                    offers.length && offers[0].pharmacy_lat && offers[0].pharmacy_lon
+                      ? [offers[0].pharmacy_lat, offers[0].pharmacy_lon]
+                      : undefined
+                  }
+                />
+              </div>
+              <div className="card p-3 mb-4">
+                <h2 className="card-title">💎 Najtańsze oferty</h2>
+                <OffersTable offers={offers} />
+                <Pagination total={total} limit={limit} offset={offset} onChange={setOffset} />
+                <div id="countInfo" className="mb-2 text-muted">
+                  Wyświetlasz {offset + 1}–{Math.min(offset + limit, total)} z {total} ofert
+                </div>
+              </div>
+              <div className="card p-3 mb-4">
+                <h2 className="card-title">📈 Trend cen wg daty</h2>
+                <PriceTrendChart data={trend} />
+              </div>
+            </>
+          )}
+          
+          {!loading && offers.length === 0 && !error && (
+            <div className="alert alert-info">
+              Brak ofert dla wybranego produktu{city ? ` w mieście ${city}` : ''}.
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
