@@ -29,6 +29,7 @@ from scraper.utils.crypto import encrypt, decrypt, _get_fernet
 from .schemas import ProductOffersResponse
 
 CITY_COORDS_FILE = Path(__file__).parent / "data" / "city_coords.json"
+_CITY_COORDS_CACHE = None  # Loaded city coordinates cache
 
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
@@ -869,15 +870,19 @@ async def get_cities():
 
 @app.get("/api/city_coords/{city}", response_class=JSONResponse)
 def get_city_coords(city: str):
-    if not CITY_COORDS_FILE.exists():
-        raise HTTPException(status_code=404, detail="Coordinates file missing")
-    try:
-        with open(CITY_COORDS_FILE, "r", encoding="utf-8") as f:
-            coords = json.load(f)
-    except Exception:
-        raise HTTPException(status_code=500, detail="Failed to load coordinates")
+    """Return coordinates for a city loaded from a cached JSON file."""
+    global _CITY_COORDS_CACHE
 
-    for name, loc in coords.items():
+    if _CITY_COORDS_CACHE is None:
+        if not CITY_COORDS_FILE.exists():
+            raise HTTPException(status_code=404, detail="Coordinates file missing")
+        try:
+            with open(CITY_COORDS_FILE, "r", encoding="utf-8") as f:
+                _CITY_COORDS_CACHE = json.load(f)
+        except Exception:
+            raise HTTPException(status_code=500, detail="Failed to load coordinates")
+
+    for name, loc in _CITY_COORDS_CACHE.items():
         if name.lower() == city.lower():
             return {"lat": loc["lat"], "lon": loc["lon"]}
 
