@@ -493,6 +493,7 @@ async def get_product_by_name(
         if key not in seen_top3_keys and len(top3) < 3:
             top3.append(offer)
             seen_top3_keys.add(key)
+    trend_data.sort(key=lambda t: t["fetched_at"])
 
     return {
         "offers": offers,
