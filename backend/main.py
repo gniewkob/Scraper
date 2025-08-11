@@ -24,7 +24,7 @@ from sqlalchemy import text
 from scraper.core.config.config import DB_PATH, DB_URL
 from scraper.core.config.urls import PACKAGE_SIZES
 from backend.db import get_engine as build_engine
-from scraper.utils.crypto import encrypt, decrypt
+from scraper.utils.crypto import encrypt, decrypt, _get_fernet
 
 from .schemas import ProductOffersResponse
 
@@ -40,6 +40,12 @@ if not SECRET_KEY:
 ADMIN_PASSWORD_HASH = os.environ.get("ADMIN_PASSWORD_HASH")
 if not ADMIN_PASSWORD_HASH:
     raise RuntimeError("ADMIN_PASSWORD_HASH environment variable is required")
+
+# Ensure encryption key is available at startup
+try:
+    _get_fernet()
+except RuntimeError as exc:
+    raise RuntimeError("ALERTS_FERNET_KEY environment variable is required") from exc
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
@@ -60,19 +66,27 @@ def index(request: Request):
 # Routes to serve Leaflet marker images from root path (for compatibility)
 @app.get("/distmarker-icon-2x.png")
 def get_distmarker_icon_2x():
-    return FileResponse(Path(STATIC_DIR) / "distmarker-icon-2x.png", media_type="image/png")
+    return FileResponse(
+        Path(STATIC_DIR) / "distmarker-icon-2x.png", media_type="image/png"
+    )
 
-@app.get("/distmarker-shadow.png") 
+
+@app.get("/distmarker-shadow.png")
 def get_distmarker_shadow():
-    return FileResponse(Path(STATIC_DIR) / "distmarker-shadow.png", media_type="image/png")
+    return FileResponse(
+        Path(STATIC_DIR) / "distmarker-shadow.png", media_type="image/png"
+    )
+
 
 @app.get("/marker-icon.png")
 def get_marker_icon():
     return FileResponse(Path(STATIC_DIR) / "marker-icon.png", media_type="image/png")
 
+
 @app.get("/marker-icon-2x.png")
 def get_marker_icon_2x():
     return FileResponse(Path(STATIC_DIR) / "marker-icon-2x.png", media_type="image/png")
+
 
 @app.get("/marker-shadow.png")
 def get_marker_shadow():
@@ -115,9 +129,7 @@ def send_confirmation_email(email: str, token: str) -> None:
     """
     if email:
         confirm_url = f"https://example.com/confirm?token={token}"
-        logger.info(
-            "Sending confirmation email to %s with link %s", email, confirm_url
-        )
+        logger.info("Sending confirmation email to %s with link %s", email, confirm_url)
 
 
 def send_confirmation_sms(phone: str, token: str) -> None:
@@ -127,14 +139,14 @@ def send_confirmation_sms(phone: str, token: str) -> None:
     could equally be sent here depending on the SMS gateway used.
     """
     if phone:
-        logger.info(
-            "Sending confirmation SMS to %s with token %s", phone, token
-        )
+        logger.info("Sending confirmation SMS to %s with token %s", phone, token)
 
 
 @app.get("/admin/login", response_class=HTMLResponse)
 def admin_login_form(request: Request):
-    return templates.TemplateResponse("admin_login.html", {"request": request, "error": None})
+    return templates.TemplateResponse(
+        "admin_login.html", {"request": request, "error": None}
+    )
 
 
 @app.post("/admin/login", response_class=HTMLResponse)
@@ -163,17 +175,21 @@ async def admin_panel(request: Request):
     engine = get_db_engine()
     async with engine.connect() as conn:
         rows = (
-            await conn.execute(
-                text(
-                    """
+            (
+                await conn.execute(
+                    text(
+                        """
                     SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                     FROM user_alerts ua
                     LEFT JOIN products p ON ua.product_id = p.id
                     ORDER BY ua.id DESC
                     """
+                    )
                 )
             )
-        ).mappings().all()
+            .mappings()
+            .all()
+        )
 
     alerts = []
     for row in rows:
@@ -187,7 +203,9 @@ async def admin_panel(request: Request):
             }
         )
 
-    return templates.TemplateResponse("admin.html", {"request": request, "alerts": alerts})
+    return templates.TemplateResponse(
+        "admin.html", {"request": request, "alerts": alerts}
+    )
 
 
 @app.get("/api/products", response_class=JSONResponse)
@@ -204,8 +222,7 @@ async def get_products():
     for row in rows:
         pid, name = row
         label = (
-            name
-            .replace("Cannabis", "")
+            name.replace("Cannabis", "")
             .replace("Flos", "")
             .replace("Marihuana Lecznicza Medyczna", "")
             .replace("Medyczna", "")
@@ -387,11 +404,15 @@ async def get_product_by_name(
     engine = get_db_engine()
     async with engine.connect() as conn:
         row = (
-            await conn.execute(
-                text("SELECT id FROM products WHERE name = :name"),
-                {"name": decoded_name},
+            (
+                await conn.execute(
+                    text("SELECT id FROM products WHERE name = :name"),
+                    {"name": decoded_name},
+                )
             )
-        ).mappings().first()
+            .mappings()
+            .first()
+        )
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
@@ -423,9 +444,7 @@ async def get_product_by_name(
     )
     query_params = {**params, "limit": limit, "offset": offset}
     async with engine.connect() as conn:
-        rows = (
-            await conn.execute(text(query), query_params)
-        ).mappings().all()
+        rows = (await conn.execute(text(query), query_params)).mappings().all()
         total = (
             await conn.execute(
                 text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
@@ -513,17 +532,21 @@ async def get_price_alerts():
     engine = get_db_engine()
     async with engine.connect() as conn:
         rows = (
-            await conn.execute(
-                text(
-                    """
+            (
+                await conn.execute(
+                    text(
+                        """
                     SELECT * FROM pharmacy_prices
                     WHERE price < 35 AND price >= 10
                       AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
                     ORDER BY price ASC
                     """
+                    )
                 )
             )
-        ).mappings().all()
+            .mappings()
+            .all()
+        )
 
     alerts = []
     now = datetime.now()
@@ -560,9 +583,10 @@ async def get_filtered_alerts():
     engine = get_db_engine()
     async with engine.connect() as conn:
         rows = (
-            await conn.execute(
-                text(
-                    """
+            (
+                await conn.execute(
+                    text(
+                        """
                     SELECT *
                     FROM pharmacy_prices AS p
                     WHERE fetched_at = (
@@ -576,9 +600,12 @@ async def get_filtered_alerts():
                     )
                       AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
                     """
+                    )
                 )
             )
-        ).mappings().all()
+            .mappings()
+            .all()
+        )
 
     alerts = []
     now = datetime.now()
@@ -635,9 +662,7 @@ async def get_grouped_alerts(city: str = Query(None)):
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
     async with engine.connect() as conn:
-        rows = (
-            await conn.execute(text(query), params)
-        ).mappings().all()
+        rows = (await conn.execute(text(query), params)).mappings().all()
 
     grouped = defaultdict(list)
     now = datetime.now()
@@ -707,7 +732,7 @@ async def register_alert(request: Request):
     threshold = data.get("threshold")
     product_name = data.get("product_name")
 
-    if ((not email and not phone) or threshold is None or not product_name):
+    if (not email and not phone) or threshold is None or not product_name:
         return JSONResponse(
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
@@ -758,7 +783,9 @@ async def confirm_alert(request: Request):
     data = await request.json()
     token = data.get("token")
     if not token:
-        return JSONResponse({"status": "error", "message": "Brak tokenu"}, status_code=400)
+        return JSONResponse(
+            {"status": "error", "message": "Brak tokenu"}, status_code=400
+        )
 
     engine = get_db_engine()
     async with engine.connect() as conn:
@@ -769,7 +796,9 @@ async def confirm_alert(request: Request):
             )
         ).first()
         if not row:
-            return JSONResponse({"status": "error", "message": "Nieprawidłowy token"}, status_code=400)
+            return JSONResponse(
+                {"status": "error", "message": "Nieprawidłowy token"}, status_code=400
+            )
         await conn.execute(
             text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
             {"id": row[0]},
@@ -784,17 +813,21 @@ async def list_alerts():
     engine = get_db_engine()
     async with engine.connect() as conn:
         rows = (
-            await conn.execute(
-                text(
-                    """
+            (
+                await conn.execute(
+                    text(
+                        """
                     SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
                     FROM user_alerts ua
                     LEFT JOIN products p ON ua.product_id = p.id
                     ORDER BY ua.id DESC
                     """
+                    )
                 )
             )
-        ).mappings().all()
+            .mappings()
+            .all()
+        )
 
     results = []
     for row in rows:
@@ -825,10 +858,10 @@ async def get_cities():
         ).fetchall()
     cities = set()
     for (address,) in rows:
-        if ',' in address:
-            city_part = address.split(',')[-1].strip()
+        if "," in address:
+            city_part = address.split(",")[-1].strip()
             # Usuń kod pocztowy jeśli jest (np. "01-234 Warszawa" → "Warszawa")
-            city = re.sub(r'^\d{2}-\d{3}\s*', '', city_part)
+            city = re.sub(r"^\d{2}-\d{3}\s*", "", city_part)
             if city:
                 cities.add(city)
     return sorted(cities)
@@ -850,15 +883,24 @@ def get_city_coords(city: str):
 
     raise HTTPException(status_code=404, detail="City not found")
 
+
 # Routes for /images/ path (used by compiled React component)
 @app.get("/images/marker-icon.png")
 def get_images_marker_icon():
-    return FileResponse(Path(STATIC_DIR) / "images" / "marker-icon.png", media_type="image/png")
+    return FileResponse(
+        Path(STATIC_DIR) / "images" / "marker-icon.png", media_type="image/png"
+    )
+
 
 @app.get("/images/marker-icon-2x.png")
 def get_images_marker_icon_2x():
-    return FileResponse(Path(STATIC_DIR) / "images" / "marker-icon-2x.png", media_type="image/png")
+    return FileResponse(
+        Path(STATIC_DIR) / "images" / "marker-icon-2x.png", media_type="image/png"
+    )
+
 
 @app.get("/images/marker-shadow.png")
 def get_images_marker_shadow():
-    return FileResponse(Path(STATIC_DIR) / "images" / "marker-shadow.png", media_type="image/png")
+    return FileResponse(
+        Path(STATIC_DIR) / "images" / "marker-shadow.png", media_type="image/png"
+    )
