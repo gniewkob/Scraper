@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProductSelect from './components/ProductSelect';
 import CitySelect from './components/CitySelect';
 import SortControls from './components/SortControls';
@@ -16,6 +16,8 @@ interface Offer {
   map_url?: string;
   pharmacy_lat?: number;
   pharmacy_lon?: number;
+  price_bucket: string;
+  is_historical_low: boolean;
 }
 
 function App() {
