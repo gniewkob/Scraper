@@ -28,5 +28,18 @@ jobs:
           pip install -r requirements.txt -r requirements-ci.txt
           playwright install --with-deps chromium
 
+      - name: Cache npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
       - name: Run tests
         run: bash scripts/run_ci_tests.sh
