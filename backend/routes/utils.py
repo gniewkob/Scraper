@@ -5,6 +5,14 @@ from sqlalchemy import text
 from scraper.core.config.urls import PACKAGE_SIZES
 
 
+def slugify(value: str) -> str:
+    """Return a simple slugified representation of ``value``."""
+    value = value.lower()
+    value = re.sub(r"[^a-z0-9\s-]", "", value)
+    value = re.sub(r"\s+", "-", value)
+    return value.strip("-")
+
+
 def haversine(lat1, lon1, lat2, lon2):
     """Return distance in kilometres between two points."""
     R = 6371
