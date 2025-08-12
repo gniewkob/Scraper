@@ -85,7 +85,10 @@ function App() {
         setTrend(data.trend || []);
         setTotal(data.total || 0);
       } catch (e: unknown) {
-        if (e instanceof DOMException && e.name === 'AbortError') return;
+        if (e instanceof DOMException && e.name === 'AbortError') {
+          // ignore abort errors triggered by race conditions
+          return;
+        }
         const message = e instanceof Error ? e.message : String(e);
         console.error('product error', e);
         setError(`Błąd podczas ładowania danych: ${message}`);
