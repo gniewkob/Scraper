@@ -1,0 +1,21 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "> **Cel:** Po jednorazowym przeczytaniu każdy nowy dev/agent potrafi uruchomić lokalny scraper, backend i interfejs z danymi – bez dodatkowych pytań.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1"
+  }
+}

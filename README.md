@@ -139,6 +139,8 @@ Serwisy:
 - `scrape-matrix.yml` – testuje scraper (Playwright) dla wielu kombinacji wejściowych.
 - Sekrety wymagane przez `deploy.yml`: `REGISTRY`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`, `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_KEY`, `DEPLOY_PATH`.
 
+Commity muszą spełniać standard [Conventional Commits](https://www.conventionalcommits.org/) i są weryfikowane w CI przez `npx commitlint --from=HEAD~1 --to=HEAD`.
+
 ---
 
 ## 6. Dynamiczna lista produktów i kryteria aktywności
