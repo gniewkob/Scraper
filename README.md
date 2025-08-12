@@ -4,6 +4,8 @@
 
 ---
 
+> **Minimalna wersja Pythona:** 3.10
+
 ## 1. Architektura
 
 ```
