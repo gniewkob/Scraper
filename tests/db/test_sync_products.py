@@ -5,44 +5,8 @@ from sqlalchemy import create_engine, text
 from scraper.services import db as db_services
 
 
-def setup_test_db():
-    engine = create_engine("sqlite:///:memory:", future=True)
-    schema = [
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug VARCHAR(255) NOT NULL UNIQUE,
-            name VARCHAR(255) NOT NULL,
-            active BOOLEAN NOT NULL DEFAULT 1,
-            first_seen DATETIME,
-            last_seen DATETIME
-        )
-        """,
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name VARCHAR(255) NOT NULL,
-            address VARCHAR(255),
-            price FLOAT NOT NULL,
-            unit VARCHAR(50),
-            expiration VARCHAR(50),
-            availability VARCHAR(50),
-            updated VARCHAR(50),
-            fetched_at VARCHAR(50) NOT NULL,
-            map_url VARCHAR(255),
-            FOREIGN KEY(product_id) REFERENCES products (id)
-        )
-        """,
-    ]
-    with engine.begin() as conn:
-        for stmt in schema:
-            conn.exec_driver_sql(stmt)
-    return engine
-
-
-def test_sync_products_activation_and_pharmacy_prices_untouched():
-    engine = setup_test_db()
+def test_sync_products_activation_and_pharmacy_prices_untouched(migrated_db):
+    engine = create_engine(f"sqlite:///{migrated_db}", future=True)
     db_services.ENGINE = engine
 
     # Initial sync inserts products

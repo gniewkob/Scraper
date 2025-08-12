@@ -3,34 +3,25 @@ from sqlalchemy import create_engine, text
 from scraper.services import db as db_services
 
 
-def setup_test_db():
-    engine = create_engine("sqlite:///:memory:", future=True)
-    with engine.begin() as conn:
-        conn.exec_driver_sql(
-            """
-            CREATE TABLE pharmacy_prices (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id TEXT NOT NULL,
-                price FLOAT NOT NULL
-            )
-            """
-        )
-    return engine
-
-
-def test_update_price_stats_creates_table_and_aggregates():
-    engine = setup_test_db()
+def test_update_price_stats_creates_table_and_aggregates(migrated_db):
+    engine = create_engine(f"sqlite:///{migrated_db}", future=True)
     db_services.ENGINE = engine
 
     with engine.begin() as conn:
         conn.execute(
             text(
+                "INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'P1'), (2, 'p2', 'P2')"
+            )
+        )
+        conn.execute(
+            text(
                 """
-                INSERT INTO pharmacy_prices (product_id, price) VALUES
-                    ('p1', 10.0),
-                    ('p1', 20.0),
-                    ('p2', 5.0),
-                    ('p2', 15.0)
+                INSERT INTO pharmacy_prices (product_id, pharmacy_name, price, fetched_at)
+                VALUES
+                    (1, 'A', 10.0, 'now'),
+                    (1, 'B', 20.0, 'now'),
+                    (2, 'A', 5.0, 'now'),
+                    (2, 'B', 15.0, 'now')
                 """
             )
         )
@@ -38,8 +29,8 @@ def test_update_price_stats_creates_table_and_aggregates():
     stats = db_services.update_price_stats()
 
     assert stats == {
-        "p1": {"min_price": 10.0, "max_price": 20.0, "avg_price": 15.0},
-        "p2": {"min_price": 5.0, "max_price": 15.0, "avg_price": 10.0},
+        1: {"min_price": 10.0, "max_price": 20.0, "avg_price": 15.0},
+        2: {"min_price": 5.0, "max_price": 15.0, "avg_price": 10.0},
     }
 
     with engine.connect() as conn:
@@ -50,7 +41,7 @@ def test_update_price_stats_creates_table_and_aggregates():
         ).mappings().all()
 
     assert rows == [
-        {"product_id": "p1", "min_price": 10.0, "max_price": 20.0, "avg_price": 15.0},
-        {"product_id": "p2", "min_price": 5.0, "max_price": 15.0, "avg_price": 10.0},
+        {"product_id": "1", "min_price": 10.0, "max_price": 20.0, "avg_price": 15.0},
+        {"product_id": "2", "min_price": 5.0, "max_price": 15.0, "avg_price": 10.0},
     ]
 
