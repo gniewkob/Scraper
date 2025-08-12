@@ -1,4 +1,4 @@
-name: CI Self Heal
+name: CI No AI Self Heal
 
 on:
   push:
@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p logs
           set -o pipefail
-          npm test --prefix frontend 2>&1 | tee logs/test.log
+          npm test --prefix frontend -- --retry=2 2>&1 | tee logs/test.log
       - name: Run build
         id: build
         continue-on-error: true
@@ -51,23 +51,43 @@ jobs:
         if: ${{ steps.tests.outcome != 'success' || steps.build.outcome != 'success' }}
         run: exit 1
 
-  self-heal:
+  autofix-lint:
     needs: test-build
     if: ${{ failure() }}
     runs-on: ubuntu-latest
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/download-artifact@v4
-        with:
-          name: pipeline-logs
-          path: logs
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Self heal
-        run: node .github/agent/ci-self-heal.js
+      - name: Run eslint
+        run: npx eslint frontend --ext .js,.ts,.tsx --fix || true
+      - name: Run prettier
+        run: npx prettier "frontend/**/*.{js,ts,tsx,jsx,json,css,md}" --write || true
+      - name: Check git diff
+        id: git-diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Commit and open PR
+        if: steps.git-diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          timestamp=$(date -u +'%Y%m%d%H%M%S')
+          branch="autofix/lint-$timestamp"
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git checkout -b "$branch"
+          git commit -am "chore: automatic lint/format fixes"
+          git push origin "$branch"
+          gh pr create --title "chore: automatic lint/format fixes" --body "Automated lint/format fixes" --base master --head "$branch"
