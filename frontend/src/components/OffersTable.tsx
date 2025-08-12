@@ -14,11 +14,11 @@ interface Props {
 
 export default function OffersTable({ offers }: Props) {
   const bucketIcons: Record<string, string> = {
-    super_okazja: '🔥',
-    okazja: '💰',
-    normalna: '😐',
-    drogo: '💸',
-    unknown: '❓',
+    super_okazja: "🔥",
+    okazja: "💰",
+    normalna: "😐",
+    drogo: "💸",
+    unknown: "❓",
   };
   return (
     <div className="table-responsive">
@@ -42,14 +42,14 @@ export default function OffersTable({ offers }: Props) {
             offers.map((o) => (
               <tr key={`${o.pharmacy}-${o.price}`}>
                 <td>
-                  {((o.price_per_g ?? o.price)).toFixed(2)} zł{' '}
+                  {(o.price_per_g ?? o.price).toFixed(2)} zł{" "}
                   <span data-testid="price-badge">
                     {bucketIcons[o.price_bucket] ?? bucketIcons.unknown}
                   </span>
                   {o.is_historical_low && <span className="ms-1">⭐</span>}
                 </td>
-                <td>{o.pharmacy ?? '–'}</td>
-                <td>{o.address ?? '–'}</td>
+                <td>{o.pharmacy ?? "–"}</td>
+                <td>{o.address ?? "–"}</td>
                 <td>
                   {o.map_url ? (
                     <a
@@ -61,7 +61,7 @@ export default function OffersTable({ offers }: Props) {
                       Mapa
                     </a>
                   ) : (
-                    '–'
+                    "–"
                   )}
                 </td>
               </tr>
