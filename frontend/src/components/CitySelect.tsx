@@ -1,25 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 interface Props {
-  value: string;
-  onChange: (val: string) => void;
+  value: string
+  onChange: (val: string) => void
 }
 
 export default function CitySelect({ value, onChange }: Props) {
-  const [cities, setCities] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([])
 
   useEffect(() => {
     fetch('/api/cities')
       .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
       })
       .then(setCities)
-      .catch((e) => console.error('cities error', e));
-  }, []);
+      .catch((e) => console.error('cities error', e))
+  }, [])
 
   return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="form-select">
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="form-select"
+    >
       <option value="">Wszystkie miasta...</option>
       {cities.map((c) => (
         <option key={c} value={c}>
@@ -27,5 +31,5 @@ export default function CitySelect({ value, onChange }: Props) {
         </option>
       ))}
     </select>
-  );
+  )
 }
