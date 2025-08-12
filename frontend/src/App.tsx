@@ -6,6 +6,7 @@ import OffersTable from './components/OffersTable';
 import Pagination from './components/Pagination';
 import PriceTrendChart from './components/PriceTrendChart';
 import MapView from './components/MapView';
+import ErrorBanner from './components/ErrorBanner';
 import './index.css';
 
 interface Offer {
@@ -58,35 +59,35 @@ function App() {
       setError(null);
       return;
     }
-    
-    setLoading(true);
-    setError(null);
-    
-    const params = new URLSearchParams({
-      limit: String(limit),
-      offset: String(offset),
-      sort,
-      order,
-    });
-    if (city) params.append('city', city);
-    
-    fetch(`/api/product/${encodeURIComponent(product)}?${params}`)
-      .then((r) => {
+
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams({
+        limit: String(limit),
+        offset: String(offset),
+        sort,
+        order,
+      });
+      if (city) params.append('city', city);
+
+      try {
+        const r = await fetch(`/api/product/${encodeURIComponent(product)}?${params}`);
         if (!r.ok) throw new Error(`HTTP ${r.status} - ${r.statusText}`);
-        return r.json();
-      })
-      .then((data) => {
+        const data = await r.json();
         setOffers(data.offers || []);
         setTrend(data.trend || []);
         setTotal(data.total || 0);
-      })
-      .catch((e) => {
+      } catch (e: any) {
         console.error('product error', e);
         setError(`Błąd podczas ładowania danych: ${e.message}`);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [product, city, sort, order, offset]);
 
   return (
@@ -94,11 +95,7 @@ function App() {
       <div className="text-end"><button id="themeToggle" onClick={toggleTheme} className="btn btn-outline-light btn-sm">Zmień motyw</button></div>
       <h1 className="text-center mb-4">🌿 Dashboard cen medycznej marihuany</h1>
       
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={error} />
       
       <div className="row mb-3">
         <div className="col-md-6 mb-2 mb-md-0">
