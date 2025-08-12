@@ -43,9 +43,12 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
                 exp_dt = exp_dt.replace(tzinfo=timezone.utc)
             days_left = (exp_dt - now).days
             short_expiry = days_left <= 30
-        except Exception:
-            logger.exception(
-                "Failed to parse expiration '%s' for product %s", expiration, product_id
+        except ValueError as exc:
+            logger.warning(
+                "Failed to parse expiration '%s' for product %s: %s",
+                expiration,
+                product_id,
+                exc,
             )
 
     price_per_g = None
