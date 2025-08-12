@@ -1,4 +1,3 @@
-import os
 import json
 import logging
 from typing import Optional
@@ -20,12 +19,7 @@ from sqlalchemy import text
 from scraper.core.config.config import DB_PATH, DB_URL
 from backend.db import get_engine as build_engine, get_cities as fetch_cities
 from scraper.utils.crypto import decrypt, _get_fernet
-from .config import (
-    EMAIL_MASK_VISIBLE_CHARS,
-    PHONE_MASK_MIN_LENGTH,
-    PHONE_MASK_VISIBLE_PREFIX,
-    PHONE_MASK_VISIBLE_SUFFIX,
-)
+from .config import settings
 from .routes.utils import compute_price_info
 from twilio.rest import Client
 from scraper.cli.email_utils import send_email
@@ -35,11 +29,11 @@ TEMPLATES_DIR = str(Path(__file__).parent / "templates")
 CITY_COORDS_FILE = Path(__file__).resolve().parent / "data" / "city_coords.json"
 _CITY_COORDS_CACHE: Optional[dict] = None
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = settings.secret_key
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY environment variable is required")
 
-ADMIN_PASSWORD_HASH = os.environ.get("ADMIN_PASSWORD_HASH")
+ADMIN_PASSWORD_HASH = settings.admin_password_hash
 if not ADMIN_PASSWORD_HASH:
     raise RuntimeError("ADMIN_PASSWORD_HASH environment variable is required")
 
@@ -54,9 +48,9 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-TWILIO_SID = os.environ.get("TWILIO_ACCOUNT_SID")
-TWILIO_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
-TWILIO_FROM = os.environ.get("TWILIO_WHATSAPP_FROM")
+TWILIO_SID = settings.twilio_account_sid
+TWILIO_TOKEN = settings.twilio_auth_token
+TWILIO_FROM = settings.twilio_whatsapp_from
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +139,7 @@ def mask_email(email):
     if not email or "@" not in email:
         return email or ""
     local, domain = email.split("@", 1)
-    visible = local[:EMAIL_MASK_VISIBLE_CHARS]
+    visible = local[: settings.email_mask_visible_chars]
     return f"{visible}***@{domain}"
 
 
@@ -153,11 +147,11 @@ def mask_phone(phone):
     """Return a masked version of a phone number for display."""
     if not phone:
         return ""
-    if len(phone) <= PHONE_MASK_MIN_LENGTH:
+    if len(phone) <= settings.phone_mask_min_length:
         return phone
     return (
-        f"{phone[:PHONE_MASK_VISIBLE_PREFIX]}***"
-        f"{phone[-PHONE_MASK_VISIBLE_SUFFIX:]}"
+        f"{phone[: settings.phone_mask_visible_prefix]}***"
+        f"{phone[-settings.phone_mask_visible_suffix:]}"
     )
 
 

@@ -1,15 +1,37 @@
-"""Backend configuration constants with environment overrides."""
+"""Application configuration loaded from environment variables."""
 
-import os
+from functools import lru_cache
 
-EMAIL_MASK_VISIBLE_CHARS = int(os.getenv("EMAIL_MASK_VISIBLE_CHARS", "4"))
-"""Number of characters to show at start of email addresses."""
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-PHONE_MASK_MIN_LENGTH = int(os.getenv("PHONE_MASK_MIN_LENGTH", "6"))
-"""Minimum phone length before masking is applied."""
 
-PHONE_MASK_VISIBLE_PREFIX = int(os.getenv("PHONE_MASK_VISIBLE_PREFIX", "3"))
-"""Digits to show at the start of a masked phone number."""
+class Settings(BaseSettings):
+    """Settings for the backend service."""
 
-PHONE_MASK_VISIBLE_SUFFIX = int(os.getenv("PHONE_MASK_VISIBLE_SUFFIX", "3"))
-"""Digits to show at the end of a masked phone number."""
+    secret_key: str
+    admin_password_hash: str
+
+    twilio_account_sid: str | None = None
+    twilio_auth_token: str | None = None
+    twilio_whatsapp_from: str | None = None
+
+    email_mask_visible_chars: int = 4
+    phone_mask_min_length: int = 6
+    phone_mask_visible_prefix: int = 3
+    phone_mask_visible_suffix: int = 3
+
+    db_pool_size: int = 5
+    db_max_overflow: int = 10
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+
+@lru_cache
+def get_settings() -> Settings:
+    """Return a cached instance of :class:`Settings`."""
+
+    return Settings()
+
+
+settings = get_settings()
+
