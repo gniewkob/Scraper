@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "format": "prettier \"frontend/**/*.{js,ts,tsx,jsx,json,css,md}\" --write",
+    "format": "prettier \"**/*.{js,ts,tsx,jsx,json,css,md}\" --write --no-error-on-unmatched-pattern",
     "preview": "vite preview",
     "test": "vitest run --environment jsdom"
   },
