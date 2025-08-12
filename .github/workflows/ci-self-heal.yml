@@ -1,0 +1,73 @@
+name: CI Self Heal
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          npm ci --prefix frontend
+      - name: Run tests
+        id: tests
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          set -o pipefail
+          npm test --prefix frontend 2>&1 | tee logs/test.log
+      - name: Run build
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm run build --prefix frontend 2>&1 | tee logs/build.log
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-logs
+          path: logs
+      - name: Fail if tests or build failed
+        if: ${{ steps.tests.outcome != 'success' || steps.build.outcome != 'success' }}
+        run: exit 1
+
+  self-heal:
+    needs: test-build
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: pipeline-logs
+          path: logs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Self heal
+        run: node .github/agent/ci-self-heal.js
