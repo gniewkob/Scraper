@@ -2,9 +2,7 @@ name: CI No AI Self Heal
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
 
 permissions:
   actions: read
