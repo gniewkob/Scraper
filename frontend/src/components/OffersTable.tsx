@@ -39,8 +39,8 @@ export default function OffersTable({ offers }: Props) {
               </td>
             </tr>
           ) : (
-            offers.map((o, i) => (
-              <tr key={i}>
+            offers.map((o) => (
+              <tr key={`${o.pharmacy}-${o.price}`}>
                 <td>
                   {((o.price_per_g ?? o.price)).toFixed(2)} zł{' '}
                   <span data-testid="price-badge">
@@ -52,7 +52,12 @@ export default function OffersTable({ offers }: Props) {
                 <td>{o.address ?? '–'}</td>
                 <td>
                   {o.map_url ? (
-                    <a href={o.map_url} target="_blank" className="btn btn-sm btn-outline-light">
+                    <a
+                      href={o.map_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-light"
+                    >
                       Mapa
                     </a>
                   ) : (
