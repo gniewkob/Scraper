@@ -16,7 +16,7 @@ from scraper.services.price_validator import parse_price_unit
 from scraper.core.constants import USER_AGENTS, DEFAULT_LOCALE, DEFAULT_VIEWPORT
 from scraper.utils.retry import retry_on_timeout
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 
 def _default_fetch(url: str) -> str:

@@ -6,7 +6,7 @@ import smtplib
 from email.message import EmailMessage
 
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 # SMTP configuration from environment variables
 SMTP_HOST = os.environ.get("SMTP_HOST")

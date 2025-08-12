@@ -21,7 +21,7 @@ from selenium.webdriver.common.by import By
 
 from scraper.services.price_validator import parse_price_unit
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 
 def extract_pharmacy_data(element: Any, product_id: Any) -> Optional[Dict[str, Any]]:

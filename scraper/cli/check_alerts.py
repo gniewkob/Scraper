@@ -16,7 +16,7 @@ from scraper.utils.crypto import decrypt
 
 # 🔧 Inicjalizacja logowania
 init_logging()
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 # 🔧 Automatyczna synchronizacja struktury bazy
 schema_path = Path(__file__).resolve().parents[1] / "services" / "update_schema.py"

@@ -20,7 +20,7 @@ from scraper.services.db import insert_prices
 from scraper.core.bootstrap import init_logging
 from scraper.core.config.config import DB_PATH
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 def create_logs_dir():
     Path("logs").mkdir(exist_ok=True)

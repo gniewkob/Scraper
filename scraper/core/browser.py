@@ -28,7 +28,7 @@ from scraper.core.constants import (
 logging.getLogger("WDM").setLevel(logging.CRITICAL)
 
 # 🧠 Używamy jednego loggera globalnego
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 FALLBACK_CHROME_DRIVER_VERSIONS = [
     "135.0.7049.96", "135.0.5435.2", "135.0.5432.10",
