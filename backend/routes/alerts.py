@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
-from .utils import compute_price_info
+from .utils import compute_price_info, slugify
 from backend.main import send_confirmation_email, send_confirmation_sms
 
 router = APIRouter()
@@ -126,7 +126,9 @@ async def get_filtered_alerts(conn: AsyncConnection = Depends(get_connection)):
 
 @router.get("/api/alerts_grouped", response_class=JSONResponse)
 async def get_grouped_alerts(
-    city: Optional[str] = Query(None),
+    city: Optional[str] = Query(
+        None, min_length=1, max_length=50, pattern=r"^[A-Za-z\s-]+$"
+    ),
     conn: AsyncConnection = Depends(get_connection),
 ):
     base_query = """
@@ -217,10 +219,11 @@ async def register_alert(
         )
 
     token = secrets.token_urlsafe(16)
+    normalized_name = slugify(product_name)
     row = (
         await conn.execute(
-            text("SELECT id FROM products WHERE name = :name"),
-            {"name": product_name},
+            text("SELECT id FROM products WHERE slug = :slug OR lower(name) = :name"),
+            {"slug": normalized_name, "name": product_name.lower()},
         )
     ).first()
     if not row:

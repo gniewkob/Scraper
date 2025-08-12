@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Path
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -14,6 +14,7 @@ from .utils import (
     get_price_thresholds,
     classify_price_bucket,
     get_historical_low,
+    slugify,
 )
 
 router = APIRouter()
@@ -48,23 +49,28 @@ async def get_products(conn: AsyncConnection = Depends(get_connection)):
     response_model_exclude_none=True,
 )
 async def get_product_by_name(
-    product_name: str,
+    product_name: str = Path(
+        ..., min_length=1, max_length=100, pattern=r"^[A-Za-z0-9-]+$"
+    ),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    sort: str = Query("price"),
-    order: str = Query("asc"),
-    city: Optional[str] = Query(None),
-    lat: Optional[float] = Query(None),
-    lon: Optional[float] = Query(None),
-    radius: Optional[float] = Query(None),
+    sort: str = Query("price", pattern=r"^(price|expiration|fetched_at)$"),
+    order: str = Query("asc", pattern=r"^(asc|desc)$"),
+    city: Optional[str] = Query(
+        None, min_length=1, max_length=50, pattern=r"^[A-Za-z\s-]+$"
+    ),
+    lat: Optional[float] = Query(None, ge=-90, le=90),
+    lon: Optional[float] = Query(None, ge=-180, le=180),
+    radius: Optional[float] = Query(None, gt=0, le=1000),
     conn: AsyncConnection = Depends(get_connection),
 ):
     decoded_name = unquote(product_name)
+    normalized_name = slugify(decoded_name)
     row = (
         (
             await conn.execute(
-                text("SELECT id FROM products WHERE name = :name"),
-                {"name": decoded_name},
+                text("SELECT id FROM products WHERE slug = :slug OR lower(name) = :name"),
+                {"slug": normalized_name, "name": decoded_name.lower()},
             )
         )
         .mappings()
@@ -74,10 +80,8 @@ async def get_product_by_name(
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
 
-    allowed_sort = {"price", "expiration", "fetched_at"}
-    allowed_order = {"asc", "desc"}
-    sort_sql = sort if sort in allowed_sort else "price"
-    order_sql = order if order in allowed_order else "asc"
+    sort_sql = sort
+    order_sql = order
 
     base_query = """
         SELECT *,
