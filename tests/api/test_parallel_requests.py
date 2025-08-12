@@ -62,6 +62,8 @@ async def async_client(tmp_path_factory, monkeypatch):
 
     monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
     monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
+    monkeypatch.setattr('scraper.core.config.config.DB_PATH', str(db_file), raising=False)
+    monkeypatch.setattr('scraper.core.config.config.DB_URL', f'sqlite:///{db_file}', raising=False)
     from backend import db as backend_db
     backend_db._ENGINE_CACHE.clear()
 

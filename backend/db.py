@@ -4,10 +4,16 @@ from __future__ import annotations
 
 import os
 import re
+from pathlib import Path
 from typing import Dict, Optional
 
 from sqlalchemy import select, text
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 
 from .models import Product
@@ -18,6 +24,15 @@ MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "10"))
 
 # cache of engines keyed by URL so modules can share a single instance
 _ENGINE_CACHE: Dict[str, AsyncEngine] = {}
+
+
+def _ensure_db_dir(db_url: Optional[str], db_path: Optional[str]) -> None:
+    """Create the parent directory for the SQLite database if needed."""
+    path = db_path
+    if path is None and db_url and db_url.startswith("sqlite"):
+        path = db_url.split("sqlite:///")[-1]
+    if path:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
 
 
 def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> AsyncEngine:
@@ -38,6 +53,8 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
 
     if db_url.startswith("sqlite://") and not db_url.startswith("sqlite+aiosqlite://"):
         db_url = db_url.replace("sqlite://", "sqlite+aiosqlite://", 1)
+
+    _ensure_db_dir(db_url, db_path)
 
     engine = _ENGINE_CACHE.get(db_url)
     if engine is None:
