@@ -79,7 +79,7 @@ jobs:
       - name: Commit and open PR
         if: steps.git-diff.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.BOT_PAT }}
         run: |
           timestamp=$(date -u +'%Y%m%d%H%M%S')
           branch="autofix/lint-$timestamp"
