@@ -5,12 +5,13 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 from scraper.utils.crypto import encrypt, decrypt
-from backend.db import get_engine
+from backend.db import get_connection
 from .utils import compute_price_info
 from backend.main import send_confirmation_email, send_confirmation_sms
 
@@ -20,25 +21,23 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/api/alerts", response_class=JSONResponse)
-async def get_price_alerts():
-    engine = get_engine()
-    async with engine.connect() as conn:
-        rows = (
-            (
-                await conn.execute(
-                    text(
-                        """
-                    SELECT * FROM pharmacy_prices
-                    WHERE price < 35 AND price >= 10
-                      AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
-                    ORDER BY price ASC
+async def get_price_alerts(conn: AsyncConnection = Depends(get_connection)):
+    rows = (
+        (
+            await conn.execute(
+                text(
                     """
-                    )
+                SELECT * FROM pharmacy_prices
+                WHERE price < 35 AND price >= 10
+                  AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+                ORDER BY price ASC
+                """
                 )
             )
-            .mappings()
-            .all()
         )
+        .mappings()
+        .all()
+    )
 
     alerts = []
     now = datetime.now()
@@ -68,33 +67,31 @@ async def get_price_alerts():
 
 
 @router.get("/api/alerts_filtered", response_class=JSONResponse)
-async def get_filtered_alerts():
-    engine = get_engine()
-    async with engine.connect() as conn:
-        rows = (
-            (
-                await conn.execute(
-                    text(
-                        """
-                    SELECT *
-                    FROM pharmacy_prices AS p
-                    WHERE fetched_at = (
-                        SELECT MAX(fetched_at)
-                        FROM pharmacy_prices
-                        WHERE
-                            product_id = p.product_id AND
-                            pharmacy_name = p.pharmacy_name AND
-                            price = p.price AND
-                            expiration = p.expiration
-                    )
-                      AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+async def get_filtered_alerts(conn: AsyncConnection = Depends(get_connection)):
+    rows = (
+        (
+            await conn.execute(
+                text(
                     """
-                    )
+                SELECT *
+                FROM pharmacy_prices AS p
+                WHERE fetched_at = (
+                    SELECT MAX(fetched_at)
+                    FROM pharmacy_prices
+                    WHERE
+                        product_id = p.product_id AND
+                        pharmacy_name = p.pharmacy_name AND
+                        price = p.price AND
+                        expiration = p.expiration
+                )
+                  AND (p.expiration IS NULL OR DATE(p.expiration) >= DATE('now'))
+                """
                 )
             )
-            .mappings()
-            .all()
         )
+        .mappings()
+        .all()
+    )
 
     alerts = []
     now = datetime.now()
@@ -128,8 +125,10 @@ async def get_filtered_alerts():
 
 
 @router.get("/api/alerts_grouped", response_class=JSONResponse)
-async def get_grouped_alerts(city: Optional[str] = Query(None)):
-    engine = get_engine()
+async def get_grouped_alerts(
+    city: Optional[str] = Query(None),
+    conn: AsyncConnection = Depends(get_connection),
+):
     base_query = """
         SELECT *,
                ROW_NUMBER() OVER (
@@ -146,8 +145,7 @@ async def get_grouped_alerts(city: Optional[str] = Query(None)):
         params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
-    async with engine.connect() as conn:
-        rows = (await conn.execute(text(query), params)).mappings().all()
+    rows = (await conn.execute(text(query), params)).mappings().all()
 
     grouped = defaultdict(list)
     now = datetime.now()
@@ -181,31 +179,32 @@ async def get_grouped_alerts(city: Optional[str] = Query(None)):
         grouped[row["product_id"]].append(offer)
 
     results = []
-    async with engine.connect() as conn2:
-        for product_id, offers in grouped.items():
-            if not offers:
-                continue
-            row = (
-                await conn2.execute(
-                    text("SELECT name FROM products WHERE id = :pid"),
-                    {"pid": product_id},
-                )
-            ).first()
-            name = row[0] if row else product_id
-            min_price = min(o["price"] for o in offers)
-            results.append(
-                {
-                    "product_id": product_id,
-                    "product": name,
-                    "min_price": min_price,
-                    "offers": sorted(offers, key=lambda x: x["price"]),
-                }
+    for product_id, offers in grouped.items():
+        if not offers:
+            continue
+        row = (
+            await conn.execute(
+                text("SELECT name FROM products WHERE id = :pid"),
+                {"pid": product_id},
             )
+        ).first()
+        name = row[0] if row else product_id
+        min_price = min(o["price"] for o in offers)
+        results.append(
+            {
+                "product_id": product_id,
+                "product": name,
+                "min_price": min_price,
+                "offers": sorted(offers, key=lambda x: x["price"]),
+            }
+        )
     return results
 
 
 @router.post("/api/alerts/register", response_class=JSONResponse)
-async def register_alert(request: Request):
+async def register_alert(
+    request: Request, conn: AsyncConnection = Depends(get_connection)
+):
     data = await request.json()
     email = data.get("email")
     phone = data.get("phone")
@@ -218,36 +217,33 @@ async def register_alert(request: Request):
         )
 
     token = secrets.token_urlsafe(16)
-    engine = get_engine()
-    async with engine.connect() as conn:
-        row = (
-            await conn.execute(
-                text("SELECT id FROM products WHERE name = :name"),
-                {"name": product_name},
-            )
-        ).first()
-        if not row:
-            return JSONResponse(
-                {"status": "error", "message": "Nieznany produkt"},
-                status_code=400,
-            )
+    row = (
         await conn.execute(
-            text(
-                """
-                INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
-                VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
-                """
-            ),
-            {
-                "pid": row[0],
-                "threshold": threshold,
-                "email": encrypt(email) if email else None,
-                "phone": encrypt(phone) if phone else None,
-                "created": datetime.now().isoformat(),
-                "token": token,
-            },
+            text("SELECT id FROM products WHERE name = :name"),
+            {"name": product_name},
         )
-        await conn.commit()
+    ).first()
+    if not row:
+        return JSONResponse(
+            {"status": "error", "message": "Nieznany produkt"},
+            status_code=400,
+        )
+    await conn.execute(
+        text(
+            """
+            INSERT INTO user_alerts (product_id, threshold, email_encrypted, phone_encrypted, created, token, confirmed)
+            VALUES (:pid, :threshold, :email, :phone, :created, :token, 0)
+            """
+        ),
+        {
+            "pid": row[0],
+            "threshold": threshold,
+            "email": encrypt(email) if email else None,
+            "phone": encrypt(phone) if phone else None,
+            "created": datetime.now().isoformat(),
+            "token": token,
+        },
+    )
 
     email_ok = send_confirmation_email(email, token) if email else True
     sms_ok = send_confirmation_sms(phone, token) if phone else True
@@ -265,7 +261,9 @@ async def register_alert(request: Request):
 
 
 @router.post("/api/alerts/confirm", response_class=JSONResponse)
-async def confirm_alert(request: Request):
+async def confirm_alert(
+    request: Request, conn: AsyncConnection = Depends(get_connection)
+):
     data = await request.json()
     token = data.get("token")
     if not token:
@@ -273,47 +271,42 @@ async def confirm_alert(request: Request):
             {"status": "error", "message": "Brak tokenu"}, status_code=400
         )
 
-    engine = get_engine()
-    async with engine.connect() as conn:
-        row = (
-            await conn.execute(
-                text("SELECT id FROM user_alerts WHERE token = :token"),
-                {"token": token},
-            )
-        ).first()
-        if not row:
-            return JSONResponse(
-                {"status": "error", "message": "Nieprawidłowy token"}, status_code=400
-            )
+    row = (
         await conn.execute(
-            text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
-            {"id": row[0]},
+            text("SELECT id FROM user_alerts WHERE token = :token"),
+            {"token": token},
         )
-        await conn.commit()
+    ).first()
+    if not row:
+        return JSONResponse(
+            {"status": "error", "message": "Nieprawidłowy token"}, status_code=400
+        )
+    await conn.execute(
+        text("UPDATE user_alerts SET confirmed = 1, token = NULL WHERE id = :id"),
+        {"id": row[0]},
+    )
 
     return {"status": "ok"}
 
 
 @router.get("/api/alerts/list", response_class=JSONResponse)
-async def list_alerts():
-    engine = get_engine()
-    async with engine.connect() as conn:
-        rows = (
-            (
-                await conn.execute(
-                    text(
-                        """
-                    SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
-                    FROM user_alerts ua
-                    LEFT JOIN products p ON ua.product_id = p.id
-                    ORDER BY ua.id DESC
+async def list_alerts(conn: AsyncConnection = Depends(get_connection)):
+    rows = (
+        (
+            await conn.execute(
+                text(
                     """
-                    )
+                SELECT ua.product_id, ua.threshold, ua.email_encrypted, ua.phone_encrypted, ua.created, ua.confirmed, p.name
+                FROM user_alerts ua
+                LEFT JOIN products p ON ua.product_id = p.id
+                ORDER BY ua.id DESC
+                """
                 )
             )
-            .mappings()
-            .all()
         )
+        .mappings()
+        .all()
+    )
 
     results = []
     for row in rows:

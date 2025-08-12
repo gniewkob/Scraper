@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection
 from urllib.parse import unquote
 from datetime import datetime
 from typing import Optional
 
-from backend.db import get_engine
+from backend.db import get_connection
 from ..schemas import ProductOffersResponse
 from .utils import (
     haversine,
@@ -19,14 +20,12 @@ router = APIRouter()
 
 
 @router.get("/api/products", response_class=JSONResponse)
-async def get_products():
-    engine = get_engine()
-    async with engine.connect() as conn:
-        rows = (
-            await conn.execute(
-                text("SELECT DISTINCT id, name FROM products WHERE active = 1")
-            )
-        ).fetchall()
+async def get_products(conn: AsyncConnection = Depends(get_connection)):
+    rows = (
+        await conn.execute(
+            text("SELECT DISTINCT id, name FROM products WHERE active = 1")
+        )
+    ).fetchall()
 
     results = []
     for pid, name in rows:
@@ -58,20 +57,19 @@ async def get_product_by_name(
     lat: Optional[float] = Query(None),
     lon: Optional[float] = Query(None),
     radius: Optional[float] = Query(None),
+    conn: AsyncConnection = Depends(get_connection),
 ):
     decoded_name = unquote(product_name)
-    engine = get_engine()
-    async with engine.connect() as conn:
-        row = (
-            (
-                await conn.execute(
-                    text("SELECT id FROM products WHERE name = :name"),
-                    {"name": decoded_name},
-                )
+    row = (
+        (
+            await conn.execute(
+                text("SELECT id FROM products WHERE name = :name"),
+                {"name": decoded_name},
             )
-            .mappings()
-            .first()
         )
+        .mappings()
+        .first()
+    )
     if not row:
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
@@ -102,15 +100,14 @@ async def get_product_by_name(
         "LIMIT :limit OFFSET :offset"
     )
     query_params = {**params, "limit": limit, "offset": offset}
-    async with engine.connect() as conn:
-        rows = (await conn.execute(text(query), query_params)).mappings().all()
-        total = (
-            await conn.execute(
-                text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
-            )
-        ).scalar()
-        thresholds = await get_price_thresholds(conn, product_id)
-        min_price = await get_historical_low(conn, product_id)
+    rows = (await conn.execute(text(query), query_params)).mappings().all()
+    total = (
+        await conn.execute(
+            text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
+        )
+    ).scalar()
+    thresholds = await get_price_thresholds(conn, product_id)
+    min_price = await get_historical_low(conn, product_id)
 
     offers = []
     now = datetime.now()

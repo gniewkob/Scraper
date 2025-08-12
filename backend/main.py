@@ -215,7 +215,7 @@ async def admin_panel(request: Request):
         return RedirectResponse("/admin/login")
     require_admin(request)
     engine = get_db_engine()
-    async with engine.connect() as conn:
+    async with engine.begin() as conn:
         rows = (
             (
                 await conn.execute(

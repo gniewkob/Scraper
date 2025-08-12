@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, AsyncIterator
 
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import (
+    AsyncConnection,
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
@@ -107,7 +108,7 @@ async def get_offers(
     query += " LIMIT :limit OFFSET :offset"
     params.update({"limit": limit, "offset": offset})
 
-    async with engine.connect() as conn:
+    async with engine.begin() as conn:
         rows = (await conn.execute(text(query), params)).mappings().all()
     return [dict(row) for row in rows]
 
@@ -130,7 +131,7 @@ async def get_cities() -> list[str]:
     """Extract unique city names from pharmacy addresses."""
 
     engine = get_engine()
-    async with engine.connect() as conn:
+    async with engine.begin() as conn:
         rows = (await conn.execute(text("SELECT DISTINCT address FROM pharmacy_prices"))).all()
 
     cities = set()
@@ -140,4 +141,12 @@ async def get_cities() -> list[str]:
         if match:
             cities.add(match.group(1))
     return sorted(list(cities))
+
+
+async def get_connection() -> AsyncIterator[AsyncConnection]:
+    """FastAPI dependency that yields a transactional connection."""
+
+    engine = get_engine()
+    async with engine.begin() as conn:
+        yield conn
 
