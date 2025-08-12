@@ -38,6 +38,17 @@ async function run() {
     })
   });
   const json = await res.json();
+  if (json.error) {
+    console.error('OpenAI API error:', json.error.message || json.error);
+    const msg = json.error.message?.toLowerCase() || '';
+    if (msg.includes('billing')) {
+      console.error('Ensure your OpenAI account has an active billing plan.');
+    }
+    if (msg.includes('invalid api key') || msg.includes('incorrect api key')) {
+      console.error('Check that your OPENAI_API_KEY is valid and has access to the requested model.');
+    }
+    process.exit(1);
+  }
   const patch = json.choices?.[0]?.message?.content;
   if (!patch) {
     console.error('No patch produced', json);
