@@ -1,22 +1,22 @@
-# GitHub Agent Scripts
 
-This directory contains helper utilities used by CI automation.
+# CI Self-Healing Agent
 
-## ci-self-heal.js
+This directory contains a script used to automatically fix failing CI builds by generating patches with OpenAI's API and opening a pull request with the changes.
 
-`ci-self-heal.js` reads build logs and tries to generate a patch fixing failing CI runs. It uses both the OpenAI API and GitHub API, so two environment variables must be provided before running:
+## Requirements
+- Node.js
+- `OPENAI_API_KEY` environment variable with access to the [OpenAI API](https://platform.openai.com/docs/api-reference/introduction).
+- `GITHUB_TOKEN` environment variable with permission to push branches and create pull requests.
 
-- `OPENAI_API_KEY` – API key for the OpenAI API
-- `GITHUB_TOKEN` – Personal access token with repository permissions
+### Billing
+An OpenAI account with **active billing** is required for the script to run. If billing is not active, API calls will fail with a `billing_not_active` error. See the [OpenAI billing documentation](https://platform.openai.com/docs/guides/billing) for more details.
 
-### Running locally
-
-To execute the script manually, export the required variables and run the file with Node.js:
+## Usage
+Run the agent from the repository root:
 
 ```bash
-export OPENAI_API_KEY="sk-your-key"
-export GITHUB_TOKEN="ghp_your_token"
 node .github/agent/ci-self-heal.js
 ```
 
-The script will apply the generated patch and push a branch with a pull request.
+The script reads CI logs from the `logs` directory, generates a patch, applies it, runs tests, and opens a pull request with the fix.
+
