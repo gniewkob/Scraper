@@ -1,5 +1,6 @@
 import sys
 import os
+import tempfile
 from pathlib import Path
 import bcrypt
 from alembic import command
@@ -20,20 +21,27 @@ import pytest
 
 
 @pytest.fixture()
-def migrated_db(tmp_path, monkeypatch):
+def migrated_db(monkeypatch):
     """Create a temporary SQLite database and apply migrations."""
-    db_file = tmp_path / "test.sqlite"
-    monkeypatch.setattr("backend.main.DB_PATH", str(db_file), raising=False)
+    with tempfile.NamedTemporaryFile(suffix=".sqlite", delete=False) as tmp:
+        db_file = tmp.name
+
+    monkeypatch.setattr("backend.main.DB_PATH", db_file, raising=False)
     monkeypatch.setattr("backend.main.DB_URL", f"sqlite:///{db_file}", raising=False)
-    monkeypatch.setattr(
-        "scraper.core.config.config.DB_PATH", str(db_file), raising=False
-    )
+    monkeypatch.setattr("scraper.core.config.config.DB_PATH", db_file, raising=False)
     monkeypatch.setattr(
         "scraper.core.config.config.DB_URL", f"sqlite:///{db_file}", raising=False
     )
+
     from backend import db as backend_db
 
     backend_db._ENGINE_CACHE.clear()
     cfg = Config("backend/alembic.ini")
     command.upgrade(cfg, "head")
-    return db_file
+
+    try:
+        yield db_file
+    finally:
+        backend_db._ENGINE_CACHE.clear()
+        if os.path.exists(db_file):
+            os.remove(db_file)

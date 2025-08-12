@@ -25,10 +25,6 @@ async def async_client(migrated_db):
     conn.commit()
     conn.close()
 
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
-
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
 
