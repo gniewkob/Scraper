@@ -1,15 +1,15 @@
 interface Offer {
-  price: number;
-  price_per_g?: number;
-  pharmacy?: string;
-  address?: string;
-  map_url?: string;
-  price_bucket: string;
-  is_historical_low: boolean;
+  price: number
+  price_per_g?: number
+  pharmacy?: string
+  address?: string
+  map_url?: string
+  price_bucket: string
+  is_historical_low: boolean
 }
 
 interface Props {
-  offers: Offer[];
+  offers: Offer[]
 }
 
 export default function OffersTable({ offers }: Props) {
@@ -19,7 +19,7 @@ export default function OffersTable({ offers }: Props) {
     normalna: '😐',
     drogo: '💸',
     unknown: '❓',
-  };
+  }
   return (
     <div className="table-responsive">
       <table className="table table-bordered">
@@ -42,7 +42,7 @@ export default function OffersTable({ offers }: Props) {
             offers.map((o) => (
               <tr key={`${o.pharmacy}-${o.price}`}>
                 <td>
-                  {((o.price_per_g ?? o.price)).toFixed(2)} zł{' '}
+                  {(o.price_per_g ?? o.price).toFixed(2)} zł{' '}
                   <span data-testid="price-badge">
                     {bucketIcons[o.price_bucket] ?? bucketIcons.unknown}
                   </span>
@@ -70,5 +70,5 @@ export default function OffersTable({ offers }: Props) {
         </tbody>
       </table>
     </div>
-  );
+  )
 }
