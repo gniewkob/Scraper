@@ -14,10 +14,6 @@ def client(migrated_db):
     conn.commit()
     conn.close()
 
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
-
     with TestClient(app) as c:
         yield c
 

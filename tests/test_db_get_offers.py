@@ -23,8 +23,6 @@ def test_get_offers_pagination(migrated_db):
     conn.commit()
     conn.close()
 
-    db_mod._ENGINE_CACHE.clear()
-
     offers = asyncio.run(db_mod.get_offers(limit=2, offset=0))
     assert len(offers) == 2
     assert {o["pharmacy_name"] for o in offers} == {"Pharmacy1", "Pharmacy2"}

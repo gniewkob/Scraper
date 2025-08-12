@@ -33,10 +33,6 @@ def client(migrated_db):
     conn.commit()
     conn.close()
 
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
-
     with TestClient(app) as c:
         yield c
 
@@ -216,9 +212,6 @@ def test_price_per_g_returned(client, migrated_db):
     )
     conn.commit()
     conn.close()
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/TestProduct')
     assert resp.status_code == 200
@@ -248,9 +241,6 @@ def test_price_per_g_from_package_sizes(client, migrated_db, monkeypatch):
     conn.commit()
     conn.close()
     monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"1": 5}, raising=False)
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/SizeProduct')
     assert resp.status_code == 200
@@ -280,9 +270,6 @@ def test_price_per_g_from_small_price(client, migrated_db, monkeypatch):
     conn.commit()
     conn.close()
     monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"1": 5}, raising=False)
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/CheapSize')
     assert resp.status_code == 200
@@ -312,9 +299,6 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, migrated_db,
     conn.commit()
     conn.close()
     monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {}, raising=False)
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/NoQtyLow')
     assert resp.status_code == 200
@@ -344,9 +328,6 @@ def test_price_per_g_added_below_100_with_package_size(client, migrated_db, monk
     conn.commit()
     conn.close()
     monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"1": 10}, raising=False)
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/CheapTen')
     assert resp.status_code == 200
@@ -376,10 +357,6 @@ def test_price_per_g_real_product_id(client, migrated_db, monkeypatch):
     conn.commit()
     conn.close()
     monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"121591": 10}, raising=False)
-    from backend import db as backend_db
-
-    backend_db._ENGINE_CACHE.clear()
-
     resp = client.get('/api/product/S-Lab22')
     assert resp.status_code == 200
     offers = resp.json()['offers']
