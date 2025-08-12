@@ -6,69 +6,8 @@ from backend.main import app
 
 
 @pytest.fixture()
-def client(tmp_path_factory, monkeypatch):
-    db_file = tmp_path_factory.mktemp("data") / "buckets.sqlite"
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1,
-            first_seen TEXT,
-            last_seen TEXT
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE product_type_mapping (
-            product_id TEXT PRIMARY KEY,
-            product_type TEXT
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE price_thresholds (
-            product_type TEXT,
-            super_deal REAL,
-            deal REAL,
-            normal REAL,
-            updated_at TEXT
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE price_statistics (
-            product TEXT,
-            min_price REAL,
-            calculated_at TEXT
-        )
-        """
-    )
+def client(migrated_db):
+    conn = sqlite3.connect(migrated_db)
     conn.execute("INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'Bucket')")
     conn.execute(
         """
@@ -101,11 +40,8 @@ def client(tmp_path_factory, monkeypatch):
     conn.commit()
     conn.close()
 
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('scraper.core.config.config.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('scraper.core.config.config.DB_URL', f'sqlite:///{db_file}', raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     with TestClient(app) as c:

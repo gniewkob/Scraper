@@ -10,42 +10,9 @@ from cryptography.fernet import Fernet
 
 
 @pytest.fixture()
-def client(tmp_path_factory, monkeypatch):
-    """Create a TestClient for the FastAPI app with a temp database."""
-    db_file = tmp_path_factory.mktemp("data") / "test.sqlite"
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1,
-            first_seen TEXT,
-            last_seen TEXT
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def client(migrated_db):
+    """Create a TestClient for the FastAPI app with seed data."""
+    conn = sqlite3.connect(migrated_db)
     conn.execute(
         "INSERT INTO products (id, slug, name, active) VALUES (1, 'p0', 'Sample', 1)"
     )
@@ -66,11 +33,8 @@ def client(tmp_path_factory, monkeypatch):
     conn.commit()
     conn.close()
 
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('scraper.core.config.config.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('scraper.core.config.config.DB_URL', f'sqlite:///{db_file}', raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     with TestClient(app) as c:
@@ -169,36 +133,20 @@ def test_alerts_grouped_city_filter(client):
 
 
 @pytest.fixture()
-def alerts_db(tmp_path, monkeypatch):
-    db_file = tmp_path / "alerts.sqlite"
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1,
-            first_seen TEXT,
-            last_seen TEXT
-        )
-        """
-    )
-    conn.execute(
-        "CREATE TABLE user_alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER NOT NULL, threshold REAL NOT NULL, email_encrypted TEXT, phone_encrypted TEXT, created TEXT, token TEXT, confirmed INTEGER DEFAULT 0)"
-    )
-    conn.execute("INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'Test')")
+def alerts_db(client, monkeypatch):
+    from backend.main import DB_PATH as _DB_PATH
+
+    conn = sqlite3.connect(_DB_PATH)
+    conn.execute("INSERT INTO products (id, slug, name) VALUES (3, 'p1', 'Test')")
     conn.commit()
     conn.close()
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('scraper.core.config.config.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('scraper.core.config.config.DB_URL', f'sqlite:///{db_file}', raising=False)
-    from backend import db as backend_db
-    backend_db._ENGINE_CACHE.clear()
     key = Fernet.generate_key().decode()
     monkeypatch.setenv("ALERTS_FERNET_KEY", key)
-    return db_file
+    monkeypatch.setattr('backend.main.send_confirmation_email', lambda *a, **k: True)
+    monkeypatch.setattr('backend.main.send_confirmation_sms', lambda *a, **k: True)
+    monkeypatch.setattr('backend.routes.alerts.send_confirmation_email', lambda *a, **k: True)
+    monkeypatch.setattr('backend.routes.alerts.send_confirmation_sms', lambda *a, **k: True)
+    return _DB_PATH
 
 
 @pytest.mark.parametrize(
@@ -248,41 +196,10 @@ def test_register_alert_success(client, alerts_db):
     assert decrypt(phone_e) == "+48100100100"
 
 
-def test_price_per_g_returned(client, monkeypatch, tmp_path):
-    db_file = tmp_path / "test.sqlite"
-    import sqlite3
-
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def test_price_per_g_returned(client, migrated_db):
+    conn = sqlite3.connect(migrated_db)
+    conn.execute("DELETE FROM pharmacy_prices")
+    conn.execute("DELETE FROM products")
     conn.execute(
         "INSERT INTO products (id, slug, name) VALUES (1, 'p1', 'TestProduct')"
     )
@@ -299,10 +216,8 @@ def test_price_per_g_returned(client, monkeypatch, tmp_path):
     )
     conn.commit()
     conn.close()
-
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/TestProduct')
@@ -312,41 +227,10 @@ def test_price_per_g_returned(client, monkeypatch, tmp_path):
     assert offers[0]['price'] == pytest.approx(15.0)
 
 
-def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
-    db_file = tmp_path / "test.sqlite"
-    import sqlite3
-
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def test_price_per_g_from_package_sizes(client, migrated_db, monkeypatch):
+    conn = sqlite3.connect(migrated_db)
+    conn.execute("DELETE FROM pharmacy_prices")
+    conn.execute("DELETE FROM products")
     conn.execute(
         "INSERT INTO products (id, slug, name) VALUES (1, 'p2', 'SizeProduct')"
     )
@@ -363,11 +247,9 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
     )
     conn.commit()
     conn.close()
-
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"1": 5}, raising=False)
+    monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"1": 5}, raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/SizeProduct')
@@ -377,41 +259,10 @@ def test_price_per_g_from_package_sizes(client, monkeypatch, tmp_path):
     assert offers[0]['price'] == pytest.approx(30.0)
 
 
-def test_price_per_g_from_small_price(client, monkeypatch, tmp_path):
-    db_file = tmp_path / "test.sqlite"
-    import sqlite3
-
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def test_price_per_g_from_small_price(client, migrated_db, monkeypatch):
+    conn = sqlite3.connect(migrated_db)
+    conn.execute("DELETE FROM pharmacy_prices")
+    conn.execute("DELETE FROM products")
     conn.execute(
         "INSERT INTO products (id, slug, name) VALUES (1, 'p3', 'CheapSize')"
     )
@@ -428,11 +279,9 @@ def test_price_per_g_from_small_price(client, monkeypatch, tmp_path):
     )
     conn.commit()
     conn.close()
-
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"1": 5}, raising=False)
+    monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"1": 5}, raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/CheapSize')
@@ -442,41 +291,10 @@ def test_price_per_g_from_small_price(client, monkeypatch, tmp_path):
     assert offers[0]['price'] == pytest.approx(10.0)
 
 
-def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch, tmp_path):
-    db_file = tmp_path / "test.sqlite"
-    import sqlite3
-
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def test_price_per_g_omitted_without_quantity_and_low_price(client, migrated_db, monkeypatch):
+    conn = sqlite3.connect(migrated_db)
+    conn.execute("DELETE FROM pharmacy_prices")
+    conn.execute("DELETE FROM products")
     conn.execute(
         "INSERT INTO products (id, slug, name) VALUES (1, 'p4', 'NoQtyLow')"
     )
@@ -493,11 +311,9 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
     )
     conn.commit()
     conn.close()
-
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {}, raising=False)
+    monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {}, raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/NoQtyLow')
@@ -507,41 +323,10 @@ def test_price_per_g_omitted_without_quantity_and_low_price(client, monkeypatch,
     assert offers[0]['price'] == pytest.approx(80.0)
 
 
-def test_price_per_g_added_below_100_with_package_size(client, monkeypatch, tmp_path):
-    db_file = tmp_path / "test.sqlite"
-    import sqlite3
-
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def test_price_per_g_added_below_100_with_package_size(client, migrated_db, monkeypatch):
+    conn = sqlite3.connect(migrated_db)
+    conn.execute("DELETE FROM pharmacy_prices")
+    conn.execute("DELETE FROM products")
     conn.execute(
         "INSERT INTO products (id, slug, name) VALUES (1, 'p5', 'CheapTen')"
     )
@@ -558,11 +343,9 @@ def test_price_per_g_added_below_100_with_package_size(client, monkeypatch, tmp_
     )
     conn.commit()
     conn.close()
-
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"1": 10}, raising=False)
+    monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"1": 10}, raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/CheapTen')
@@ -572,41 +355,10 @@ def test_price_per_g_added_below_100_with_package_size(client, monkeypatch, tmp_
     assert offers[0]['price'] == pytest.approx(7.0)
 
 
-def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
-    db_file = tmp_path / "test.sqlite"
-    import sqlite3
-
-    conn = sqlite3.connect(db_file)
-    conn.execute(
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER DEFAULT 1
-        )
-        """
-    )
-    conn.execute(
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT,
-            pharmacy_lat REAL,
-            pharmacy_lon REAL,
-            UNIQUE(product_id, pharmacy_name, price, expiration, fetched_at)
-        )
-        """
-    )
+def test_price_per_g_real_product_id(client, migrated_db, monkeypatch):
+    conn = sqlite3.connect(migrated_db)
+    conn.execute("DELETE FROM pharmacy_prices")
+    conn.execute("DELETE FROM products")
     conn.execute(
         "INSERT INTO products (id, slug, name) VALUES (121591, '121591', 'S-Lab22')"
     )
@@ -623,11 +375,9 @@ def test_price_per_g_real_product_id(client, monkeypatch, tmp_path):
     )
     conn.commit()
     conn.close()
-
-    monkeypatch.setattr('backend.main.DB_PATH', str(db_file), raising=False)
-    monkeypatch.setattr('backend.main.DB_URL', f'sqlite:///{db_file}', raising=False)
-    monkeypatch.setattr('backend.main.PACKAGE_SIZES', {"121591": 10}, raising=False)
+    monkeypatch.setattr('backend.routes.utils.PACKAGE_SIZES', {"121591": 10}, raising=False)
     from backend import db as backend_db
+
     backend_db._ENGINE_CACHE.clear()
 
     resp = client.get('/api/product/S-Lab22')

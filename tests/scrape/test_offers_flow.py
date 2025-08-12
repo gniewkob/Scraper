@@ -1,53 +1,12 @@
 from sqlalchemy import create_engine, text
-from sqlalchemy.pool import StaticPool
 
 from scraper.services import db as db_services
 from scraper.services import offers as offers_mod
 
 
-def setup_test_db():
-    engine = create_engine(
-        "sqlite://",
-        future=True,
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
-    schema = [
-        """
-        CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            active INTEGER NOT NULL DEFAULT 1,
-            first_seen TEXT,
-            last_seen TEXT
-        )
-        """,
-        """
-        CREATE TABLE pharmacy_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            pharmacy_name TEXT NOT NULL,
-            address TEXT,
-            price REAL,
-            unit TEXT,
-            expiration TEXT,
-            fetched_at TEXT,
-            availability TEXT,
-            updated TEXT,
-            map_url TEXT
-        )
-        """,
-    ]
-    with engine.begin() as conn:
-        for stmt in schema:
-            conn.exec_driver_sql(stmt)
-    return engine
 
-
-
-def test_offers_flow_marks_inactive_and_inserts_prices():
-    engine = setup_test_db()
+def test_offers_flow_marks_inactive_and_inserts_prices(migrated_db):
+    engine = create_engine(f"sqlite:///{migrated_db}", future=True)
     db_services.ENGINE = engine
     offers_mod.ENGINE = engine
 
