@@ -60,6 +60,8 @@ function App() {
       return;
     }
 
+    const controller = new AbortController();
+
     const fetchData = async () => {
       setLoading(true);
       setError(null);
@@ -73,21 +75,28 @@ function App() {
       if (city) params.append('city', city);
 
       try {
-        const r = await fetch(`/api/product/${encodeURIComponent(product)}?${params}`);
+        const r = await fetch(
+          `/api/product/${encodeURIComponent(product)}?${params}`,
+          { signal: controller.signal },
+        );
         if (!r.ok) throw new Error(`HTTP ${r.status} - ${r.statusText}`);
         const data = await r.json();
         setOffers(data.offers || []);
         setTrend(data.trend || []);
         setTotal(data.total || 0);
-      } catch (e: any) {
+      } catch (e: unknown) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+        const message = e instanceof Error ? e.message : String(e);
         console.error('product error', e);
-        setError(`Błąd podczas ładowania danych: ${e.message}`);
+        setError(`Błąd podczas ładowania danych: ${message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => controller.abort();
   }, [product, city, sort, order, offset]);
 
   return (
