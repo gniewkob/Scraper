@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 from pathlib import Path
 from typing import Dict, Optional
@@ -15,12 +14,10 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from .config import settings
+
 
 from .models import Product
-
-# Connection pooling settings can be tweaked via environment variables
-POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "5"))
-MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "10"))
 
 # cache of engines keyed by URL so modules can share a single instance
 _ENGINE_CACHE: Dict[str, AsyncEngine] = {}
@@ -66,8 +63,8 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
         engine = create_async_engine(
             db_url,
             pool_pre_ping=True,
-            pool_size=POOL_SIZE,
-            max_overflow=MAX_OVERFLOW,
+            pool_size=settings.db_pool_size,
+            max_overflow=settings.db_max_overflow,
             future=True,
         )
 
