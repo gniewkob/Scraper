@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+pip install -r requirements-ci.txt
+
 playwright install --with-deps firefox
 
 # Install frontend dependencies before running tests
