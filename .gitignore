@@ -7,6 +7,9 @@ venv/
 ENV/
 env/
 
+# Node
+node_modules/
+
 # Mac/Windows śmieci
 .DS_Store
 Thumbs.db
