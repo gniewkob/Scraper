@@ -1,18 +1,18 @@
-import { getPages } from '../utils/pagination';
+import { getPages } from '../utils/pagination'
 
 interface Props {
-  total: number;
-  limit: number;
-  offset: number;
-  onChange: (offset: number) => void;
+  total: number
+  limit: number
+  offset: number
+  onChange: (offset: number) => void
 }
 
 export default function Pagination({ total, limit, offset, onChange }: Props) {
-  const totalPages = Math.ceil(total / limit);
-  const current = Math.floor(offset / limit) + 1;
-  if (totalPages <= 1) return null;
+  const totalPages = Math.ceil(total / limit)
+  const current = Math.floor(offset / limit) + 1
+  if (totalPages <= 1) return null
 
-  const pages = getPages(totalPages, current);
+  const pages = getPages(totalPages, current)
 
   return (
     <div className="my-3" id="pagination">
@@ -23,7 +23,7 @@ export default function Pagination({ total, limit, offset, onChange }: Props) {
       >
         «
       </button>
-      {pages.map((p, i) => (
+      {pages.map((p, i) =>
         typeof p === 'number' ? (
           <button
             key={p}
@@ -37,8 +37,8 @@ export default function Pagination({ total, limit, offset, onChange }: Props) {
           <span key={`ellipsis-${i}`} className="mx-1">
             ...
           </span>
-        )
-      ))}
+        ),
+      )}
       <button
         className="btn btn-outline-light btn-sm mx-1"
         disabled={current === totalPages}
@@ -47,5 +47,5 @@ export default function Pagination({ total, limit, offset, onChange }: Props) {
         »
       </button>
     </div>
-  );
+  )
 }
