@@ -1,7 +1,10 @@
 import os
 from typing import List, Dict, Optional
 
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError as exc:
+    raise RuntimeError("Playwright is required for product discovery") from exc
 
 from .urls import build_regional_url
 
@@ -14,7 +17,23 @@ def discover_products(headless: Optional[bool] = None) -> List[Dict[str, str]]:
     if headless is None:
         headless_env = os.getenv("HEADLESS", "true")
         headless = headless_env.lower() == "true"
-    with sync_playwright() as p:
+    global sync_playwright
+    manager = sync_playwright()
+    if manager is None:
+        import importlib
+        import sys
+        try:
+            sys.modules.pop("playwright", None)
+            sys.modules.pop("playwright.sync_api", None)
+            sync_playwright = importlib.import_module(
+                "playwright.sync_api"
+            ).sync_playwright
+            manager = sync_playwright()
+        except Exception as exc:  # pragma: no cover - defensive
+            raise RuntimeError("Playwright is required for product discovery") from exc
+    if manager is None:
+        raise RuntimeError("Playwright is required for product discovery")
+    with manager as p:
         browser = p.firefox.launch(headless=headless)
         context = browser.new_context(ignore_https_errors=True)
         page = context.new_page()
