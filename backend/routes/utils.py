@@ -1,8 +1,12 @@
+import logging
 import re
 from datetime import datetime, timezone
 from math import radians, cos, sin, asin, sqrt
 from sqlalchemy import text
 from scraper.core.config.urls import PACKAGE_SIZES
+
+
+logger = logging.getLogger(__name__)
 
 
 def slugify(value: str) -> str:
@@ -40,7 +44,9 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
             days_left = (exp_dt - now).days
             short_expiry = days_left <= 30
         except Exception:
-            pass
+            logger.exception(
+                "Failed to parse expiration '%s' for product %s", expiration, product_id
+            )
 
     price_per_g = None
     match = re.search(r"(\d+(?:[.,]\d+)?)\s*g", unit or "")

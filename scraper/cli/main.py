@@ -16,7 +16,7 @@ from scraper.services.offers import _default_fetch, _parse_offers
 from backend.models import Product
 
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 
 def main() -> None:

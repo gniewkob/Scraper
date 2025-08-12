@@ -10,7 +10,7 @@ except Exception:  # pragma: no cover - fallback if Playwright missing
 
 T = TypeVar("T")
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 
 def retry_on_timeout(func: Callable[..., T], max_attempts: int = 3, *args, **kwargs) -> T:

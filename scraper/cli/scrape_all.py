@@ -16,6 +16,8 @@ from datetime import datetime
 from scraper.cli.email_utils import send_email
 
 
+logger = logging.getLogger(__name__)
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--db-type", help="Typ bazy: sqlite, postgresql, mysql, api")
@@ -55,7 +57,6 @@ def worker(products, db_url, headless):
     from scraper.core.config.urls import get_url_by_name, extract_product_id
 
     init_logging()
-    logger = logging.getLogger("gdziepolek")
     ensure_schema()
 
     driver = setup_browser(headless=headless)
@@ -134,7 +135,6 @@ def main():
     from scraper.core.bootstrap import init_logging
 
     init_logging()
-    logger = logging.getLogger("gdziepolek")
 
     start_dt = datetime.now()
     start_time = time.time()

@@ -15,7 +15,7 @@ from backend.models import Product
 from scraper.core.config.config import DB_PATH, DB_URL, API_URL
 from scraper.services.price_validator import normalize_unit
 
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 
 # shared engine used for all DB operations
 ENGINE = get_engine(DB_URL, DB_PATH)

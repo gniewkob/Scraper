@@ -3,6 +3,7 @@ import importlib.util
 import os
 import sys
 import logging
+import logging.config
 from pathlib import Path
 from datetime import datetime
 
@@ -10,6 +11,9 @@ from datetime import datetime
 LOG_LEVEL = getattr(
     logging, os.getenv("SCRAPER_LOG_LEVEL", "ERROR").upper(), logging.ERROR
 )
+
+
+logger = logging.getLogger(__name__)
 
 def ensure_schema():
 	schema_path = Path(__file__).resolve().parents[1] / "services" / "update_schema.py"
@@ -20,27 +24,12 @@ def ensure_schema():
 	update_schema = importlib.util.module_from_spec(spec)
 	sys.modules["update_schema"] = update_schema
 	spec.loader.exec_module(update_schema)
-	logging.getLogger("gdziepolek").info("✅ Struktura bazy została zaktualizowana.")
+        logger.info("✅ Struktura bazy została zaktualizowana.")
 
 def init_logging():
-	log_dir = Path(__file__).resolve().parents[1] / "logs"
-	log_dir.mkdir(parents=True, exist_ok=True)
-	log_file = log_dir / f"scrape_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-
-	# Handlery
-	file_handler = logging.FileHandler(log_file)
-	file_handler.setLevel(LOG_LEVEL)
-
-	console_handler = logging.StreamHandler()
-	console_handler.setLevel(LOG_LEVEL)
-
-	# Format
-	formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', "%Y-%m-%d %H:%M:%S")
-	file_handler.setFormatter(formatter)
-	console_handler.setFormatter(formatter)
-
-	# Logger główny
-	logger = logging.getLogger("gdziepolek")
-	logger.setLevel(LOG_LEVEL)
-	logger.addHandler(file_handler)
-	logger.addHandler(console_handler)
+        config_path = Path(__file__).resolve().parents[2] / "logging.config"
+        if config_path.exists():
+                logging.config.fileConfig(config_path, disable_existing_loggers=False)
+                logging.getLogger().setLevel(LOG_LEVEL)
+        else:
+                logging.basicConfig(level=LOG_LEVEL)

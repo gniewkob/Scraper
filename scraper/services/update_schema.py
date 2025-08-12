@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 
 # Konfiguracja loggera
-logger = logging.getLogger("gdziepolek")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 from scraper.core.config.config import DB_PATH
