@@ -14,7 +14,7 @@ jobs:
   test-build:
     runs-on: ubuntu-latest
     outputs:
-      detect: ${{ steps.detect.outputs }}
+      failed: ${{ steps.detect.outputs.failed }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -58,7 +58,7 @@ jobs:
 
   autofix-lint:
     needs: test-build
-    if: needs.test-build.outputs.detect.failed == '1'
+    if: needs.test-build.outputs.failed == '1'
     runs-on: ubuntu-latest
     permissions:
       contents: write
