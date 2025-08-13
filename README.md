@@ -50,6 +50,7 @@ HEADLESS=true         # uruchamiaj przeglądarkę bez GUI
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `FROM_EMAIL` | konfiguracja serwera SMTP dla wysyłki e-maili |
 | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_SMS_FROM` | dane logowania do Twilio do wysyłki SMS        |
 | `CONFIRMATION_BASE_URL` | bazowy URL używany w linkach potwierdzających (domyślnie https://example.com) |
+| `ALLOWED_ORIGINS` | lista domen (rozdzielona przecinkami) do CORS (domyślnie http://localhost:5173,http://localhost:3000) |
 | `EMAIL_MASK_VISIBLE_CHARS` | ile znaków lokalnej części e‑maila pozostaje odkrytych (domyślnie 4) |
 | `PHONE_MASK_MIN_LENGTH` | minimalna długość numeru telefonu, aby zastosować maskowanie (domyślnie 6) |
 | `PHONE_MASK_VISIBLE_PREFIX`, `PHONE_MASK_VISIBLE_SUFFIX` | ile cyfr pokazujemy na początku i końcu numeru (domyślnie po 3) |
