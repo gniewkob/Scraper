@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     twilio_whatsapp_from: str | None = None
 
     confirmation_base_url: str = "https://example.com"
+    allowed_origins: str = "http://localhost:5173,http://localhost:3000"
 
     email_mask_visible_chars: int = 4
     phone_mask_min_length: int = 6
