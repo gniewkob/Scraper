@@ -23,6 +23,7 @@ describe('PriceTrendChart', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     ;(HTMLCanvasElement.prototype as any).getContext = vi.fn(() => ({}))
+    process.env.VITE_API_URL = ''
   })
 
   it('shows message when no data', () => {

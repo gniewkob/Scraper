@@ -30,6 +30,7 @@ vi.mock(
 describe('MapView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    process.env.VITE_API_URL = ''
   })
 
   it('does not initialize map when offers are empty', async () => {
