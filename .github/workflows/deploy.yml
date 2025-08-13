@@ -38,6 +38,32 @@ jobs:
       - name: Run scraper integration tests
         run: bash scripts/run_ci_tests.sh
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend
+        run: npm --prefix frontend run build
+
+      - name: Upload frontend to MyDevil
+        env:
+          MYDEVIL_USER: ${{ secrets.MYDEVIL_USER }}
+          MYDEVIL_HOST: ${{ secrets.MYDEVIL_HOST }}
+          MYDEVIL_PATH: ${{ secrets.MYDEVIL_PATH }}
+          MYDEVIL_SSH_KEY: ${{ secrets.MYDEVIL_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$MYDEVIL_SSH_KEY" > ~/.ssh/mydevil_key
+          chmod 600 ~/.ssh/mydevil_key
+          rsync -av -e "ssh -i ~/.ssh/mydevil_key -o StrictHostKeyChecking=no" frontend/dist/ "$MYDEVIL_USER@$MYDEVIL_HOST:$MYDEVIL_PATH"
+
       - name: Log in to Docker registry
         uses: docker/login-action@v3
         with:
