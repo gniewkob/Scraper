@@ -130,7 +130,7 @@ def test_alerts_grouped_city_filter(client):
 
 @pytest.fixture()
 def alerts_db(client, monkeypatch):
-    from backend.main import DB_PATH as _DB_PATH
+    from scraper.core.config.config import DB_PATH as _DB_PATH
 
     conn = sqlite3.connect(_DB_PATH)
     conn.execute("INSERT INTO products (id, slug, name) VALUES (3, 'p1', 'Test')")

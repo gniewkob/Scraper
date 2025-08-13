@@ -1,6 +1,6 @@
 """Tests for masking helper functions."""
 
-from backend.main import mask_email, mask_phone
+from backend.utils import mask_email, mask_phone
 
 
 def test_mask_email():

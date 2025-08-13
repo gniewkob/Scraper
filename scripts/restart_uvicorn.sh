@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PORT=8000
+PORT=61973
 CMD="uvicorn backend.main:app --host 127.0.0.1 --port $PORT --reload"
 
 # Stop running Uvicorn processes
