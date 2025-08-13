@@ -56,11 +56,6 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
 
     engine = _ENGINE_CACHE.get(db_url)
     if engine is None:
-        # Dispose any previously cached engine to close old connections
-        for cached_engine in _ENGINE_CACHE.values():
-            cached_engine.dispose()
-        _ENGINE_CACHE.clear()
-
         engine = create_async_engine(
             db_url,
             pool_pre_ping=True,
@@ -69,8 +64,26 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
             future=True,
         )
 
-        _ENGINE_CACHE[db_url] = engine  # cache fresh engine after cleanup
+        _ENGINE_CACHE[db_url] = engine  # cache fresh engine
     return engine
+
+
+async def dispose_engines(db_url: Optional[str] = None) -> None:
+    """Dispose cached engines.
+
+    If ``db_url`` is provided only that engine is disposed otherwise all
+    engines in the cache are cleaned up. This should be called on application
+    shutdown to close open connections gracefully.
+    """
+
+    if db_url:
+        engine = _ENGINE_CACHE.pop(db_url, None)
+        if engine is not None:
+            await engine.dispose()
+    else:
+        for engine in list(_ENGINE_CACHE.values()):
+            await engine.dispose()
+        _ENGINE_CACHE.clear()
 
 
 async def get_offers(

@@ -18,7 +18,11 @@ import bcrypt
 from sqlalchemy import text
 
 from scraper.core.config.config import DB_PATH, DB_URL
-from backend.db import get_engine as build_engine, get_cities as fetch_cities
+from backend.db import (
+    get_engine as build_engine,
+    get_cities as fetch_cities,
+    dispose_engines,
+)
 from scraper.utils.crypto import decrypt, _get_fernet
 from .config import settings
 from .routes.utils import compute_price_info
@@ -106,6 +110,12 @@ from .routes import alerts, products
 
 app.include_router(products.router)
 app.include_router(alerts.router)
+
+
+@app.on_event("shutdown")
+async def shutdown_event() -> None:
+    """Dispose database engines on application shutdown."""
+    await dispose_engines()
 
 
 def get_db_engine():
