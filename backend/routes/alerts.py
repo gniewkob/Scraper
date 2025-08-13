@@ -15,6 +15,7 @@ from backend.db import get_connection
 from .utils import compute_price_info
 from backend.main import send_confirmation_email, send_confirmation_sms
 from backend.schemas import AlertRegisterRequest, AlertConfirmRequest
+from backend.config import settings
 
 router = APIRouter()
 
@@ -36,22 +37,23 @@ async def get_price_alerts(conn: AsyncConnection = Depends(get_connection)):
         Alert entries with pricing details.
     """
 
-    rows = (
-        (
-            await conn.execute(
-                text(
-                    """
-                SELECT * FROM pharmacy_prices
-                WHERE price < 35 AND price >= 10
-                  AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
-                ORDER BY price ASC
-                """
-                )
-            )
-        )
-        .mappings()
-        .all()
+    query = text(
+        """
+        SELECT * FROM pharmacy_prices
+        WHERE price < :max_price AND price >= :min_price
+          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+        ORDER BY price ASC
+        """
     )
+    rows = (
+        await conn.execute(
+            query,
+            {
+                "min_price": settings.alerts_min_price,
+                "max_price": settings.alerts_max_price,
+            },
+        )
+    ).mappings().all()
 
     alerts = []
     now = datetime.now()

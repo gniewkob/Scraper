@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     confirmation_base_url: str = "https://example.com"
     allowed_origins: str = "http://localhost:5173,http://localhost:3000"
 
+    alerts_min_price: float = 10
+    alerts_max_price: float = 35
+
     email_mask_visible_chars: int = 4
     phone_mask_min_length: int = 6
     phone_mask_visible_prefix: int = 3
