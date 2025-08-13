@@ -210,7 +210,7 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 1. **Katalog na serwerze**: `~/scraper_workspace/backend/`.
 2. Stwórz i aktywuj wirtualne środowisko, zainstaluj `pip install -r requirements.txt`.
 3. Ustaw w `.env` zmienne (`SECRET_KEY`, `ADMIN_PASSWORD_HASH`, `DB_URL` wskazujący na SQLite lub PostgreSQL).
-4. Uruchom `uvicorn` w tle (np. `restart_uvicorn.sh` + cron `@reboot`).
+4. Uruchom `uvicorn` w tle (np. `scripts/restart_uvicorn.sh` + cron `@reboot`).
 5. W panelu MyDevil ustaw **reverse proxy** do portu backendu (`http://localhost:8000` → subdomena).
 
 ### Frontend (React)
