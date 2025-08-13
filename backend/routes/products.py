@@ -19,6 +19,14 @@ from .utils import (
 
 router = APIRouter()
 
+ALLOWED_SORT_FIELDS = {
+    "price": "price",
+    "expiration": "expiration",
+    "fetched_at": "fetched_at",
+}
+
+ALLOWED_SORT_ORDERS = {"asc": "ASC", "desc": "DESC"}
+
 
 @router.get("/api/products", response_class=JSONResponse)
 async def get_products(conn: AsyncConnection = Depends(get_connection)):
@@ -80,8 +88,8 @@ async def get_product_by_name(
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
 
-    sort_sql = sort
-    order_sql = order
+    sort_sql = ALLOWED_SORT_FIELDS[sort]
+    order_sql = ALLOWED_SORT_ORDERS[order]
 
     base_query = """
         SELECT *,
@@ -99,12 +107,12 @@ async def get_product_by_name(
         base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
         params.update({"city1": f"%, {city}", "city2": f"% {city}"})
 
-    query = (
-        f"SELECT * FROM ({base_query}) WHERE rn = 1 ORDER BY {sort_sql} {order_sql} "
-        "LIMIT :limit OFFSET :offset"
+    order_clause = f" ORDER BY {sort_sql} {order_sql} "
+    query = text(
+        f"SELECT * FROM ({base_query}) WHERE rn = 1{order_clause}LIMIT :limit OFFSET :offset"
     )
     query_params = {**params, "limit": limit, "offset": offset}
-    rows = (await conn.execute(text(query), query_params)).mappings().all()
+    rows = (await conn.execute(query, query_params)).mappings().all()
     total = (
         await conn.execute(
             text(f"SELECT COUNT(*) FROM ({base_query}) WHERE rn = 1"), params
