@@ -24,3 +24,17 @@ jobs:
             -e HEADLESS \
             scraper \
             python -m scraper.cli.scrape_all
+
+      - name: Upload SQLite database to MyDevil
+        env:
+          MYDEVIL_USER: ${{ secrets.MYDEVIL_USER }}
+          MYDEVIL_HOST: ${{ secrets.MYDEVIL_HOST }}
+          MYDEVIL_PATH: ${{ secrets.MYDEVIL_PATH }}
+          MYDEVIL_SSH_KEY: ${{ secrets.MYDEVIL_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$MYDEVIL_SSH_KEY" > ~/.ssh/mydevil_key
+          chmod 600 ~/.ssh/mydevil_key
+          rsync -av -e "ssh -i ~/.ssh/mydevil_key -o StrictHostKeyChecking=no" \
+            data/pharmacy_prices.sqlite \
+            "$MYDEVIL_USER@$MYDEVIL_HOST:$MYDEVIL_PATH"
