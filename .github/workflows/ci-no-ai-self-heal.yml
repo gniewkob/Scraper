@@ -96,6 +96,6 @@ jobs:
           git commit -am "chore: automatic lint/format fixes"
           git push origin "$branch"
           gh pr create --title "chore: automatic lint/format fixes" --body "Automated lint/format fixes" --base master --head "$branch"
-      - name: Fail if no PR created
+      - name: No PR created
         if: steps.git-diff.outputs.changed == 'false'
-        run: exit 1
+        run: echo "No lint changes detected"
