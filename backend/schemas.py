@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 
 class Offer(BaseModel):
@@ -33,3 +33,20 @@ class ProductOffersResponse(BaseModel):
     order: str
     top3: List[Offer]
     trend: List[TrendEntry]
+
+
+class AlertRegisterRequest(BaseModel):
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    threshold: float = Field(..., gt=0)
+    product_name: str
+
+    @model_validator(mode="after")
+    def at_least_one_contact(cls, m):
+        if not (m.email or m.phone):
+            raise ValueError("either email or phone must be provided")
+        return m
+
+
+class AlertConfirmRequest(BaseModel):
+    token: str
