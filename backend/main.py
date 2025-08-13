@@ -47,7 +47,7 @@ app = FastAPI(lifespan=lifespan)
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -110,3 +110,40 @@ app.include_router(alerts.router)
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy"}
+
+
+# City coordinates cache
+_CITY_COORDS_CACHE = None
+CITY_COORDS_FILE = os.getenv("CITY_COORDS_FILE", "data/city_coords.json")
+
+@app.get("/api/city_coords/{city}")
+def get_city_coords(city: str):
+    """Return latitude/longitude for a given city from cached file."""
+    from pathlib import Path
+    import json
+    
+    global _CITY_COORDS_CACHE
+    
+    coords_file = Path(CITY_COORDS_FILE)
+
+    if _CITY_COORDS_CACHE is None:
+        if not coords_file.exists():
+            raise HTTPException(status_code=404, detail="Coordinates file missing")
+        try:
+            with open(coords_file, "r", encoding="utf-8") as f:
+                _CITY_COORDS_CACHE = json.load(f)
+        except Exception:
+            raise HTTPException(status_code=500, detail="Failed to load coordinates")
+
+    for name, loc in _CITY_COORDS_CACHE.items():
+        if name.lower() == city.lower():
+            return {"lat": loc["lat"], "lon": loc["lon"]}
+
+    raise HTTPException(status_code=404, detail="City not found")
+
+
+@app.get("/api/cities")
+async def get_cities_endpoint():
+    """Return list of unique city names."""
+    from backend.db import get_cities
+    return await get_cities()

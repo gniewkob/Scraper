@@ -79,7 +79,7 @@ def test_get_cities(client, monkeypatch):
     import backend.main as main
     from backend import db as backend_db
 
-    engine = main.get_db_engine()
+    engine = backend_db.get_engine()
     monkeypatch.setattr(backend_db, 'get_engine', lambda db_url=None, db_path=None: engine)
 
     response = client.get('/api/cities')

@@ -19,7 +19,7 @@ class Product(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     slug = Column(String(255), nullable=False, unique=True)
     name = Column(String(255), nullable=False)
-    active = Column(Boolean, nullable=False, default=True, server_default=text("1"))
+    active = Column(Boolean, nullable=False, default=True, server_default=text("true"))
     first_seen = Column(DateTime, default=datetime.utcnow)
     last_seen = Column(DateTime, default=datetime.utcnow)
 

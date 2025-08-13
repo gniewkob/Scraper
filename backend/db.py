@@ -102,7 +102,7 @@ async def get_offers(
         "       pr.id as product_id, pr.name as product_name "
         "FROM pharmacy_prices p "
         "LEFT JOIN products pr ON p.product_id = pr.id "
-        "WHERE pr.active = 1"
+        "WHERE pr.active = true"
     )
     params = {}
     if city:

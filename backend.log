@@ -1,0 +1,15 @@
+INFO:     Started server process [58117]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:38273 (Press CTRL+C to quit)
+INFO:     127.0.0.1:40103 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:20320 - "GET /health HTTP/1.1" 200 OK
+INFO:     212.91.26.153:0 - "GET /api/product/Aspirin%20100mg?city=Krak%C3%B3w HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/cities HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/cities HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/product/Aspirin%20100mg?limit=50&offset=0&sort=price&order=asc HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/product/Aspirin%20100mg?limit=50&offset=0&sort=price&order=asc&city=Krak%C3%B3w HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/product/Aspirin%20100mg?limit=50&offset=0&sort=price&order=asc&city=Gda%C5%84sk HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/product/Aspirin%20100mg?limit=50&offset=0&sort=price&order=asc&city=Warszawa HTTP/1.1" 200 OK

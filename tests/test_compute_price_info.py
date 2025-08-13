@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from backend.main import compute_price_info
+from backend.routes.utils import compute_price_info
 
 
 def test_compute_price_info_handles_naive_expiration():

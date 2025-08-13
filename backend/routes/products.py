@@ -46,7 +46,7 @@ async def get_products(conn: AsyncConnection = Depends(get_connection)):
 
     rows = (
         await conn.execute(
-            text("SELECT DISTINCT id, name FROM products WHERE active = 1")
+            text("SELECT DISTINCT id, name FROM products WHERE active = true")
         )
     ).fetchall()
 
@@ -72,14 +72,14 @@ async def get_products(conn: AsyncConnection = Depends(get_connection)):
 )
 async def get_product_by_name(
     product_name: str = Path(
-        ..., min_length=1, max_length=100, pattern=r"^[A-Za-z0-9-]+$"
+        ..., min_length=1, max_length=100, pattern=r"^[A-Za-z0-9\s-]+$"
     ),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
     sort: str = Query("price", pattern=r"^(price|expiration|fetched_at)$"),
     order: str = Query("asc", pattern=r"^(asc|desc)$"),
     city: Optional[str] = Query(
-        None, min_length=1, max_length=50, pattern=r"^[A-Za-z\s-]+$"
+        None, min_length=1, max_length=50, pattern=r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$"
     ),
     lat: Optional[float] = Query(None, ge=-90, le=90),
     lon: Optional[float] = Query(None, ge=-180, le=180),
@@ -145,17 +145,17 @@ async def get_product_by_name(
         SELECT *,
                ROW_NUMBER() OVER (
                    PARTITION BY pharmacy_name, expiration
-                   ORDER BY datetime(fetched_at) DESC
+                   ORDER BY fetched_at::timestamp DESC
                ) AS rn
         FROM pharmacy_prices
         WHERE product_id = :pid
-          AND (expiration IS NULL OR DATE(expiration) >= DATE('now'))
+          AND (expiration IS NULL OR expiration::date >= CURRENT_DATE)
     """
     params = {"pid": product_id}
 
     if city:
         base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
-        params.update({"city1": f"%, {city}", "city2": f"% {city}"})
+        params.update({"city1": f"%{city}%", "city2": f"%{city}%"})
 
     order_clause = f" ORDER BY {sort_sql} {order_sql} "
     query = text(

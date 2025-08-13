@@ -25,21 +25,27 @@ def mask_email(email: str) -> str:
     if "@" not in email:
         return email
     local, domain = email.split("@", 1)
-    if len(local) <= 3:
-        masked = "*" * len(local)
+    if len(local) <= 1:
+        masked = local + "***"
     else:
-        masked = local[:2] + "*" * (len(local) - 3) + local[-1]
+        masked = local[:4] + "***" if len(local) > 4 else local + "***"
     return f"{masked}@{domain}"
 
 
 def mask_phone(phone: str) -> str:
     """Mask phone number for privacy."""
-    # Remove all non-digits
-    digits = re.sub(r"\D", "", phone)
-    if len(digits) <= 4:
-        return "*" * len(digits)
-    # Show first 2 and last 2 digits
-    return digits[:2] + "*" * (len(digits) - 4) + digits[-2:]
+    # If it's a short phone (6 digits or less), don't mask
+    if len(phone) <= 6:
+        return phone
+    
+    # Keep the prefix and last 3 digits
+    if phone.startswith("+"):
+        # Extract country code (first 3 chars including +)
+        if len(phone) > 6:
+            return phone[:3] + "***" + phone[-3:]
+    
+    # For other formats, mask middle part
+    return phone[:3] + "***" + phone[-3:]
 
 
 def require_admin(request: Request):
