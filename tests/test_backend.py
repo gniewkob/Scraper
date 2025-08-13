@@ -153,13 +153,12 @@ def alerts_db(client, monkeypatch):
         {"phone": "+48100100100", "product_name": "Test"},  # missing threshold
         {"email": "a@b.com", "threshold": 30},  # missing product_name
         {"phone": "+48100100100", "threshold": 30},  # missing product_name
+        {"email": "a@b.com", "threshold": -1, "product_name": "Test"},  # invalid threshold
     ],
 )
-def test_register_alert_missing_field(client, alerts_db, data):
+def test_register_alert_invalid_payload(client, alerts_db, data):
     resp = client.post('/api/alerts/register', json=data)
-    assert resp.status_code == 400
-    body = resp.json()
-    assert body.get("status") == "error"
+    assert resp.status_code == 422
 
 
 def test_register_alert_success(client, alerts_db):

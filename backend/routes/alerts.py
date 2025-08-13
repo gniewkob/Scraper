@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -14,6 +14,7 @@ from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
 from .utils import compute_price_info
 from backend.main import send_confirmation_email, send_confirmation_sms
+from backend.schemas import AlertRegisterRequest, AlertConfirmRequest
 
 router = APIRouter()
 
@@ -245,7 +246,7 @@ async def get_grouped_alerts(
 
 @router.post("/api/alerts/register", response_class=JSONResponse)
 async def register_alert(
-    request: Request,
+    payload: AlertRegisterRequest,
     background_tasks: BackgroundTasks,
     conn: AsyncConnection = Depends(get_connection),
 ):
@@ -253,7 +254,7 @@ async def register_alert(
 
     Parameters
     ----------
-    request : Request
+    payload : AlertRegisterRequest
         Incoming request containing alert details.
     background_tasks : BackgroundTasks
         FastAPI task manager for deferred notification sending.
@@ -266,16 +267,10 @@ async def register_alert(
         Status message indicating success or failure.
     """
 
-    data = await request.json()
-    email = data.get("email")
-    phone = data.get("phone")
-    threshold = data.get("threshold")
-    product_name = data.get("product_name")
-
-    if (not email and not phone) or threshold is None or not product_name:
-        return JSONResponse(
-            {"status": "error", "message": "Brakuje danych"}, status_code=400
-        )
+    email = payload.email
+    phone = payload.phone
+    threshold = payload.threshold
+    product_name = payload.product_name
 
     token = uuid.uuid4().hex
     row = (
@@ -315,13 +310,13 @@ async def register_alert(
 
 @router.post("/api/alerts/confirm", response_class=JSONResponse)
 async def confirm_alert(
-    request: Request, conn: AsyncConnection = Depends(get_connection)
+    payload: AlertConfirmRequest, conn: AsyncConnection = Depends(get_connection)
 ):
     """Confirm an alert registration using a token.
 
     Parameters
     ----------
-    request : Request
+    payload : AlertConfirmRequest
         Incoming request with confirmation token.
     conn : AsyncConnection
         Database connection provided by dependency injection.
@@ -332,12 +327,7 @@ async def confirm_alert(
         Status message indicating success or failure.
     """
 
-    data = await request.json()
-    token = data.get("token")
-    if not token:
-        return JSONResponse(
-            {"status": "error", "message": "Brak tokenu"}, status_code=400
-        )
+    token = payload.token
 
     row = (
         await conn.execute(
