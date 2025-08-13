@@ -1,5 +1,5 @@
 import logging
-import secrets
+import uuid
 import re
 from collections import defaultdict
 from datetime import datetime
@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
-from .utils import compute_price_info, slugify
+from .utils import compute_price_info
 from backend.main import send_confirmation_email, send_confirmation_sms
 
 router = APIRouter()
@@ -218,12 +218,11 @@ async def register_alert(
             {"status": "error", "message": "Brakuje danych"}, status_code=400
         )
 
-    token = secrets.token_urlsafe(16)
-    normalized_name = slugify(product_name)
+    token = uuid.uuid4().hex
     row = (
         await conn.execute(
-            text("SELECT id FROM products WHERE slug = :slug OR lower(name) = :name"),
-            {"slug": normalized_name, "name": product_name.lower()},
+            text("SELECT id FROM products WHERE lower(name) = :name"),
+            {"name": product_name.lower()},
         )
     ).first()
     if not row:
