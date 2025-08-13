@@ -22,6 +22,19 @@ logger = logging.getLogger(__name__)
 
 @router.get("/api/alerts", response_class=JSONResponse)
 async def get_price_alerts(conn: AsyncConnection = Depends(get_connection)):
+    """Return active price alerts sorted by price.
+
+    Parameters
+    ----------
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    list[dict]
+        Alert entries with pricing details.
+    """
+
     rows = (
         (
             await conn.execute(
@@ -68,6 +81,19 @@ async def get_price_alerts(conn: AsyncConnection = Depends(get_connection)):
 
 @router.get("/api/alerts_filtered", response_class=JSONResponse)
 async def get_filtered_alerts(conn: AsyncConnection = Depends(get_connection)):
+    """Return deduplicated alerts with the latest price per pharmacy.
+
+    Parameters
+    ----------
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    list[dict]
+        Filtered alert entries.
+    """
+
     rows = (
         (
             await conn.execute(
@@ -131,6 +157,20 @@ async def get_grouped_alerts(
     ),
     conn: AsyncConnection = Depends(get_connection),
 ):
+    """Retrieve alerts grouped by product, optionally filtered by city.
+
+    Parameters
+    ----------
+    city : str, optional
+        City name to narrow results.
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    list[dict]
+        Grouped alert information for each product.
+    """
     base_query = """
         SELECT *,
                ROW_NUMBER() OVER (
@@ -207,6 +247,21 @@ async def get_grouped_alerts(
 async def register_alert(
     request: Request, conn: AsyncConnection = Depends(get_connection)
 ):
+    """Register a new user alert for a product threshold.
+
+    Parameters
+    ----------
+    request : Request
+        Incoming request containing alert details.
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    dict
+        Status message indicating success or failure.
+    """
+
     data = await request.json()
     email = data.get("email")
     phone = data.get("phone")
@@ -266,6 +321,21 @@ async def register_alert(
 async def confirm_alert(
     request: Request, conn: AsyncConnection = Depends(get_connection)
 ):
+    """Confirm an alert registration using a token.
+
+    Parameters
+    ----------
+    request : Request
+        Incoming request with confirmation token.
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    dict
+        Status message indicating success or failure.
+    """
+
     data = await request.json()
     token = data.get("token")
     if not token:
@@ -293,6 +363,19 @@ async def confirm_alert(
 
 @router.get("/api/alerts/list", response_class=JSONResponse)
 async def list_alerts(conn: AsyncConnection = Depends(get_connection)):
+    """List registered alerts with decrypted contact information.
+
+    Parameters
+    ----------
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    list[dict]
+        Alert entries for all users.
+    """
+
     rows = (
         (
             await conn.execute(
