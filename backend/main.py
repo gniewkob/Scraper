@@ -74,7 +74,8 @@ logger = logging.getLogger(__name__)
 def send_confirmation_email(email: str, token: str) -> bool:
     if not email:
         return False
-    confirm_url = f"https://example.com/confirm?token={token}"
+    base_url = settings.confirmation_base_url.rstrip("/")
+    confirm_url = f"{base_url}/confirm?token={token}"
     subject = "Potwierdzenie alertu cenowego"
     body = f"Kliknij link, aby potwierdzić alert: {confirm_url}"
     return send_email(email, subject, body)
@@ -85,7 +86,8 @@ def send_confirmation_sms(phone: str, token: str) -> bool:
     if not (TWILIO_SID and TWILIO_TOKEN and TWILIO_FROM):
         logger.warning("Twilio configuration missing; skipping SMS to %s", phone)
         return False
-    confirm_url = f"https://example.com/confirm?token={token}"
+    base_url = settings.confirmation_base_url.rstrip("/")
+    confirm_url = f"{base_url}/confirm?token={token}"
     body = f"Potwierdź alert: {confirm_url}"
     try:
         client = Client(TWILIO_SID, TWILIO_TOKEN)

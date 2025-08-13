@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     twilio_auth_token: str | None = None
     twilio_whatsapp_from: str | None = None
 
+    confirmation_base_url: str = "https://example.com"
+
     email_mask_visible_chars: int = 4
     phone_mask_min_length: int = 6
     phone_mask_visible_prefix: int = 3
