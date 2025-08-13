@@ -213,6 +213,24 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 4. Uruchom `uvicorn` w tle (np. `restart_uvicorn.sh` + cron `@reboot`).
 5. W panelu MyDevil ustaw **reverse proxy** do portu backendu (`http://localhost:8000` → subdomena).
 
+### Frontend (React)
+
+1. **Build statycznych plików**:
+   ```bash
+   npm --prefix frontend run build
+   ```
+   Powstaje katalog `frontend/dist/` z plikami HTML, JS i CSS.
+2. **Upload na hosting** – skopiuj zawartość `dist/` do katalogu serwowanego przez MyDevil
+   (`public_html` lub ścieżka reverse‑proxy), np.:
+   ```bash
+   scp -r frontend/dist/* user@server:/home/user/public_html/
+   ```
+3. **Zmienna środowiskowa API** – jeśli backend działa pod inną domeną/prefiksem, ustaw podczas budowy
+   `VITE_API_URL` wskazującą na endpoint, np.:
+   ```bash
+   VITE_API_URL=https://api.example.com npm --prefix frontend run build
+   ```
+
 ### Scraper (CI lub lokalny cron)
 
 **Opcja CI:**
