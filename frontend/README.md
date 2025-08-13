@@ -21,4 +21,3 @@ VITE_API_URL=https://api.example.com npm --prefix frontend run build
 ```
 
 The compiled assets are generated in `backend/static/`.
-
