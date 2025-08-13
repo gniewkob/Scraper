@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from math import radians, cos, sin, asin, sqrt
 from sqlalchemy import text
 from scraper.core.config.urls import PACKAGE_SIZES
+from backend.config import settings
 
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ def compute_price_info(price, unit, product_id, expiration, now=None):
             if exp_dt.tzinfo is None:
                 exp_dt = exp_dt.replace(tzinfo=timezone.utc)
             days_left = (exp_dt - now).days
-            short_expiry = days_left <= 30
+            short_expiry = days_left <= int(settings.short_expiry_days)
         except ValueError as exc:
             logger.warning(
                 "Failed to parse expiration '%s' for product %s: %s",

@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, EmailStr, constr
 
 
 class Offer(BaseModel):
@@ -36,8 +36,8 @@ class ProductOffersResponse(BaseModel):
 
 
 class AlertRegisterRequest(BaseModel):
-    email: Optional[str] = None
-    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[constr(pattern=r"^\+?[0-9\s\-()]{6,20}$")] = None
     threshold: float = Field(..., gt=0)
     product_name: str
 

@@ -18,6 +18,8 @@ RUN pip install --no-cache /wheels/* && rm -rf /wheels
 COPY backend ./backend
 COPY scraper ./scraper
 
-EXPOSE 8000
+EXPOSE 61973
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV PORT=61973
+
+CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT}"]

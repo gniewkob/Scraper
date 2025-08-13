@@ -7,13 +7,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 import bcrypt
+import time
 
 from sqlalchemy import text
 
@@ -28,6 +29,9 @@ from .config import settings
 from .routes.utils import compute_price_info
 from twilio.rest import Client
 from scraper.cli.email_utils import send_email
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from fastapi_csrf_protect import CsrfProtect
+from pydantic import BaseModel
 
 STATIC_DIR = str(Path(__file__).parent / "static")
 TEMPLATES_DIR = str(Path(__file__).parent / "templates")
@@ -75,6 +79,15 @@ TWILIO_TOKEN = settings.twilio_auth_token
 TWILIO_FROM = settings.twilio_whatsapp_from
 
 logger = logging.getLogger(__name__)
+
+
+class CsrfSettings(BaseModel):
+    secret_key: str = SECRET_KEY
+
+
+@CsrfProtect.load_config
+def get_csrf_config() -> CsrfSettings:  # pragma: no cover - simple config hook
+    return CsrfSettings()
 
 def send_confirmation_email(email: str, token: str) -> bool:
     if not email:
@@ -185,6 +198,30 @@ def mask_phone(phone: Optional[str]) -> str:
     )
 
 
+@app.get("/healthz")
+def healthz():
+    """Liveness probe."""
+    return {"status": "ok"}
+
+
+@app.get("/readyz")
+async def readyz():
+    """Readiness probe with DB check."""
+    engine = get_db_engine()
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        return {"status": "ready"}
+    except Exception as exc:  # pragma: no cover - defensive
+        raise HTTPException(status_code=503, detail=f"db not ready: {exc}")
+
+
+@app.get("/metrics")
+def metrics() -> Response:
+    """Prometheus metrics endpoint."""
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
 @app.get("/api/cities")
 async def get_cities_endpoint():
     """Return list of unique city names using shared helper."""
@@ -215,21 +252,49 @@ def get_city_coords(city: str):
 
 
 @app.get("/admin/login", response_class=HTMLResponse)
-def admin_login_form(request: Request):
-    return templates.TemplateResponse(
-        "admin_login.html", {"request": request, "error": None}
+def admin_login_form(request: Request, csrf: CsrfProtect = CsrfProtect()):
+    token = csrf.create_csrf_token()
+    response = templates.TemplateResponse(
+        "admin_login.html", {"request": request, "error": None, "csrf_token": token}
     )
+    csrf.set_csrf_cookie(response)
+    return response
 
 
 @app.post("/admin/login", response_class=HTMLResponse)
-async def admin_login(request: Request):
+async def admin_login(request: Request, csrf: CsrfProtect = CsrfProtect()):
     form = await request.form()
+    token = form.get("csrf-token")
+    try:
+        csrf.validate_csrf(token)
+    except Exception:
+        return templates.TemplateResponse(
+            "admin_login.html",
+            {"request": request, "error": "Nieprawidłowy token CSRF", "csrf_token": csrf.create_csrf_token()},
+            status_code=400,
+        )
     password = form.get("password", "")
+    # simple session-based rate limiting
+    locked_until = request.session.get("admin_lock_until")
+    if locked_until and time.time() < float(locked_until):
+        return templates.TemplateResponse(
+            "admin_login.html",
+            {"request": request, "error": "Zbyt wiele prób. Spróbuj ponownie później."},
+        )
+
     if bcrypt.checkpw(password.encode(), ADMIN_PASSWORD_HASH.encode()):
         request.session["admin"] = True
+        request.session.pop("admin_failed", None)
+        request.session.pop("admin_lock_until", None)
         return RedirectResponse("/admin", status_code=302)
+    # failed attempt
+    attempts = int(request.session.get("admin_failed", 0)) + 1
+    request.session["admin_failed"] = attempts
+    if attempts >= 5:
+        request.session["admin_lock_until"] = time.time() + 60
     return templates.TemplateResponse(
-        "admin_login.html", {"request": request, "error": "Błędne hasło"}
+        "admin_login.html",
+        {"request": request, "error": "Błędne hasło"},
     )
 
 
@@ -300,4 +365,3 @@ def get_images_marker_shadow():
     return FileResponse(
         Path(STATIC_DIR) / "images" / "marker-shadow.png", media_type="image/png"
     )
-

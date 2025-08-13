@@ -104,10 +104,10 @@ Argumenty CLI:
 ```bash
 export SECRET_KEY=devsecret
 export ADMIN_PASSWORD_HASH=<bcrypt_hash>
-uvicorn backend.main:app --reload --port 8000
+PORT=61973 uvicorn backend.main:app --reload --port $PORT
 ```
 
-Otwórz `http://localhost:8000` – pojawi się panel z listą ofert i trendem cenowym.
+Otwórz `http://localhost:61973` – pojawi się panel z listą ofert i trendem cenowym.
 *Jeśli w bazie brak danych, najpierw uruchom scraper.*
 
 **Statyczne zasoby:** Pliki CSS/JS w szablonach (Bootstrap, Chart.js, Leaflet) są pobierane z CDN z atrybutami `integrity` i `crossorigin`. Jeśli wolisz trzymać je lokalnie (np. do pracy offline), umieść je w katalogu `backend/static/` i zaktualizuj odwołania w szablonach.
@@ -129,7 +129,7 @@ Serwisy:
 
 | Kontener   | Funkcja                                          |
 |------------|--------------------------------------------------|
-| `backend`  | FastAPI na porcie `8000`                         |
+| `backend`  | FastAPI na porcie `61973` (zmienne `PORT`)       |
 | `scraper`  | Celery worker pobierający zadania                |
 | `db`       | PostgreSQL                                      |
 | `redis`    | broker wiadomości                                |
@@ -212,7 +212,7 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 2. Stwórz i aktywuj wirtualne środowisko, zainstaluj `pip install -r requirements.txt`.
 3. Ustaw w `.env` zmienne (`SECRET_KEY`, `ADMIN_PASSWORD_HASH`, `DB_URL` wskazujący na SQLite lub PostgreSQL).
 4. Uruchom `uvicorn` w tle (np. `scripts/restart_uvicorn.sh` + cron `@reboot`).
-5. W panelu MyDevil ustaw **reverse proxy** do portu backendu (`http://localhost:8000` → subdomena).
+5. W panelu MyDevil ustaw **reverse proxy** do portu backendu (`http://localhost:61973` → subdomena).
 
 ### Frontend (React)
 
@@ -256,7 +256,7 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 
 1. **Świeży QA** klonuje repo.
 2. Wykonuje kroki z sekcji 3 (instalacja zależności, `playwright install`, uruchomienie scrapera).
-3. Uruchamia backend (`uvicorn`) i otwiera `http://localhost:8000`.
+3. Uruchamia backend (`uvicorn`) i otwiera `http://localhost:61973`.
 4. Widzi w UI listę produktów, tabelę ofert oraz – jeśli nie wyłączył – wykres trendu.
 
 Po przejściu powyższych kroków cały system działa lokalnie z realnymi danymi.

@@ -7,18 +7,34 @@ from datetime import datetime, timezone
 from typing import Dict, Iterable
 
 import requests
-from sqlalchemy import select, text, update
+from sqlalchemy import select, text, update, create_engine as create_sync_engine
 from sqlalchemy.orm import Session
-
-from backend.db import get_engine
 from backend.models import Product
 from scraper.core.config.config import DB_PATH, DB_URL, API_URL
 from scraper.services.price_validator import normalize_unit
 
 logger = logging.getLogger(__name__)
 
-# shared engine used for all DB operations
-ENGINE = get_engine(DB_URL, DB_PATH)
+def _build_sync_engine(db_url: str | None, db_path: str | None):
+    """Return a synchronous SQLAlchemy Engine for scraper writes.
+
+    Converts async driver URLs to sync equivalents and defaults to SQLite when
+    only a path is provided.
+    """
+    url = db_url
+    if not url:
+        url = f"sqlite:///{db_path}" if db_path else "sqlite:///./data/pharmacy_prices.sqlite"
+
+    if url.startswith("sqlite+aiosqlite://"):
+        url = url.replace("sqlite+aiosqlite://", "sqlite://", 1)
+    if url.startswith("postgresql+asyncpg://"):
+        url = url.replace("postgresql+asyncpg://", "postgresql+psycopg2://", 1)
+
+    return create_sync_engine(url, future=True)
+
+
+# shared synchronous engine used for scraper DB operations
+ENGINE = _build_sync_engine(DB_URL, DB_PATH)
 
 __all__ = [
     "ensure_product_name",
@@ -265,7 +281,11 @@ def get_top3_prices(product_id: str) -> Iterable[Dict]:
 
 
 def update_price_stats() -> Dict[str, Dict[str, float]]:
-    """Aggregate price statistics and persist them."""
+    """Aggregate price statistics and persist historical minimums.
+
+    Writes into the unified ``price_statistics`` table used by the backend,
+    appending a snapshot (no upsert) so the backend can fetch the latest row.
+    """
 
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     stats: Dict[str, Dict[str, float]] = {}
@@ -274,12 +294,10 @@ def update_price_stats() -> Dict[str, Dict[str, float]]:
         conn.execute(
             text(
                 """
-                CREATE TABLE IF NOT EXISTS price_stats (
-                    product_id TEXT PRIMARY KEY,
+                CREATE TABLE IF NOT EXISTS price_statistics (
+                    product TEXT,
                     min_price REAL,
-                    max_price REAL,
-                    avg_price REAL,
-                    updated_at TEXT
+                    calculated_at TEXT
                 )
                 """
             )
@@ -288,10 +306,8 @@ def update_price_stats() -> Dict[str, Dict[str, float]]:
         result = conn.execute(
             text(
                 """
-                SELECT product_id,
-                       MIN(price) AS min_price,
-                       MAX(price) AS max_price,
-                       AVG(price) AS avg_price
+                SELECT product_id AS product,
+                       MIN(price) AS min_price
                 FROM pharmacy_prices
                 GROUP BY product_id
                 """
@@ -299,35 +315,23 @@ def update_price_stats() -> Dict[str, Dict[str, float]]:
         )
 
         for row in result.mappings():
-            pid = row["product_id"]
-            stats[pid] = {
-                "min_price": row["min_price"],
-                "max_price": row["max_price"],
-                "avg_price": row["avg_price"],
-            }
+            pid = row["product"]
+            stats[pid] = {"min_price": row["min_price"]}
             conn.execute(
                 text(
                     """
-                    INSERT INTO price_stats (
-                        product_id, min_price, max_price, avg_price, updated_at
+                    INSERT INTO price_statistics (
+                        product, min_price, calculated_at
                     ) VALUES (
-                        :product_id, :min_price, :max_price, :avg_price, :updated_at
+                        :product, :min_price, :calculated_at
                     )
-                    ON CONFLICT(product_id) DO UPDATE SET
-                        min_price=excluded.min_price,
-                        max_price=excluded.max_price,
-                        avg_price=excluded.avg_price,
-                        updated_at=excluded.updated_at
                     """
                 ),
                 {
-                    "product_id": pid,
+                    "product": pid,
                     "min_price": row["min_price"],
-                    "max_price": row["max_price"],
-                    "avg_price": row["avg_price"],
-                    "updated_at": now,
+                    "calculated_at": now,
                 },
             )
 
     return stats
-

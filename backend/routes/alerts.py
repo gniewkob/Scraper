@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -13,7 +13,13 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
 from .utils import compute_price_info
-from backend.main import send_confirmation_email, send_confirmation_sms
+from backend.main import (
+    send_confirmation_email,
+    send_confirmation_sms,
+    require_admin,
+    mask_email,
+    mask_phone,
+)
 from backend.schemas import AlertRegisterRequest, AlertConfirmRequest
 from backend.config import settings
 
@@ -126,7 +132,7 @@ async def get_filtered_alerts(conn: AsyncConnection = Depends(get_connection)):
     now = datetime.now()
     for row in rows:
         price = float(row["price"])
-        if price < 10:
+        if price < float(settings.min_display_price):
             continue
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
@@ -196,7 +202,7 @@ async def get_grouped_alerts(
     now = datetime.now()
     for row in rows:
         price = float(row["price"])
-        if price < 10:
+        if price < float(settings.min_display_price):
             continue
         expiration = row["expiration"]
         fetched_at = row["fetched_at"]
@@ -350,7 +356,9 @@ async def confirm_alert(
 
 
 @router.get("/api/alerts/list", response_class=JSONResponse)
-async def list_alerts(conn: AsyncConnection = Depends(get_connection)):
+async def list_alerts(
+    request: Request, conn: AsyncConnection = Depends(get_connection)
+):
     """List registered alerts with decrypted contact information.
 
     Parameters
@@ -363,6 +371,9 @@ async def list_alerts(conn: AsyncConnection = Depends(get_connection)):
     list[dict]
         Alert entries for all users.
     """
+
+    # Require admin session to access PII
+    require_admin(request)
 
     rows = (
         (
@@ -383,10 +394,12 @@ async def list_alerts(conn: AsyncConnection = Depends(get_connection)):
 
     results = []
     for row in rows:
+        email_plain = decrypt(row["email_encrypted"]) if row["email_encrypted"] else None
+        phone_plain = decrypt(row["phone_encrypted"]) if row["phone_encrypted"] else None
         results.append(
             {
-                "email": decrypt(row["email_encrypted"]),
-                "phone": decrypt(row["phone_encrypted"]),
+                "email": mask_email(email_plain),
+                "phone": mask_phone(phone_plain),
                 "threshold": row["threshold"],
                 "product_name": row["name"] or row["product_id"],
                 "created": row["created"],
@@ -395,4 +408,3 @@ async def list_alerts(conn: AsyncConnection = Depends(get_connection)):
             }
         )
     return results
-

@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Optional
 
 from backend.db import get_connection
+from backend.config import settings
 from ..schemas import ProductOffersResponse
 from .utils import (
     haversine,
@@ -172,7 +173,7 @@ async def get_product_by_name(
 
     offers = []
     now = datetime.now()
-    MINIMUM_DISPLAY_PRICE = 10
+    MINIMUM_DISPLAY_PRICE = float(settings.min_display_price)
 
     for row in rows:
         price = float(row["price"])
@@ -239,4 +240,3 @@ async def get_product_by_name(
         "top3": top3,
         "trend": trend_data,
     }
-
