@@ -30,6 +30,19 @@ ALLOWED_SORT_ORDERS = {"asc": "ASC", "desc": "DESC"}
 
 @router.get("/api/products", response_class=JSONResponse)
 async def get_products(conn: AsyncConnection = Depends(get_connection)):
+    """Return all active products.
+
+    Parameters
+    ----------
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    list[dict]
+        Each item contains ``id``, ``name`` and a simplified ``label``.
+    """
+
     rows = (
         await conn.execute(
             text("SELECT DISTINCT id, name FROM products WHERE active = 1")
@@ -72,6 +85,42 @@ async def get_product_by_name(
     radius: Optional[float] = Query(None, gt=0, le=1000),
     conn: AsyncConnection = Depends(get_connection),
 ):
+    """Return offers for a given product.
+
+    Parameters
+    ----------
+    product_name : str
+        URL-friendly name or slug of the product.
+    limit : int, optional
+        Maximum number of offers to return. Default is 50.
+    offset : int, optional
+        Number of offers to skip for pagination. Default is 0.
+    sort : str, optional
+        Field used for sorting (``price``, ``expiration`` or ``fetched_at``).
+    order : str, optional
+        Sort order, either ``asc`` or ``desc``.
+    city : str, optional
+        Filter offers by city in the pharmacy address.
+    lat : float, optional
+        Latitude used for distance filtering.
+    lon : float, optional
+        Longitude used for distance filtering.
+    radius : float, optional
+        Maximum distance in kilometers for location filtering.
+    conn : AsyncConnection
+        Database connection provided by dependency injection.
+
+    Returns
+    -------
+    dict
+        Contains ``offers`` list and metadata keys ``total``, ``limit``,
+        ``offset``, ``sort``, ``order``, ``top3`` and ``trend``.
+
+    Error Cases
+    -----------
+    Returns a 404 JSON response when the product is not found.
+    """
+
     decoded_name = unquote(product_name)
     normalized_name = slugify(decoded_name)
     row = (
