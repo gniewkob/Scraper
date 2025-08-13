@@ -8,8 +8,7 @@ import PriceTrendChart from './components/PriceTrendChart'
 import MapView from './components/MapView'
 import ErrorBanner from './components/ErrorBanner'
 import './index.css'
-
-const API = import.meta.env.VITE_API_URL || ''
+import API from './utils/env'
 
 interface Offer {
   price: number

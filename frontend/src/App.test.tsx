@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useEffect } from 'react'
 
 vi.mock('./components/ProductSelect', () => ({
@@ -17,9 +17,12 @@ vi.mock('./components/Pagination', () => ({ default: () => <div /> }))
 vi.mock('./components/PriceTrendChart', () => ({ default: () => <div /> }))
 vi.mock('./components/MapView', () => ({ default: () => <div /> }))
 
-import App from './App'
-
 describe('App', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    process.env.VITE_API_URL = ''
+  })
+
   it('shows error banner on API failure', async () => {
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({
       ok: false,
@@ -27,6 +30,7 @@ describe('App', () => {
       statusText: 'Server Error',
     } as Response)
 
+    const { default: App } = await import('./App')
     render(<App />)
 
     expect(

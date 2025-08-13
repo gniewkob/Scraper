@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-
-const API = import.meta.env.VITE_API_URL || ''
+import API from '../utils/env'
 
 interface Product {
   name: string

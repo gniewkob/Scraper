@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def render_app() -> str:
         text=True,
         check=True,
         cwd=frontend_dir,
+        env={**os.environ, "VITE_API_URL": ""},
     )
     return result.stdout.strip()
 
