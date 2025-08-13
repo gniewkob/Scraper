@@ -16,13 +16,11 @@ jobs:
 
       - name: Run scraper
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          API_TOKEN: ${{ secrets.API_TOKEN }}
+          DB_URL: ${{ secrets.DB_URL }}
           HEADLESS: true
         run: |
           docker run --rm \
-            -e DATABASE_URL \
-            -e API_TOKEN \
+            -e DB_URL \
             -e HEADLESS \
             scraper \
             python -m scraper.cli.scrape_all
