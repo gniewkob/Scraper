@@ -13,6 +13,8 @@ permissions:
 jobs:
   test-build:
     runs-on: ubuntu-latest
+    outputs:
+      detect: ${{ steps.detect.outputs }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,13 +47,13 @@ jobs:
         with:
           name: pipeline-logs
           path: logs
-      - name: Fail if tests or build failed
-        if: ${{ steps.tests.outcome != 'success' || steps.build.outcome != 'success' }}
-        run: exit 1
+      - name: Detect failures
+        id: detect
+        run: echo "failed=$((steps.tests.outcome != 'success' || steps.build.outcome != 'success'))" >> $GITHUB_OUTPUT
 
   autofix-lint:
     needs: test-build
-    if: ${{ failure() }}
+    if: needs.test-build.outputs.detect.failed == '1'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -89,3 +91,6 @@ jobs:
           git commit -am "chore: automatic lint/format fixes"
           git push origin "$branch"
           gh pr create --title "chore: automatic lint/format fixes" --body "Automated lint/format fixes" --base master --head "$branch"
+      - name: Fail if no PR created
+        if: steps.git-diff.outputs.changed == 'false'
+        run: exit 1
