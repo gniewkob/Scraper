@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+const API = import.meta.env.VITE_API_URL || ''
+
 interface Props {
   value: string
   onChange: (val: string) => void
@@ -9,7 +11,7 @@ export default function CitySelect({ value, onChange }: Props) {
   const [cities, setCities] = useState<string[]>([])
 
   useEffect(() => {
-    fetch('/api/cities')
+    fetch(`${API}/api/cities`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()

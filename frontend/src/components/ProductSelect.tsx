@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+const API = import.meta.env.VITE_API_URL || ''
+
 interface Product {
   name: string
   label: string
@@ -14,7 +16,7 @@ export default function ProductSelect({ value, onChange }: Props) {
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch(`${API}/api/products`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()

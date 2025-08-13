@@ -9,6 +9,8 @@ import MapView from './components/MapView'
 import ErrorBanner from './components/ErrorBanner'
 import './index.css'
 
+const API = import.meta.env.VITE_API_URL || ''
+
 interface Offer {
   price: number
   price_per_g?: number
@@ -76,7 +78,7 @@ function App() {
 
       try {
         const r = await fetch(
-          `/api/product/${encodeURIComponent(product)}?${params}`,
+          `${API}/api/product/${encodeURIComponent(product)}?${params}`,
           { signal: controller.signal },
         )
         if (!r.ok) throw new Error(`HTTP ${r.status} - ${r.statusText}`)
