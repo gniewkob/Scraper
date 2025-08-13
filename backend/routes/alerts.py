@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -245,7 +245,9 @@ async def get_grouped_alerts(
 
 @router.post("/api/alerts/register", response_class=JSONResponse)
 async def register_alert(
-    request: Request, conn: AsyncConnection = Depends(get_connection)
+    request: Request,
+    background_tasks: BackgroundTasks,
+    conn: AsyncConnection = Depends(get_connection),
 ):
     """Register a new user alert for a product threshold.
 
@@ -253,6 +255,8 @@ async def register_alert(
     ----------
     request : Request
         Incoming request containing alert details.
+    background_tasks : BackgroundTasks
+        FastAPI task manager for deferred notification sending.
     conn : AsyncConnection
         Database connection provided by dependency injection.
 
@@ -302,18 +306,10 @@ async def register_alert(
         },
     )
 
-    email_ok = send_confirmation_email(email, token) if email else True
-    sms_ok = send_confirmation_sms(phone, token) if phone else True
-
-    if not (email_ok and sms_ok):
-        problems = []
-        if email and not email_ok:
-            problems.append("e-maila")
-        if phone and not sms_ok:
-            problems.append("SMS")
-        message = "Nie udało się wysłać " + " oraz ".join(problems)
-        return JSONResponse({"status": "error", "message": message}, status_code=500)
-
+    if email:
+        background_tasks.add_task(send_confirmation_email, email, token)
+    if phone:
+        background_tasks.add_task(send_confirmation_sms, phone, token)
     return {"status": "ok"}
 
 
