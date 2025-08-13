@@ -153,7 +153,7 @@ def require_admin(request: Request):
         raise HTTPException(status_code=401)
 
 
-def mask_email(email):
+def mask_email(email: Optional[str]) -> str:
     """Return a masked version of an email address for display."""
     if not email or "@" not in email:
         return email or ""
@@ -162,7 +162,7 @@ def mask_email(email):
     return f"{visible}***@{domain}"
 
 
-def mask_phone(phone):
+def mask_phone(phone: Optional[str]) -> str:
     """Return a masked version of a phone number for display."""
     if not phone:
         return ""
