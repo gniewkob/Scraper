@@ -1,57 +1,56 @@
-import { MapPin, Star, Clock, Leaf, Zap } from "lucide-react"
+import { MapPin, Star, Leaf, Zap } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import type { Product } from "@/lib/api"
 
-const mockResults = [
-  {
-    id: 1,
-    pharmacy: "🌿 Green Galaxy Dispensary",
-    product: "Olej CBD 10% 👽",
-    price: 189.99,
-    originalPrice: 249.99,
-    location: "Warszawa, Mokotów",
-    distance: "2.3 km",
-    rating: 4.8,
-    reviews: 127,
-    availability: "Dostępny",
-    lastUpdated: "5 min temu",
-    discount: 24,
-    quality: "Premium 💎",
-  },
-  {
-    id: 2,
-    pharmacy: "🛸 Cosmic Cannabis Co.",
-    product: "Olej CBD 10% 🌱",
-    price: 199.99,
-    originalPrice: 259.99,
-    location: "Warszawa, Śródmieście",
-    distance: "4.1 km",
-    rating: 4.6,
-    reviews: 89,
-    availability: "Ostatnie sztuki",
-    lastUpdated: "12 min temu",
-    discount: 23,
-    quality: "Organic 🌿",
-  },
-  {
-    id: 3,
-    pharmacy: "🔥 Space Herb Station",
-    product: "Olej CBD 10% ✨",
-    price: 219.99,
-    originalPrice: 279.99,
-    location: "Warszawa, Wola",
-    distance: "6.8 km",
-    rating: 4.9,
-    reviews: 203,
-    availability: "Dostępny",
-    lastUpdated: "8 min temu",
-    discount: 21,
-    quality: "Lab Tested 🧪",
-  },
-]
+interface ResultsSectionProps {
+  products: Product[]
+  loading: boolean
+  searchPerformed: boolean
+}
 
-export function ResultsSection() {
+export function ResultsSection({ products, loading, searchPerformed }: ResultsSectionProps) {
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-2xl font-serif font-bold text-foreground flex items-center gap-2">
+            🚀 Skanowanie galaktyki...
+            <Leaf className="w-6 h-6 text-primary rotate-slow" />
+          </h3>
+        </div>
+        <div className="grid gap-4">
+          {[...Array(3)].map((_, index) => (
+            <Card key={index} className="p-6 bg-card/40 backdrop-blur-sm neon-border animate-pulse">
+              <div className="h-24 bg-muted/20 rounded"></div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (!searchPerformed) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4 float-animation">🛸</div>
+        <h3 className="text-xl font-serif font-bold text-foreground mb-2">Gotowy na kosmiczną podróż?</h3>
+        <p className="text-muted-foreground">Użyj wyszukiwarki powyżej, aby znaleźć najlepsze oferty w galaktyce 🌌</p>
+      </div>
+    )
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">👽</div>
+        <h3 className="text-xl font-serif font-bold text-foreground mb-2">Brak wyników w tej galaktyce</h3>
+        <p className="text-muted-foreground">Spróbuj zmienić filtry wyszukiwania lub sprawdź inne planety 🪐</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -60,14 +59,14 @@ export function ResultsSection() {
           <Leaf className="w-6 h-6 text-primary rotate-slow" />
         </h3>
         <Badge variant="secondary" className="text-sm glow-purple">
-          {mockResults.length} kosmicznych wyników 🛸
+          {products.length} kosmicznych wyników 🛸
         </Badge>
       </div>
 
       <div className="grid gap-4">
-        {mockResults.map((result, index) => (
+        {products.map((product, index) => (
           <Card
-            key={result.id}
+            key={product.id}
             className={`p-6 bg-card/40 backdrop-blur-sm neon-border hover:bg-card/60 transition-all duration-300 hover:scale-[1.02] relative overflow-hidden ${
               index === 0 ? "ring-2 ring-primary/30 glow-green" : ""
             }`}
@@ -82,13 +81,13 @@ export function ResultsSection() {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
-                      {result.pharmacy}
+                      🌿 {product.dispensary}
                       {index === 0 && <span className="text-sm">👑</span>}
                     </h4>
                     <p className="text-muted-foreground text-sm flex items-center gap-2">
-                      {result.product}
+                      {product.name}
                       <Badge variant="outline" className="text-xs">
-                        {result.quality}
+                        {product.strain_type} 💎
                       </Badge>
                     </p>
                   </div>
@@ -99,24 +98,24 @@ export function ResultsSection() {
 
                 <div className="flex items-center gap-4 mb-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4" />📍 {result.location} • {result.distance}
+                    <MapPin className="w-4 h-4" />📍 {product.location}
+                    {product.distance && ` • ${product.distance}km`}
                   </div>
                   <div className="flex items-center gap-1 text-sm">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-foreground">{result.rating}</span>
-                    <span className="text-muted-foreground">({result.reviews} 👥)</span>
+                    <span className="text-foreground">{product.rating}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4 text-sm">
                   <Badge
-                    variant={result.availability === "Dostępny" ? "default" : "destructive"}
-                    className={result.availability === "Dostępny" ? "glow-green" : ""}
+                    variant={product.availability ? "default" : "destructive"}
+                    className={product.availability ? "glow-green" : ""}
                   >
-                    {result.availability === "Dostępny" ? "✅ Dostępny" : "⚠️ Ostatnie sztuki"}
+                    {product.availability ? "✅ Dostępny" : "⚠️ Niedostępny"}
                   </Badge>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <Clock className="w-4 h-4" />⏰ {result.lastUpdated}
+                  <div className="text-xs text-muted-foreground">
+                    THC: {product.thc_content}% | CBD: {product.cbd_content}%
                   </div>
                 </div>
               </div>
@@ -124,15 +123,8 @@ export function ResultsSection() {
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl font-bold text-foreground">{result.price.toFixed(2)} zł</span>
-                    <Badge variant="secondary" className="text-green-400 glow-green">
-                      🔥 -{result.discount}%
-                    </Badge>
+                    <span className="text-2xl font-bold text-foreground">{product.price.toFixed(2)} zł</span>
                   </div>
-                  <p className="text-sm text-muted-foreground line-through">{result.originalPrice.toFixed(2)} zł</p>
-                  <p className="text-xs text-green-400 font-medium">
-                    💰 Oszczędzasz {(result.originalPrice - result.price).toFixed(2)} zł
-                  </p>
                 </div>
 
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 hover:scale-105 glow-green">
@@ -142,12 +134,6 @@ export function ResultsSection() {
             </div>
           </Card>
         ))}
-      </div>
-
-      <div className="text-center pt-8">
-        <Button variant="outline" className="border-border hover:bg-secondary/50 bg-transparent glow-purple">
-          🛸 Załaduj więcej kosmicznych ofert
-        </Button>
       </div>
     </div>
   )

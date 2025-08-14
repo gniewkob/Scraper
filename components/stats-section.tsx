@@ -1,45 +1,86 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { TrendingUp, Users, MapPin, Clock } from "lucide-react"
 import { Card } from "@/components/ui/card"
-
-const stats = [
-  {
-    icon: TrendingUp,
-    label: "Średnia oszczędność",
-    value: "127 zł",
-    change: "+12%",
-    positive: true,
-    emoji: "💰",
-  },
-  {
-    icon: Users,
-    label: "Aktywne dispensary",
-    value: "248",
-    change: "+5",
-    positive: true,
-    emoji: "🏪",
-  },
-  {
-    icon: MapPin,
-    label: "Miasta",
-    value: "67",
-    change: "+3",
-    positive: true,
-    emoji: "🌍",
-  },
-  {
-    icon: Clock,
-    label: "Ostatnia aktualizacja",
-    value: "2 min",
-    change: "temu",
-    positive: null,
-    emoji: "⚡",
-  },
-]
+import { apiClient, type StatsResponse } from "@/lib/api"
 
 export function StatsSection() {
+  const [stats, setStats] = useState<StatsResponse | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const statsData = await apiClient.getStats()
+        setStats(statsData)
+      } catch (error) {
+        console.error("Failed to load stats:", error)
+        // Fallback to mock data
+        setStats({
+          total_products: 1247,
+          total_dispensaries: 248,
+          avg_price: 127.5,
+          cities_covered: 67,
+          last_updated: "2 min temu",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadStats()
+  }, [])
+
+  if (loading || !stats) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        {[...Array(4)].map((_, index) => (
+          <Card key={index} className="p-6 bg-card/30 backdrop-blur-sm neon-border animate-pulse">
+            <div className="h-16 bg-muted/20 rounded"></div>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
+  const statsDisplay = [
+    {
+      icon: TrendingUp,
+      label: "Średnia cena",
+      value: `${stats.avg_price.toFixed(0)} zł`,
+      change: "+12%",
+      positive: true,
+      emoji: "💰",
+    },
+    {
+      icon: Users,
+      label: "Aktywne dispensary",
+      value: stats.total_dispensaries.toString(),
+      change: "+5",
+      positive: true,
+      emoji: "🏪",
+    },
+    {
+      icon: MapPin,
+      label: "Miasta",
+      value: stats.cities_covered.toString(),
+      change: "+3",
+      positive: true,
+      emoji: "🌍",
+    },
+    {
+      icon: Clock,
+      label: "Ostatnia aktualizacja",
+      value: stats.last_updated.split(" ")[0],
+      change: stats.last_updated.split(" ").slice(1).join(" "),
+      positive: null,
+      emoji: "⚡",
+    },
+  ]
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-      {stats.map((stat, index) => (
+      {statsDisplay.map((stat, index) => (
         <Card
           key={index}
           className="p-6 bg-card/30 backdrop-blur-sm neon-border hover:bg-card/50 transition-all duration-300 hover:scale-105 glow-green relative overflow-hidden"
