@@ -8,13 +8,15 @@ const stats = [
     value: "127 zł",
     change: "+12%",
     positive: true,
+    emoji: "💰",
   },
   {
     icon: Users,
-    label: "Aktywne apteki",
+    label: "Aktywne dispensary",
     value: "248",
     change: "+5",
     positive: true,
+    emoji: "🏪",
   },
   {
     icon: MapPin,
@@ -22,6 +24,7 @@ const stats = [
     value: "67",
     change: "+3",
     positive: true,
+    emoji: "🌍",
   },
   {
     icon: Clock,
@@ -29,6 +32,7 @@ const stats = [
     value: "2 min",
     change: "temu",
     positive: null,
+    emoji: "⚡",
   },
 ]
 
@@ -38,10 +42,13 @@ export function StatsSection() {
       {stats.map((stat, index) => (
         <Card
           key={index}
-          className="p-6 bg-card/30 backdrop-blur-sm border-border/50 hover:bg-card/50 transition-all duration-300 hover:scale-105"
+          className="p-6 bg-card/30 backdrop-blur-sm neon-border hover:bg-card/50 transition-all duration-300 hover:scale-105 glow-green relative overflow-hidden"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-primary/20 rounded-lg">
+          <div className="absolute top-2 right-2 text-lg opacity-30 float-animation">{stat.emoji}</div>
+          <div className="absolute inset-0 alien-glow opacity-10"></div>
+
+          <div className="flex items-center gap-3 mb-3 relative z-10">
+            <div className="p-2 bg-primary/20 rounded-lg glow-green">
               <stat.icon className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
@@ -51,7 +58,7 @@ export function StatsSection() {
           </div>
           {stat.change && (
             <div
-              className={`text-xs flex items-center gap-1 ${
+              className={`text-xs flex items-center gap-1 relative z-10 ${
                 stat.positive === true
                   ? "text-green-400"
                   : stat.positive === false
@@ -59,8 +66,8 @@ export function StatsSection() {
                     : "text-muted-foreground"
               }`}
             >
-              {stat.positive === true && "↗"}
-              {stat.positive === false && "↘"}
+              {stat.positive === true && "🚀"}
+              {stat.positive === false && "📉"}
               {stat.change}
             </div>
           )}
