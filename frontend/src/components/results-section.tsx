@@ -10,7 +10,11 @@ interface ResultsSectionProps {
   searchPerformed: boolean
 }
 
-export function ResultsSection({ products, loading, searchPerformed }: ResultsSectionProps) {
+export function ResultsSection({
+  products,
+  loading,
+  searchPerformed,
+}: ResultsSectionProps) {
   if (loading) {
     return (
       <div className="space-y-6">
@@ -22,7 +26,10 @@ export function ResultsSection({ products, loading, searchPerformed }: ResultsSe
         </div>
         <div className="grid gap-4">
           {[...Array(3)].map((_, index) => (
-            <Card key={index} className="p-6 bg-card/40 backdrop-blur-sm neon-border animate-pulse">
+            <Card
+              key={index}
+              className="p-6 bg-card/40 backdrop-blur-sm neon-border animate-pulse"
+            >
               <div className="h-24 bg-muted/20 rounded"></div>
             </Card>
           ))}
@@ -35,8 +42,12 @@ export function ResultsSection({ products, loading, searchPerformed }: ResultsSe
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4 float-animation">🛸</div>
-        <h3 className="text-xl font-serif font-bold text-foreground mb-2">Gotowy na kosmiczną podróż?</h3>
-        <p className="text-muted-foreground">Użyj wyszukiwarki powyżej, aby znaleźć najlepsze oferty w galaktyce 🌌</p>
+        <h3 className="text-xl font-serif font-bold text-foreground mb-2">
+          Gotowy na kosmiczną podróż?
+        </h3>
+        <p className="text-muted-foreground">
+          Użyj wyszukiwarki powyżej, aby znaleźć najlepsze oferty w galaktyce 🌌
+        </p>
       </div>
     )
   }
@@ -45,8 +56,12 @@ export function ResultsSection({ products, loading, searchPerformed }: ResultsSe
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">👽</div>
-        <h3 className="text-xl font-serif font-bold text-foreground mb-2">Brak wyników w tej galaktyce</h3>
-        <p className="text-muted-foreground">Spróbuj zmienić filtry wyszukiwania lub sprawdź inne planety 🪐</p>
+        <h3 className="text-xl font-serif font-bold text-foreground mb-2">
+          Brak wyników w tej galaktyce
+        </h3>
+        <p className="text-muted-foreground">
+          Spróbuj zmienić filtry wyszukiwania lub sprawdź inne planety 🪐
+        </p>
       </div>
     )
   }
@@ -92,13 +107,16 @@ export function ResultsSection({ products, loading, searchPerformed }: ResultsSe
                     </p>
                   </div>
                   {index === 0 && (
-                    <Badge className="bg-primary text-primary-foreground glow-green">🏆 Najlepsza oferta</Badge>
+                    <Badge className="bg-primary text-primary-foreground glow-green">
+                      🏆 Najlepsza oferta
+                    </Badge>
                   )}
                 </div>
 
                 <div className="flex items-center gap-4 mb-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4" />📍 {product.location}
+                    <MapPin className="w-4 h-4" />
+                    📍 {product.location}
                     {product.distance && ` • ${product.distance}km`}
                   </div>
                   <div className="flex items-center gap-1 text-sm">
@@ -123,12 +141,15 @@ export function ResultsSection({ products, loading, searchPerformed }: ResultsSe
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl font-bold text-foreground">{product.price.toFixed(2)} zł</span>
+                    <span className="text-2xl font-bold text-foreground">
+                      {product.price.toFixed(2)} zł
+                    </span>
                   </div>
                 </div>
 
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 hover:scale-105 glow-green">
-                  <Zap className="w-4 h-4 mr-2" />🚀 Teleportuj się
+                  <Zap className="w-4 h-4 mr-2" />
+                  🚀 Teleportuj się
                 </Button>
               </div>
             </div>
