@@ -1,0 +1,11 @@
+INFO:     Started server process [55979]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:38273 (Press CTRL+C to quit)
+DEBUG: Getting thresholds for product_id=100241, type=<class 'int'>
+DEBUG: Mapping result: {'product_type': 'cannabis'}
+INFO:     127.0.0.1:29416 - "GET /api/product/Cannabis%20Flos%20Thc%208%20Cbd%208%20Aurora%20Deutschland%20Gmbh%20Equiposa?city=Katowice HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [55979]

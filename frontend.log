@@ -1,24 +1,77 @@
 
-> frontend@0.0.0 dev
-> vite --port 61973 --host 0.0.0.0
+> my-v0-project@0.1.0 dev
+> next dev --port 61973 --hostname 0.0.0.0
 
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:61973
+   - Network:      http://0.0.0.0:61973
+   - Environments: .env.local, .env
 
-  VITE v7.1.0  ready in 521 ms
-
-  ➜  Local:   http://localhost:61973/
-  ➜  Network: http://91.185.191.213:61973/
-  ➜  Network: http://212.91.26.153:61973/
-  ➜  Network: http://212.91.26.155:61973/
-  ➜  Network: http://85.194.241.94:61973/
-  ➜  Network: http://128.204.216.195:61973/
-  ➜  Network: http://91.185.185.22:61973/
-  ➜  Network: http://128.204.218.242:61973/
-  ➜  Network: http://85.194.246.208:61973/
-  ➜  Network: http://185.36.169.78:61973/
-  ➜  Network: http://85.194.246.62:61973/
-  ➜  Network: http://77.79.227.186:61973/
-  ➜  Network: http://31.186.82.56:61973/
-  ➜  Network: http://31.186.83.52:61973/
-  ➜  Network: http://213.189.54.112:61973/
-  ➜  Network: http://213.189.54.123:61973/
-  ➜  Network: http://127.0.0.2:61973/
+ ✓ Starting...
+ ✓ Ready in 3.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.5s (905 modules)
+ GET / 200 in 15784ms
+ ✓ Compiled in 1343ms (432 modules)
+ ✓ Compiled in 320ms (432 modules)
+ ✓ Compiled in 374ms (432 modules)
+ ✓ Compiled in 379ms (432 modules)
+ ⚠ Cross origin request detected from smart.bodora.pl to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ✓ Compiled in 321ms (432 modules)
+ GET / 200 in 316ms
+ ✓ Compiled in 396ms (432 modules)
+ GET / 200 in 315ms
+ ✓ Compiled in 421ms (432 modules)
+ GET / 200 in 65ms
+ ✓ Compiled in 454ms (432 modules)
+ GET / 200 in 49ms
+ ✓ Compiled in 369ms (432 modules)
+ GET / 200 in 246ms
+ ✓ Compiled in 339ms (432 modules)
+ GET / 200 in 339ms
+ ✓ Compiled in 420ms (432 modules)
+ GET / 200 in 51ms
+ ✓ Compiled in 356ms (432 modules)
+ GET / 200 in 39ms
+ ✓ Compiled in 291ms (432 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 306ms (432 modules)
+ GET / 200 in 334ms
+ ✓ Compiled in 434ms (432 modules)
+ GET / 200 in 303ms
+ ✓ Compiled in 384ms (432 modules)
+ GET / 200 in 43ms
+ ✓ Compiled in 310ms (432 modules)
+ GET / 200 in 47ms
+ ✓ Compiled in 339ms (432 modules)
+ GET / 200 in 29ms
+ ✓ Compiled in 5.5s (432 modules)
+ GET / 200 in 481ms
+ ✓ Compiled in 580ms (432 modules)
+ GET / 200 in 375ms
+ ✓ Compiled in 502ms (432 modules)
+ GET / 200 in 653ms
+ ✓ Compiled in 777ms (432 modules)
+ GET / 200 in 319ms
+ ✓ Compiled in 409ms (432 modules)
+ GET / 200 in 289ms
+ ✓ Compiled in 371ms (432 modules)
+ GET / 200 in 344ms
+ ✓ Compiled in 431ms (432 modules)
+ GET / 200 in 45ms
+ ✓ Compiled in 402ms (432 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 313ms (432 modules)
+ GET / 200 in 426ms
+ ✓ Compiled in 514ms (432 modules)
+ GET / 200 in 55ms
+ ✓ Compiled in 427ms (432 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 2.9s (432 modules)
+ ✓ Compiled in 713ms (432 modules)
+ ✓ Compiled in 664ms (432 modules)
+ ✓ Compiled in 417ms (432 modules)
+ ✓ Compiled in 502ms (432 modules)
+ ✓ Compiled in 374ms (432 modules)
+ ✓ Compiled in 318ms (432 modules)

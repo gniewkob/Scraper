@@ -1,0 +1,29 @@
+INFO:     Started server process [91767]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:61973 (Press CTRL+C to quit)
+Starting frontend server with backend proxy...
+Serving frontend from: /usr/home/vetternkraft/apps/python/scraper_workspace/frontend/dist
+Proxying API requests to: http://127.0.0.1:38273
+INFO:     127.0.0.1:22399 - "GET / HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/cities HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/cities HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56354 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:41093 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50155 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     91.231.32.83:0 - "GET / HTTP/1.1" 404 Not Found
