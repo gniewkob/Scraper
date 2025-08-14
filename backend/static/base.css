@@ -1,0 +1,182 @@
+/* Theme variables and shared base styles */
+.light {
+  --bg-color: #ffffff;
+  --text-color: #212529;
+  --surface-color: #ffffff;
+  --border-color: #dee2e6;
+  --btn-outline-color: #212529;
+  --btn-outline-border: #6c757d;
+  --btn-outline-hover-bg: #e9ecef;
+  --btn-outline-hover-border: #212529;
+  --placeholder-color: #6c757d;
+  --short-expiry-bg: #ffdddd;
+  --short-expiry-text: #212529;
+  --short-expiry-row-bg: #fff5f5;
+  --short-expiry-border: #ff5555;
+  --good-deal-row-bg: #d4edda;
+  --good-deal-border: #28a745;
+  --table-row-hover-bg: #f8f9fa;
+  --save-btn-bg: #28a745;
+  --save-btn-border: #28a745;
+  --save-btn-hover-bg: #218838;
+  --save-btn-hover-border: #1e7e34;
+  --canvas-bg: #ffffff;
+  --price-chart-bg: #ffffff;
+}
+
+.dark {
+  --bg-color: #121212;
+  --text-color: #f1f1f1;
+  --surface-color: #1e1e1e;
+  --border-color: #2c2c2c;
+  --btn-outline-color: #f1f1f1;
+  --btn-outline-border: #ccc;
+  --btn-outline-hover-bg: #1e1e1e;
+  --btn-outline-hover-border: #f1f1f1;
+  --placeholder-color: #bbbbbb;
+  --short-expiry-bg: #6c1a1a;
+  --short-expiry-text: #ffcdd2;
+  --short-expiry-row-bg: #2a2a2a;
+  --short-expiry-border: #ff5555;
+  --good-deal-row-bg: #183c28;
+  --good-deal-border: #4be287;
+  --table-row-hover-bg: #3a3a3a;
+  --save-btn-bg: #28a745;
+  --save-btn-border: #28a745;
+  --save-btn-hover-bg: #218838;
+  --save-btn-hover-border: #1e7e34;
+  --canvas-bg: #ffffff;
+  --price-chart-bg: #1e1e1e;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.card,
+.table,
+.form-control,
+.form-label,
+.btn {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+.card {
+  border: 1px solid var(--border-color);
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.short-expiry {
+  background-color: var(--short-expiry-bg) !important;
+  color: var(--short-expiry-text);
+  font-weight: bold;
+}
+
+tr.short-expiry {
+  background-color: var(--short-expiry-row-bg);
+  border-left: 4px solid var(--short-expiry-border);
+}
+
+tr.short-expiry.good-deal {
+  background-color: var(--good-deal-row-bg) !important;
+  border-left: 4px solid var(--good-deal-border);
+}
+
+#alertTable tbody tr:hover {
+  background-color: var(--table-row-hover-bg);
+}
+
+.btn-outline-light {
+  color: var(--btn-outline-color);
+  border-color: var(--btn-outline-border);
+}
+
+.btn-outline-light:hover {
+  background-color: var(--btn-outline-hover-bg);
+  border-color: var(--btn-outline-hover-border);
+}
+
+.form-control::placeholder {
+  color: var(--placeholder-color);
+}
+
+.btn-save {
+  background-color: var(--save-btn-bg);
+  border-color: var(--save-btn-border);
+  color: #fff;
+}
+
+.btn-save:hover {
+  background-color: var(--save-btn-hover-bg);
+  border-color: var(--save-btn-hover-border);
+  color: #fff;
+}
+
+canvas {
+  background-color: var(--canvas-bg);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.price-trend-canvas {
+  background-color: var(--price-chart-bg);
+  max-height: 200px;
+}
+
+#loadingIndicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+body.loading .container {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@media (max-width: 576px) {
+  .table td,
+  .table th {
+    font-size: 0.875rem;
+    padding: 0.25rem;
+  }
+  .accordion-button {
+    font-size: 1rem;
+  }
+}
+
+.accordion-button {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+.accordion-button::after {
+  filter: invert(1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.accordion-button:not(.collapsed)::after {
+  transform: rotate(180deg);
+}
+
+a {
+  color: var(--text-color);
+}
+
+.spinner-border {
+  color: var(--text-color);
+}
+
