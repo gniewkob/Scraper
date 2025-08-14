@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { TrendingUp, Users, MapPin, Clock } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { apiClient, type StatsResponse } from "@/lib/api"
+import { useState, useEffect } from "react";
+import { TrendingUp, Users, MapPin, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { apiClient, type StatsResponse } from "@/lib/api";
 
 export function StatsSection() {
-  const [stats, setStats] = useState<StatsResponse | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<StatsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const statsData = await apiClient.getStats()
-        setStats(statsData)
+        const statsData = await apiClient.getStats();
+        setStats(statsData);
       } catch (error) {
-        console.error("Failed to load stats:", error)
+        console.error("Failed to load stats:", error);
         // Fallback to mock data
         setStats({
           total_products: 1247,
@@ -23,24 +23,27 @@ export function StatsSection() {
           avg_price: 127.5,
           cities_covered: 67,
           last_updated: "2 min temu",
-        })
+        });
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    loadStats()
-  }, [])
+    };
+    loadStats();
+  }, []);
 
   if (loading || !stats) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {[...Array(4)].map((_, index) => (
-          <Card key={index} className="p-6 bg-card/30 backdrop-blur-sm neon-border animate-pulse">
+          <Card
+            key={index}
+            className="p-6 bg-card/30 backdrop-blur-sm neon-border animate-pulse"
+          >
             <div className="h-16 bg-muted/20 rounded"></div>
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   const statsDisplay = [
@@ -76,7 +79,7 @@ export function StatsSection() {
       positive: null,
       emoji: "⚡",
     },
-  ]
+  ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
@@ -85,7 +88,9 @@ export function StatsSection() {
           key={index}
           className="p-6 bg-card/30 backdrop-blur-sm neon-border hover:bg-card/50 transition-all duration-300 hover:scale-105 glow-green relative overflow-hidden"
         >
-          <div className="absolute top-2 right-2 text-lg opacity-30 float-animation">{stat.emoji}</div>
+          <div className="absolute top-2 right-2 text-lg opacity-30 float-animation">
+            {stat.emoji}
+          </div>
           <div className="absolute inset-0 alien-glow opacity-10"></div>
 
           <div className="flex items-center gap-3 mb-3 relative z-10">
@@ -115,5 +120,5 @@ export function StatsSection() {
         </Card>
       ))}
     </div>
-  )
+  );
 }
