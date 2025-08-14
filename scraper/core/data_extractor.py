@@ -138,4 +138,3 @@ def extract_pharmacy_data(element: Any, product_id: Any) -> Optional[Dict[str, A
     except Exception as e:  # pragma: no cover - defensive log
         logger.error(f"❌ Błąd ekstrakcji – {e}")
         raise
-

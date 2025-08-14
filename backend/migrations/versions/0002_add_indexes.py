@@ -25,4 +25,3 @@ def upgrade():
 def downgrade():
     op.drop_index("ix_prices_product_fetched", table_name="pharmacy_prices")
     op.drop_index("ix_prices_product_expiration", table_name="pharmacy_prices")
-

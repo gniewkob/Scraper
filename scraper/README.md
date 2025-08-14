@@ -13,7 +13,7 @@ The framework is designed to:
 
 ## Project Structure
 
-```
+\`\`\`
 selenium/
 │
 ├── config/                    # Configuration files
@@ -38,20 +38,20 @@ selenium/
 ├── reports/                   # Test reports
 ├── README.md                  # Project documentation
 └── requirements.txt           # Project dependencies
-```
+\`\`\`
 
 ## Setup
 
 1. Create and activate a virtual environment:
-   ```
+   \`\`\`
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+   \`\`\`
 
 2. Install dependencies:
-   ```
+   \`\`\`
    pip install -r requirements.txt
-   ```
+   \`\`\`
 
 3. Make sure you have Chrome browser installed (the framework uses ChromeDriver by default)
 
@@ -78,24 +78,24 @@ Set the `SCRAPER_LOG_LEVEL` environment variable (`DEBUG`, `INFO`, `WARNING`, `E
 ## Running Tests
 
 Run all tests:
-```
+\`\`\`
 pytest
-```
+\`\`\`
 
 Run with HTML report:
-```
+\`\`\`
 pytest --html=reports/report.html
-```
+\`\`\`
 
 Run a specific test:
-```
+\`\`\`
 pytest tests/test_pharmacy_data.py::test_price_extraction
-```
+\`\`\`
 
 Run tests with verbose output:
-```
+\`\`\`
 pytest -v
-```
+\`\`\`
 
 ## Test Output
 
@@ -112,26 +112,26 @@ The framework produces several types of output:
 ### Browser Module
 
 Handles WebDriver setup and configuration:
-```python
+\`\`\`python
 from modules.browser import setup_browser
 driver = setup_browser(headless=True)
-```
+\`\`\`
 
 ### Price Validator
 
 Validates if price information is correctly displayed:
-```python
+\`\`\`python
 from modules.price_validator import verify_price
 has_price, price_text = verify_price(element)
-```
+\`\`\`
 
 ### Data Extractor
 
 Extracts complete pharmacy information from webpage elements:
-```python
+\`\`\`python
 from modules.data_extractor import extract_pharmacy_data
 pharmacy_data = extract_pharmacy_data(element, product_id=123)
-```
+\`\`\`
 
 ## Troubleshooting
 
@@ -154,9 +154,9 @@ pharmacy_data = extract_pharmacy_data(element, product_id=123)
 ### Debug Mode
 
 For more detailed logs, add debug flags:
-```
+\`\`\`
 pytest -v --log-cli-level=DEBUG
-```
+\`\`\`
 
 ## Framework Features
 
@@ -174,21 +174,21 @@ The script `scrape_and_sync.sh` can run the scraper, geocode addresses and uploa
 
 By default the upload uses `rsync` with the `--compress` and `--partial` options, sending only the differences:
 
-```bash
+\`\`\`bash
 ./scrape_and_sync.sh
-```
+\`\`\`
 
 You can override the destination with environment variables:
 
-```bash
+\`\`\`bash
 REMOTE_USER=alice \
 REMOTE_HOST=example.org \
 REMOTE_PATH=/path/on/server/pharmacy_prices.sqlite \
 ./scrape_and_sync.sh
-```
+\`\`\`
 
 If `rsync` is unavailable the script falls back to a compressed transfer using `gzip` and `scp`. The remote file will have the `.gz` extension and needs to be unpacked:
 
-```bash
+\`\`\`bash
 gunzip pharmacy_prices.sqlite.gz
-```
+\`\`\`

@@ -145,15 +145,19 @@ async def get_cities() -> list[str]:
 
     engine = get_engine()
     async with engine.begin() as conn:
-        rows = (await conn.execute(text("SELECT DISTINCT address FROM pharmacy_prices"))).all()
+        rows = (await conn.execute(text("SELECT DISTINCT address FROM pharmacy_prices WHERE address IS NOT NULL"))).all()
 
     cities = set()
-    city_regex = re.compile(r"\d{2}-\d{3}\s+([\wąćęłńóśźżA-Z]+)", re.IGNORECASE)
     for (address,) in rows:
-        match = city_regex.search(address or "")
-        if match:
-            cities.add(match.group(1))
+        if address and ', ' in address:
+            # Format: "ulica, miasto"
+            parts = address.rsplit(', ', 1)
+            if len(parts) == 2:
+                city = parts[1].strip()
+                if city:
+                    cities.add(city)
     return sorted(list(cities))
+
 
 
 async def get_connection() -> AsyncIterator[AsyncConnection]:
@@ -162,4 +166,3 @@ async def get_connection() -> AsyncIterator[AsyncConnection]:
     engine = get_engine()
     async with engine.begin() as conn:
         yield conn
-

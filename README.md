@@ -8,10 +8,10 @@
 
 ## 1. Architektura
 
-```
+\`\`\`
 Scraper  ──→  Baza danych  ──→  Backend API  ──→  Frontend
 (Selenium/Playwright)    (SQLite/PostgreSQL)   (FastAPI)      (React/HTML)
-```
+\`\`\`
 
 1. **Scraper** pobiera oferty z portali (domyślnie URL-e z `scraper/core/config/urls.py`), zapisuje je do bazy lokalnej lub zdalnej.
 2. **Baza danych** (domyślnie `data/pharmacy_prices.sqlite`) przechowuje historię cen oraz listę produktów.
@@ -24,7 +24,7 @@ Scraper  ──→  Baza danych  ──→  Backend API  ──→  Frontend
 
 ### Minimalny plik `.env` (w katalogu głównym)
 
-```env
+\`\`\`env
 # DB
 DB_URL=sqlite:///data/pharmacy_prices.sqlite
 # lub postgresql://user:pass@host:port/pharmacy
@@ -35,7 +35,7 @@ ADMIN_PASSWORD_HASH=<bcrypt_hash_hasła_admina>
 
 # Scraper
 HEADLESS=true         # uruchamiaj przeglądarkę bez GUI
-```
+\`\`\`
 
 ### Pozostałe zmienne (opcjonalne)
 
@@ -60,11 +60,11 @@ HEADLESS=true         # uruchamiaj przeglądarkę bez GUI
 
 Jeśli baza PostgreSQL działa na serwerze MyDevil:
 
-```bash
+\`\`\`bash
 ssh -L 5432:127.0.0.1:5432 user@s0.mydevil.net
 # w innym oknie
 export DB_URL=postgresql://pguser:pgpass@localhost:5432/pharmacy
-```
+\`\`\`
 
 Tymczasowy tunel przekieruje lokalny port 5432 na serwer.
 
@@ -80,19 +80,19 @@ Tymczasowy tunel przekieruje lokalny port 5432 na serwer.
 
 ### 3.2. Instalacja zależności i Playwright
 
-```bash
+\`\`\`bash
 python -m venv venv
 source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt -r requirements-ci.txt
 playwright install --with-deps firefox
-```
+\`\`\`
 
 ### 3.3. Scraper (CLI)
 
-```bash
+\`\`\`bash
 # zapis do SQLite
 python -m scraper.cli.scrape_all --headless --db-url sqlite:///data/pharmacy_prices.sqlite
-```
+\`\`\`
 
 Wyniki: `data/pharmacy_prices.sqlite`, logi w `scraper/logs/`, podsumowanie w `scraper/logs/scrape_metrics.log`.
 
@@ -101,11 +101,11 @@ Argumenty CLI:
 
 ### 3.4. Backend + UI
 
-```bash
+\`\`\`bash
 export SECRET_KEY=devsecret
 export ADMIN_PASSWORD_HASH=<bcrypt_hash>
 PORT=61973 uvicorn backend.main:app --reload --port $PORT
-```
+\`\`\`
 
 Otwórz `http://localhost:61973` – pojawi się panel z listą ofert i trendem cenowym.
 *Jeśli w bazie brak danych, najpierw uruchom scraper.*
@@ -118,12 +118,12 @@ Otwórz `http://localhost:61973` – pojawi się panel z listą ofert i trendem 
 
 W pełni zautomatyzowane środowisko (backend, scraper worker, PostgreSQL, Redis):
 
-```bash
+\`\`\`bash
 cp .env.example .env   # uzupełnij wymagane wartości
 docker-compose up --build
 # produkcyjnie:
 # docker-compose up -d
-```
+\`\`\`
 
 Serwisy:
 
@@ -162,12 +162,12 @@ Commity muszą spełniać standard [Conventional Commits](https://www.convention
 
 Po każdym uruchomieniu `scrape_all` tworzony jest tekstowy raport:
 
-```
+\`\`\`
 Start: 2024-05-15T12:00:00
 End:   2024-05-15T12:05:42
 Runtime: 342.10s
 Offers scraped: 128
-```
+\`\`\`
 
 - **Start / End** – znaczniki czasu rozpoczęcia i zakończenia.
 - **Runtime** – czas wykonania w sekundach.
@@ -182,19 +182,19 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 ### Wersja React (`frontend/`)
 
 - W `src/App.tsx` wykres znajduje się w akordeonie:
-  ```tsx
+  \`\`\`tsx
   <PriceTrendChart data={trend} className="price-trend-canvas" />
-  ```
+  \`\`\`
   - **Wyłączenie**: usuń powyższą linię lub ustaw `chartOpen` na `false`.
 - W `src/components/PriceTrendChart.tsx` można włączyć etykiety/dział legendy:
-  ```ts
+  \`\`\`ts
   options: {
     plugins: {
       legend: { display: true },          // etykiety serii
       // tooltip, dataLabels itp. wg potrzeb
     },
   }
-  ```
+  \`\`\`
   Przy potrzeby wyświetlania wartości nad punktami doinstaluj `chartjs-plugin-datalabels`.
 
 ### Wersja legacy (`backend/templates/index_legacy.html`)
@@ -217,20 +217,20 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 ### Frontend (React)
 
 1. **Build statycznych plików**:
-   ```bash
+   \`\`\`bash
    npm --prefix frontend run build
-   ```
+   \`\`\`
    Powstaje katalog `frontend/dist/` z plikami HTML, JS i CSS.
 2. **Upload na hosting** – skopiuj zawartość `dist/` do katalogu serwowanego przez MyDevil
    (`public_html` lub ścieżka reverse‑proxy), np.:
-   ```bash
+   \`\`\`bash
    scp -r frontend/dist/* user@server:/home/user/public_html/
-   ```
+   \`\`\`
 3. **Zmienna środowiskowa API** – jeśli backend działa pod inną domeną/prefiksem, ustaw podczas budowy
    `VITE_API_URL` wskazującą na endpoint, np.:
-   ```bash
+   \`\`\`bash
    VITE_API_URL=https://api.example.com npm --prefix frontend run build
-   ```
+   \`\`\`
 
 ### Scraper (CI lub lokalny cron)
 
@@ -238,9 +238,9 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 
 - GitHub Action uruchamia `python -m scraper.cli.scrape_all`.
 - Po zakończeniu plik bazy (lub eksport JSON) wysyłany na serwer:
-  ```bash
+  \`\`\`bash
   rsync -av data/pharmacy_prices.sqlite user@server:/home/user/scraper_workspace/data/
-  ```
+  \`\`\`
 - Klucz SSH dodaj do sekretów repozytorium.
 
 **Opcja lokalna:**
