@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
-import { Leaf, MapPin, Clock, Users, Filter, TrendingUp, Search, ShoppingCart, Star, Info } from 'lucide-react';
+import { Leaf, MapPin, Search, Star } from 'lucide-react';
 
 interface Offer {
   id: number;
@@ -37,12 +37,12 @@ const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState({
+  const stats = {
     totalOffers: 127,
     activeCities: 248,
     totalProducts: 67,
     avgResponseTime: '2 min'
-  });
+  };
 
   useEffect(() => {
     fetchProducts();
