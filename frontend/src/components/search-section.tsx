@@ -3,7 +3,13 @@
 import { useState, useEffect } from "react"
 import { MapPin, Leaf, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { apiClient, type SearchFilters } from "@/lib/api"
@@ -27,7 +33,15 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
       } catch (error) {
         console.error("Failed to load cities:", error)
         // Fallback to default cities
-        setCities(["Warszawa", "Kraków", "Gdańsk", "Wrocław", "Poznań", "Katowice", "Łódź"])
+        setCities([
+          "Warszawa",
+          "Kraków",
+          "Gdańsk",
+          "Wrocław",
+          "Poznań",
+          "Katowice",
+          "Łódź",
+        ])
       }
     }
     loadCities()
@@ -45,15 +59,21 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
 
   return (
     <Card className="p-8 mb-12 bg-card/50 backdrop-blur-sm neon-border shadow-2xl cannabis-pattern relative overflow-hidden">
-      <div className="absolute top-4 right-4 text-2xl opacity-20 float-animation">🌿</div>
-      <div className="absolute bottom-4 left-4 text-xl opacity-15 float-animation" style={{ animationDelay: "1s" }}>
+      <div className="absolute top-4 right-4 text-2xl opacity-20 float-animation">
+        🌿
+      </div>
+      <div
+        className="absolute bottom-4 left-4 text-xl opacity-15 float-animation"
+        style={{ animationDelay: "1s" }}
+      >
         🛸
       </div>
 
       <div className="grid md:grid-cols-4 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground flex items-center gap-2">
-            <Leaf className="w-4 h-4 text-primary glow-green" />🌱 Wybierz produkt
+            <Leaf className="w-4 h-4 text-primary glow-green" />
+            🌱 Wybierz produkt
           </label>
           <Select value={product} onValueChange={setProduct}>
             <SelectTrigger className="bg-input border-border hover:border-primary/50 transition-colors neon-border">
@@ -89,7 +109,9 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground flex items-center gap-2">💰 Maks. cena (zł)</label>
+          <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            💰 Maks. cena (zł)
+          </label>
           <Input
             type="number"
             placeholder="np. 300"
@@ -100,7 +122,9 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground opacity-0">Search</label>
+          <label className="text-sm font-medium text-foreground opacity-0">
+            Search
+          </label>
           <Button
             onClick={handleSearch}
             disabled={isLoading}
@@ -113,7 +137,8 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />🚀 Znajdź najlepsze oferty
+                <Sparkles className="w-4 h-4" />
+                🚀 Znajdź najlepsze oferty
               </div>
             )}
           </Button>

@@ -35,7 +35,10 @@ export function StatsSection() {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {[...Array(4)].map((_, index) => (
-          <Card key={index} className="p-6 bg-card/30 backdrop-blur-sm neon-border animate-pulse">
+          <Card
+            key={index}
+            className="p-6 bg-card/30 backdrop-blur-sm neon-border animate-pulse"
+          >
             <div className="h-16 bg-muted/20 rounded"></div>
           </Card>
         ))}
@@ -85,7 +88,9 @@ export function StatsSection() {
           key={index}
           className="p-6 bg-card/30 backdrop-blur-sm neon-border hover:bg-card/50 transition-all duration-300 hover:scale-105 glow-green relative overflow-hidden"
         >
-          <div className="absolute top-2 right-2 text-lg opacity-30 float-animation">{stat.emoji}</div>
+          <div className="absolute top-2 right-2 text-lg opacity-30 float-animation">
+            {stat.emoji}
+          </div>
           <div className="absolute inset-0 alien-glow opacity-10"></div>
 
           <div className="flex items-center gap-3 mb-3 relative z-10">
