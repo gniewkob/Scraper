@@ -38,6 +38,7 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
     
     // Filter offers with valid coordinates
     const validOffers = offers.filter(o => o.pharmacy_lat && o.pharmacy_lon)
+    console.log('MapView: Valid offers with GPS:', validOffers.length, validOffers)
     if (validOffers.length === 0) return
 
     // Clean up previous map instance if it exists

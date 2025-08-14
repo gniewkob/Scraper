@@ -260,3 +260,4 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 4. Widzi w UI listę produktów, tabelę ofert oraz – jeśli nie wyłączył – wykres trendu.
 
 Po przejściu powyższych kroków cały system działa lokalnie z realnymi danymi.
+

@@ -1,5 +1,7 @@
 // API configuration
-const API = 'https://backend.bodora.pl'
+const API = import.meta.env.DEV 
+  ? '/api-backend' 
+  : 'https://backend.bodora.pl'
 
 // Debug logging
 if (import.meta.env.DEV) {

@@ -73,7 +73,7 @@ async def get_price_thresholds(conn, product_id):
     try:
         row = await conn.execute(
             text("SELECT product_type FROM product_type_mapping WHERE product_id = :pid"),
-            {"pid": str(product_id)},
+            {"pid": int(product_id)},
         )
         mapping = row.mappings().first()
         if mapping and mapping.get("product_type"):
@@ -88,13 +88,12 @@ async def get_price_thresholds(conn, product_id):
                 SELECT super_deal, deal, normal
                 FROM price_thresholds
                 WHERE product_type = :ptype
-                ORDER BY datetime(updated_at) DESC
-                LIMIT 1
                 """
             ),
             {"ptype": product_type},
         )
-        return row.mappings().first()
+        result = row.mappings().first()
+        return result
     except Exception:
         return None
 
@@ -128,7 +127,7 @@ async def get_historical_low(conn, product_id):
                 LIMIT 1
                 """
             ),
-            {"pid": str(product_id)},
+            {"pid": int(product_id)},
         )
         result = row.mappings().first()
         return result["min_price"] if result else None
