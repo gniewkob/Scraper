@@ -20,22 +20,22 @@ export default function ProductSelect({ value, onChange }: ProductSelectProps) {
   useEffect(() => {
     console.log('Fetching products from:', `${API}/api/products`)
     fetch(`${API}/api/products`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`)
         }
-        const contentType = res.headers.get("content-type")
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Response is not JSON")
+        const contentType = res.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Response is not JSON')
         }
         return res.json()
       })
-      .then(data => {
+      .then((data) => {
         console.log('Products loaded:', data)
         setProducts(data)
         setError(null)
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Failed to load products:', err)
         setError(err.message)
       })
@@ -47,7 +47,9 @@ export default function ProductSelect({ value, onChange }: ProductSelectProps) {
   }
 
   if (error) {
-    return <div className="alert alert-danger">Error loading products: {error}</div>
+    return (
+      <div className="alert alert-danger">Error loading products: {error}</div>
+    )
   }
 
   if (products.length === 0) {
@@ -55,13 +57,13 @@ export default function ProductSelect({ value, onChange }: ProductSelectProps) {
   }
 
   return (
-    <select 
-      className="form-select" 
-      value={value} 
+    <select
+      className="form-select"
+      value={value}
       onChange={(e) => onChange(e.target.value)}
     >
       <option value="">Select a product...</option>
-      {products.map(product => (
+      {products.map((product) => (
         <option key={product.id} value={product.name}>
           {product.label || product.name}
         </option>

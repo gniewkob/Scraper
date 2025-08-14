@@ -1,118 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import './index.css';
-import { Leaf, MapPin, Search, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react'
+import './index.css'
+import { Leaf, MapPin, Search, Star } from 'lucide-react'
 
 interface Offer {
-  id: number;
-  pharmacy: string;
-  address: string;
-  price: number;
-  price_per_unit?: number;
-  price_bucket?: string;
-  pharmacy_lat?: number;
-  pharmacy_lon?: number;
-  distance?: number;
-  lab_tested?: boolean;
-  premium?: boolean;
-  rating?: number;
-  reviews?: number;
-  time_to_reach?: string;
+  id: number
+  pharmacy: string
+  address: string
+  price: number
+  price_per_unit?: number
+  price_bucket?: string
+  pharmacy_lat?: number
+  pharmacy_lon?: number
+  distance?: number
+  lab_tested?: boolean
+  premium?: boolean
+  rating?: number
+  reviews?: number
+  time_to_reach?: string
 }
 
 interface Product {
-  id: number;
-  name: string;
-  unit?: string;
+  id: number
+  name: string
+  unit?: string
 }
 
 interface City {
-  name: string;
-  count: number;
+  name: string
+  count: number
 }
 
 const App: React.FC = () => {
-  const [offers, setOffers] = useState<Offer[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<string>('');
-  const [selectedCity, setSelectedCity] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const [offers, setOffers] = useState<Offer[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [cities, setCities] = useState<City[]>([])
+  const [selectedProduct, setSelectedProduct] = useState<string>('')
+  const [selectedCity, setSelectedCity] = useState<string>('')
+  const [loading, setLoading] = useState(false)
   const stats = {
     totalOffers: 127,
     activeCities: 248,
     totalProducts: 67,
-    avgResponseTime: '2 min'
-  };
+    avgResponseTime: '2 min',
+  }
 
   useEffect(() => {
-    fetchProducts();
-    fetchCities();
-  }, []);
+    fetchProducts()
+    fetchCities()
+  }, [])
 
   useEffect(() => {
     if (selectedProduct && selectedCity) {
-      fetchOffers();
+      fetchOffers()
     }
-  }, [selectedProduct, selectedCity]);
+  }, [selectedProduct, selectedCity])
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api-backend/products');
-      const data = await response.json();
-      setProducts(data.products || []);
+      const response = await fetch('/api-backend/products')
+      const data = await response.json()
+      setProducts(data.products || [])
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching products:', error)
     }
-  };
+  }
 
   const fetchCities = async () => {
     try {
-      const response = await fetch('/api-backend/cities');
-      const data = await response.json();
-      setCities(data.cities || []);
+      const response = await fetch('/api-backend/cities')
+      const data = await response.json()
+      setCities(data.cities || [])
     } catch (error) {
-      console.error('Error fetching cities:', error);
+      console.error('Error fetching cities:', error)
     }
-  };
+  }
 
   const fetchOffers = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const response = await fetch(`/api-backend/product-offers?product=${selectedProduct}&city=${selectedCity}`);
-      const data = await response.json();
-      setOffers(data.offers || []);
+      const response = await fetch(
+        `/api-backend/product-offers?product=${selectedProduct}&city=${selectedCity}`,
+      )
+      const data = await response.json()
+      setOffers(data.offers || [])
     } catch (error) {
-      console.error('Error fetching offers:', error);
+      console.error('Error fetching offers:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const getPriceBucketIcon = (bucket?: string) => {
-    switch(bucket) {
+    switch (bucket) {
       case 'super_okazja':
-        return '🔥';
+        return '🔥'
       case 'okazja':
-        return '💚';
+        return '💚'
       case 'średnia':
-        return '💛';
+        return '💛'
       default:
-        return '❓';
+        return '❓'
     }
-  };
+  }
 
   const getPriceBucketClass = (bucket?: string) => {
-    switch(bucket) {
+    switch (bucket) {
       case 'super_okazja':
-        return 'text-green-400';
+        return 'text-green-400'
       case 'okazja':
-        return 'text-green-500';
+        return 'text-green-500'
       case 'średnia':
-        return 'text-yellow-500';
+        return 'text-yellow-500'
       default:
-        return 'text-gray-500';
+        return 'text-gray-500'
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -123,7 +125,8 @@ const App: React.FC = () => {
             <div className="flex items-center space-x-3">
               <Leaf className="text-green-500 w-8 h-8" />
               <h1 className="text-2xl font-bold">
-                <span className="text-green-500">🍃 Porównaj Ceny</span> <span className="text-blue-400">💊</span>
+                <span className="text-green-500">🍃 Porównaj Ceny</span>{' '}
+                <span className="text-blue-400">💊</span>
               </h1>
             </div>
             <div className="text-center">
@@ -132,7 +135,8 @@ const App: React.FC = () => {
           </div>
           <div className="text-center mt-2">
             <p className="text-gray-400">
-              🚀 Najlepsze oferty w Twojej okolicy. Znajdź najlepszą "zielonkę" w kilka sekund!
+              🚀 Najlepsze oferty w Twojej okolicy. Znajdź najlepszą "zielonkę"
+              w kilka sekund!
             </p>
             <p className="text-gray-500 text-sm mt-1">
               ✨ Cosmic prices for earthly medicine ✨
@@ -215,7 +219,9 @@ const App: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Średnia oszczędność</p>
-                <p className="text-2xl font-bold text-green-400">{stats.totalOffers} zł</p>
+                <p className="text-2xl font-bold text-green-400">
+                  {stats.totalOffers} zł
+                </p>
               </div>
               <div className="text-3xl">💰</div>
             </div>
@@ -279,8 +285,12 @@ const App: React.FC = () => {
                   <div className="flex items-center space-x-3">
                     <span className="text-2xl">🍃</span>
                     <div>
-                      <h3 className="font-bold text-lg">Green Galaxy Dispensary</h3>
-                      <p className="text-gray-400 text-sm">Olej CBD 10% 🌿 Premium 💎</p>
+                      <h3 className="font-bold text-lg">
+                        Green Galaxy Dispensary
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Olej CBD 10% 🌿 Premium 💎
+                      </p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center space-x-4 text-sm text-gray-400">
@@ -307,8 +317,12 @@ const App: React.FC = () => {
                     🔥 Najlepsza oferta
                   </div>
                   <div className="text-3xl font-bold">189.99 zł</div>
-                  <div className="text-gray-400 line-through text-sm">249.99 zł</div>
-                  <div className="text-green-400 text-sm">Oszczędzasz 60.00 zł</div>
+                  <div className="text-gray-400 line-through text-sm">
+                    249.99 zł
+                  </div>
+                  <div className="text-green-400 text-sm">
+                    Oszczędzasz 60.00 zł
+                  </div>
                   <button className="mt-3 bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg w-full transition-colors">
                     🚀 Teleportuj się
                   </button>
@@ -323,7 +337,9 @@ const App: React.FC = () => {
                     <span className="text-2xl">🌌</span>
                     <div>
                       <h3 className="font-bold text-lg">Cosmic Cannabis Co.</h3>
-                      <p className="text-gray-400 text-sm">Olej CBD 10% 🌿 Organic 🌱</p>
+                      <p className="text-gray-400 text-sm">
+                        Olej CBD 10% 🌿 Organic 🌱
+                      </p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center space-x-4 text-sm text-gray-400">
@@ -350,8 +366,12 @@ const App: React.FC = () => {
                     +3%
                   </div>
                   <div className="text-3xl font-bold">199.99 zł</div>
-                  <div className="text-gray-400 line-through text-sm">259.99 zł</div>
-                  <div className="text-green-400 text-sm">Oszczędzasz 60.00 zł</div>
+                  <div className="text-gray-400 line-through text-sm">
+                    259.99 zł
+                  </div>
+                  <div className="text-green-400 text-sm">
+                    Oszczędzasz 60.00 zł
+                  </div>
                   <button className="mt-3 bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg w-full transition-colors">
                     🚀 Teleportuj się
                   </button>
@@ -366,7 +386,9 @@ const App: React.FC = () => {
                     <span className="text-2xl">🔥</span>
                     <div>
                       <h3 className="font-bold text-lg">Space Herb Station</h3>
-                      <p className="text-gray-400 text-sm">Olej CBD 10% 🌿 Lab Tested 🔬</p>
+                      <p className="text-gray-400 text-sm">
+                        Olej CBD 10% 🌿 Lab Tested 🔬
+                      </p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center space-x-4 text-sm text-gray-400">
@@ -393,8 +415,12 @@ const App: React.FC = () => {
                     +1%
                   </div>
                   <div className="text-3xl font-bold">219.99 zł</div>
-                  <div className="text-gray-400 line-through text-sm">279.99 zł</div>
-                  <div className="text-green-400 text-sm">Oszczędzasz 60.00 zł</div>
+                  <div className="text-gray-400 line-through text-sm">
+                    279.99 zł
+                  </div>
+                  <div className="text-green-400 text-sm">
+                    Oszczędzasz 60.00 zł
+                  </div>
                   <button className="mt-3 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg w-full transition-colors">
                     🚀 Teleportuj się
                   </button>
@@ -403,11 +429,16 @@ const App: React.FC = () => {
             </div>
 
             {offers.map((offer, index) => (
-              <div key={index} className="bg-gray-900 rounded-lg p-4 border border-gray-800 hover:border-green-600 transition-colors">
+              <div
+                key={index}
+                className="bg-gray-900 rounded-lg p-4 border border-gray-800 hover:border-green-600 transition-colors"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{getPriceBucketIcon(offer.price_bucket)}</span>
+                      <span className="text-2xl">
+                        {getPriceBucketIcon(offer.price_bucket)}
+                      </span>
                       <div>
                         <h3 className="font-bold text-lg">{offer.pharmacy}</h3>
                         <p className="text-gray-400 text-sm">{offer.address}</p>
@@ -430,11 +461,17 @@ const App: React.FC = () => {
                   </div>
                   <div className="text-right">
                     {offer.price_bucket && (
-                      <div className={`px-3 py-1 rounded-lg inline-block mb-2 ${getPriceBucketClass(offer.price_bucket)}`}>
-                        {offer.price_bucket === 'super_okazja' ? '🔥 Najlepsza oferta' : offer.price_bucket}
+                      <div
+                        className={`px-3 py-1 rounded-lg inline-block mb-2 ${getPriceBucketClass(offer.price_bucket)}`}
+                      >
+                        {offer.price_bucket === 'super_okazja'
+                          ? '🔥 Najlepsza oferta'
+                          : offer.price_bucket}
                       </div>
                     )}
-                    <div className="text-3xl font-bold">{offer.price.toFixed(2)} zł</div>
+                    <div className="text-3xl font-bold">
+                      {offer.price.toFixed(2)} zł
+                    </div>
                     {offer.price_per_unit && (
                       <div className="text-gray-400 text-sm">
                         {offer.price_per_unit.toFixed(2)} zł/g
@@ -461,7 +498,7 @@ const App: React.FC = () => {
         </div>
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

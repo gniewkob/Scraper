@@ -35,10 +35,14 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
 
   useEffect(() => {
     if (!mapRef.current || typeof window === 'undefined') return
-    
+
     // Filter offers with valid coordinates
-    const validOffers = offers.filter(o => o.pharmacy_lat && o.pharmacy_lon)
-    console.log('MapView: Valid offers with GPS:', validOffers.length, validOffers)
+    const validOffers = offers.filter((o) => o.pharmacy_lat && o.pharmacy_lon)
+    console.log(
+      'MapView: Valid offers with GPS:',
+      validOffers.length,
+      validOffers,
+    )
     if (validOffers.length === 0) return
 
     // Clean up previous map instance if it exists
@@ -48,8 +52,11 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
     }
 
     // Calculate center - use first offer with coords or provided center
-    const mapCenter: [number, number] = center || 
-      (validOffers[0] ? [validOffers[0].pharmacy_lat!, validOffers[0].pharmacy_lon!] : [52.2297, 21.0122])
+    const mapCenter: [number, number] =
+      center ||
+      (validOffers[0]
+        ? [validOffers[0].pharmacy_lat!, validOffers[0].pharmacy_lon!]
+        : [52.2297, 21.0122])
 
     // Create map instance
     const map = L.map(mapRef.current).setView(mapCenter, 13)
@@ -57,7 +64,8 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
 
     // Add tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(map)
 
@@ -69,16 +77,15 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     })
 
     // Add markers for each pharmacy
     validOffers.forEach((offer, index) => {
-      const marker = L.marker(
-        [offer.pharmacy_lat!, offer.pharmacy_lon!],
-        { icon: customIcon }
-      )
-      
+      const marker = L.marker([offer.pharmacy_lat!, offer.pharmacy_lon!], {
+        icon: customIcon,
+      })
+
       // Add popup with pharmacy info
       const popupContent = `
         <div style="min-width: 150px;">
@@ -88,21 +95,23 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
         </div>
       `
       marker.bindPopup(popupContent)
-      
+
       // Open first popup by default
       if (index === 0) {
         marker.on('add', () => {
           setTimeout(() => marker.openPopup(), 100)
         })
       }
-      
+
       marker.addTo(map)
     })
 
     // If multiple markers, fit bounds to show all
     if (validOffers.length > 1) {
       const bounds = L.latLngBounds(
-        validOffers.map(o => [o.pharmacy_lat!, o.pharmacy_lon!] as [number, number])
+        validOffers.map(
+          (o) => [o.pharmacy_lat!, o.pharmacy_lon!] as [number, number],
+        ),
       )
       map.fitBounds(bounds, { padding: [50, 50] })
     }
@@ -121,26 +130,27 @@ const MapView: React.FC<MapViewProps> = ({ offers, center }) => {
   }, [offers, center, mapId])
 
   // Don't render if no valid offers
-  const hasValidCoords = offers.some(o => o.pharmacy_lat && o.pharmacy_lon)
-  
+  const hasValidCoords = offers.some((o) => o.pharmacy_lat && o.pharmacy_lon)
+
   if (!hasValidCoords) {
     return (
       <div className="alert alert-info">
-        <i className="bi bi-info-circle"></i> Brak danych lokalizacji dla wybranych aptek.
+        <i className="bi bi-info-circle"></i> Brak danych lokalizacji dla
+        wybranych aptek.
       </div>
     )
   }
 
   return (
-    <div 
-      id={mapId} 
-      ref={mapRef} 
-      style={{ 
-        height: '400px', 
+    <div
+      id={mapId}
+      ref={mapRef}
+      style={{
+        height: '400px',
         width: '100%',
         borderRadius: '8px',
-        border: '1px solid #dee2e6'
-      }} 
+        border: '1px solid #dee2e6',
+      }}
     />
   )
 }

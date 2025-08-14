@@ -11,8 +11,8 @@ export default defineConfig({
       '/api-backend': {
         target: 'http://127.0.0.1:38273',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api-backend/, '')
-      }
-    }
-  }
+        rewrite: (path) => path.replace(/^\/api-backend/, ''),
+      },
+    },
+  },
 })
