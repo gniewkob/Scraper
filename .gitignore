@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+node_modules/
+**/node_modules
 
 # next.js
 /.next/
@@ -9,6 +11,7 @@
 
 # production
 /build
+dist/
 
 # debug
 npm-debug.log*
@@ -18,10 +21,63 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 
 # vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Database
+data/
+*.sqlite
+*.db
+*.sqlite3
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+uvicorn_scraper.log
+backend.log
+frontend.log
+logs/
+
+# IDE
+.nova
+.vscode/
+.idea/
+
+# User data
+**/user_alerts.json*
+
+# PID files
+.pids/
+*.pid
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/

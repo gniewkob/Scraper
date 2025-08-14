@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard cen leków</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/dashboard.css">
+  <style>
+    /* Override Leaflet icon path detection */
+    .leaflet-default-icon-path { 
+      background-image: url("/static/marker-icon.png"); 
+    }
+  </style>
+</head>
+<body>
+  <script>document.body.classList.add(localStorage.getItem("theme") || "dark");</script>
+  
+  <!-- Fix for Node.js process.env in browser -->
+  <script>
+    if (typeof process === 'undefined') {
+      window.process = {
+        env: {
+          NODE_ENV: 'production'
+        }
+      };
+    }
+  </script>
+  
+  <div id="root"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Fix Leaflet icon paths BEFORE loading dashboard.js -->
+  <script>
+    // Override Leaflet's icon path detection
+    if (typeof L !== 'undefined' && L.Icon && L.Icon.Default) {
+      L.Icon.Default.imagePath = '/static/';
+    }
+  </script>
+  
+  <!-- Use local Chart.js files to avoid source map 404s -->
+  <script src="/static/chart.umd.min.js"></script>
+  <script src="/static/chartjs-adapter-date-fns.bundle.min.js"></script>
+  
+  <script src="/static/theme.js"></script>
+  <script type="module" src="/static/dashboard.js"></script>
+</body>
+</html>
