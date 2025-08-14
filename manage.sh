@@ -6,332 +6,390 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Konfiguracja
+# Ścieżki
+WORKSPACE_DIR="/usr/home/vetternkraft/apps/python/scraper_workspace"
+BACKEND_LOG="$WORKSPACE_DIR/backend.log"
+FRONTEND_LOG="$WORKSPACE_DIR/frontend_server.log"
+BACKEND_PID_FILE="$WORKSPACE_DIR/backend.pid"
+FRONTEND_PID_FILE="$WORKSPACE_DIR/frontend.pid"
+
+# Porty
 BACKEND_PORT=38273
 FRONTEND_PORT=61973
-PROJECT_DIR="/usr/home/vetternkraft/apps/python/scraper_workspace"
-BACKEND_LOG="$PROJECT_DIR/backend.log"
-FRONTEND_LOG="$PROJECT_DIR/frontend.log"
-PID_DIR="$PROJECT_DIR/.pids"
-
-# Tworzenie katalogu na PID-y jeśli nie istnieje
-mkdir -p "$PID_DIR"
 
 # Funkcja do sprawdzania czy proces działa
-check_process() {
-    local pid_file=$1
-    if [ -f "$pid_file" ]; then
-        local pid=$(cat "$pid_file")
+is_running() {
+    if [ -f "$1" ]; then
+        pid=$(cat "$1")
         if ps -p "$pid" > /dev/null 2>&1; then
             return 0
+        else
+            rm -f "$1"
+            return 1
         fi
     fi
     return 1
 }
 
-# Funkcja do zabijania procesu
-kill_process() {
-    local pid_file=$1
-    local name=$2
-    
-    if [ -f "$pid_file" ]; then
-        local pid=$(cat "$pid_file")
-        if ps -p "$pid" > /dev/null 2>&1; then
-            echo -e "${YELLOW}Zatrzymywanie $name (PID: $pid)...${NC}"
-            kill "$pid" 2>/dev/null
-            sleep 2
-            
-            # Jeśli nadal działa, użyj SIGKILL
-            if ps -p "$pid" > /dev/null 2>&1; then
-                echo -e "${YELLOW}Wymuszanie zatrzymania $name...${NC}"
-                kill -9 "$pid" 2>/dev/null
-            fi
-            rm -f "$pid_file"
-            echo -e "${GREEN}$name zatrzymany${NC}"
-        else
-            echo -e "${YELLOW}$name nie działa (stary PID: $pid)${NC}"
-            rm -f "$pid_file"
-        fi
-    else
-        echo -e "${YELLOW}$name nie jest uruchomiony${NC}"
-    fi
+# Funkcja do sprawdzania portu
+check_port() {
+    netstat -an | grep -q ":$1.*LISTEN"
+    return $?
 }
 
-# Funkcja startująca backend
+# Start backend
 start_backend() {
-    if check_process "$PID_DIR/backend.pid"; then
-        echo -e "${YELLOW}Backend już działa${NC}"
-        return
+    echo -e "${YELLOW}Starting backend API server...${NC}"
+    
+    if is_running "$BACKEND_PID_FILE"; then
+        echo -e "${YELLOW}Backend is already running (PID: $(cat $BACKEND_PID_FILE))${NC}"
+        return 0
     fi
     
-    echo -e "${GREEN}Uruchamianie backend na porcie $BACKEND_PORT...${NC}"
-    cd "$PROJECT_DIR"
+    # Sprawdź czy port jest zajęty
+    if check_port $BACKEND_PORT; then
+        echo -e "${RED}Port $BACKEND_PORT is already in use!${NC}"
+        echo "Trying to kill process using port $BACKEND_PORT..."
+        pid=$(sockstat -l | grep ":$BACKEND_PORT" | awk '{print $3}')
+        if [ ! -z "$pid" ]; then
+            kill -9 $pid 2>/dev/null
+            sleep 2
+        fi
+    fi
     
-    # Ładowanie zmiennych środowiskowych
-    export DB_URL="postgresql+asyncpg://p11522_scraper:k_y7_g5WM[8rb{OlgTOElFO15KYk47@pgsql0.mydevil.net:5432/p11522_scraper"
+    cd "$WORKSPACE_DIR"
+    nohup python -m uvicorn backend.main:app --host 127.0.0.1 --port $BACKEND_PORT > "$BACKEND_LOG" 2>&1 &
+    echo $! > "$BACKEND_PID_FILE"
     
-    # Uruchomienie uvicorn w tle
-    nohup uvicorn backend.main:app \
-        --host 0.0.0.0 \
-        --port $BACKEND_PORT \
-        > "$BACKEND_LOG" 2>&1 &
-    
-    local pid=$!
-    echo $pid > "$PID_DIR/backend.pid"
-    
-    # Czekanie na uruchomienie
     sleep 3
     
-    # Sprawdzenie czy działa
-    if curl -s "http://127.0.0.1:$BACKEND_PORT/health" > /dev/null; then
-        echo -e "${GREEN}Backend uruchomiony pomyślnie (PID: $pid)${NC}"
-        echo -e "Logi: $BACKEND_LOG"
-        echo -e "API dostępne na: https://backend.bodora.pl"
+    if is_running "$BACKEND_PID_FILE"; then
+        echo -e "${GREEN}✓ Backend started successfully (PID: $(cat $BACKEND_PID_FILE))${NC}"
+        echo -e "   URL: http://127.0.0.1:$BACKEND_PORT"
     else
-        echo -e "${RED}Backend nie odpowiada - sprawdź logi: $BACKEND_LOG${NC}"
-        tail -20 "$BACKEND_LOG"
+        echo -e "${RED}✗ Failed to start backend${NC}"
+        return 1
     fi
 }
 
-# Funkcja startująca frontend
+# Start frontend
 start_frontend() {
-    if check_process "$PID_DIR/frontend.pid"; then
-        echo -e "${YELLOW}Frontend już działa${NC}"
-        return
+    echo -e "${YELLOW}Starting frontend server...${NC}"
+    
+    if is_running "$FRONTEND_PID_FILE"; then
+        echo -e "${YELLOW}Frontend is already running (PID: $(cat $FRONTEND_PID_FILE))${NC}"
+        return 0
     fi
     
-    echo -e "${GREEN}Uruchamianie frontend na porcie $FRONTEND_PORT...${NC}"
-    cd "$PROJECT_DIR/frontend"
+    # Sprawdź czy port jest zajęty
+    if check_port $FRONTEND_PORT; then
+        echo -e "${RED}Port $FRONTEND_PORT is already in use!${NC}"
+        echo "Trying to kill process using port $FRONTEND_PORT..."
+        pid=$(sockstat -l | grep ":$FRONTEND_PORT" | awk '{print $3}')
+        if [ ! -z "$pid" ]; then
+            kill -9 $pid 2>/dev/null
+            sleep 2
+        fi
+    fi
     
-    # Upewnienie się że .env wskazuje na właściwy backend
-    echo "VITE_API_URL=https://backend.bodora.pl" > .env
+    # Sprawdź czy frontend jest zbudowany
+    if [ ! -d "$WORKSPACE_DIR/frontend/dist" ]; then
+        echo -e "${YELLOW}Frontend not built. Building...${NC}"
+        cd "$WORKSPACE_DIR/frontend"
+        npm run build
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}✗ Failed to build frontend${NC}"
+            return 1
+        fi
+    fi
     
-    # Uruchomienie Vite w tle
-    nohup npm run dev -- --port $FRONTEND_PORT --host 0.0.0.0 \
-        > "$FRONTEND_LOG" 2>&1 &
+    cd "$WORKSPACE_DIR"
+    nohup python frontend_server.py > "$FRONTEND_LOG" 2>&1 &
+    echo $! > "$FRONTEND_PID_FILE"
     
-    local pid=$!
-    echo $pid > "$PID_DIR/frontend.pid"
-    
-    # Czekanie na uruchomienie
     sleep 3
     
-    # Sprawdzenie czy działa
-    if curl -s "http://127.0.0.1:$FRONTEND_PORT" > /dev/null; then
-        echo -e "${GREEN}Frontend uruchomiony pomyślnie (PID: $pid)${NC}"
-        echo -e "Dostępny pod: https://smart.bodora.pl"
-        echo -e "Logi: $FRONTEND_LOG"
+    if is_running "$FRONTEND_PID_FILE"; then
+        echo -e "${GREEN}✓ Frontend started successfully (PID: $(cat $FRONTEND_PID_FILE))${NC}"
+        echo -e "   URL: http://127.0.0.1:$FRONTEND_PORT"
     else
-        echo -e "${RED}Frontend nie odpowiada - sprawdź logi: $FRONTEND_LOG${NC}"
-        tail -20 "$FRONTEND_LOG"
+        echo -e "${RED}✗ Failed to start frontend${NC}"
+        return 1
     fi
 }
 
-# Funkcja zatrzymująca backend
+# Stop backend
 stop_backend() {
-    kill_process "$PID_DIR/backend.pid" "Backend"
-    # Zabij też procesy uvicorn które mogły zostać
-    pkill -f "uvicorn backend.main:app" 2>/dev/null
+    echo -e "${YELLOW}Stopping backend...${NC}"
+    
+    if is_running "$BACKEND_PID_FILE"; then
+        pid=$(cat "$BACKEND_PID_FILE")
+        kill $pid 2>/dev/null
+        sleep 2
+        
+        # Force kill if still running
+        if ps -p $pid > /dev/null 2>&1; then
+            kill -9 $pid 2>/dev/null
+        fi
+        
+        rm -f "$BACKEND_PID_FILE"
+        echo -e "${GREEN}✓ Backend stopped${NC}"
+    else
+        echo -e "${YELLOW}Backend is not running${NC}"
+    fi
+    
+    # Dodatkowo zabij procesy na porcie
+    pid=$(sockstat -l | grep ":$BACKEND_PORT" | awk '{print $3}')
+    if [ ! -z "$pid" ]; then
+        kill -9 $pid 2>/dev/null
+    fi
 }
 
-# Funkcja zatrzymująca frontend
+# Stop frontend
 stop_frontend() {
-    kill_process "$PID_DIR/frontend.pid" "Frontend"
-    # Zabij też procesy npm/node które mogły zostać
-    pkill -f "npm run dev.*61973" 2>/dev/null
+    echo -e "${YELLOW}Stopping frontend...${NC}"
+    
+    if is_running "$FRONTEND_PID_FILE"; then
+        pid=$(cat "$FRONTEND_PID_FILE")
+        kill $pid 2>/dev/null
+        sleep 2
+        
+        # Force kill if still running
+        if ps -p $pid > /dev/null 2>&1; then
+            kill -9 $pid 2>/dev/null
+        fi
+        
+        rm -f "$FRONTEND_PID_FILE"
+        echo -e "${GREEN}✓ Frontend stopped${NC}"
+    else
+        echo -e "${YELLOW}Frontend is not running${NC}"
+    fi
+    
+    # Dodatkowo zabij procesy na porcie
+    pid=$(sockstat -l | grep ":$FRONTEND_PORT" | awk '{print $3}')
+    if [ ! -z "$pid" ]; then
+        kill -9 $pid 2>/dev/null
+    fi
 }
 
-# Funkcja pokazująca status
-show_status() {
-    echo -e "\n${YELLOW}=== STATUS APLIKACJI ===${NC}\n"
+# Status
+status() {
+    echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║        🌿 SERVICE STATUS 🌿          ║${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+    echo ""
     
     # Backend status
-    if check_process "$PID_DIR/backend.pid"; then
-        local pid=$(cat "$PID_DIR/backend.pid")
-        echo -e "${GREEN}✓ Backend${NC} działa (PID: $pid) na porcie $BACKEND_PORT"
-        echo -e "  URL: https://backend.bodora.pl"
-        
-        # Test API
-        if curl -s "http://127.0.0.1:$BACKEND_PORT/health" > /dev/null; then
-            echo -e "  API odpowiada: ${GREEN}OK${NC}"
+    if is_running "$BACKEND_PID_FILE"; then
+        pid=$(cat "$BACKEND_PID_FILE")
+        echo -e "${GREEN}✓ Backend (uvicorn):${NC} Running"
+        echo -e "   PID: $pid"
+        echo -e "   URL: http://127.0.0.1:$BACKEND_PORT"
+        if check_port $BACKEND_PORT; then
+            echo -e "   Port $BACKEND_PORT: ${GREEN}LISTENING${NC}"
         else
-            echo -e "  API odpowiada: ${RED}BŁĄD${NC}"
+            echo -e "   Port $BACKEND_PORT: ${RED}NOT LISTENING${NC}"
         fi
     else
-        echo -e "${RED}✗ Backend${NC} nie działa"
+        echo -e "${RED}✗ Backend (uvicorn):${NC} Stopped"
+        if check_port $BACKEND_PORT; then
+            echo -e "   ${YELLOW}Warning: Port $BACKEND_PORT is in use by another process${NC}"
+        fi
     fi
+    
+    echo ""
     
     # Frontend status
-    if check_process "$PID_DIR/frontend.pid"; then
-        local pid=$(cat "$PID_DIR/frontend.pid")
-        echo -e "${GREEN}✓ Frontend${NC} działa (PID: $pid) na porcie $FRONTEND_PORT"
-        echo -e "  URL: https://smart.bodora.pl"
+    if is_running "$FRONTEND_PID_FILE"; then
+        pid=$(cat "$FRONTEND_PID_FILE")
+        echo -e "${GREEN}✓ Frontend (uvicorn):${NC} Running"
+        echo -e "   PID: $pid"
+        echo -e "   URL: http://127.0.0.1:$FRONTEND_PORT"
+        if check_port $FRONTEND_PORT; then
+            echo -e "   Port $FRONTEND_PORT: ${GREEN}LISTENING${NC}"
+        else
+            echo -e "   Port $FRONTEND_PORT: ${RED}NOT LISTENING${NC}"
+        fi
     else
-        echo -e "${RED}✗ Frontend${NC} nie działa"
+        echo -e "${RED}✗ Frontend (uvicorn):${NC} Stopped"
+        if check_port $FRONTEND_PORT; then
+            echo -e "   ${YELLOW}Warning: Port $FRONTEND_PORT is in use by another process${NC}"
+        fi
     fi
     
-    # Database info
-    echo -e "\n${YELLOW}=== BAZA DANYCH ===${NC}"
-    echo -e "PostgreSQL: pgsql0.mydevil.net:5432"
-    echo -e "Database: p11522_scraper"
-    
     echo ""
+    echo -e "${YELLOW}────────────────────────────────────────${NC}"
+    echo -e "${YELLOW}Port Usage Details:${NC}"
+    echo ""
+    echo "Backend port ($BACKEND_PORT):"
+    sockstat -l | grep ":$BACKEND_PORT" || echo "  Not in use"
+    echo ""
+    echo "Frontend port ($FRONTEND_PORT):"
+    sockstat -l | grep ":$FRONTEND_PORT" || echo "  Not in use"
 }
 
-# Funkcja pokazująca logi
-show_logs() {
-    local service=$1
-    local lines=${2:-50}
-    
-    case $service in
+# Logs
+logs() {
+    case "$1" in
         backend)
-            echo -e "${YELLOW}=== Ostatnie $lines linii logów Backend ===${NC}"
-            tail -$lines "$BACKEND_LOG"
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║      BACKEND LOGS (last 50)         ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+            tail -50 "$BACKEND_LOG"
             ;;
         frontend)
-            echo -e "${YELLOW}=== Ostatnie $lines linii logów Frontend ===${NC}"
-            tail -$lines "$FRONTEND_LOG"
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║     FRONTEND LOGS (last 50)         ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+            tail -50 "$FRONTEND_LOG"
             ;;
-        all)
-            show_logs backend $lines
+        *)
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║      BACKEND LOGS (last 20)         ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+            tail -20 "$BACKEND_LOG"
             echo ""
-            show_logs frontend $lines
-            ;;
-        *)
-            echo -e "${RED}Nieznany serwis: $service${NC}"
-            echo "Użyj: backend, frontend lub all"
-            ;;
-    esac
-}
-
-# Funkcja restartująca serwis
-restart_service() {
-    local service=$1
-    
-    case $service in
-        backend)
-            stop_backend
-            sleep 1
-            start_backend
-            ;;
-        frontend)
-            stop_frontend
-            sleep 1
-            start_frontend
-            ;;
-        all)
-            stop_backend
-            stop_frontend
-            sleep 1
-            start_backend
-            start_frontend
-            ;;
-        *)
-            echo -e "${RED}Nieznany serwis: $service${NC}"
-            echo "Użyj: backend, frontend lub all"
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║     FRONTEND LOGS (last 20)         ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+            tail -20 "$FRONTEND_LOG"
             ;;
     esac
 }
 
-# Menu pomocy
-show_help() {
-    echo "Medical Cannabis Price Tracker - Management Script"
-    echo "=================================================="
-    echo ""
-    echo "Użycie: $0 [KOMENDA] [OPCJE]"
-    echo ""
-    echo "KOMENDY:"
-    echo "  start [backend|frontend|all]  - Uruchamia serwisy (domyślnie: all)"
-    echo "  stop [backend|frontend|all]   - Zatrzymuje serwisy (domyślnie: all)"
-    echo "  restart [backend|frontend|all] - Restartuje serwisy (domyślnie: all)"
-    echo "  status                         - Pokazuje status serwisów"
-    echo "  logs [backend|frontend|all] [n] - Pokazuje ostatnie n linii logów (domyślnie: 50)"
-    echo "  help                          - Pokazuje tę pomoc"
-    echo ""
-    echo "PRZYKŁADY:"
-    echo "  $0 start              # Uruchamia backend i frontend"
-    echo "  $0 stop backend       # Zatrzymuje tylko backend"
-    echo "  $0 restart frontend   # Restartuje tylko frontend"
-    echo "  $0 logs backend 100   # Pokazuje 100 ostatnich linii logów backendu"
-    echo "  $0 status            # Pokazuje status wszystkich serwisów"
-    echo ""
-    echo "ADRESY URL:"
-    echo "  Frontend: https://smart.bodora.pl"
-    echo "  Backend:  https://backend.bodora.pl"
-    echo "  Database: pgsql0.mydevil.net:5432"
+# Build frontend
+build() {
+    echo -e "${YELLOW}Building frontend for production...${NC}"
+    cd "$WORKSPACE_DIR/frontend"
+    npm run build
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Frontend built successfully${NC}"
+        echo -e "   Build output: $WORKSPACE_DIR/frontend/dist"
+    else
+        echo -e "${RED}✗ Build failed${NC}"
+        return 1
+    fi
 }
 
-# Główna logika skryptu
+# Clean logs and pid files
+clean() {
+    echo -e "${YELLOW}Cleaning logs and pid files...${NC}"
+    rm -f "$BACKEND_LOG" "$FRONTEND_LOG" "$BACKEND_PID_FILE" "$FRONTEND_PID_FILE"
+    echo -e "${GREEN}✓ Cleaned${NC}"
+}
+
+# Main menu
 case "$1" in
     start)
-        service=${2:-all}
-        case $service in
-            backend)
-                start_backend
-                ;;
-            frontend)
-                start_frontend
-                ;;
-            all)
-                start_backend
-                start_frontend
-                ;;
-            *)
-                echo -e "${RED}Nieznany serwis: $service${NC}"
-                show_help
-                ;;
-        esac
-        show_status
-        ;;
-        
-    stop)
-        service=${2:-all}
-        case $service in
-            backend)
-                stop_backend
-                ;;
-            frontend)
-                stop_frontend
-                ;;
-            all)
-                stop_backend
-                stop_frontend
-                ;;
-            *)
-                echo -e "${RED}Nieznany serwis: $service${NC}"
-                show_help
-                ;;
-        esac
-        ;;
-        
-    restart)
-        service=${2:-all}
-        restart_service $service
-        show_status
-        ;;
-        
-    status)
-        show_status
-        ;;
-        
-    logs)
-        service=${2:-all}
-        lines=${3:-50}
-        show_logs $service $lines
-        ;;
-        
-    help|--help|-h)
-        show_help
-        ;;
-        
-    *)
-        if [ -z "$1" ]; then
-            show_status
+        if [ "$2" = "backend" ]; then
+            start_backend
+        elif [ "$2" = "frontend" ]; then
+            start_frontend
         else
-            echo -e "${RED}Nieznana komenda: $1${NC}"
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║   🚀 STARTING ALL SERVICES 🚀       ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
             echo ""
-            show_help
-            exit 1
+            start_backend
+            echo ""
+            start_frontend
+            echo ""
+            echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
+            echo -e "${GREEN}║    ✅ ALL SERVICES STARTED ✅       ║${NC}"
+            echo -e "${GREEN}╚══════════════════════════════════════╝${NC}"
+            echo ""
+            echo -e "🌿 Backend API: http://127.0.0.1:$BACKEND_PORT"
+            echo -e "🌿 Frontend: http://127.0.0.1:$FRONTEND_PORT"
         fi
+        ;;
+    stop)
+        if [ "$2" = "backend" ]; then
+            stop_backend
+        elif [ "$2" = "frontend" ]; then
+            stop_frontend
+        else
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║   🛑 STOPPING ALL SERVICES 🛑       ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+            echo ""
+            stop_backend
+            stop_frontend
+            echo ""
+            echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
+            echo -e "${GREEN}║    ✅ ALL SERVICES STOPPED ✅       ║${NC}"
+            echo -e "${GREEN}╚══════════════════════════════════════╝${NC}"
+        fi
+        ;;
+    restart)
+        if [ "$2" = "backend" ]; then
+            stop_backend
+            sleep 2
+            start_backend
+        elif [ "$2" = "frontend" ]; then
+            stop_frontend
+            sleep 2
+            start_frontend
+        else
+            echo -e "${YELLOW}╔══════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║   🔄 RESTARTING ALL SERVICES 🔄     ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════╝${NC}"
+            echo ""
+            stop_backend
+            stop_frontend
+            sleep 2
+            start_backend
+            echo ""
+            start_frontend
+            echo ""
+            echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
+            echo -e "${GREEN}║   ✅ ALL SERVICES RESTARTED ✅      ║${NC}"
+            echo -e "${GREEN}╚══════════════════════════════════════╝${NC}"
+        fi
+        ;;
+    status)
+        status
+        ;;
+    logs)
+        logs "$2"
+        ;;
+    build)
+        build
+        ;;
+    clean)
+        clean
+        ;;
+    help|--help|-h)
+        echo -e "${YELLOW}╔══════════════════════════════════════════════════════╗${NC}"
+        echo -e "${YELLOW}║     🌿 Cannabis Price Comparison Manager 🌿         ║${NC}"
+        echo -e "${YELLOW}╚══════════════════════════════════════════════════════╝${NC}"
+        echo ""
+        echo "Usage: $0 {start|stop|restart|status|logs|build|clean|help} [service]"
+        echo ""
+        echo "Commands:"
+        echo "  start [backend|frontend]  - Start service(s) with uvicorn"
+        echo "  stop [backend|frontend]   - Stop service(s)"
+        echo "  restart [backend|frontend]- Restart service(s)"
+        echo "  status                    - Show status of all services"
+        echo "  logs [backend|frontend]   - Show logs (default: both)"
+        echo "  build                     - Build frontend for production"
+        echo "  clean                     - Remove logs and pid files"
+        echo "  help                      - Show this help message"
+        echo ""
+        echo "Services:"
+        echo "  Backend:  FastAPI/uvicorn on port $BACKEND_PORT"
+        echo "  Frontend: FastAPI/uvicorn on port $FRONTEND_PORT"
+        echo ""
+        echo "Examples:"
+        echo "  $0 start              # Start all services"
+        echo "  $0 start backend      # Start only backend"
+        echo "  $0 logs frontend      # Show frontend logs"
+        echo "  $0 status             # Check status of all services"
+        echo ""
+        echo "Note: Both backend and frontend are served with uvicorn (Python)"
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status|logs|build|clean|help} [service]"
+        echo "Run '$0 help' for more information"
+        exit 1
         ;;
 esac
