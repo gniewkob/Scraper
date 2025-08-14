@@ -120,7 +120,6 @@ class ApiClient {
 
       return await response.json()
     } catch (error) {
-      console.error(`API request failed for ${endpoint}:`, error)
       throw error
     }
   }
@@ -143,9 +142,7 @@ class ApiClient {
 
       return await this.makeRequest<SearchResponse>(endpoint)
     } catch (error) {
-      // Fallback to mock data
-      console.log("Using mock search data")
-      await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
       let filteredProducts = [...MOCK_PRODUCTS]
 
@@ -177,7 +174,6 @@ class ApiClient {
     try {
       return await this.makeRequest<StatsResponse>("/stats")
     } catch (error) {
-      console.log("Using mock stats data")
       await new Promise((resolve) => setTimeout(resolve, 300))
       return MOCK_STATS
     }
@@ -187,7 +183,6 @@ class ApiClient {
     try {
       return await this.makeRequest<string[]>("/cities")
     } catch (error) {
-      console.log("Using mock cities data")
       await new Promise((resolve) => setTimeout(resolve, 200))
       return MOCK_CITIES
     }
@@ -197,7 +192,6 @@ class ApiClient {
     try {
       return await this.makeRequest<Product>(`/products/${id}`)
     } catch (error) {
-      console.log("Using mock product data")
       await new Promise((resolve) => setTimeout(resolve, 300))
       return MOCK_PRODUCTS.find((p) => p.id === id) || MOCK_PRODUCTS[0]
     }
@@ -207,7 +201,6 @@ class ApiClient {
     try {
       return await this.makeRequest<Product[]>(`/products/city/${encodeURIComponent(city)}`)
     } catch (error) {
-      console.log("Using mock city products data")
       await new Promise((resolve) => setTimeout(resolve, 400))
       return MOCK_PRODUCTS.filter((p) => p.location.toLowerCase().includes(city.toLowerCase()))
     }
@@ -217,7 +210,6 @@ class ApiClient {
     try {
       return await this.makeRequest<Product[]>(`/deals/best?limit=${limit}`)
     } catch (error) {
-      console.log("Using mock best deals data")
       await new Promise((resolve) => setTimeout(resolve, 350))
       return MOCK_PRODUCTS.slice(0, limit)
     }
