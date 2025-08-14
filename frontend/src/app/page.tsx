@@ -33,7 +33,11 @@ export default function HomePage() {
         <Header />
         <SearchSection onSearch={handleSearch} isLoading={loading} />
         <StatsSection />
-        <ResultsSection products={products} loading={loading} searchPerformed={searchPerformed} />
+        <ResultsSection
+          products={products}
+          loading={loading}
+          searchPerformed={searchPerformed}
+        />
       </div>
     </div>
   )

@@ -14,15 +14,22 @@ export function Header() {
           <Leaf className="w-8 h-8 text-primary rotate-slow" />
           <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-purple-500/20 rounded-full blur-sm"></div>
         </div>
-        <h1 className="text-4xl md:text-5xl font-serif font-black text-foreground">🌿 Porównaj Ceny 🛸</h1>
+        <h1 className="text-4xl md:text-5xl font-serif font-black text-foreground">
+          🌿 Porównaj Ceny 🛸
+        </h1>
       </div>
 
-      <h2 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-4">Medycznej Marihuany 👽</h2>
+      <h2 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-4">
+        Medycznej Marihuany 👽
+      </h2>
 
       <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto font-sans">
-        🚀 Najlepsze oferty w Twojej okolicy. Znajdź najlepszą "zielonkę" w kilka sekund!
+        🚀 Najlepsze oferty w Twojej okolicy. Znajdź najlepszą "zielonkę" w
+        kilka sekund!
         <br />
-        <span className="text-sm opacity-75">✨ Cosmic prices for earthly medicine ✨</span>
+        <span className="text-sm opacity-75">
+          ✨ Cosmic prices for earthly medicine ✨
+        </span>
       </p>
 
       <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">

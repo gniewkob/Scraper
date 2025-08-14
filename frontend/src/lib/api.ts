@@ -41,7 +41,8 @@ export interface StatsResponse {
   last_updated: string
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://smart.bodora.pl/api"
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://smart.bodora.pl/api"
 
 const MOCK_CITIES = [
   "Warszawa",
@@ -103,9 +104,11 @@ const MOCK_PRODUCTS: Product[] = [
   },
 ]
 
-
 class ApiClient {
-  private async makeRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  private async makeRequest<T>(
+    endpoint: string,
+    options?: RequestInit,
+  ): Promise<T> {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         headers: {
@@ -131,7 +134,8 @@ class ApiClient {
 
       if (filters.city) params.append("city", filters.city)
       if (filters.strain_type) params.append("strain_type", filters.strain_type)
-      if (filters.max_price) params.append("max_price", filters.max_price.toString())
+      if (filters.max_price)
+        params.append("max_price", filters.max_price.toString())
       if (filters.min_thc) params.append("min_thc", filters.min_thc.toString())
       if (filters.max_thc) params.append("max_thc", filters.max_thc.toString())
       if (filters.min_cbd) params.append("min_cbd", filters.min_cbd.toString())
@@ -154,17 +158,23 @@ class ApiClient {
       }
 
       if (filters.strain_type) {
-        filteredProducts = filteredProducts.filter((p) => p.strain_type === filters.strain_type)
+        filteredProducts = filteredProducts.filter(
+          (p) => p.strain_type === filters.strain_type,
+        )
       }
 
       if (filters.max_price) {
-        filteredProducts = filteredProducts.filter((p) => p.price <= filters.max_price!)
+        filteredProducts = filteredProducts.filter(
+          (p) => p.price <= filters.max_price!,
+        )
       }
 
       return {
         products: filteredProducts,
         total_count: filteredProducts.length,
-        avg_price: filteredProducts.reduce((sum, p) => sum + p.price, 0) / filteredProducts.length,
+        avg_price:
+          filteredProducts.reduce((sum, p) => sum + p.price, 0) /
+          filteredProducts.length,
         lowest_price: Math.min(...filteredProducts.map((p) => p.price)),
         highest_price: Math.max(...filteredProducts.map((p) => p.price)),
       }
@@ -200,11 +210,14 @@ class ApiClient {
 
   async getProductsByCity(city: string): Promise<Product[]> {
     try {
-      return await this.makeRequest<Product[]>(`/products/city/${encodeURIComponent(city)}`)
+      return await this.makeRequest<Product[]>(
+        `/products/city/${encodeURIComponent(city)}`,
+      )
     } catch (error) {
       await new Promise((resolve) => setTimeout(resolve, 400))
-      return MOCK_PRODUCTS.filter((p) => p.location.toLowerCase().includes(city.toLowerCase()))
-
+      return MOCK_PRODUCTS.filter((p) =>
+        p.location.toLowerCase().includes(city.toLowerCase()),
+      )
     }
   }
 

@@ -22,12 +22,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pl" className={`${montserrat.variable} ${openSans.variable} dark antialiased`}>
+    <html
+      lang="pl"
+      className={`${montserrat.variable} ${openSans.variable} dark antialiased`}
+    >
       <body className="bg-background text-foreground">{children}</body>
     </html>
   )
 }
 
 export const metadata = {
-      generator: 'v0.app'
-    };
+  generator: "v0.app",
+}
