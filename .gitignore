@@ -1,47 +1,27 @@
-# Python cache
-__pycache__/
-*.pyc
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Virtualenv
-venv/
-ENV/
-env/
+# dependencies
+/node_modules
 
-# Node
-node_modules/
+# next.js
+/.next/
+/out/
 
-# Mac/Windows śmieci
-.DS_Store
-Thumbs.db
+# production
+/build
 
-# Logi, tempy, screenshoty
-logs/
-tmp/
-error_screenshots/
-reports/
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Chromedriver, test cache
-chromedriver
+# env files
+.env*
 
-# SQLite backupy
-*.sqlite-journal
+# vercel
+.vercel
 
-# Testy, jeśli nie chcesz ich trzymać w repo
-scraper/tests/
-
-# Baza
-data/
-data/pharmacy_prices.sqlite
-scraper/data/pharmacy_prices.sqlite
-
-# Local environment (never commit real secrets)
-.env
-
-# Uvicorn log
-uvicorn_scraper.log
-
-# Nova
-.nova
-
-# User alerts
-**/user_alerts.json*
+# typescript
+*.tsbuildinfo
+next-env.d.ts
