@@ -45,3 +45,17 @@ uvicorn_scraper.log
 
 # User alerts
 **/user_alerts.json*
+
+# PID files
+.pids/
+*.pid
+
+# Log files
+*.log
+backend.log
+frontend.log
+
+# Environment files
+.env.local
+.env.*.local
+
