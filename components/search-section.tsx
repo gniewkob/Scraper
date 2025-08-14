@@ -1,21 +1,46 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MapPin, Leaf, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { apiClient, type SearchFilters } from "@/lib/api"
 
-export function SearchSection() {
+interface SearchSectionProps {
+  onSearch: (filters: SearchFilters) => void
+  isLoading: boolean
+}
+
+export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
   const [product, setProduct] = useState("")
   const [city, setCity] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [maxPrice, setMaxPrice] = useState("")
+  const [cities, setCities] = useState<string[]>([])
 
-  const handleSearch = async () => {
-    setIsLoading(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsLoading(false)
+  useEffect(() => {
+    const loadCities = async () => {
+      try {
+        const citiesData = await apiClient.getCities()
+        setCities(citiesData)
+      } catch (error) {
+        console.error("Failed to load cities:", error)
+        // Fallback to default cities
+        setCities(["Warszawa", "Kraków", "Gdańsk", "Wrocław", "Poznań", "Katowice", "Łódź"])
+      }
+    }
+    loadCities()
+  }, [])
+
+  const handleSearch = () => {
+    const filters: SearchFilters = {}
+
+    if (city) filters.city = city
+    if (product) filters.strain_type = product
+    if (maxPrice) filters.max_price = Number.parseFloat(maxPrice)
+
+    onSearch(filters)
   }
 
   return (
@@ -25,7 +50,7 @@ export function SearchSection() {
         🛸
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-4 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground flex items-center gap-2">
             <Leaf className="w-4 h-4 text-primary glow-green" />🌱 Wybierz produkt
@@ -35,13 +60,10 @@ export function SearchSection() {
               <SelectValue placeholder="🔍 Wszystkie produkty..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="cbd-oil">🌿 Olej CBD</SelectItem>
-              <SelectItem value="thc-flower">🔥 Susz THC</SelectItem>
-              <SelectItem value="cbd-capsules">💊 Kapsułki CBD</SelectItem>
-              <SelectItem value="tinctures">🧪 Nalewki</SelectItem>
-              <SelectItem value="edibles">🍪 Produkty jadalne</SelectItem>
-              <SelectItem value="concentrates">💎 Koncentraty</SelectItem>
-              <SelectItem value="vapes">💨 Waporyzatory</SelectItem>
+              <SelectItem value="all">🌿 Wszystkie</SelectItem>
+              <SelectItem value="indica">🌙 Indica</SelectItem>
+              <SelectItem value="sativa">☀️ Sativa</SelectItem>
+              <SelectItem value="hybrid">🌈 Hybrid</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -56,15 +78,25 @@ export function SearchSection() {
               <SelectValue placeholder="🌍 Wszystkie miasta..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="warszawa">🏛️ Warszawa</SelectItem>
-              <SelectItem value="krakow">🏰 Kraków</SelectItem>
-              <SelectItem value="gdansk">⚓ Gdańsk</SelectItem>
-              <SelectItem value="wroclaw">🌉 Wrocław</SelectItem>
-              <SelectItem value="poznan">🎭 Poznań</SelectItem>
-              <SelectItem value="katowice">⛏️ Katowice</SelectItem>
-              <SelectItem value="lodz">🧵 Łódź</SelectItem>
+              <SelectItem value="all">🌍 Wszystkie miasta</SelectItem>
+              {cities.map((cityName) => (
+                <SelectItem key={cityName} value={cityName.toLowerCase()}>
+                  🏛️ {cityName}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground flex items-center gap-2">💰 Maks. cena (zł)</label>
+          <Input
+            type="number"
+            placeholder="np. 300"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="bg-input border-border hover:border-primary/50 transition-colors neon-border"
+          />
         </div>
 
         <div className="space-y-2">
