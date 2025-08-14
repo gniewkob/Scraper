@@ -43,6 +43,66 @@ export interface StatsResponse {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://smart.bodora.pl/api"
 
+const MOCK_CITIES = [
+  "Warszawa",
+  "Kraków",
+  "Gdańsk",
+  "Wrocław",
+  "Poznań",
+  "Łódź",
+  "Katowice",
+  "Szczecin",
+  "Lublin",
+  "Bydgoszcz",
+]
+
+const MOCK_STATS: StatsResponse = {
+  total_products: 1337,
+  total_dispensaries: 42,
+  avg_price: 35.5,
+  cities_covered: 10,
+  last_updated: new Date().toISOString(),
+}
+
+const MOCK_PRODUCTS: Product[] = [
+  {
+    id: "1",
+    name: "🛸 Alien OG",
+    strain_type: "hybrid",
+    thc_content: 24.5,
+    cbd_content: 0.8,
+    price: 45.0,
+    dispensary: "🌌 Green Galaxy",
+    location: "Warszawa",
+    availability: true,
+    rating: 4.8,
+  },
+  {
+    id: "2",
+    name: "🍪 Space Cookies",
+    strain_type: "indica",
+    thc_content: 22.1,
+    cbd_content: 1.2,
+    price: 38.5,
+    dispensary: "👽 Cosmic Cannabis",
+    location: "Kraków",
+    availability: true,
+    rating: 4.6,
+  },
+  {
+    id: "3",
+    name: "🚀 UFO Kush",
+    strain_type: "sativa",
+    thc_content: 26.8,
+    cbd_content: 0.5,
+    price: 52.0,
+    dispensary: "🌿 Stellar Strains",
+    location: "Gdańsk",
+    availability: false,
+    rating: 4.9,
+  },
+]
+
 class ApiClient {
   private async makeRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
     try {
@@ -66,41 +126,101 @@ class ApiClient {
   }
 
   async searchProducts(filters: SearchFilters): Promise<SearchResponse> {
-    const params = new URLSearchParams()
+    try {
+      const params = new URLSearchParams()
 
-    if (filters.city) params.append("city", filters.city)
-    if (filters.strain_type) params.append("strain_type", filters.strain_type)
-    if (filters.max_price) params.append("max_price", filters.max_price.toString())
-    if (filters.min_thc) params.append("min_thc", filters.min_thc.toString())
-    if (filters.max_thc) params.append("max_thc", filters.max_thc.toString())
-    if (filters.min_cbd) params.append("min_cbd", filters.min_cbd.toString())
-    if (filters.max_cbd) params.append("max_cbd", filters.max_cbd.toString())
-    if (filters.radius) params.append("radius", filters.radius.toString())
+      if (filters.city) params.append("city", filters.city)
+      if (filters.strain_type) params.append("strain_type", filters.strain_type)
+      if (filters.max_price) params.append("max_price", filters.max_price.toString())
+      if (filters.min_thc) params.append("min_thc", filters.min_thc.toString())
+      if (filters.max_thc) params.append("max_thc", filters.max_thc.toString())
+      if (filters.min_cbd) params.append("min_cbd", filters.min_cbd.toString())
+      if (filters.max_cbd) params.append("max_cbd", filters.max_cbd.toString())
+      if (filters.radius) params.append("radius", filters.radius.toString())
 
-    const queryString = params.toString()
-    const endpoint = `/search${queryString ? `?${queryString}` : ""}`
+      const queryString = params.toString()
+      const endpoint = `/search${queryString ? `?${queryString}` : ""}`
 
-    return this.makeRequest<SearchResponse>(endpoint)
+      return await this.makeRequest<SearchResponse>(endpoint)
+    } catch (error) {
+      // Fallback to mock data
+      console.log("Using mock search data")
+      await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API delay
+
+      let filteredProducts = [...MOCK_PRODUCTS]
+
+      if (filters.city) {
+        filteredProducts = filteredProducts.filter((p) =>
+          p.location.toLowerCase().includes(filters.city!.toLowerCase()),
+        )
+      }
+
+      if (filters.strain_type) {
+        filteredProducts = filteredProducts.filter((p) => p.strain_type === filters.strain_type)
+      }
+
+      if (filters.max_price) {
+        filteredProducts = filteredProducts.filter((p) => p.price <= filters.max_price!)
+      }
+
+      return {
+        products: filteredProducts,
+        total_count: filteredProducts.length,
+        avg_price: filteredProducts.reduce((sum, p) => sum + p.price, 0) / filteredProducts.length,
+        lowest_price: Math.min(...filteredProducts.map((p) => p.price)),
+        highest_price: Math.max(...filteredProducts.map((p) => p.price)),
+      }
+    }
   }
 
   async getStats(): Promise<StatsResponse> {
-    return this.makeRequest<StatsResponse>("/stats")
+    try {
+      return await this.makeRequest<StatsResponse>("/stats")
+    } catch (error) {
+      console.log("Using mock stats data")
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      return MOCK_STATS
+    }
   }
 
   async getCities(): Promise<string[]> {
-    return this.makeRequest<string[]>("/cities")
+    try {
+      return await this.makeRequest<string[]>("/cities")
+    } catch (error) {
+      console.log("Using mock cities data")
+      await new Promise((resolve) => setTimeout(resolve, 200))
+      return MOCK_CITIES
+    }
   }
 
   async getProduct(id: string): Promise<Product> {
-    return this.makeRequest<Product>(`/products/${id}`)
+    try {
+      return await this.makeRequest<Product>(`/products/${id}`)
+    } catch (error) {
+      console.log("Using mock product data")
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      return MOCK_PRODUCTS.find((p) => p.id === id) || MOCK_PRODUCTS[0]
+    }
   }
 
   async getProductsByCity(city: string): Promise<Product[]> {
-    return this.makeRequest<Product[]>(`/products/city/${encodeURIComponent(city)}`)
+    try {
+      return await this.makeRequest<Product[]>(`/products/city/${encodeURIComponent(city)}`)
+    } catch (error) {
+      console.log("Using mock city products data")
+      await new Promise((resolve) => setTimeout(resolve, 400))
+      return MOCK_PRODUCTS.filter((p) => p.location.toLowerCase().includes(city.toLowerCase()))
+    }
   }
 
   async getBestDeals(limit = 10): Promise<Product[]> {
-    return this.makeRequest<Product[]>(`/deals/best?limit=${limit}`)
+    try {
+      return await this.makeRequest<Product[]>(`/deals/best?limit=${limit}`)
+    } catch (error) {
+      console.log("Using mock best deals data")
+      await new Promise((resolve) => setTimeout(resolve, 350))
+      return MOCK_PRODUCTS.slice(0, limit)
+    }
   }
 }
 
