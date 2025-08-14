@@ -100,11 +100,11 @@ start_frontend() {
     fi
     
     echo -e "${GREEN}Uruchamianie frontend na porcie $FRONTEND_PORT...${NC}"
-    cd "$PROJECT_DIR"
-    
+    cd "$PROJECT_DIR/frontend"
+
     # Upewnienie się że .env wskazuje na właściwy backend
     echo "VITE_API_URL=http://127.0.0.1:$BACKEND_PORT" > .env
-    
+
     # Uruchomienie Vite w tle
     nohup npm run dev -- --port $FRONTEND_PORT --hostname 0.0.0.0 \
         > "$FRONTEND_LOG" 2>&1 &
