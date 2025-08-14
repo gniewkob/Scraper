@@ -1,61 +1,83 @@
-# Python cache
-__pycache__/
-*.pyc
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Virtualenv
-venv/
-ENV/
-env/
-
-# Node
+# dependencies
+/node_modules
 node_modules/
+**/node_modules
 
-# Mac/Windows śmieci
-.DS_Store
-Thumbs.db
+# next.js
+/.next/
+/out/
 
-# Logi, tempy, screenshoty
-logs/
-tmp/
-error_screenshots/
-reports/
+# production
+/build
+dist/
 
-# Chromedriver, test cache
-chromedriver
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# SQLite backupy
-*.sqlite-journal
+# env files
+.env*
+!.env.example
 
-# Testy, jeśli nie chcesz ich trzymać w repo
-scraper/tests/
+# vercel
+.vercel
 
-# Baza
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Database
 data/
-data/pharmacy_prices.sqlite
-scraper/data/pharmacy_prices.sqlite
+*.sqlite
+*.db
+*.sqlite3
 
-# Local environment (never commit real secrets)
+# Local environment
 .env
+.env.local
+.env.*.local
 
-# Uvicorn log
+# Logs
+*.log
 uvicorn_scraper.log
+backend.log
+frontend.log
+logs/
 
-# Nova
+# IDE
 .nova
+.vscode/
+.idea/
 
-# User alerts
+# User data
 **/user_alerts.json*
 
 # PID files
 .pids/
 *.pid
 
-# Log files
-*.log
-backend.log
-frontend.log
+# OS files
+.DS_Store
+Thumbs.db
 
-# Environment files
-.env.local
-.env.*.local
+# Test coverage
+coverage/
+.coverage
+htmlcov/
 
+# Build artifacts
+build/
+dist/
+*.egg-info/
