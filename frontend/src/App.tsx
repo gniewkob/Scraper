@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from "react"
 
 interface Offer {
   price: number
@@ -7,13 +7,13 @@ interface Offer {
 }
 
 function getBadgeLabel(offer: Offer): string {
-  if (offer.is_historical_low) return '🔥'
-  if (offer.price_bucket === 'okazja') return '💰'
-  return '😐'
+  if (offer.is_historical_low) return "🔥"
+  if (offer.price_bucket === "okazja") return "💰"
+  return "😐"
 }
 
 export default function App() {
-  const [query] = useState('')
+  const [query] = useState("")
   const [unused1] = useState(null)
   const [offers] = useState<Offer[]>([])
   const [unused2] = useState<any[]>([])
