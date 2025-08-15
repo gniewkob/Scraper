@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from datetime import datetime
 import random
 
+from . import cities
+
 router = APIRouter(prefix="/api", tags=["medical"])
 
 # Pydantic models
@@ -36,13 +38,7 @@ class StatsResponse(BaseModel):
     cities_covered: int
     last_updated: str
 
-# Mock data
-MOCK_CITIES = [
-    "Warszawa", "Kraków", "Gdańsk", "Wrocław", "Poznań",
-    "Łódź", "Katowice", "Szczecin", "Lublin", "Bydgoszcz",
-    "Białystok", "Gdynia", "Częstochowa", "Radom", "Sosnowiec",
-    "Toruń", "Kielce", "Rzeszów", "Gliwice", "Zabrze"
-]
+MOCK_CITIES = cities.CITY_LIST
 
 STRAIN_NAMES = {
     "indica": ["🌙 Northern Lights", "🍇 Purple Kush", "💤 Granddaddy Purple", "🌌 Bubba Kush", "🍰 Wedding Cake"],
@@ -153,7 +149,7 @@ async def get_stats():
 @router.get("/cities", response_model=List[str])
 async def get_cities():
     """Get list of available cities."""
-    return sorted(list(set(p.location for p in MOCK_PRODUCTS)))
+    return list(cities.CITY_LIST)
 
 @router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
