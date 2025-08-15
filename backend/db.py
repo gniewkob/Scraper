@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Dict, Optional, AsyncIterator
 
@@ -19,6 +18,7 @@ from .config import settings
 
 
 from .models import Product
+from . import cities
 
 # cache of engines keyed by URL so modules can share a single instance
 _ENGINE_CACHE: Dict[str, AsyncEngine] = {}
@@ -141,19 +141,9 @@ async def get_products() -> list[dict[str, str]]:
 
 
 async def get_cities() -> list[str]:
-    """Extract unique city names from pharmacy addresses."""
+    """Return list of available cities from shared configuration."""
 
-    engine = get_engine()
-    async with engine.begin() as conn:
-        rows = (await conn.execute(text("SELECT DISTINCT address FROM pharmacy_prices"))).all()
-
-    cities = set()
-    city_regex = re.compile(r"\d{2}-\d{3}\s+([\wąćęłńóśźżA-Z]+)", re.IGNORECASE)
-    for (address,) in rows:
-        match = city_regex.search(address or "")
-        if match:
-            cities.add(match.group(1))
-    return sorted(list(cities))
+    return list(cities.CITY_LIST)
 
 
 async def get_connection() -> AsyncIterator[AsyncConnection]:
