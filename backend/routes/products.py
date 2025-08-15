@@ -17,13 +17,14 @@ from .utils import (
     get_historical_low,
     slugify,
 )
+from .db_utils import date_cast, timestamp_cast, safe_date_comparison
 
 router = APIRouter()
 
 ALLOWED_SORT_FIELDS = {
-    "price": "price",
-    "expiration": "expiration",
-    "fetched_at": "fetched_at",
+    "price": lambda conn: "price",
+    "expiration": lambda conn: date_cast("expiration", conn),
+    "fetched_at": lambda conn: timestamp_cast("fetched_at", conn),
 }
 
 ALLOWED_SORT_ORDERS = {"asc": "ASC", "desc": "DESC"}
@@ -138,18 +139,21 @@ async def get_product_by_name(
         return JSONResponse({"error": "Produkt nie znaleziony"}, status_code=404)
     product_id = row["id"]
 
-    sort_sql = ALLOWED_SORT_FIELDS[sort]
+    sort_sql = ALLOWED_SORT_FIELDS[sort](conn)
     order_sql = ALLOWED_SORT_ORDERS[order]
 
-    base_query = """
+    fetched_at_cast = timestamp_cast("fetched_at", conn)
+    expiration_comparison = safe_date_comparison("expiration", conn)
+
+    base_query = f"""
         SELECT *,
                ROW_NUMBER() OVER (
                    PARTITION BY pharmacy_name, expiration
-                   ORDER BY fetched_at::timestamp DESC
+                   ORDER BY {fetched_at_cast} DESC
                ) AS rn
         FROM pharmacy_prices
         WHERE product_id = :pid
-          AND (expiration IS NULL OR expiration::date >= CURRENT_DATE)
+          AND (expiration IS NULL OR {expiration_comparison})
     """
     params = {"pid": product_id}
 
