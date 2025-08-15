@@ -86,6 +86,7 @@ source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt -r requirements-ci.txt
 playwright install --with-deps firefox
 ```
+Pakiet `email-validator` jest wymagany przez Pydantic do walidacji adresów e-mail i jest instalowany razem z powyższymi zależnościami.
 
 ### 3.3. Scraper (CLI)
 

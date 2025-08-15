@@ -1,3 +1,4 @@
 playwright
 asyncpg
 alembic
+email-validator
