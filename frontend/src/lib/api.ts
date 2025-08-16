@@ -46,12 +46,19 @@ export interface StatsResponse {
 // (default 38273) and NEXT_PUBLIC_HOST (default localhost). This avoids accidentally
 // pointing to a remote production API on developer machines or CI.
 declare const process: any
-const NEXT_PUBLIC_API_URL = typeof process !== "undefined" ? process.env?.NEXT_PUBLIC_API_URL : undefined
-const NEXT_PUBLIC_HOST = typeof process !== "undefined" ? process.env?.NEXT_PUBLIC_HOST : undefined
-const NEXT_PUBLIC_BACKEND_PORT = typeof process !== "undefined" ? process.env?.NEXT_PUBLIC_BACKEND_PORT : undefined
+const NEXT_PUBLIC_API_URL =
+  typeof process !== "undefined" ? process.env?.NEXT_PUBLIC_API_URL : undefined
+const NEXT_PUBLIC_HOST =
+  typeof process !== "undefined" ? process.env?.NEXT_PUBLIC_HOST : undefined
+const NEXT_PUBLIC_BACKEND_PORT =
+  typeof process !== "undefined"
+    ? process.env?.NEXT_PUBLIC_BACKEND_PORT
+    : undefined
 
 function defaultApiUrl(): string {
-  const host = NEXT_PUBLIC_HOST || (typeof window !== "undefined" ? window.location.hostname : "localhost")
+  const host =
+    NEXT_PUBLIC_HOST ||
+    (typeof window !== "undefined" ? window.location.hostname : "localhost")
   const port = NEXT_PUBLIC_BACKEND_PORT || "38273"
   return `http://${host}:${port}/api`
 }
