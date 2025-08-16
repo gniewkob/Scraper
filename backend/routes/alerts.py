@@ -197,7 +197,7 @@ async def get_grouped_alerts(
     params = {}
     if city:
         base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
-        params.update({"city1": f"%, {city}", "city2": f"% {city}"})
+        params.update({"city1": f"%, {city}%", "city2": f"% {city}%"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
     rows = (await conn.execute(text(query), params)).mappings().all()
