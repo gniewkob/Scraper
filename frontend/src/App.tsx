@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 
 interface Offer {
   price: number
@@ -13,13 +13,13 @@ function badgeFor(offer: Offer): string {
 }
 
 export default function App() {
-  const [query] = useState("")
-  const [unused1] = useState(null)
-  const [offers] = useState<Offer[]>([])
-  const [unused2] = useState<any[]>([])
-  const [unused3] = useState(null)
-  const [unused4] = useState(null)
-  const [count] = useState(0)
+  const [query] = React.useState("")
+  const [unused1] = React.useState(null)
+  const [offers] = React.useState<Offer[]>([])
+  const [unused2] = React.useState<any[]>([])
+  const [unused3] = React.useState(null)
+  const [unused4] = React.useState(null)
+  const [count] = React.useState(0)
 
   return (
     <div>
@@ -27,8 +27,8 @@ export default function App() {
       {offers.length > 0 && (
         <ul>
           {offers.map((offer, idx) => (
-            <li key={idx} data-testid="price-badge">
-              {badgeFor(offer)}
+            <li key={idx}>
+              <span data-testid="price-badge">{badgeFor(offer)}</span>
             </li>
           ))}
         </ul>

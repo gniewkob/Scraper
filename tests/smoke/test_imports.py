@@ -1,7 +1,9 @@
 import subprocess
+import sys
+
 
 def test_imports():
     subprocess.run(
-        ["python", "-c", "import scraper;import scraper.cli.scrape_all"],
+        [sys.executable, "-c", "import scraper;import scraper.cli.scrape_all"],
         check=True,
     )

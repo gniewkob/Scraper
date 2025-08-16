@@ -45,10 +45,27 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # CORS middleware
+# Configure CORS from environment. Provide a comma-separated list in ALLOWED_ORIGINS.
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+if allowed_origins_env:
+    allow_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+else:
+    # Default to localhost dev origins plus known proxy domains used in production.
+    # These proxy domains (smart.bodora.pl and backend.bodora.pl) route to localhost:PORT on the host.
+    allow_origins = [
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "https://smart.bodora.pl",
+        "https://backend.bodora.pl",
+    ]
+
+# By default do not allow credentials unless explicitly enabled in env for trusted deployments.
+allow_credentials = os.getenv("ALLOW_CREDENTIALS", "false").lower() in ("1", "true", "yes")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=allow_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

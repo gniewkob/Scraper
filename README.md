@@ -261,3 +261,47 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
 4. Widzi w UI listę produktów, tabelę ofert oraz – jeśli nie wyłączył – wykres trendu.
 
 Po przejściu powyższych kroków cały system działa lokalnie z realnymi danymi.
+
+## 11. FreeBSD (docelowy hosting) i zarezerwowane porty
+
+Na docelowym hostingu (FreeBSD) frontend i backend są wystawione przez reverse-proxy
+na stałych, zarezerwowanych portach. Używamy proxy-domen które mapują na localhost:PORT
+na maszynie (bez dodatkowej konfiguracji proxy). Zalecane ustawienia środowiskowe:
+
+- BACKEND_PORT=38273  # zarezerwowany port dla backendu
+- FRONTEND_PORT=61973 # zarezerwowany port dla frontendu
+- ALLOWED_ORIGINS=https://smart.bodora.pl,https://backend.bodora.pl
+- NEXT_PUBLIC_API_URL=https://backend.bodora.pl/api  # (opcjonalnie) preferowany dla frontendu
+
+Przykładowe uruchomienie (w FreeBSD rc / skrypcie systemowym):
+
+```sh
+export BACKEND_PORT=38273
+export FRONTEND_PORT=61973
+export ALLOWED_ORIGINS="https://smart.bodora.pl,https://backend.bodora.pl"
+export NEXT_PUBLIC_API_URL="https://backend.bodora.pl/api"
+# uruchom backend
+uvicorn backend.main:app --host 127.0.0.1 --port $BACKEND_PORT --workers 4 &
+# build frontend statyczny (jeśli używasz build+upload)
+cd frontend && NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
+```
+
+Uwaga: `smart.bodora.pl` i `backend.bodora.pl` są proxy i nie wymagają dodatkowej konfiguracji
+aplikacji — proxy po prostu przekierowuje ruch do `localhost:PORT` na hoście.
+
+## 12. Testy
+
+Uruchamianie testów lokalnie (dev):
+
+```bash
+# aktywuj venv z wymaganymi pakietami
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt -r requirements-ci.txt
+pytest -q
+```
+
+Jeżeli testy zależą od usług zewnętrznych (np. baza, playwright), upewnij się, że są uruchomione
+lub skorzystaj z fixtureów/zmiennych środowiskowych wymaganych przez testy (zobacz `pytest.ini`).
+
+Jeżeli chcesz, mogę uruchomić testy w Twoim repo i przekazać wynik tutaj.

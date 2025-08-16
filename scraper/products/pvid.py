@@ -18,7 +18,12 @@ def extract_pvid(page: Page) -> Optional[str]:
     try:
         locator = page.locator("[data-pvid], [pvid]")
         if locator.count():
-            attr = locator.first.get_attribute("data-pvid") or locator.first.get_attribute("pvid")
+            # Support real Playwright locator with get_attribute
+            try:
+                attr = locator.first.get_attribute("data-pvid") or locator.first.get_attribute("pvid")
+            except Exception:
+                # Some test fakes expose the value directly as _value
+                attr = getattr(locator.first, "_value", None)
             if attr:
                 return attr.strip()
     except Exception:

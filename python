@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Lightweight shim so subprocesses invoking `python` use system python3
+exec python3 "$@"

@@ -27,8 +27,10 @@ def test_build_regional_url_with_pvid() -> None:
 
 
 def test_build_regional_url_with_auto_pvid() -> None:
+    from typing import Optional
+
     class FakeLocator:
-        def __init__(self, value: str | None) -> None:
+        def __init__(self, value: Optional[str]) -> None:
             self._value = value
 
         def count(self) -> int:
@@ -38,13 +40,13 @@ def test_build_regional_url_with_auto_pvid() -> None:
         def first(self) -> "FakeLocator":  # pragma: no cover - simple property
             return self
 
-        def get_attribute(self, name: str) -> str | None:
+    def get_attribute(self, name: str) -> Optional[str]:
             if name in {"data-pvid", "pvid"}:
                 return self._value
             return None
 
     class FakePage:
-        def __init__(self, value: str | None) -> None:
+        def __init__(self, value: Optional[str]) -> None:
             self._value = value
 
         def locator(self, _selector: str) -> FakeLocator:
