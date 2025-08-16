@@ -1,24 +1,14 @@
 
 > my-v0-project@0.1.0 dev
-> next dev --port 61973 --hostname 0.0.0.0
+> next dev --port 61973 --hostname 127.0.0.1
 
-   ▲ Next.js 15.2.4
-   - Local:        http://localhost:61973
-   - Network:      http://0.0.0.0:61973
-   - Environments: .env
-
- ✓ Starting...
- ✓ Ready in 2.8s
- ○ Compiling / ...
- ✓ Compiled / in 8.1s (887 modules)
- GET / 200 in 9485ms
- ⚠ Cross origin request detected from smart.bodora.pl to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
- GET / 200 in 108ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 872ms (891 modules)
- GET /apple-touch-icon.png 404 in 1061ms
- GET /apple-touch-icon-precomposed.png 404 in 1113ms
- GET / 200 in 33ms
- GET / 200 in 219ms
+ ⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use 127.0.0.1:61973
+    at <unknown> (Error: listen EADDRINUSE: address already in use 127.0.0.1:61973) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 61973
+}
 [?25h

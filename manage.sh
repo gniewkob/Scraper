@@ -113,7 +113,7 @@ start_frontend() {
     echo "VITE_API_URL=http://127.0.0.1:$BACKEND_PORT" > "$FRONTEND_DIR/.env"
 
     # Uruchomienie Vite w tle bez zmiany katalogu
-    nohup npm --prefix "$FRONTEND_DIR" run dev -- --port "$FRONTEND_PORT" --hostname 0.0.0.0 \
+    nohup npm --prefix "$FRONTEND_DIR" run dev -- --port "$FRONTEND_PORT" --hostname 127.0.0.1 \
         > "$FRONTEND_LOG" 2>&1 &
 
     local pid=$!
