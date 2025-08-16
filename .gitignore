@@ -45,3 +45,8 @@ uvicorn_scraper.log
 
 # User alerts
 **/user_alerts.json*
+.aider*
+.env
+.env
+.env
+.env

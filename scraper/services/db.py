@@ -15,7 +15,10 @@ from scraper.services.price_validator import normalize_unit
 
 logger = logging.getLogger(__name__)
 
-def _build_sync_engine(db_url: str | None, db_path: str | None):
+from typing import Optional
+
+
+def _build_sync_engine(db_url: Optional[str], db_path: Optional[str]):
     """Return a synchronous SQLAlchemy Engine for scraper writes.
 
     Converts async driver URLs to sync equivalents and defaults to SQLite when

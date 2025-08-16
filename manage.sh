@@ -11,6 +11,13 @@ BACKEND_PORT=38273
 FRONTEND_PORT=61973
 PROJECT_DIR="/usr/home/vetternkraft/apps/python/scraper_workspace"
 
+# If the configured project dir does not exist (e.g. running locally),
+# fallback to the repository/script directory so the script works on macOS/dev machines.
+if [ ! -d "$PROJECT_DIR" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PROJECT_DIR="$SCRIPT_DIR"
+fi
+
 # Ścieżki logów i PID-ów
 BACKEND_LOG="$PROJECT_DIR/backend.log"
 
@@ -77,9 +84,17 @@ start_backend() {
 
     # Ładowanie zmiennych środowiskowych
     if [ -f .env ]; then
-        export $(cat .env | grep -v '^#' | xargs) 2>/dev/null || true
+        export $(cat .env | grep -v '^#' | xargs)
     fi
 
+    # Ensure ALLOWED_ORIGINS contains local frontend and known proxy domains when not set
+    if [ -z "$ALLOWED_ORIGINS" ]; then
+        export ALLOWED_ORIGINS="http://127.0.0.1:$FRONTEND_PORT,https://smart.bodora.pl,https://backend.bodora.pl"
+    fi
+
+    # Export BACKEND_PORT for consistency
+    export BACKEND_PORT="$BACKEND_PORT"
+   
     # Uruchomienie uvicorn w tle
     nohup uvicorn backend.main:app \
         --host 0.0.0.0 \
@@ -111,8 +126,16 @@ start_frontend() {
 
     echo -e "${GREEN}Uruchamianie frontend na porcie $FRONTEND_PORT...${NC}"
 
-    # Upewnienie się że .env wskazuje na właściwy backend
-    echo "VITE_API_URL=http://127.0.0.1:$BACKEND_PORT" > "$FRONTEND_DIR/.env"
+    # Upewnienie się że .env wskazuje na właściwy backend dla Next.js frontend
+    # Prefer an explicit NEXT_PUBLIC_API_URL if provided in the environment; otherwise
+    # set NEXT_PUBLIC_HOST and NEXT_PUBLIC_BACKEND_PORT so the app will build the URL.
+    mkdir -p "$FRONTEND_DIR"
+    if [ -n "$NEXT_PUBLIC_API_URL" ]; then
+        echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" > "$FRONTEND_DIR/.env"
+    else
+        echo "NEXT_PUBLIC_HOST=127.0.0.1" > "$FRONTEND_DIR/.env"
+        echo "NEXT_PUBLIC_BACKEND_PORT=$BACKEND_PORT" >> "$FRONTEND_DIR/.env"
+    fi
 
     # Uruchomienie Vite w tle bez zmiany katalogu
     nohup npm --prefix "$FRONTEND_DIR" run dev -- --port "$FRONTEND_PORT" --hostname 127.0.0.1 \

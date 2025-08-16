@@ -1,6 +1,7 @@
 """Application configuration loaded from environment variables."""
 
 from functools import lru_cache
+from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
@@ -12,11 +13,11 @@ class Settings(BaseSettings):
     secret_key: str
     admin_password_hash: str
 
-    twilio_account_sid: str | None = None
-    twilio_auth_token: str | None = None
-    twilio_whatsapp_from: str | None = Field(default=None, alias="TWILIO_WHATSAPP_FROM")
+    twilio_account_sid: Optional[str] = None
+    twilio_auth_token: Optional[str] = None
+    twilio_whatsapp_from: Optional[str] = Field(default=None, alias="TWILIO_WHATSAPP_FROM")
     # Backward-compatible alias
-    twilio_sms_from: str | None = Field(default=None, alias="TWILIO_SMS_FROM")
+    twilio_sms_from: Optional[str] = Field(default=None, alias="TWILIO_SMS_FROM")
 
     confirmation_base_url: str = "https://example.com"
     allowed_origins: str = "http://localhost:5173,http://localhost:3000,http://localhost:61973"

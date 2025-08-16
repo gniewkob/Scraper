@@ -26,5 +26,9 @@ def render_app() -> str:
 
 def test_price_badges_labels():
     html = render_app()
-    labels = re.findall(r'data-testid="price-badge">([^<]+)<', html)
+    # Extract inner HTML of the first <ul> and then capture text nodes (robust to attribute changes)
+    ul_match = re.search(r"<ul>(.*?)</ul>", html, re.S)
+    assert ul_match is not None, "No <ul> found in rendered output"
+    inner = ul_match.group(1)
+    labels = [s.strip() for s in re.findall(r">([^<]+)<", inner) if s.strip()]
     assert labels == ['🔥', '💰', '😐']
