@@ -143,7 +143,7 @@ async def get_products() -> list[dict[str, str]]:
 async def get_cities() -> list[str]:
     """Return list of available cities from shared configuration."""
 
-    return list(cities.CITY_LIST)
+    return cities.get_city_list()
 
 
 async def get_connection() -> AsyncIterator[AsyncConnection]:
