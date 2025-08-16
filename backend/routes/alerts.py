@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
-from .utils import compute_price_info
+from .utils import compute_price_info, CITY_REGEX
 from backend.utils import (
     send_confirmation_email,
     send_confirmation_sms,
@@ -26,6 +26,7 @@ from backend.config import settings
 router = APIRouter()
 
 logger = logging.getLogger(__name__)
+
 
 
 @router.get("/api/alerts", response_class=JSONResponse)
@@ -165,7 +166,7 @@ async def get_grouped_alerts(
         None,
         min_length=1,
         max_length=50,
-        pattern=r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$",
+        pattern=CITY_REGEX,
     ),
     conn: AsyncConnection = Depends(get_connection),
 ):
@@ -196,7 +197,7 @@ async def get_grouped_alerts(
     params = {}
     if city:
         base_query += " AND (address LIKE :city1 OR address LIKE :city2)"
-        params.update({"city1": f"%, {city}", "city2": f"% {city}"})
+        params.update({"city1": f"%, {city}%", "city2": f"% {city}%"})
 
     query = f"SELECT * FROM ({base_query}) WHERE rn = 1"
     rows = (await conn.execute(text(query), params)).mappings().all()
