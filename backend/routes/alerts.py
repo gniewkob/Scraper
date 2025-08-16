@@ -162,7 +162,10 @@ async def get_filtered_alerts(conn: AsyncConnection = Depends(get_connection)):
 @router.get("/api/alerts_grouped", response_class=JSONResponse)
 async def get_grouped_alerts(
     city: Optional[str] = Query(
-        None, min_length=1, max_length=50, pattern=r"^[A-Za-z\s-]+$"
+        None,
+        min_length=1,
+        max_length=50,
+        pattern=r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$",
     ),
     conn: AsyncConnection = Depends(get_connection),
 ):
