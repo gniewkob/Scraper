@@ -113,18 +113,24 @@ jobs:
           fi
 
 
-      - name: Setup Google Chrome
+      # Instaluje Chrome for Testing + dopasowany Chromedriver
+      - name: Setup Chrome (Chrome for Testing)
+        id: chrome
         uses: browser-actions/setup-chrome@v1
-
-      - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@v2
         with:
-          chromedriver-version: latest
-
+          chrome-version: stable    # możesz ustawić też 'beta' lub konkretną wersję
+      
+      # Eksport zmiennych środowiskowych dla testów (używa outputów akcji)
+      - name: Export Chrome env
+        run: |
+          echo "CHROME_BIN=${{ steps.chrome.outputs.chrome-path }}" >> $GITHUB_ENV
+          echo "CHROMEDRIVER_PATH=${{ steps.chrome.outputs.chromedriver-path }}" >> $GITHUB_ENV
+      
       - name: Verify Chrome & Driver
         run: |
-          google-chrome --version
-          chromedriver --version
+          "${{ steps.chrome.outputs.chrome-path }}" --version
+          "${{ steps.chrome.outputs.chromedriver-path }}" --version
+
 
       # ---------- Node (globalny cache dla backend + frontend) ----------
       - name: Setup Node
