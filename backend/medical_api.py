@@ -6,6 +6,7 @@ from datetime import datetime
 import random
 
 from . import cities
+from backend.db import get_cities as db_get_cities
 
 router = APIRouter(prefix="/api", tags=["medical"])
 
@@ -38,7 +39,7 @@ class StatsResponse(BaseModel):
     cities_covered: int
     last_updated: str
 
-MOCK_CITIES = cities.CITY_LIST
+MOCK_CITIES = cities.get_city_list()
 
 STRAIN_NAMES = {
     "indica": ["🌙 Northern Lights", "🍇 Purple Kush", "💤 Granddaddy Purple", "🌌 Bubba Kush", "🍰 Wedding Cake"],
@@ -149,7 +150,7 @@ async def get_stats():
 @router.get("/cities", response_model=List[str])
 async def get_cities():
     """Get list of available cities."""
-    return list(cities.CITY_LIST)
+    return await db_get_cities()
 
 @router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
