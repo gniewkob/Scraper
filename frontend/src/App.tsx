@@ -1,26 +1,18 @@
-import React, { useState } from "react"
+import React from "react"
 
-interface Offer {
+export interface Offer {
   price: number
   price_bucket: string
   is_historical_low: boolean
 }
 
-function badgeFor(offer: Offer): string {
+export function badgeFor(offer: Offer): string {
   if (offer.is_historical_low) return "🔥"
   if (offer.price_bucket === "okazja") return "💰"
   return "😐"
 }
 
-export default function App() {
-  const [query] = useState("")
-  const [unused1] = useState(null)
-  const [offers] = useState<Offer[]>([])
-  const [unused2] = useState<any[]>([])
-  const [unused3] = useState(null)
-  const [unused4] = useState(null)
-  const [count] = useState(0)
-
+export function App({ offers = [] }: { offers?: Offer[] }) {
   return (
     <div>
       <h1>🌿 Dashboard cen medycznej marihuany</h1>
@@ -36,3 +28,5 @@ export default function App() {
     </div>
   )
 }
+
+export default App

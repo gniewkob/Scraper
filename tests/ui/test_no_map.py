@@ -7,7 +7,6 @@ def render_app() -> str:
     frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
     script = (
         "import React from 'react';"
-        "globalThis.React = React;"
         "import ReactDOMServer from 'react-dom/server';"
         "import App from './src/App.tsx';"
         "console.log(ReactDOMServer.renderToString(React.createElement(App)));"
