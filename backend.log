@@ -1,10 +1,32 @@
-INFO:     Started server process [66548]
+INFO:     Started server process [19869]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:38273 (Press CTRL+C to quit)
-INFO:     127.0.0.1:52767 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:26468 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57025 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48436 - "GET /health HTTP/1.1" 200 OK
+INFO:     54.188.31.149:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.154.87.111:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.154.87.111:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     54.188.31.149:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     157.143.53.238:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     157.143.53.238:0 - "GET /js/twint_ch.js HTTP/1.1" 404 Not Found
+INFO:     157.143.53.238:0 - "GET /js/lkk_ch.js HTTP/1.1" 404 Not Found
+INFO:     23.27.145.93:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     23.27.145.223:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.248.160.122:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.248.160.122:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     104.248.160.122:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     104.248.160.122:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     44.249.166.219:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     143.198.64.110:47478 - "GET / HTTP/1.1" 404 Not Found
+INFO:     149.57.180.168:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.99.36.66:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.99.36.66:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     167.99.36.66:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     167.99.36.66:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     149.57.180.34:0 - "GET / HTTP/1.1" 404 Not Found
+INFO:     149.57.180.116:0 - "GET / HTTP/1.1" 404 Not Found
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [66548]
+INFO:     Finished server process [19869]
