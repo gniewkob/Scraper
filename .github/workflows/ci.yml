@@ -98,12 +98,20 @@ jobs:
           pip install mypy || true
 
       # ---------- System + Chrome dla Selenium ----------
-      - name: Install system deps for headless browsers
+      - name: Install system deps for headless browsers (robust)
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libxss1 libnss3 libasound2 libgbm1 libu2f-udev \
-            fonts-liberation xdg-utils xvfb
+          sudo apt-get install -y --no-install-recommends \
+            libxss1 libnss3 libgbm1 libu2f-udev fonts-liberation xdg-utils xvfb
+          # asound: t64 on Noble; try legacy name if t64 not found
+          if apt-cache show libasound2t64 >/dev/null 2>&1; then
+            sudo apt-get install -y --no-install-recommends libasound2t64
+          else
+            sudo apt-get install -y --no-install-recommends libasound2 || true
+          fi
+
 
       - name: Setup Google Chrome
         uses: browser-actions/setup-chrome@v1
