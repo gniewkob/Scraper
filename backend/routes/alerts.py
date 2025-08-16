@@ -27,6 +27,8 @@ router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
+CITY_REGEX = r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$"
+
 
 @router.get("/api/alerts", response_class=JSONResponse)
 async def get_price_alerts(conn: AsyncConnection = Depends(get_connection)):
@@ -165,7 +167,7 @@ async def get_grouped_alerts(
         None,
         min_length=1,
         max_length=50,
-        pattern=r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$",
+        pattern=CITY_REGEX,
     ),
     conn: AsyncConnection = Depends(get_connection),
 ):
