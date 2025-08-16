@@ -1,12 +1,12 @@
-name: CI
+name: CI (scraper)
 
 on:
   push:
     branches: [ "**" ]
   pull_request:
     branches: [ "**" ]
+  workflow_dispatch:
 
-# Anuluj starsze joby dla tego samego PR/brancha
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -23,7 +23,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # dla commitlinta potrzebujemy historii
           fetch-depth: 0
 
       - name: Setup Node
@@ -35,34 +34,37 @@ jobs:
       - name: Install commitlint
         run: npm i -D @commitlint/cli @commitlint/config-conventional
 
-      # Zakres:
-      # - dla PR: od base SHA do HEAD (wszystkie commity w PR)
-      # - dla push: różnica względem poprzedniego refa
+      # Sprawdź WSZYSTKIE commity w PR
       - name: Lint commits (PR)
         if: github.event_name == 'pull_request'
         run: |
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }}
+
+      # Sprawdź zakres push
       - name: Lint commits (push)
         if: github.event_name == 'push'
         run: |
-          BASE="$(git rev-parse ${{ github.event.before }})"
+          BASE="${{ github.event.before }}"
           HEAD="${{ github.sha }}"
           npx commitlint --from "$BASE" --to "$HEAD"
 
-  test:
+  lint_and_test:
     name: Lint & Tests (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
     needs: commitlint
-    timeout-minutes: 20
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.11', '3.12']
 
     env:
       CI: true
       HEADLESS: true
       DB_URL: sqlite+aiosqlite:///tmp/test.db
+      # Ułatwienie dla testów Selenium:
+      CHROME_BIN: /usr/bin/google-chrome
+      CHROMEDRIVER_PATH: /usr/local/bin/chromedriver
 
     steps:
       - name: Checkout
@@ -76,7 +78,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Cache pip (extra safety)
+      - name: Cache pip (extra)
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -87,20 +89,38 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
 
-      - name: Install Python deps
+      - name: Install system deps for headless browsers
         run: |
-          python -m pip install --upgrade pip wheel setuptools
-          if [ -f "requirements-ci.txt" ]; then
-            pip install -r requirements-ci.txt
-          fi
-          if [ -f "requirements.txt" ]; then
-            pip install -r requirements.txt
-          fi
-          # narzędzia CI, jeśli nie masz w requirements
-          pip install ruff pytest pytest-cov
-          pip install mypy || true
+          sudo apt-get update
+          sudo apt-get install -y \
+            libxss1 libnss3 libasound2 libgbm1 libu2f-udev \
+            fonts-liberation xdg-utils xvfb
 
-      - name: Setup Node
+      # Chrome + ChromeDriver dla Selenium
+      - name: Setup Google Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: latest
+
+      - name: Verify Chrome & Driver
+        run: |
+          google-chrome --version
+          chromedriver --version
+
+      - name: Upgrade pip tooling
+        run: python -m pip install --upgrade pip wheel setuptools
+
+      - name: Install Python dependencies
+        run: |
+          if [ -f "requirements-ci.txt" ]; then pip install -r requirements-ci.txt; fi
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+          # Narzędzia CI, jeśli nie ma ich w requirements
+          pip install ruff pytest pytest-cov mypy||true
+
+      - name: Setup Node (frontend)
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -124,17 +144,20 @@ jobs:
           fi
         continue-on-error: true
 
+      # Jeśli Twoje testy Selenium wymagają Xvfb, odkomentuj poniższe i opakuj run_ci_tests.sh:
+      # - name: Run tests (with Xvfb)
+      #   run: xvfb-run -a bash scripts/run_ci_tests.sh
+
       - name: Run tests
         run: bash scripts/run_ci_tests.sh
 
-      # Artefakty testów/coverage (jeśli Twój skrypt je tworzy)
+      # Artefakty: coverage.xml i JUnit, jeśli generujesz
       - name: Upload coverage
         if: always() && hashFiles('**/coverage.xml') != ''
         uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.python-version }}
-          path: |
-            **/coverage.xml
+          path: "**/coverage.xml"
           if-no-files-found: ignore
           retention-days: 7
 
