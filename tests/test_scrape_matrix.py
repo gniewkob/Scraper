@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 
 import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 TARGET_URL = os.getenv("TARGET_URL")
 MIN_OFFERS = int(os.getenv("MIN_OFFERS", 5))
@@ -30,16 +33,17 @@ def write_metrics(runner: str, records: list[dict]) -> None:
 
 @pytest.mark.parametrize("target_url,min_offers", [(TARGET_URL, MIN_OFFERS)])
 def test_selenium_headed(target_url: str, min_offers: int) -> None:
-    webdriver = pytest.importorskip("selenium.webdriver").Firefox
-    selenium_by = pytest.importorskip("selenium.webdriver.common.by").By
     if not target_url:
         pytest.skip("TARGET_URL env variable not set")
 
-    options_module = pytest.importorskip("selenium.webdriver").FirefoxOptions
-    options = options_module()
-    # TODO: run with a visible browser when environment supports GUI
-    # options.headless = False
-    driver = webdriver(options=options)
+    opts = Options()
+    opts.add_argument("--headless=new")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument("--disable-dev-shm-usage")
+    chrome_bin = os.getenv("CHROME_BIN")
+    if chrome_bin:
+        opts.binary_location = chrome_bin
+    driver = webdriver.Chrome(options=opts)
     try:
         driver.get(target_url)
         driver.save_screenshot("selenium.png")
@@ -50,16 +54,16 @@ def test_selenium_headed(target_url: str, min_offers: int) -> None:
         price_selector = ".price"  # TODO adjust selector for real DOM
         expires_selector = ".expires,.exp-date"  # TODO adjust selector for real DOM
 
-        offers = driver.find_elements(selenium_by.CSS_SELECTOR, offer_selector)
+        offers = driver.find_elements(By.CSS_SELECTOR, offer_selector)
         scraped = []
         for offer in offers[:min_offers]:
             try:
                 scraped.append(
                     {
-                        "product": offer.find_element(selenium_by.CSS_SELECTOR, product_selector).text.strip(),
-                        "pharmacy": offer.find_element(selenium_by.CSS_SELECTOR, pharmacy_selector).text.strip(),
-                        "price": offer.find_element(selenium_by.CSS_SELECTOR, price_selector).text.strip(),
-                        "expires_at": offer.find_element(selenium_by.CSS_SELECTOR, expires_selector).text.strip(),
+                        "product": offer.find_element(By.CSS_SELECTOR, product_selector).text.strip(),
+                        "pharmacy": offer.find_element(By.CSS_SELECTOR, pharmacy_selector).text.strip(),
+                        "price": offer.find_element(By.CSS_SELECTOR, price_selector).text.strip(),
+                        "expires_at": offer.find_element(By.CSS_SELECTOR, expires_selector).text.strip(),
                     }
                 )
             except Exception:
