@@ -147,9 +147,9 @@ async def get_stats():
         last_updated=datetime.now().isoformat()
     )
 
-@router.get("/cities", response_model=List[str])
-async def get_cities():
-    """Get list of available cities."""
+@router.get("/medical/cities", response_model=List[str])
+async def get_medical_cities():
+    """Get list of available cities for the medical API."""
     return await db_get_cities()
 
 @router.get("/products/{product_id}", response_model=Product)
