@@ -39,22 +39,22 @@ HEADLESS=true         # uruchamiaj przeglądarkę bez GUI
 
 ### Pozostałe zmienne (opcjonalne)
 
-| Nazwa             | Opis                                                                                 |
-|-------------------|---------------------------------------------------------------------------------------|
-| `DB_PATH`         | Ścieżka do pliku SQLite (gdy nie podasz `DB_URL`)                                     |
-| `DB_TYPE`         | `sqlite`, `postgresql`, `mysql`, `api`                                                |
-| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | parametry budowania `DB_URL`                   |
-| `API_URL`         | zamiast bazy – wysyłka danych do zewnętrznego API                                     |
-| `SUMMARY_EMAIL`   | adres do wysłania krótkiego podsumowania pracy scrapera                               |
-| `CELERY_BROKER_URL` | broker dla kontenera `scraper` w Dockerze (np. `redis://redis:6379/0`)              |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `FROM_EMAIL` | konfiguracja serwera SMTP dla wysyłki e-maili |
-| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_SMS_FROM` | dane logowania do Twilio do wysyłki SMS        |
-| `CONFIRMATION_BASE_URL` | bazowy URL używany w linkach potwierdzających (domyślnie https://example.com) |
-| `ALLOWED_ORIGINS` | lista domen (rozdzielona przecinkami) do CORS (domyślnie http://localhost:5173,http://localhost:3000) |
-| `ALERTS_MIN_PRICE`, `ALERTS_MAX_PRICE` | minimalna i maksymalna cena w endpointzie `/api/alerts` (domyślnie 10 i 35) |
-| `EMAIL_MASK_VISIBLE_CHARS` | ile znaków lokalnej części e‑maila pozostaje odkrytych (domyślnie 4) |
-| `PHONE_MASK_MIN_LENGTH` | minimalna długość numeru telefonu, aby zastosować maskowanie (domyślnie 6) |
-| `PHONE_MASK_VISIBLE_PREFIX`, `PHONE_MASK_VISIBLE_SUFFIX` | ile cyfr pokazujemy na początku i końcu numeru (domyślnie po 3) |
+| Nazwa                                                                | Opis                                                                                                  |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `DB_PATH`                                                            | Ścieżka do pliku SQLite (gdy nie podasz `DB_URL`)                                                     |
+| `DB_TYPE`                                                            | `sqlite`, `postgresql`, `mysql`, `api`                                                                |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`            | parametry budowania `DB_URL`                                                                          |
+| `API_URL`                                                            | zamiast bazy – wysyłka danych do zewnętrznego API                                                     |
+| `SUMMARY_EMAIL`                                                      | adres do wysłania krótkiego podsumowania pracy scrapera                                               |
+| `CELERY_BROKER_URL`                                                  | broker dla kontenera `scraper` w Dockerze (np. `redis://redis:6379/0`)                                |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `FROM_EMAIL` | konfiguracja serwera SMTP dla wysyłki e-maili                                                         |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_SMS_FROM`         | dane logowania do Twilio do wysyłki SMS                                                               |
+| `CONFIRMATION_BASE_URL`                                              | bazowy URL używany w linkach potwierdzających (domyślnie https://example.com)                         |
+| `ALLOWED_ORIGINS`                                                    | lista domen (rozdzielona przecinkami) do CORS (domyślnie http://localhost:5173,http://localhost:3000) |
+| `ALERTS_MIN_PRICE`, `ALERTS_MAX_PRICE`                               | minimalna i maksymalna cena w endpointzie `/api/alerts` (domyślnie 10 i 35)                           |
+| `EMAIL_MASK_VISIBLE_CHARS`                                           | ile znaków lokalnej części e‑maila pozostaje odkrytych (domyślnie 4)                                  |
+| `PHONE_MASK_MIN_LENGTH`                                              | minimalna długość numeru telefonu, aby zastosować maskowanie (domyślnie 6)                            |
+| `PHONE_MASK_VISIBLE_PREFIX`, `PHONE_MASK_VISIBLE_SUFFIX`             | ile cyfr pokazujemy na początku i końcu numeru (domyślnie po 3)                                       |
 
 ### Tunel SSH do PostgreSQL (MyDevil)
 
@@ -86,6 +86,7 @@ source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt -r requirements-ci.txt
 playwright install --with-deps firefox
 ```
+
 Pakiet `email-validator` jest wymagany przez Pydantic do walidacji adresów e-mail i jest instalowany razem z powyższymi zależnościami.
 
 ### 3.3. Scraper (CLI)
@@ -98,6 +99,7 @@ python -m scraper.cli.scrape_all --headless --db-url sqlite:///data/pharmacy_pri
 Wyniki: `data/pharmacy_prices.sqlite`, logi w `scraper/logs/`, podsumowanie w `scraper/logs/scrape_metrics.log`.
 
 Argumenty CLI:
+
 - `--headless` – uruchamia przeglądarkę bez GUI (można też ustawić zmienną środowiskową `HEADLESS`).
 
 ### 3.4. Backend + UI
@@ -109,7 +111,7 @@ PORT=61973 uvicorn backend.main:app --reload --port $PORT
 ```
 
 Otwórz `http://localhost:61973` – pojawi się panel z listą ofert i trendem cenowym.
-*Jeśli w bazie brak danych, najpierw uruchom scraper.*
+_Jeśli w bazie brak danych, najpierw uruchom scraper._
 
 **Statyczne zasoby:** Pliki CSS/JS w szablonach (Bootstrap, Chart.js, Leaflet) są pobierane z CDN z atrybutami `integrity` i `crossorigin`. Jeśli wolisz trzymać je lokalnie (np. do pracy offline), umieść je w katalogu `backend/static/` i zaktualizuj odwołania w szablonach.
 
@@ -128,12 +130,12 @@ docker-compose up --build
 
 Serwisy:
 
-| Kontener   | Funkcja                                          |
-|------------|--------------------------------------------------|
-| `backend`  | FastAPI na porcie `61973` (zmienne `PORT`)       |
-| `scraper`  | Celery worker pobierający zadania                |
-| `db`       | PostgreSQL                                      |
-| `redis`    | broker wiadomości                                |
+| Kontener  | Funkcja                                    |
+| --------- | ------------------------------------------ |
+| `backend` | FastAPI na porcie `61973` (zmienne `PORT`) |
+| `scraper` | Celery worker pobierający zadania          |
+| `db`      | PostgreSQL                                 |
+| `redis`   | broker wiadomości                          |
 
 ---
 
@@ -186,6 +188,7 @@ Zależnie od konfiguracji, raport zapisywany jest jako `summary.txt` albo dopisy
   ```tsx
   <PriceTrendChart data={trend} className="price-trend-canvas" />
   ```
+
   - **Wyłączenie**: usuń powyższą linię lub ustaw `chartOpen` na `false`.
 - W `src/components/PriceTrendChart.tsx` można włączyć etykiety/dział legendy:
   ```ts
@@ -268,10 +271,10 @@ Na docelowym hostingu (FreeBSD) frontend i backend są wystawione przez reverse-
 na stałych, zarezerwowanych portach. Używamy proxy-domen które mapują na localhost:PORT
 na maszynie (bez dodatkowej konfiguracji proxy). Zalecane ustawienia środowiskowe:
 
-- BACKEND_PORT=38273  # zarezerwowany port dla backendu
+- BACKEND_PORT=38273 # zarezerwowany port dla backendu
 - FRONTEND_PORT=61973 # zarezerwowany port dla frontendu
 - ALLOWED_ORIGINS=https://smart.bodora.pl,https://backend.bodora.pl
-- NEXT_PUBLIC_API_URL=https://backend.bodora.pl/api  # (opcjonalnie) preferowany dla frontendu
+- NEXT_PUBLIC_API_URL=https://backend.bodora.pl/api # (opcjonalnie) preferowany dla frontendu
 
 Przykładowe uruchomienie (w FreeBSD rc / skrypcie systemowym):
 
