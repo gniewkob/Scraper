@@ -94,7 +94,7 @@ start_backend() {
 
     # Export BACKEND_PORT for consistency
     export BACKEND_PORT="$BACKEND_PORT"
-   
+
     # Uruchomienie uvicorn w tle
     nohup uvicorn backend.main:app \
         --host 0.0.0.0 \
