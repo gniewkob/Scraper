@@ -6,6 +6,8 @@ from sqlalchemy import text
 from scraper.core.config.urls import PACKAGE_SIZES
 from backend.config import settings
 
+CITY_REGEX = r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$"
+
 
 logger = logging.getLogger(__name__)
 

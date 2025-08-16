@@ -16,6 +16,7 @@ from .utils import (
     classify_price_bucket,
     get_historical_low,
     slugify,
+    CITY_REGEX,
 )
 from .db_utils import date_cast, timestamp_cast, safe_date_comparison
 
@@ -80,7 +81,7 @@ async def get_product_by_name(
     sort: str = Query("price", pattern=r"^(price|expiration|fetched_at)$"),
     order: str = Query("asc", pattern=r"^(asc|desc)$"),
     city: Optional[str] = Query(
-        None, min_length=1, max_length=50, pattern=r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$"
+        None, min_length=1, max_length=50, pattern=CITY_REGEX
     ),
     lat: Optional[float] = Query(None, ge=-90, le=90),
     lon: Optional[float] = Query(None, ge=-180, le=180),

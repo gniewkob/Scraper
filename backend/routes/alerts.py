@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
-from .utils import compute_price_info
+from .utils import compute_price_info, CITY_REGEX
 from backend.utils import (
     send_confirmation_email,
     send_confirmation_sms,
@@ -27,7 +27,6 @@ router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
-CITY_REGEX = r"^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$"
 
 
 @router.get("/api/alerts", response_class=JSONResponse)
