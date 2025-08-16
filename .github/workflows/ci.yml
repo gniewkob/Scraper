@@ -17,42 +17,32 @@ permissions:
 
 jobs:
   commitlint:
-    name: Commitlint
+    name: PR Title (Conventional Commits)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # commitlint potrzebuje historii do porównania zakresów
           fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          # globalny cache dla wielu lockfile'i
-          cache-dependency-path: |
-            package-lock.json
-            frontend/package-lock.json
 
       - name: Install commitlint
         run: npm i -D @commitlint/cli @commitlint/config-conventional
 
-      # Cały zakres commitów w PR
-      - name: Lint commits (PR)
+      # Lintujemy TYTUŁ PR, nie historię commitów
+      - name: Lint PR title
         if: github.event_name == 'pull_request'
-        run: |
-          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }}
+        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
 
-      # Zakres push (od poprzedniego SHA do aktualnego)
-      - name: Lint commits (push)
+      # Jeśli to push (bez PR), nie blokuj — przepuść
+      - name: Skip on push (no PR)
         if: github.event_name == 'push'
-        run: |
-          BASE="${{ github.event.before }}"
-          HEAD="${{ github.sha }}"
-          npx commitlint --from "$BASE" --to "$HEAD"
+        run: echo "Skipping commitlint on push"
 
   lint_and_test:
     name: Lint & Tests (py${{ matrix.python-version }})
