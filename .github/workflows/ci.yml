@@ -7,7 +7,6 @@ on:
     branches: [ "**" ]
   workflow_dispatch:
 
-# Anuluj starsze uruchomienia dla tego samego brancha/PR
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -21,25 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install commitlint
-        run: npm i -D @commitlint/cli @commitlint/config-conventional
-
-      # Lintujemy TYTUŁ PR, nie historię commitów
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i -D @commitlint/cli @commitlint/config-conventional
       - name: Lint PR title
         if: github.event_name == 'pull_request'
         run: echo "${{ github.event.pull_request.title }}" | npx commitlint
-
-      # Jeśli to push (bez PR), nie blokuj — przepuść
       - name: Skip on push (no PR)
         if: github.event_name == 'push'
         run: echo "Skipping commitlint on push"
@@ -58,25 +46,18 @@ jobs:
       CI: true
       HEADLESS: true
       DB_URL: sqlite+aiosqlite:///tmp/test.db
-      # Ułatwienia dla Selenium/Chrome
-      CHROME_BIN: /usr/bin/google-chrome
-      CHROMEDRIVER_PATH: /usr/local/bin/chromedriver
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
 
-      # ---------- Python ----------
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      # --- Python ---
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Cache pip (extra safety)
-        uses: actions/cache@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: >-
@@ -93,48 +74,36 @@ jobs:
         run: |
           if [ -f "requirements-ci.txt" ]; then pip install -r requirements-ci.txt; fi
           if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          # Narzędzia CI (jeśli nie są w requirements)
-          pip install ruff pytest pytest-cov
+          # WAŻNE: zapewnij Selenium Managera
+          pip install "selenium>=4.12" ruff pytest pytest-cov
           pip install mypy || true
 
-      # ---------- System + Chrome dla Selenium ----------
-      - name: Install system deps for headless browsers (robust)
+      # --- Systemowe biblioteki dla Chrome (Ubuntu 24.04) ---
+      - name: Install system deps for headless browsers
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libxss1 libnss3 libgbm1 libu2f-udev fonts-liberation xdg-utils xvfb
-          # asound: t64 on Noble; try legacy name if t64 not found
-          if apt-cache show libasound2t64 >/dev/null 2>&1; then
-            sudo apt-get install -y --no-install-recommends libasound2t64
-          else
-            sudo apt-get install -y --no-install-recommends libasound2 || true
-          fi
+            libxss1 libnss3 libasound2t64 libgbm1 libu2f-udev \
+            fonts-liberation xdg-utils xvfb
 
-
-      # Instaluje Chrome for Testing + dopasowany Chromedriver
+      # --- Chrome for Testing (z pasującym driverem zarządzanym przez Selenium Manager) ---
       - name: Setup Chrome (Chrome for Testing)
         id: chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: stable    # możesz ustawić też 'beta' lub konkretną wersję
-      
-      # Eksport zmiennych środowiskowych dla testów (używa outputów akcji)
-      - name: Export Chrome env
-        run: |
-          echo "CHROME_BIN=${{ steps.chrome.outputs.chrome-path }}" >> $GITHUB_ENV
-          echo "CHROMEDRIVER_PATH=${{ steps.chrome.outputs.chromedriver-path }}" >> $GITHUB_ENV
-      
-      - name: Verify Chrome & Driver
+          chrome-version: stable
+
+      - name: Export CHROME_BIN
+        run: echo "CHROME_BIN=${{ steps.chrome.outputs.chrome-path }}" >> $GITHUB_ENV
+
+      - name: Verify Chrome
         run: |
           "${{ steps.chrome.outputs.chrome-path }}" --version
-          "${{ steps.chrome.outputs.chromedriver-path }}" --version
 
-
-      # ---------- Node (globalny cache dla backend + frontend) ----------
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      # --- Node (globalny cache dla root + frontend) ---
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
@@ -151,11 +120,9 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # ---------- Lint / Type check ----------
+      # --- Lint / Types ---
       - name: Ruff (lint)
         run: ruff check .
-        continue-on-error: false
-
       - name: mypy (optional)
         run: |
           if [ -f "mypy.ini" ] || grep -q "\[tool\.mypy\]" pyproject.toml 2>/dev/null; then
@@ -165,14 +132,14 @@ jobs:
           fi
         continue-on-error: true
 
-      # ---------- Testy ----------
-      # Jeśli Twoje testy Selenium wymagają wirtualnego ekranu, użyj xvfb-run:
+      # --- Testy ---
+      # Jeśli Twoje testy wymagają wirtualnego ekranu, odkomentuj:
       # - name: Run tests (with Xvfb)
       #   run: xvfb-run -a bash scripts/run_ci_tests.sh
       - name: Run tests
         run: bash scripts/run_ci_tests.sh
 
-      # ---------- Artefakty ----------
+      # --- Artefakty ---
       - name: Upload coverage
         if: always() && hashFiles('**/coverage.xml') != ''
         uses: actions/upload-artifact@v4
