@@ -7,6 +7,7 @@ on:
     branches: [ "**" ]
   workflow_dispatch:
 
+# Anuluj starsze uruchomienia dla tego samego brancha/PR
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -23,6 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # commitlint potrzebuje historii do porównania zakresów
           fetch-depth: 0
 
       - name: Setup Node
@@ -30,17 +32,21 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          # globalny cache dla wielu lockfile'i
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
 
       - name: Install commitlint
         run: npm i -D @commitlint/cli @commitlint/config-conventional
 
-      # Sprawdź WSZYSTKIE commity w PR
+      # Cały zakres commitów w PR
       - name: Lint commits (PR)
         if: github.event_name == 'pull_request'
         run: |
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }}
 
-      # Sprawdź zakres push
+      # Zakres push (od poprzedniego SHA do aktualnego)
       - name: Lint commits (push)
         if: github.event_name == 'push'
         run: |
@@ -52,7 +58,7 @@ jobs:
     name: Lint & Tests (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
     needs: commitlint
-    timeout-minutes: 25
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -62,7 +68,7 @@ jobs:
       CI: true
       HEADLESS: true
       DB_URL: sqlite+aiosqlite:///tmp/test.db
-      # Ułatwienie dla testów Selenium:
+      # Ułatwienia dla Selenium/Chrome
       CHROME_BIN: /usr/bin/google-chrome
       CHROMEDRIVER_PATH: /usr/local/bin/chromedriver
 
@@ -72,13 +78,14 @@ jobs:
         with:
           fetch-depth: 2
 
+      # ---------- Python ----------
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Cache pip (extra)
+      - name: Cache pip (extra safety)
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -89,6 +96,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
 
+      - name: Upgrade pip tooling
+        run: python -m pip install --upgrade pip wheel setuptools
+
+      - name: Install Python dependencies
+        run: |
+          if [ -f "requirements-ci.txt" ]; then pip install -r requirements-ci.txt; fi
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+          # Narzędzia CI (jeśli nie są w requirements)
+          pip install ruff pytest pytest-cov
+          pip install mypy || true
+
+      # ---------- System + Chrome dla Selenium ----------
       - name: Install system deps for headless browsers
         run: |
           sudo apt-get update
@@ -96,7 +115,6 @@ jobs:
             libxss1 libnss3 libasound2 libgbm1 libu2f-udev \
             fonts-liberation xdg-utils xvfb
 
-      # Chrome + ChromeDriver dla Selenium
       - name: Setup Google Chrome
         uses: browser-actions/setup-chrome@v1
 
@@ -110,27 +128,26 @@ jobs:
           google-chrome --version
           chromedriver --version
 
-      - name: Upgrade pip tooling
-        run: python -m pip install --upgrade pip wheel setuptools
-
-      - name: Install Python dependencies
-        run: |
-          if [ -f "requirements-ci.txt" ]; then pip install -r requirements-ci.txt; fi
-          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          # Narzędzia CI, jeśli nie ma ich w requirements
-          pip install ruff pytest pytest-cov mypy||true
-
-      - name: Setup Node (frontend)
+      # ---------- Node (globalny cache dla backend + frontend) ----------
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install backend deps (root)
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
 
       - name: Install frontend deps
+        if: hashFiles('frontend/package-lock.json') != ''
         working-directory: frontend
         run: npm ci
 
+      # ---------- Lint / Type check ----------
       - name: Ruff (lint)
         run: ruff check .
         continue-on-error: false
@@ -144,14 +161,14 @@ jobs:
           fi
         continue-on-error: true
 
-      # Jeśli Twoje testy Selenium wymagają Xvfb, odkomentuj poniższe i opakuj run_ci_tests.sh:
+      # ---------- Testy ----------
+      # Jeśli Twoje testy Selenium wymagają wirtualnego ekranu, użyj xvfb-run:
       # - name: Run tests (with Xvfb)
       #   run: xvfb-run -a bash scripts/run_ci_tests.sh
-
       - name: Run tests
         run: bash scripts/run_ci_tests.sh
 
-      # Artefakty: coverage.xml i JUnit, jeśli generujesz
+      # ---------- Artefakty ----------
       - name: Upload coverage
         if: always() && hashFiles('**/coverage.xml') != ''
         uses: actions/upload-artifact@v4
