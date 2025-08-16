@@ -33,15 +33,11 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install commitlint dependencies
-        run: npm ci
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
 
       - name: Lint commits
-        run: npx commitlint --from=HEAD~1 --to=HEAD
-
-      - name: Install frontend dependencies
-        run: npm ci
-        working-directory: frontend
+        run: npx --prefix frontend commitlint --from=HEAD~1 --to=HEAD
 
       - name: Run tests
         run: bash scripts/run_ci_tests.sh

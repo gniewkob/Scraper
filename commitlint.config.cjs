@@ -1,3 +1,9 @@
+const {join} = require('node:path');
+
 module.exports = {
-  extends: ['@commitlint/config-conventional'],
+  extends: [
+    require.resolve('@commitlint/config-conventional', {
+      paths: [join(__dirname, 'frontend')],
+    }),
+  ],
 };

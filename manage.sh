@@ -10,8 +10,16 @@ NC='\033[0m' # No Color
 BACKEND_PORT=38273
 FRONTEND_PORT=61973
 PROJECT_DIR="/usr/home/vetternkraft/apps/python/scraper_workspace"
+
+# Ścieżki logów i PID-ów
 BACKEND_LOG="$PROJECT_DIR/backend.log"
-FRONTEND_LOG="$PROJECT_DIR/frontend.log"
+
+# Pliki frontendu trzymamy w katalogu frontend/
+FRONTEND_DIR="$PROJECT_DIR/frontend"
+FRONTEND_LOG="$FRONTEND_DIR/frontend.log"
+FRONTEND_PID_FILE="$FRONTEND_DIR/frontend.pid"
+
+# Katalog na PID-y backendu
 PID_DIR="$PROJECT_DIR/.pids"
 
 # Tworzenie katalogu na PID-y jeśli nie istnieje
@@ -94,23 +102,22 @@ start_backend() {
 
 # Funkcja startująca frontend
 start_frontend() {
-    if check_process "$PID_DIR/frontend.pid"; then
+    if check_process "$FRONTEND_PID_FILE"; then
         echo -e "${YELLOW}Frontend już działa${NC}"
         return
     fi
-    
+
     echo -e "${GREEN}Uruchamianie frontend na porcie $FRONTEND_PORT...${NC}"
-    cd "$PROJECT_DIR/frontend"
-    
+
     # Upewnienie się że .env wskazuje na właściwy backend
-    echo "VITE_API_URL=http://127.0.0.1:$BACKEND_PORT" > .env
-    
-    # Uruchomienie Vite w tle
-    nohup npm run dev -- --port $FRONTEND_PORT --hostname 0.0.0.0 \
+    echo "VITE_API_URL=http://127.0.0.1:$BACKEND_PORT" > "$FRONTEND_DIR/.env"
+
+    # Uruchomienie Vite w tle bez zmiany katalogu
+    nohup npm --prefix "$FRONTEND_DIR" run dev -- --port "$FRONTEND_PORT" --hostname 0.0.0.0 \
         > "$FRONTEND_LOG" 2>&1 &
-    
+
     local pid=$!
-    echo $pid > "$PID_DIR/frontend.pid"
+    echo $pid > "$FRONTEND_PID_FILE"
     
     # Czekanie na uruchomienie
     sleep 3
@@ -133,7 +140,7 @@ stop_backend() {
 
 # Funkcja zatrzymująca frontend
 stop_frontend() {
-    kill_process "$PID_DIR/frontend.pid" "Frontend"
+    kill_process "$FRONTEND_PID_FILE" "Frontend"
 }
 
 # Funkcja pokazująca status
@@ -156,8 +163,8 @@ show_status() {
     fi
     
     # Frontend status
-    if check_process "$PID_DIR/frontend.pid"; then
-        local pid=$(cat "$PID_DIR/frontend.pid")
+    if check_process "$FRONTEND_PID_FILE"; then
+        local pid=$(cat "$FRONTEND_PID_FILE")
         echo -e "${GREEN}✓ Frontend${NC} działa (PID: $pid) na porcie $FRONTEND_PORT"
         echo -e "  URL: http://127.0.0.1:$FRONTEND_PORT"
         echo -e "  URL: http://smart.bodora.pl:$FRONTEND_PORT"
