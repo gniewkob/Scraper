@@ -79,7 +79,7 @@ def test_get_cities(client, monkeypatch):
     from backend import db as backend_db
     import backend.cities as city_data
 
-    monkeypatch.setattr(city_data, "CITY_LIST", ["SampleCity"])
+    monkeypatch.setattr(city_data, "get_city_list", lambda: ["SampleCity"])
 
     response = client.get('/api/cities')
     assert response.status_code == 200

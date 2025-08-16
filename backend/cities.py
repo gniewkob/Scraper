@@ -22,3 +22,9 @@ CITY_LIST = [
     "Gliwice",
     "Zabrze",
 ]
+
+
+def get_city_list() -> list[str]:
+    """Return a copy of the configured city names."""
+
+    return list(CITY_LIST)

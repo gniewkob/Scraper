@@ -5,128 +5,17 @@
    ▲ Next.js 15.2.4
    - Local:        http://localhost:61973
    - Network:      http://0.0.0.0:61973
-   - Environments: .env.local, .env
+   - Environments: .env
 
  ✓ Starting...
  ✓ Ready in 2.5s
  ○ Compiling / ...
- ✓ Compiled / in 3.3s (887 modules)
- GET / 200 in 11616ms
- ✓ Compiled in 8.7s (432 modules)
+ ✓ Compiled / in 10.4s (905 modules)
+ GET / 200 in 11081ms
  ⚠ Cross origin request detected from smart.bodora.pl to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
- ✓ Compiled in 652ms (432 modules)
- GET / 200 in 308ms
- ✓ Compiled in 395ms (432 modules)
- GET / 200 in 247ms
- ✓ Compiled in 327ms (432 modules)
- GET / 200 in 290ms
- ✓ Compiled in 366ms (432 modules)
- GET / 200 in 245ms
- ✓ Compiled in 315ms (432 modules)
- GET / 200 in 218ms
- ✓ Compiled in 282ms (432 modules)
- GET / 200 in 198ms
- ✓ Compiled in 262ms (432 modules)
- GET / 200 in 195ms
- ✓ Compiled in 258ms (432 modules)
- GET / 200 in 248ms
- ✓ Compiled in 337ms (432 modules)
- GET / 200 in 272ms
- ✓ Compiled in 327ms (432 modules)
- GET / 200 in 224ms
- ✓ Compiled in 285ms (432 modules)
- GET / 200 in 215ms
- ✓ Compiled in 267ms (432 modules)
- GET / 200 in 223ms
- ✓ Compiled in 285ms (432 modules)
- GET / 200 in 255ms
- ✓ Compiled in 310ms (432 modules)
- GET / 200 in 269ms
- ✓ Compiled in 339ms (432 modules)
- GET / 200 in 232ms
- ✓ Compiled in 288ms (432 modules)
- GET / 200 in 220ms
- ✓ Compiled in 299ms (432 modules)
- GET / 200 in 253ms
- ✓ Compiled in 324ms (432 modules)
- GET / 200 in 265ms
- ✓ Compiled in 329ms (432 modules)
- GET / 200 in 208ms
- ✓ Compiled in 264ms (432 modules)
- GET / 200 in 214ms
- ✓ Compiled in 276ms (432 modules)
- GET / 200 in 213ms
- ✓ Compiled in 268ms (432 modules)
- GET / 200 in 213ms
- ✓ Compiled in 266ms (432 modules)
- GET / 200 in 201ms
- ✓ Compiled in 262ms (432 modules)
- GET / 200 in 230ms
- ✓ Compiled in 297ms (432 modules)
- GET / 200 in 266ms
- ✓ Compiled in 347ms (432 modules)
- GET / 200 in 277ms
- ✓ Compiled in 338ms (432 modules)
- GET / 200 in 225ms
- ✓ Compiled in 283ms (432 modules)
- GET / 200 in 265ms
- ✓ Compiled in 364ms (432 modules)
- GET / 200 in 242ms
- ✓ Compiled in 308ms (432 modules)
- GET / 200 in 253ms
- ✓ Compiled in 309ms (432 modules)
- GET / 200 in 230ms
- ✓ Compiled in 287ms (432 modules)
- GET / 200 in 226ms
- ✓ Compiled in 291ms (432 modules)
- GET / 200 in 283ms
- ✓ Compiled in 339ms (432 modules)
- GET / 200 in 283ms
- ✓ Compiled in 346ms (432 modules)
- GET / 200 in 284ms
- ✓ Compiled in 348ms (432 modules)
- GET / 200 in 289ms
- ✓ Compiled in 351ms (432 modules)
- GET / 200 in 272ms
- ✓ Compiled in 334ms (432 modules)
- GET / 200 in 300ms
- ✓ Compiled in 379ms (432 modules)
- GET / 200 in 352ms
- ✓ Compiled in 408ms (432 modules)
- GET / 200 in 347ms
- ✓ Compiled in 416ms (432 modules)
- GET / 200 in 275ms
- ✓ Compiled in 339ms (432 modules)
- GET / 200 in 275ms
- ✓ Compiled in 338ms (432 modules)
- GET / 200 in 20ms
- ✓ Compiled in 525ms (432 modules)
- GET / 200 in 221ms
- ✓ Compiled in 284ms (432 modules)
- GET / 200 in 227ms
- ✓ Compiled in 286ms (432 modules)
- GET / 200 in 222ms
- ✓ Compiled in 290ms (432 modules)
- GET / 200 in 284ms
- ✓ Compiled in 348ms (432 modules)
- GET / 200 in 354ms
- ✓ Compiled in 439ms (432 modules)
- GET / 200 in 293ms
- ✓ Compiled in 363ms (432 modules)
- GET / 200 in 297ms
- ✓ Compiled in 378ms (432 modules)
- GET / 200 in 229ms
- ✓ Compiled in 299ms (432 modules)
- GET / 200 in 217ms
- ✓ Compiled in 268ms (432 modules)
- GET / 200 in 218ms
- ✓ Compiled in 263ms (432 modules)
- GET / 200 in 210ms
- ✓ Compiled in 264ms (432 modules)
- GET / 200 in 222ms
- ✓ Compiled in 285ms (432 modules)
- GET / 200 in 229ms
- ✓ Compiled in 287ms (432 modules)
- GET / 200 in 17ms
+ GET / 200 in 108ms
+ GET / 200 in 105ms
+ GET / 200 in 101ms
+ GET / 200 in 93ms
 [?25h

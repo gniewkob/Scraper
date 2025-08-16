@@ -159,11 +159,11 @@ def get_city_coords(city: str):
     raise HTTPException(status_code=404, detail="City not found")
 
 
-# @app.get("/api/cities")
-# async def get_cities_endpoint():
-#     """Return list of unique city names."""
-#     from backend.db import get_cities
-#     return await get_cities()
+@app.get("/api/cities")
+async def get_cities_endpoint():
+    """Return list of unique city names."""
+    from backend.db import get_cities
+    return await get_cities()
 
 # Import and add medical marijuana API routes
 from backend.medical_api import router as medical_router

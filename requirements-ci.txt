@@ -1,4 +1,4 @@
 playwright
 asyncpg
 alembic
-email-validator
+email-validator>=2.1.0

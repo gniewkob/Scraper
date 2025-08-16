@@ -48,14 +48,14 @@ check_process() {
 kill_process() {
     local pid_file=$1
     local name=$2
-    
+
     if [ -f "$pid_file" ]; then
         local pid=$(cat "$pid_file")
         if ps -p "$pid" > /dev/null 2>&1; then
             echo -e "${YELLOW}Zatrzymywanie $name (PID: $pid)...${NC}"
             kill "$pid" 2>/dev/null
             sleep 2
-            
+
             # Jeśli nadal działa, użyj SIGKILL
             if ps -p "$pid" > /dev/null 2>&1; then
                 echo -e "${YELLOW}Wymuszanie zatrzymania $name...${NC}"
@@ -78,10 +78,10 @@ start_backend() {
         echo -e "${YELLOW}Backend już działa${NC}"
         return
     fi
-    
+
     echo -e "${GREEN}Uruchamianie backend na porcie $BACKEND_PORT...${NC}"
     cd "$PROJECT_DIR"
-    
+
     # Ładowanie zmiennych środowiskowych
     if [ -f .env ]; then
         export $(cat .env | grep -v '^#' | xargs)
@@ -94,19 +94,19 @@ start_backend() {
 
     # Export BACKEND_PORT for consistency
     export BACKEND_PORT="$BACKEND_PORT"
-    
+
     # Uruchomienie uvicorn w tle
     nohup uvicorn backend.main:app \
         --host 0.0.0.0 \
         --port $BACKEND_PORT \
         > "$BACKEND_LOG" 2>&1 &
-    
+
     local pid=$!
     echo $pid > "$PID_DIR/backend.pid"
-    
+
     # Czekanie na uruchomienie
     sleep 3
-    
+
     # Sprawdzenie czy działa
     if curl -s "http://127.0.0.1:$BACKEND_PORT/health" > /dev/null; then
         echo -e "${GREEN}Backend uruchomiony pomyślnie (PID: $pid)${NC}"
@@ -138,15 +138,15 @@ start_frontend() {
     fi
 
     # Uruchomienie Vite w tle bez zmiany katalogu
-    nohup npm --prefix "$FRONTEND_DIR" run dev -- --port "$FRONTEND_PORT" --hostname 0.0.0.0 \
+    nohup npm --prefix "$FRONTEND_DIR" run dev -- --port "$FRONTEND_PORT" --hostname 127.0.0.1 \
         > "$FRONTEND_LOG" 2>&1 &
 
     local pid=$!
     echo $pid > "$FRONTEND_PID_FILE"
-    
+
     # Czekanie na uruchomienie
     sleep 3
-    
+
     # Sprawdzenie czy działa
     if curl -s "http://127.0.0.1:$FRONTEND_PORT" > /dev/null; then
         echo -e "${GREEN}Frontend uruchomiony pomyślnie (PID: $pid)${NC}"
@@ -171,12 +171,12 @@ stop_frontend() {
 # Funkcja pokazująca status
 show_status() {
     echo -e "\n${YELLOW}=== STATUS APLIKACJI ===${NC}\n"
-    
+
     # Backend status
     if check_process "$PID_DIR/backend.pid"; then
         local pid=$(cat "$PID_DIR/backend.pid")
         echo -e "${GREEN}✓ Backend${NC} działa (PID: $pid) na porcie $BACKEND_PORT"
-        
+
         # Test API
         if curl -s "http://127.0.0.1:$BACKEND_PORT/health" > /dev/null; then
             echo -e "  API odpowiada: ${GREEN}OK${NC}"
@@ -186,7 +186,7 @@ show_status() {
     else
         echo -e "${RED}✗ Backend${NC} nie działa"
     fi
-    
+
     # Frontend status
     if check_process "$FRONTEND_PID_FILE"; then
         local pid=$(cat "$FRONTEND_PID_FILE")
@@ -196,7 +196,7 @@ show_status() {
     else
         echo -e "${RED}✗ Frontend${NC} nie działa"
     fi
-    
+
     echo ""
 }
 
@@ -204,7 +204,7 @@ show_status() {
 show_logs() {
     local service=$1
     local lines=${2:-50}
-    
+
     case $service in
         backend)
             echo -e "${YELLOW}=== Ostatnie $lines linii logów Backend ===${NC}"
@@ -229,7 +229,7 @@ show_logs() {
 # Funkcja restartująca serwis
 restart_service() {
     local service=$1
-    
+
     case $service in
         backend)
             stop_backend
@@ -297,7 +297,7 @@ case "$1" in
         esac
         show_status
         ;;
-        
+
     stop)
         service=${2:-all}
         case $service in
@@ -313,31 +313,30 @@ case "$1" in
                 ;;
             *)
                 echo -e "${RED}Nieznany serwis: $service${NC}"
-                show_help
+                echo "Użyj: backend, frontend lub all"
                 ;;
         esac
         ;;
-        
+
     restart)
         service=${2:-all}
-        restart_service $service
-        show_status
+        restart_service "$service"
         ;;
-        
+
     status)
         show_status
         ;;
-        
+
     logs)
         service=${2:-all}
         lines=${3:-50}
-        show_logs $service $lines
+        show_logs "$service" "$lines"
         ;;
-        
-    help|--help|-h)
+
+    help)
         show_help
         ;;
-        
+
     *)
         echo -e "${RED}Nieznana komenda: $1${NC}"
         echo ""

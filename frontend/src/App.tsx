@@ -1,12 +1,12 @@
 import React from "react"
 
-interface Offer {
+export interface Offer {
   price: number
   price_bucket: string
   is_historical_low: boolean
 }
 
-function badgeFor(offer: Offer): string {
+export function badgeFor(offer: Offer): string {
   if (offer.is_historical_low) return "🔥"
   if (offer.price_bucket === "okazja") return "💰"
   return "😐"
@@ -20,7 +20,6 @@ export default function App() {
   const [unused3] = React.useState(null)
   const [unused4] = React.useState(null)
   const [count] = React.useState(0)
-
   return (
     <div>
       <h1>🌿 Dashboard cen medycznej marihuany</h1>
@@ -36,3 +35,5 @@ export default function App() {
     </div>
   )
 }
+
+export default App
