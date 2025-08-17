@@ -97,7 +97,7 @@ def scrape_offers_once(fetch_page: Callable[[str], str] = _default_fetch) -> Non
     to provide a lightweight stub instead of launching a browser.
     """
     with Session(ENGINE) as session:
-        products = session.execute(select(Product).where(Product.active == True)).scalars().all()
+        products = session.execute(select(Product).where(Product.active)).scalars().all()
 
     seen: set[str] = set()
     for product in products:
