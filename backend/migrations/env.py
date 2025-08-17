@@ -2,6 +2,7 @@ import asyncio
 from logging.config import fileConfig
 
 from alembic import context
+from backend.db import get_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -12,8 +13,6 @@ if config.config_file_name is not None:
         fileConfig(config.config_file_name)
     except Exception:
         pass
-
-from backend.db import get_engine
 
 
 def run_migrations_offline():

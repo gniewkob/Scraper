@@ -2,9 +2,6 @@
 import hashlib
 import logging
 import os
-import re
-from functools import wraps
-from typing import Optional
 
 from fastapi import HTTPException, Request
 from twilio.rest import Client
