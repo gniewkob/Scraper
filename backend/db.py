@@ -9,7 +9,6 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
-    AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )

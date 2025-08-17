@@ -1,7 +1,6 @@
 """Add performance indexes for pharmacy_prices"""
 
 from alembic import op
-import sqlalchemy as sa
 
 revision = "0002_add_indexes"
 down_revision = "0001_create_tables"

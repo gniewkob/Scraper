@@ -1,30 +1,18 @@
 """Main FastAPI application."""
-import asyncio
-import hashlib
+import json
 import logging
 import os
-import re
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from pathlib import Path
+from typing import Any, Dict, List
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from sqlalchemy import text
 
-from backend.db import get_engine, dispose_engines, get_connection
-from backend.models import Base
-
-# Import utility functions from the new utils module
-from backend.utils import (
-    mask_email,
-    mask_phone,
-    require_admin,
-    send_confirmation_email,
-    send_confirmation_sms,
-    send_confirmation_whatsapp,
-)
+from backend.db import dispose_engines, get_cities
+from backend.medical_api import router as medical_router
+from backend.routes import alerts, products
+from backend.utils import send_confirmation_email, send_confirmation_sms  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -116,11 +104,10 @@ def compute_price_info(offers: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-# Import routes after app is defined
-from .routes import alerts, products
-
+# Include routers
 app.include_router(products.router)
 app.include_router(alerts.router)
+app.include_router(medical_router)
 
 
 @app.get("/health")
@@ -136,11 +123,7 @@ CITY_COORDS_FILE = os.getenv("CITY_COORDS_FILE", "data/city_coords.json")
 @app.get("/api/city_coords/{city}")
 def get_city_coords(city: str):
     """Return latitude/longitude for a given city from cached file."""
-    from pathlib import Path
-    import json
-    
     global _CITY_COORDS_CACHE
-    
     coords_file = Path(CITY_COORDS_FILE)
 
     if _CITY_COORDS_CACHE is None:
@@ -162,9 +145,4 @@ def get_city_coords(city: str):
 @app.get("/api/cities")
 async def get_cities_endpoint():
     """Return list of unique city names."""
-    from backend.db import get_cities
     return await get_cities()
-
-# Import and add medical marijuana API routes
-from backend.medical_api import router as medical_router
-app.include_router(medical_router)
