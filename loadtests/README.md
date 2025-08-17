@@ -6,7 +6,7 @@ This directory contains a basic [Locust](https://locust.io/) scenario that exerc
 ## Running
 
 ```
-locust -f loadtests/locustfile.py --headless -u 10 -r 10 -t 10s --host http://localhost:8000
+locust -f loadtests/locustfile.py --headless -u 10 -r 10 -t 10s --host http://localhost:38273  # backend.bodora.pl proxies to the same port in production
 ```
 
 Adjust the host to point at a running instance of the application.
