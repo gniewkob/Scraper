@@ -32,8 +32,8 @@ def main() -> None:
 
     # Count products before sync
     with Session(ENGINE) as session:
-        before_active = session.execute(select(Product).where(Product.active == True)).scalars().all()
-        before_inactive = session.execute(select(Product).where(Product.active == False)).scalars().all()
+        before_active = session.execute(select(Product).where(Product.active)).scalars().all()
+        before_inactive = session.execute(select(Product).where(~Product.active)).scalars().all()
 
     # Sync products
     sync_start = time.time()
@@ -41,9 +41,9 @@ def main() -> None:
     sync_time = time.time() - sync_start
 
     with Session(ENGINE) as session:
-        active_products = session.execute(select(Product).where(Product.active == True)).scalars().all()
+        active_products = session.execute(select(Product).where(Product.active)).scalars().all()
         after_active = len(active_products)
-        after_inactive = session.execute(select(Product).where(Product.active == False)).scalars().all()
+        after_inactive = session.execute(select(Product).where(~Product.active)).scalars().all()
         after_inactive = len(after_inactive)
 
     activated = max(0, after_active - len(before_active))
