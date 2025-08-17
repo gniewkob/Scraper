@@ -12,7 +12,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.db import dispose_engines, get_cities
 from backend.medical_api import router as medical_router
 from backend.routes import alerts, products
-from backend.utils import send_confirmation_email, send_confirmation_sms  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
