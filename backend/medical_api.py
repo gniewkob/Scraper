@@ -1,12 +1,26 @@
-"""Medical marijuana API endpoints."""
+"""Medical marijuana API endpoints.
+
+This module provides API endpoints for searching and retrieving medical marijuana product information
+from the real database instead of using mock data. The endpoints include:
+
+- /api/search: Search for products with various filters
+- /api/stats: Get statistics about products and dispensaries
+- /api/medical/cities: Get list of available cities
+- /api/products/{product_id}: Get specific product information
+- /api/products/city/{city}: Get products available in a specific city
+- /api/deals/best: Get best deals (lowest prices)
+
+All endpoints now query the real database for up-to-date information.
+"""
 from typing import List, Optional
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from pydantic import BaseModel
 from datetime import datetime
-import random
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 from . import cities
-from backend.db import get_cities as db_get_cities
+from backend.db import get_cities as db_get_cities, get_connection
 
 router = APIRouter(prefix="/api", tags=["medical"])
 
@@ -39,44 +53,6 @@ class StatsResponse(BaseModel):
     cities_covered: int
     last_updated: str
 
-MOCK_CITIES = cities.get_city_list()
-
-STRAIN_NAMES = {
-    "indica": ["🌙 Northern Lights", "🍇 Purple Kush", "💤 Granddaddy Purple", "🌌 Bubba Kush", "🍰 Wedding Cake"],
-    "sativa": ["☀️ Sour Diesel", "🍋 Lemon Haze", "🚀 Green Crack", "⚡ Jack Herer", "🌈 Durban Poison"],
-    "hybrid": ["🛸 Blue Dream", "🍪 Girl Scout Cookies", "🦍 Gorilla Glue", "🎨 Gelato", "🍓 Strawberry Cough"]
-}
-
-DISPENSARIES = [
-    "🌿 Green Galaxy", "👽 Cosmic Cannabis", "🌌 Stellar Strains",
-    "🚀 Space Station THC", "🛸 UFO Botanicals", "🌙 Lunar Leaf",
-    "⭐ Star Seeds", "🌠 Meteor Medicine", "🪐 Planet Plant",
-    "🌍 Earth's Essence"
-]
-
-def generate_mock_products(count: int = 50) -> List[Product]:
-    """Generate mock products."""
-    products = []
-    for i in range(count):
-        strain_type = random.choice(["indica", "sativa", "hybrid"])
-        products.append(Product(
-            id=str(i + 1),
-            name=random.choice(STRAIN_NAMES[strain_type]),
-            strain_type=strain_type,
-            thc_content=round(random.uniform(15, 30), 1),
-            cbd_content=round(random.uniform(0.1, 5), 1),
-            price=round(random.uniform(25, 80), 2),
-            dispensary=random.choice(DISPENSARIES),
-            location=random.choice(MOCK_CITIES),
-            availability=random.choice([True, True, True, False]),  # 75% available
-            rating=round(random.uniform(3.5, 5.0), 1),
-            image_url=None
-        ))
-    return products
-
-# Generate mock products once
-MOCK_PRODUCTS = generate_mock_products(100)
-
 @router.get("/search", response_model=SearchResponse)
 async def search_products(
     city: Optional[str] = Query(None),
@@ -86,34 +62,84 @@ async def search_products(
     max_thc: Optional[float] = Query(None),
     min_cbd: Optional[float] = Query(None),
     max_cbd: Optional[float] = Query(None),
-    radius: Optional[float] = Query(None)
+    radius: Optional[float] = Query(None),
+    conn: AsyncConnection = Depends(get_connection)
 ):
-    """Search for medical marijuana products."""
-    filtered_products = MOCK_PRODUCTS.copy()
+    """Search for medical marijuana products from real database data."""
+    
+    # Build query for pharmacy prices with product information
+    query = """
+        SELECT p.pharmacy_name, p.address, p.price, p.unit, p.expiration, p.map_url,
+               pr.id as product_id, pr.name as product_name,
+               p.availability, p.updated
+        FROM pharmacy_prices p
+        LEFT JOIN products pr ON p.product_id = pr.id
+        WHERE pr.active = true
+    """
+    params = {}
     
     # Apply filters
     if city and city != "all":
-        filtered_products = [p for p in filtered_products if p.location.lower() == city.lower()]
+        query += " AND lower(p.address) LIKE :city"
+        params["city"] = f"%{city.lower()}%"
     
-    if strain_type and strain_type != "all":
-        filtered_products = [p for p in filtered_products if p.strain_type == strain_type]
+    # Note: For strain_type, min_thc, max_thc, min_cbd, max_cbd filters,
+    # we would need additional product information in the database
+    # For now, we'll implement what we can with available data
     
     if max_price:
-        filtered_products = [p for p in filtered_products if p.price <= max_price]
+        query += " AND p.price <= :max_price"
+        params["max_price"] = max_price
+    
+    query += " ORDER BY p.price ASC"
+    
+    rows = (await conn.execute(text(query), params)).mappings().all()
+    
+    # Convert database rows to Product objects
+    products = []
+    for row in rows:
+        # Extract city from address
+        address_parts = (row["address"] or "").split(",")
+        location = address_parts[-1].strip() if address_parts else "Unknown"
+        
+        # For strain_type, thc_content, cbd_content, we'll use default values
+        # since this information is not in the current database schema
+        product = Product(
+            id=str(row["product_id"]),
+            name=row["product_name"] or "Unknown Product",
+            strain_type="hybrid",  # Default value
+            thc_content=20.0,     # Default value
+            cbd_content=1.0,     # Default value
+            price=float(row["price"]) if row["price"] else 0.0,
+            dispensary=row["pharmacy_name"] or "Unknown Pharmacy",
+            location=location,
+            availability=(row["availability"] or "Available") == "Available",
+            rating=4.5,  # Default rating
+            image_url=None
+        )
+        products.append(product)
+    
+    # Apply additional filters that couldn't be done in SQL
+    if strain_type and strain_type != "all":
+        # This is a limitation - we can't filter by strain type without that data in DB
+        pass
     
     if min_thc:
-        filtered_products = [p for p in filtered_products if p.thc_content >= min_thc]
+        products = [p for p in products if p.thc_content >= min_thc]
     
     if max_thc:
-        filtered_products = [p for p in filtered_products if p.thc_content <= max_thc]
+        products = [p for p in products if p.thc_content <= max_thc]
     
     if min_cbd:
-        filtered_products = [p for p in filtered_products if p.cbd_content >= min_cbd]
+        products = [p for p in products if p.cbd_content >= min_cbd]
     
     if max_cbd:
-        filtered_products = [p for p in filtered_products if p.cbd_content <= max_cbd]
+        products = [p for p in products if p.cbd_content <= max_cbd]
     
-    if not filtered_products:
+    # Limit to first 20 results
+    products = products[:20]
+    
+    if not products:
         return SearchResponse(
             products=[],
             total_count=0,
@@ -122,28 +148,49 @@ async def search_products(
             highest_price=0
         )
     
-    prices = [p.price for p in filtered_products]
+    prices = [p.price for p in products]
     
     return SearchResponse(
-        products=filtered_products[:20],  # Return first 20 results
-        total_count=len(filtered_products),
-        avg_price=round(sum(prices) / len(prices), 2),
-        lowest_price=min(prices),
-        highest_price=max(prices)
+        products=products,
+        total_count=len(products),
+        avg_price=round(sum(prices) / len(prices), 2) if prices else 0,
+        lowest_price=min(prices) if prices else 0,
+        highest_price=max(prices) if prices else 0
     )
 
 @router.get("/stats", response_model=StatsResponse)
-async def get_stats():
-    """Get statistics about available products."""
-    prices = [p.price for p in MOCK_PRODUCTS]
-    unique_dispensaries = len(set(p.dispensary for p in MOCK_PRODUCTS))
-    unique_cities = len(set(p.location for p in MOCK_PRODUCTS))
+async def get_stats(conn: AsyncConnection = Depends(get_connection)):
+    """Get statistics about available products from real database data."""
+    
+    # Get total number of products
+    product_count_result = await conn.execute(
+        text("SELECT COUNT(DISTINCT product_id) FROM pharmacy_prices")
+    )
+    total_products = product_count_result.scalar() or 0
+    
+    # Get total number of dispensaries (pharmacies)
+    pharmacy_count_result = await conn.execute(
+        text("SELECT COUNT(DISTINCT pharmacy_name) FROM pharmacy_prices")
+    )
+    total_dispensaries = pharmacy_count_result.scalar() or 0
+    
+    # Get average price
+    avg_price_result = await conn.execute(
+        text("SELECT AVG(price) FROM pharmacy_prices WHERE price IS NOT NULL")
+    )
+    avg_price = float(avg_price_result.scalar() or 0)
+    
+    # Get cities covered
+    cities_result = await conn.execute(
+        text("SELECT COUNT(DISTINCT address) FROM pharmacy_prices WHERE address IS NOT NULL")
+    )
+    cities_covered = cities_result.scalar() or 0
     
     return StatsResponse(
-        total_products=len(MOCK_PRODUCTS),
-        total_dispensaries=unique_dispensaries,
-        avg_price=round(sum(prices) / len(prices), 2),
-        cities_covered=unique_cities,
+        total_products=total_products,
+        total_dispensaries=total_dispensaries,
+        avg_price=round(avg_price, 2),
+        cities_covered=cities_covered,
         last_updated=datetime.now().isoformat()
     )
 
@@ -153,21 +200,118 @@ async def get_medical_cities():
     return await db_get_cities()
 
 @router.get("/products/{product_id}", response_model=Product)
-async def get_product(product_id: str):
-    """Get a specific product by ID."""
-    product = next((p for p in MOCK_PRODUCTS if p.id == product_id), None)
-    if not product:
+async def get_product(product_id: str, conn: AsyncConnection = Depends(get_connection)):
+    """Get a specific product by ID from real database data."""
+    # Get product information from pharmacy_prices
+    query = """
+        SELECT p.pharmacy_name, p.address, p.price, p.unit, p.expiration, p.map_url,
+               pr.id as product_id, pr.name as product_name,
+               p.availability, p.updated
+        FROM pharmacy_prices p
+        LEFT JOIN products pr ON p.product_id = pr.id
+        WHERE p.product_id = :product_id
+        LIMIT 1
+    """
+    row = (await conn.execute(text(query), {"product_id": product_id})).mappings().first()
+    
+    if not row:
         raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Extract city from address
+    address_parts = (row["address"] or "").split(",")
+    location = address_parts[-1].strip() if address_parts else "Unknown"
+    
+    product = Product(
+        id=str(row["product_id"]),
+        name=row["product_name"] or "Unknown Product",
+        strain_type="hybrid",  # Default value
+        thc_content=20.0,     # Default value
+        cbd_content=1.0,     # Default value
+        price=float(row["price"]) if row["price"] else 0.0,
+        dispensary=row["pharmacy_name"] or "Unknown Pharmacy",
+        location=location,
+        availability=(row["availability"] or "Available") == "Available",
+        rating=4.5,  # Default rating
+        image_url=None
+    )
     return product
 
 @router.get("/products/city/{city}", response_model=List[Product])
-async def get_products_by_city(city: str):
-    """Get products available in a specific city."""
-    products = [p for p in MOCK_PRODUCTS if p.location.lower() == city.lower()]
-    return products[:20]  # Return first 20 results
+async def get_products_by_city(city: str, conn: AsyncConnection = Depends(get_connection)):
+    """Get products available in a specific city from real database data."""
+    query = """
+        SELECT p.pharmacy_name, p.address, p.price, p.unit, p.expiration, p.map_url,
+               pr.id as product_id, pr.name as product_name,
+               p.availability, p.updated
+        FROM pharmacy_prices p
+        LEFT JOIN products pr ON p.product_id = pr.id
+        WHERE pr.active = true
+          AND lower(p.address) LIKE :city
+    """
+    params = {"city": f"%{city.lower()}%"}
+    
+    rows = (await conn.execute(text(query), params)).mappings().all()
+    
+    products = []
+    for row in rows[:20]:  # Limit to first 20 results
+        # Extract city from address
+        address_parts = (row["address"] or "").split(",")
+        location = address_parts[-1].strip() if address_parts else "Unknown"
+        
+        product = Product(
+            id=str(row["product_id"]),
+            name=row["product_name"] or "Unknown Product",
+            strain_type="hybrid",  # Default value
+            thc_content=20.0,     # Default value
+            cbd_content=1.0,     # Default value
+            price=float(row["price"]) if row["price"] else 0.0,
+            dispensary=row["pharmacy_name"] or "Unknown Pharmacy",
+            location=location,
+            availability=(row["availability"] or "Available") == "Available",
+            rating=4.5,  # Default rating
+            image_url=None
+        )
+        products.append(product)
+    
+    return products
 
 @router.get("/deals/best", response_model=List[Product])
-async def get_best_deals(limit: int = Query(10, ge=1, le=50)):
-    """Get best deals (lowest prices)."""
-    sorted_products = sorted(MOCK_PRODUCTS, key=lambda p: p.price)
-    return sorted_products[:limit]
+async def get_best_deals(limit: int = Query(10, ge=1, le=50), conn: AsyncConnection = Depends(get_connection)):
+    """Get best deals (lowest prices) from real database data."""
+    query = """
+        SELECT p.pharmacy_name, p.address, p.price, p.unit, p.expiration, p.map_url,
+               pr.id as product_id, pr.name as product_name,
+               p.availability, p.updated
+        FROM pharmacy_prices p
+        LEFT JOIN products pr ON p.product_id = pr.id
+        WHERE pr.active = true
+          AND p.price IS NOT NULL
+        ORDER BY p.price ASC
+        LIMIT :limit
+    """
+    params = {"limit": limit}
+    
+    rows = (await conn.execute(text(query), params)).mappings().all()
+    
+    products = []
+    for row in rows:
+        # Extract city from address
+        address_parts = (row["address"] or "").split(",")
+        location = address_parts[-1].strip() if address_parts else "Unknown"
+        
+        product = Product(
+            id=str(row["product_id"]),
+            name=row["product_name"] or "Unknown Product",
+            strain_type="hybrid",  # Default value
+            thc_content=20.0,     # Default value
+            cbd_content=1.0,     # Default value
+            price=float(row["price"]) if row["price"] else 0.0,
+            dispensary=row["pharmacy_name"] or "Unknown Pharmacy",
+            location=location,
+            availability=(row["availability"] or "Available") == "Available",
+            rating=4.5,  # Default rating
+            image_url=None
+        )
+        products.append(product)
+    
+    return products

@@ -168,37 +168,9 @@ class ApiClient {
 
       return await this.makeRequest<SearchResponse>(endpoint)
     } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      let filteredProducts = [...MOCK_PRODUCTS]
-
-      if (filters.city) {
-        filteredProducts = filteredProducts.filter((p) =>
-          p.location.toLowerCase().includes(filters.city!.toLowerCase()),
-        )
-      }
-
-      if (filters.strain_type) {
-        filteredProducts = filteredProducts.filter(
-          (p) => p.strain_type === filters.strain_type,
-        )
-      }
-
-      if (filters.max_price) {
-        filteredProducts = filteredProducts.filter(
-          (p) => p.price <= filters.max_price!,
-        )
-      }
-
-      return {
-        products: filteredProducts,
-        total_count: filteredProducts.length,
-        avg_price:
-          filteredProducts.reduce((sum, p) => sum + p.price, 0) /
-          filteredProducts.length,
-        lowest_price: Math.min(...filteredProducts.map((p) => p.price)),
-        highest_price: Math.max(...filteredProducts.map((p) => p.price)),
-      }
+      console.error("Search API error:", error)
+      // Instead of using mock data, re-throw the error so the UI can handle it appropriately
+      throw error
     }
   }
 
@@ -206,8 +178,9 @@ class ApiClient {
     try {
       return await this.makeRequest<StatsResponse>("/stats")
     } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      return MOCK_STATS
+      console.error("Stats API error:", error)
+      // Instead of using mock data, re-throw the error so the UI can handle it appropriately
+      throw error
     }
   }
 
@@ -215,8 +188,9 @@ class ApiClient {
     try {
       return await this.makeRequest<string[]>("/cities")
     } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 200))
-      return MOCK_CITIES
+      console.error("Cities API error:", error)
+      // Instead of using mock data, re-throw the error so the UI can handle it appropriately
+      throw error
     }
   }
 
@@ -224,8 +198,9 @@ class ApiClient {
     try {
       return await this.makeRequest<Product>(`/products/${id}`)
     } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      return MOCK_PRODUCTS.find((p) => p.id === id) || MOCK_PRODUCTS[0]
+      console.error("Product API error:", error)
+      // Instead of using mock data, re-throw the error so the UI can handle it appropriately
+      throw error
     }
   }
 
@@ -235,10 +210,9 @@ class ApiClient {
         `/products/city/${encodeURIComponent(city)}`,
       )
     } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 400))
-      return MOCK_PRODUCTS.filter((p) =>
-        p.location.toLowerCase().includes(city.toLowerCase()),
-      )
+      console.error("Products by city API error:", error)
+      // Instead of using mock data, re-throw the error so the UI can handle it appropriately
+      throw error
     }
   }
 
@@ -246,8 +220,9 @@ class ApiClient {
     try {
       return await this.makeRequest<Product[]>(`/deals/best?limit=${limit}`)
     } catch (error) {
-      await new Promise((resolve) => setTimeout(resolve, 350))
-      return MOCK_PRODUCTS.slice(0, limit)
+      console.error("Best deals API error:", error)
+      // Instead of using mock data, re-throw the error so the UI can handle it appropriately
+      throw error
     }
   }
 }
