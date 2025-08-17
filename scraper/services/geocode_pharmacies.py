@@ -9,7 +9,6 @@ import sqlite3
 import requests
 import time
 from urllib.parse import quote
-from pathlib import Path
 
 from scraper.core.config.config import DB_PATH, DB_URL, API_URL
 
