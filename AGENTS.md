@@ -11,8 +11,8 @@
 ## Build, Test, and Development
 - Python env: `python -m venv venv && source venv/bin/activate && pip install -r requirements.txt -r requirements-ci.txt`.
 - Scraper (local): `python -m scraper.cli.scrape_all --headless --db-url sqlite:///data/pharmacy_prices.sqlite`.
-- Backend (dev): `uvicorn backend.main:app --reload --port 8000` → open `http://localhost:8000`.
-- Frontend: `cd frontend && npm install` then `npm run dev` (or `npm run build`, `npm run preview`, `npm test`).
+- Backend (dev): `uvicorn backend.main:app --reload --port 38273` → open `http://localhost:38273`.
+- Frontend: `cd frontend && npm install` then `npm run dev` (or `npm run build`, `npm run preview`, `npm test`) → open `http://localhost:61973`.
 - Tests: run `pytest` (or `pytest -q -k keyword`). Test paths default to `tests/` and files `test_*.py`.
 
 ## Coding Style & Naming
