@@ -133,7 +133,7 @@ async def get_products() -> list[dict[str, str]]:
     async with session_factory() as session:
         rows = (
             await session.execute(
-                select(Product.id, Product.name).where(Product.active == True)  # noqa: E712
+                select(Product.id, Product.name).where(Product.active)
             )
         ).all()
     return [{"id": pid, "name": name} for pid, name in rows]
