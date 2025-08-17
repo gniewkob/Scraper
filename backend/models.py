@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Database ORM models used by the application."""
+
+from __future__ import annotations
 
 from datetime import datetime
 
