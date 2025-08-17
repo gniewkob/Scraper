@@ -5,7 +5,6 @@ import sys
 import logging
 import logging.config
 from pathlib import Path
-from datetime import datetime
 
 # Determine log level from environment with fallback to ERROR
 LOG_LEVEL = getattr(
