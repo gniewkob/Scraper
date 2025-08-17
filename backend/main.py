@@ -54,9 +54,9 @@ else:
     # These proxy domains (smart.bodora.pl and backend.bodora.pl) route to localhost:PORT on the host.
     allow_origins = [
         "http://localhost:3000",
-        "http://localhost:8000",
-        "https://smart.bodora.pl",
-        "https://backend.bodora.pl",
+        "http://localhost:38273",
+        "https://smart.bodora.pl",  # → localhost:61973
+        "https://backend.bodora.pl",  # → localhost:38273
     ]
 
 # By default do not allow credentials unless explicitly enabled in env for trusted deployments.

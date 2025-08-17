@@ -18,8 +18,9 @@ RUN pip install --no-cache /wheels/* && rm -rf /wheels
 COPY backend ./backend
 COPY scraper ./scraper
 
-EXPOSE 61973
+# Expose backend through reverse proxy (backend.bodora.pl)
+EXPOSE 38273
 
-ENV PORT=61973
+ENV PORT=38273
 
 CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT}"]
