@@ -21,7 +21,16 @@ services:
     depends_on:
       - redis
     ports:
-      - "8000:8000"
+      - "38273:38273" # backend.bodora.pl → localhost:38273
+  frontend:
+    build:
+      context: ./frontend
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    ports:
+      - "61973:61973" # smart.bodora.pl → localhost:61973
   scraper:
     build:
       context: ./scraper
