@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Optional
 
 import requests
 from sqlalchemy import select, text, update, create_engine as create_sync_engine
@@ -14,8 +14,6 @@ from scraper.core.config.config import DB_PATH, DB_URL, API_URL
 from scraper.services.price_validator import normalize_unit
 
 logger = logging.getLogger(__name__)
-
-from typing import Optional
 
 
 def _build_sync_engine(db_url: Optional[str], db_path: Optional[str]):
