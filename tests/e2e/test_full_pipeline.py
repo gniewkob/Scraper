@@ -14,8 +14,7 @@ except RuntimeError:
     cli_main = None
 
 
-@pytest.fixture(autouse=True, scope="module")
-def playwright_stub():
+def setup_playwright_stub() -> None:
     """Provide a minimal stub for the optional playwright dependency."""
     playwright_module = types.ModuleType("playwright")
     sync_api_module = types.ModuleType("playwright.sync_api")
@@ -23,6 +22,11 @@ def playwright_stub():
     playwright_module.sync_api = sync_api_module
     sys.modules.setdefault("playwright", playwright_module)
     sys.modules.setdefault("playwright.sync_api", sync_api_module)
+
+
+@pytest.fixture(autouse=True, scope="module")
+def playwright_stub() -> None:
+    setup_playwright_stub()
 
     global cli_main
     if cli_main is None:
