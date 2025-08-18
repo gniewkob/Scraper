@@ -21,13 +21,22 @@ logger = logging.getLogger(__name__)
 # 🔧 Automatyczna synchronizacja struktury bazy
 schema_path = Path(__file__).resolve().parents[1] / "services" / "update_schema.py"
 if schema_path.exists():
-    spec = importlib.util.spec_from_file_location("update_schema", schema_path)
-    update_schema = importlib.util.module_from_spec(spec)
-    sys.modules["update_schema"] = update_schema
-    spec.loader.exec_module(update_schema)
-    logger.info("✅ Schemat bazy zaktualizowany.")
+    try:
+        spec = importlib.util.spec_from_file_location("update_schema", schema_path)
+        update_schema = importlib.util.module_from_spec(spec)
+        sys.modules["update_schema"] = update_schema
+        spec.loader.exec_module(update_schema)
+        logger.info("✅ Schemat bazy zaktualizowany.")
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning(
+            "⚠️ Nie udało się zaktualizować schematu z pliku update_schema.py: %s",
+            exc,
+        )
+        ensure_schema()
 else:
-    logger.warning("⚠️ Plik update_schema.py nie znaleziony. Upewnij się, że struktura bazy została przygotowana.")
+    logger.warning(
+        "⚠️ Plik update_schema.py nie znaleziony. Upewnij się, że struktura bazy została przygotowana."
+    )
     ensure_schema()
 
 # 📦 Ścieżki
@@ -101,28 +110,35 @@ def send_whatsapp(to_number: str, body: str) -> bool:
 
 def fetch_latest_prices():
     conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    query = """
-        SELECT product_id, pharmacy_name, price, expiration, fetched_at
-        FROM pharmacy_prices
-        WHERE (product_id, price, expiration, fetched_at) IN (
-            SELECT product_id, price, expiration, MAX(fetched_at)
+    try:
+        cursor = conn.cursor()
+        query = """
+            SELECT product_id, pharmacy_name, price, expiration, fetched_at
             FROM pharmacy_prices
-            GROUP BY product_id, pharmacy_name, expiration
-        )
-    """
-    cursor.execute(query)
-    results = cursor.fetchall()
-    conn.close()
+            WHERE (product_id, price, expiration, fetched_at) IN (
+                SELECT product_id, price, expiration, MAX(fetched_at)
+                FROM pharmacy_prices
+                GROUP BY product_id, pharmacy_name, expiration
+            )
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.error("❌ Błąd pobierania najnowszych cen: %s", exc)
+        return {}
+    finally:
+        conn.close()
 
     prices = {}
     for product_id, pharmacy, price, expiry, fetched in results:
-        prices.setdefault(product_id, []).append({
-            "pharmacy": pharmacy,
-            "price": price,
-            "expiration_date": expiry,
-            "fetched_at": fetched
-        })
+        prices.setdefault(product_id, []).append(
+            {
+                "pharmacy": pharmacy,
+                "price": price,
+                "expiration_date": expiry,
+                "fetched_at": fetched,
+            }
+        )
     return prices
 
 
