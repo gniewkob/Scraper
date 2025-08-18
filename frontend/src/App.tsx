@@ -12,10 +12,9 @@ export function badgeFor(offer: Offer): string {
   return "😐"
 }
 
-export default function App() {
+export default function App({ offers = [] }: { offers?: Offer[] }) {
   const [query] = React.useState("")
   const [unused1] = React.useState(null)
-  const [offers] = React.useState<Offer[]>([])
   const [unused2] = React.useState<any[]>([])
   const [unused3] = React.useState(null)
   const [unused4] = React.useState(null)
@@ -35,5 +34,3 @@ export default function App() {
     </div>
   )
 }
-
-export default App
