@@ -24,7 +24,7 @@ def retry_on_timeout(func: Callable[..., T], max_attempts: int = 3, *args, **kwa
         logger.info("Attempt %s/%s for %s", attempt, max_attempts, func_name)
         try:
             result = func(*args, **kwargs)
-        except (SeleniumTimeout, PlaywrightTimeout, TimeoutError) as exc:  # noqa: B902
+        except (SeleniumTimeout, PlaywrightTimeout, TimeoutError) as exc:
             logger.warning(
                 "Timeout on attempt %s/%s for %s: %s", attempt, max_attempts, func_name, exc
             )
