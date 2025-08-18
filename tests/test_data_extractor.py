@@ -23,8 +23,10 @@ def test_extract_pharmacy_data_returns_dict():
     name_el.get_attribute.return_value = "https://example.com/apteki/test"
 
     # address elements
-    addr1 = MagicMock(); addr1.text = "adres"
-    addr2 = MagicMock(); addr2.text = "ul. Testowa 1"
+    addr1 = MagicMock()
+    addr1.text = "adres"
+    addr2 = MagicMock()
+    addr2.text = "ul. Testowa 1"
 
     # offers block with one price paragraph
     price_span = _mock_span("12,34 zł / szt")
