@@ -1,8 +1,10 @@
-import sys
 import os
+import sys
 import tempfile
 from pathlib import Path
+
 import bcrypt
+import pytest
 from alembic import command
 from alembic.config import Config
 from cryptography.fernet import Fernet
@@ -15,9 +17,6 @@ os.environ.setdefault(
 )
 os.environ["DB_URL"] = ""
 os.environ.setdefault("ALERTS_FERNET_KEY", Fernet.generate_key().decode())
-
-
-import pytest
 
 
 @pytest.fixture()

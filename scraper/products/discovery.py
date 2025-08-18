@@ -1,12 +1,14 @@
 import os
-from typing import List, Dict, Optional
+import importlib
+import sys
+from typing import Dict, List, Optional
+
+from .urls import build_regional_url
 
 try:
     from playwright.sync_api import sync_playwright
 except ImportError as exc:
     raise RuntimeError("Playwright is required for product discovery") from exc
-
-from .urls import build_regional_url
 
 CATEGORY_URL = "https://www.gdziepolek.pl/kategorie/susz-i-ekstrakt-marihuany-medycznej"
 PRODUCT_URL_BASE = "https://www.gdziepolek.pl"
@@ -20,8 +22,6 @@ def discover_products(headless: Optional[bool] = None) -> List[Dict[str, str]]:
     global sync_playwright
     manager = sync_playwright()
     if manager is None:
-        import importlib
-        import sys
         try:
             sys.modules.pop("playwright", None)
             sys.modules.pop("playwright.sync_api", None)

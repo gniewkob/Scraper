@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.db import dispose_engines, get_cities
 from backend.medical_api import router as medical_router
+from backend.routes import alerts, products
 from backend.utils import send_confirmation_sms  # noqa: F401
 
 logger = logging.getLogger(__name__)
@@ -115,8 +116,6 @@ def compute_price_info(offers: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 # Include routers
-from backend.routes import alerts, products
-
 app.include_router(products.router)
 app.include_router(alerts.router)
 app.include_router(medical_router)
