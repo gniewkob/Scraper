@@ -13,8 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
 from .utils import compute_price_info, CITY_REGEX
+from backend.main import send_confirmation_email
 from backend.utils import (
-    send_confirmation_email,
     send_confirmation_sms,
     require_admin,
     mask_email,
@@ -314,7 +314,7 @@ async def register_alert(
     )
 
     if email:
-        background_tasks.add_task(send_confirmation_email, email, token)
+        background_tasks.add_task(send_confirmation_email, email)
     if phone:
         background_tasks.add_task(send_confirmation_sms, phone, token)
     return {"status": "ok"}
