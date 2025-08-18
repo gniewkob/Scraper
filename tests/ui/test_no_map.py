@@ -12,7 +12,16 @@ def render_app() -> str:
         "console.log(ReactDOMServer.renderToString(React.createElement(App)));"
     )
     result = subprocess.run(
-        ["npx", "--yes", "tsx", "-e", script],
+        [
+            "npx",
+            "--yes",
+            "tsx",
+            "-e",
+            script,
+            "--tsconfig",
+            "tsconfig.json",
+            "--no-cache",
+        ],
         capture_output=True,
         text=True,
         check=True,
