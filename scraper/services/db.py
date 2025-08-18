@@ -7,10 +7,12 @@ from datetime import datetime, timezone
 from typing import Dict, Iterable, Optional
 
 import requests
-from sqlalchemy import select, text, update, create_engine as create_sync_engine
+from sqlalchemy import create_engine as create_sync_engine
+from sqlalchemy import select, text, update
 from sqlalchemy.orm import Session
+
 from backend.models import Product
-from scraper.core.config.config import DB_PATH, DB_URL, API_URL
+from scraper.core.config.config import API_URL, DB_PATH, DB_URL
 from scraper.services.price_validator import normalize_unit
 
 logger = logging.getLogger(__name__)
