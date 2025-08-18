@@ -1,15 +1,22 @@
+import importlib
 import os
 import sys
-import importlib
 import types
+
 import pytest
+
+try:
+    from scraper.products.discovery import discover_products
+except RuntimeError:  # Playwright missing
+    discover_products = None
 
 MIN_ITEMS = int(os.getenv("MIN_ITEMS", 10))
 
 
 @pytest.mark.skipif(not os.getenv("CI"), reason="Playwright tests run only in CI")
 def test_discover_products() -> None:
-    from scraper.products.discovery import discover_products
+    if discover_products is None:
+        pytest.skip("Playwright is required for product discovery")
 
     items = discover_products()
     assert isinstance(items, list)

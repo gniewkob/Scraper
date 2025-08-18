@@ -3,13 +3,15 @@ import sys
 import tempfile
 from pathlib import Path
 
-import bcrypt
-import pytest
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from alembic import command
 from alembic.config import Config
+import bcrypt
 from cryptography.fernet import Fernet
+import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from backend import db as backend_db
 
 os.environ.setdefault("SECRET_KEY", "test-secret")
 os.environ.setdefault(
@@ -31,8 +33,6 @@ def migrated_db(monkeypatch):
     monkeypatch.setattr(
         "scraper.core.config.config.DB_URL", f"sqlite:///{db_file}", raising=False
     )
-
-    from backend import db as backend_db
 
     backend_db._ENGINE_CACHE.clear()
     cfg = Config("backend/alembic.ini")

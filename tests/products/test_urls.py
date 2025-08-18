@@ -1,7 +1,9 @@
+from typing import Optional
+
 import pytest
 
-from scraper.products.urls import build_regional_url
 from scraper.products.pvid import extract_pvid
+from scraper.products.urls import build_regional_url
 
 
 @pytest.mark.parametrize(
@@ -27,8 +29,6 @@ def test_build_regional_url_with_pvid() -> None:
 
 
 def test_build_regional_url_with_auto_pvid() -> None:
-    from typing import Optional
-
     class FakeLocator:
         def __init__(self, value: Optional[str]) -> None:
             self._value = value
