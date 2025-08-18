@@ -17,7 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 def send_confirmation_email(to_email: str) -> bool:
-    """Placeholder email confirmation sender."""
+    """Simulate sending a confirmation email.
+
+    The real application would dispatch an email containing a confirmation
+    link or token.  For testing purposes we simply return ``True`` to mimic a
+    successful send operation.
+    """
+
     return True
 
 
