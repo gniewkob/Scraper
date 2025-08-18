@@ -1,21 +1,32 @@
+import importlib
 import sys
 import types
 
-
-# Provide a minimal stub for the optional playwright dependency
-playwright_stub = types.ModuleType("playwright")
-sync_api_stub = types.ModuleType("playwright.sync_api")
-sync_api_stub.sync_playwright = lambda: None
-playwright_stub.sync_api = sync_api_stub
-sys.modules.setdefault("playwright", playwright_stub)
-sys.modules.setdefault("playwright.sync_api", sync_api_stub)
-
-import scraper.cli.main as cli_main
-
+import pytest
 from sqlalchemy import create_engine, text
 
 from scraper.services import db as db_services
 from scraper.services import offers as offers_mod
+
+try:
+    import scraper.cli.main as cli_main
+except RuntimeError:
+    cli_main = None
+
+
+@pytest.fixture(autouse=True, scope="module")
+def playwright_stub():
+    """Provide a minimal stub for the optional playwright dependency."""
+    playwright_module = types.ModuleType("playwright")
+    sync_api_module = types.ModuleType("playwright.sync_api")
+    sync_api_module.sync_playwright = lambda: None
+    playwright_module.sync_api = sync_api_module
+    sys.modules.setdefault("playwright", playwright_module)
+    sys.modules.setdefault("playwright.sync_api", sync_api_module)
+
+    global cli_main
+    if cli_main is None:
+        cli_main = importlib.import_module("scraper.cli.main")
 
 
 def test_full_pipeline(monkeypatch, migrated_db):
