@@ -13,9 +13,9 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 from scraper.utils.crypto import encrypt, decrypt
 from backend.db import get_connection
 from .utils import compute_price_info, CITY_REGEX
-from backend.main import send_confirmation_email
 from backend.utils import (
     send_confirmation_sms,
+    send_confirmation_email,
     require_admin,
     mask_email,
     mask_phone,
