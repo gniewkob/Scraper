@@ -1,12 +1,18 @@
 """Tests for the FastAPI backend."""
 
-import pytest
-from fastapi.testclient import TestClient
-
-from backend.main import app
+import asyncio
 import json
 import sqlite3
+
 from cryptography.fernet import Fernet
+from fastapi.testclient import TestClient
+import pytest
+
+import backend.cities as city_data
+from backend import db as backend_db
+from backend.main import app
+from scraper.core.config import config as config_module
+from scraper.utils.crypto import decrypt
 
 
 @pytest.fixture()
@@ -75,10 +81,6 @@ def test_get_product_not_found(client):
 
 
 def test_get_cities(client, monkeypatch):
-    import asyncio
-    from backend import db as backend_db
-    import backend.cities as city_data
-
     monkeypatch.setattr(city_data, "get_city_list", lambda: ["SampleCity"])
 
     response = client.get('/api/cities')
@@ -127,9 +129,7 @@ def test_alerts_grouped_city_filter(client):
 
 @pytest.fixture()
 def alerts_db(client, monkeypatch):
-    from scraper.core.config.config import DB_PATH as _DB_PATH
-
-    conn = sqlite3.connect(_DB_PATH)
+    conn = sqlite3.connect(config_module.DB_PATH)
     conn.execute("INSERT INTO products (id, slug, name) VALUES (3, 'p1', 'Test')")
     conn.commit()
     conn.close()
@@ -139,7 +139,7 @@ def alerts_db(client, monkeypatch):
     monkeypatch.setattr('backend.main.send_confirmation_sms', lambda *a, **k: True)
     monkeypatch.setattr('backend.routes.alerts.send_confirmation_email', lambda *a, **k: True)
     monkeypatch.setattr('backend.routes.alerts.send_confirmation_sms', lambda *a, **k: True)
-    return _DB_PATH
+    return config_module.DB_PATH
 
 
 @pytest.mark.parametrize(
@@ -181,7 +181,6 @@ def test_register_alert_success(client, alerts_db):
         (alert_id,),
     ).fetchone()
     conn.close()
-    from scraper.utils.crypto import decrypt
 
     assert confirmed == 1
     assert decrypt(email_e) == "a@b.com"
