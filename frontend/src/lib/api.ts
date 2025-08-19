@@ -43,7 +43,7 @@ export interface StatsResponse {
 
 // Build API base url from public env (Next.js exposes NEXT_PUBLIC_* to browser).
 // Prefer explicit NEXT_PUBLIC_API_URL. If missing, construct using NEXT_PUBLIC_BACKEND_PORT
-// (default 38273) and NEXT_PUBLIC_HOST (default localhost). This avoids accidentally
+// (default 8000) and NEXT_PUBLIC_HOST (default localhost). This avoids accidentally
 // pointing to a remote production API on developer machines or CI.
 declare const process: any
 const NEXT_PUBLIC_API_URL =
@@ -59,7 +59,7 @@ function defaultApiUrl(): string {
   const host =
     NEXT_PUBLIC_HOST ||
     (typeof window !== "undefined" ? window.location.hostname : "localhost")
-  const port = NEXT_PUBLIC_BACKEND_PORT || "38273"
+  const port = NEXT_PUBLIC_BACKEND_PORT || "8000"
   return `http://${host}:${port}/api`
 }
 
