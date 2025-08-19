@@ -96,7 +96,7 @@ spec:
         - name: CELERY_BROKER_URL
           value: redis://redis:6379/0
         ports:
-        - containerPort: 8000
+        - containerPort: 38273
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -134,9 +134,12 @@ spec:
     app: backend
   ports:
   - port: 80
-    targetPort: 8000
+    targetPort: 38273
     protocol: TCP
 ```
+
+Production proxy domains `backend.bodora.pl` and `smart.bodora.pl` forward
+traffic to this port.
 
 Scale the deployments independently depending on load:
 
