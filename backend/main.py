@@ -54,6 +54,7 @@ else:
     allow_origins = [
         "http://localhost:3000",
         "http://localhost:38273",
+        "http://localhost:61973",
         "https://smart.bodora.pl",  # → localhost:61973
         "https://backend.bodora.pl",  # → localhost:38273
     ]
