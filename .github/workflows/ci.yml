@@ -96,9 +96,19 @@ jobs:
           if not p.exists():
               print('No audit.json found; skipping fail-on-critical.')
               sys.exit(0)
-          data = json.loads(p.read_text() or '[]')
+          raw = p.read_text().strip()
+          data = json.loads(raw) if raw else []
+          # Support both older list form and newer object with 'dependencies'
+          if isinstance(data, dict):
+              deps = data.get('dependencies') or []
+          elif isinstance(data, list):
+              deps = data
+          else:
+              deps = []
           crit = []
-          for pkg in data:
+          for pkg in deps:
+              if not isinstance(pkg, dict):
+                  continue
               for v in (pkg.get('vulns') or []):
                   sev = (v.get('severity') or (v.get('advisory') or {}).get('severity') or '').upper()
                   if sev == 'CRITICAL':
