@@ -55,6 +55,17 @@ def main() -> int:
         "aiosqlite",
         "celery",
         "selenium",
+        # Utility/infra/testing (for pinning completeness)
+        "python-dotenv",
+        "typing-extensions",
+        "tenacity",
+        "prometheus-client",
+        "bcrypt",
+        "webdriver-manager",
+        "pytest",
+        "pytest-html",
+        "pytest-xdist",
+        "pytest-metadata",
     ]
 
     for name in packages:
@@ -68,4 +79,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
