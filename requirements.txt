@@ -2,7 +2,7 @@ selenium==4.9.0
 pytest==8.4.1
 pytest-html==4.1.1
 webdriver-manager==3.8.6
-requests==2.29.0
+requests==2.32.3
 typing-extensions>=4.5.0
 python-dotenv>=1.0.0
 pytest-xdist>=3.8.0
@@ -15,7 +15,7 @@ uvicorn
 geopy
 jinja2
 python-multipart
-httpx<0.25
+httpx>=0.27.0,<0.28.0
 itsdangerous
 twilio
 sqlalchemy>=1.4

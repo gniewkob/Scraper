@@ -83,6 +83,11 @@ jobs:
           python -m pip install --upgrade pip-audit
           pip-audit -r requirements.txt -r requirements-ci.txt || true
 
+      - name: Fail on critical vulnerabilities
+        run: |
+          # Only report critical vulns and fail if any are found
+          pip-audit --severity critical -r requirements.txt -r requirements-ci.txt
+
       # --- Systemowe biblioteki dla Chrome (Ubuntu 24.04) ---
       - name: Install system deps for headless browsers
         env:
