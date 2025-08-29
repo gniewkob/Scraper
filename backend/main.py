@@ -53,7 +53,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # CORS middleware
-# Configure CORS from environment. Provide a comma-separated list in ALLOWED_ORIGINS.
+# Configure CORS from environment. Provide a comma-separated list in ALLOWED_ORIGINS
+# and/or a regex in ALLOW_ORIGIN_REGEX for flexible dev setups.
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
 if allowed_origins_env:
     allow_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
@@ -97,9 +98,16 @@ else:
 # By default do not allow credentials unless explicitly enabled in env for trusted deployments.
 allow_credentials = os.getenv("ALLOW_CREDENTIALS", "false").lower() in ("1", "true", "yes")
 
+# Optional regex allowing localhost variants without enumerating ports
+allow_origin_regex = os.getenv("ALLOW_ORIGIN_REGEX")
+if not allow_origin_regex:
+    # Safe default for local development: allow http(s)://localhost or 127.0.0.1 with any port
+    allow_origin_regex = r"^https?://(localhost|127\.0\.0\.1)(:\\d+)?$"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
+    allow_origin_regex=allow_origin_regex,
     allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -1,5 +1,9 @@
 name: Browser Tests
 
+concurrency:
+  group: browsers-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   schedule:
@@ -8,6 +12,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     env:
       CI: true
       HEADLESS: true

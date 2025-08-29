@@ -5,8 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 import logging
 from typing import Dict, Optional, AsyncIterator
+import logging
 
 from sqlalchemy import select, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
@@ -22,6 +24,7 @@ from . import cities
 
 # cache of engines keyed by URL so modules can share a single instance
 _ENGINE_CACHE: Dict[str, AsyncEngine] = {}
+logger = logging.getLogger(__name__)
 logger = logging.getLogger(__name__)
 
 
@@ -170,7 +173,24 @@ async def get_cities() -> list[str]:
 
 async def get_connection() -> AsyncIterator[AsyncConnection]:
     """FastAPI dependency that yields a transactional connection."""
-
     engine = get_engine()
-    async with engine.begin() as conn:
-        yield conn
+    try:
+        async with engine.begin() as conn:
+            yield conn
+            return
+    except Exception as e:
+        logger.warning("Primary DB connection failed (%s). Falling back to SQLite.", type(e).__name__)
+        # Build fallback SQLite URL using configured DB_PATH
+        try:
+            from scraper.core.config import config as cfg
+            fb_url = f"sqlite+aiosqlite:///{cfg.DB_PATH}"
+            fb_engine = _ENGINE_CACHE.get(fb_url)
+            if fb_engine is None:
+                fb_engine = create_async_engine(fb_url, pool_pre_ping=True, future=True)
+                _ENGINE_CACHE[fb_url] = fb_engine
+            async with fb_engine.begin() as conn:
+                yield conn
+                return
+        except Exception as e2:
+            logger.error("SQLite fallback connection failed: %s", e2)
+            raise

@@ -2,15 +2,19 @@
 > my-v0-project@0.1.0 dev
 > next dev --port 61973 --hostname 127.0.0.1
 
-   ▲ Next.js 15.2.4
+   ▲ Next.js 15.5.2
    - Local:        http://127.0.0.1:61973
    - Network:      http://127.0.0.1:61973
    - Environments: .env
 
  ✓ Starting...
- ✓ Ready in 2.2s
+ ✓ Ready in 3.8s
  ○ Compiling / ...
- ✓ Compiled / in 3.1s (887 modules)
- GET / 200 in 3787ms
- GET / 200 in 175ms
- GET / 200 in 214ms
+ ✓ Compiled / in 5.2s (783 modules)
+ GET / 200 in 5915ms
+ GET / 200 in 4951ms
+ GET / 200 in 337ms
+ GET / 200 in 129ms
+ GET / 200 in 198ms
+ GET / 200 in 147ms
+ GET / 200 in 332ms

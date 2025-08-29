@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncConnection
 from typing import Optional, Dict, Any, Union
 import logging
@@ -209,9 +210,22 @@ async def search_products(
         
     except Exception as e:
         logger.error(f"Search query failed: {e}")
+        # Graceful dev fallback if schema not initialized
+        if isinstance(e, OperationalError) or 'no such table' in str(e).lower():
+            return {
+                "products": [],
+                "total_count": 0,
+                "avg_price": 0.0,
+                "lowest_price": 0.0,
+                "highest_price": 0.0,
+                "limit": limit,
+                "offset": offset,
+                "sort_by": sort_by,
+                "sort_order": sort_order,
+            }
         return JSONResponse(
-            {"error": "Search failed", "details": str(e)}, 
-            status_code=500
+            {"error": "Search failed", "details": str(e)},
+            status_code=500,
         )
 
 
@@ -339,6 +353,14 @@ async def get_statistics(
 
     except Exception as e:
         logger.error(f"Stats query failed: {e}")
+        if isinstance(e, OperationalError) or 'no such table' in str(e).lower():
+            return {
+                "total_products": 0,
+                "total_pharmacies": 0,
+                "avg_price": 0.0,
+                "cities_covered": 0,
+                "last_updated": "Unknown",
+            }
         return JSONResponse(
             {"error": "Failed to get statistics", "details": str(e)},
             status_code=500,
@@ -404,9 +426,11 @@ async def get_cities_stats(conn: AsyncConnection = Depends(get_connection)):
 
     except Exception as e:
         logger.error(f"Cities query failed: {e}")
+        if isinstance(e, OperationalError) or 'no such table' in str(e).lower():
+            return []
         return JSONResponse(
-            {"error": "Failed to get cities", "details": str(e)}, 
-            status_code=500
+            {"error": "Failed to get cities", "details": str(e)},
+            status_code=500,
         )
 
 
