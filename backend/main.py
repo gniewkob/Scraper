@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.db import dispose_engines, get_cities, get_engine
 from backend.capabilities import refresh_capabilities, get_capabilities
-import os
 from backend.medical_api import router as medical_router
 from backend.routes import alerts, products, search
 from backend.utils import send_confirmation_sms  # noqa: F401

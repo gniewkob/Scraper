@@ -2,9 +2,9 @@
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from sqlalchemy import text, func
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, Dict, Any, Union
 import logging
 
 from backend.db import get_connection

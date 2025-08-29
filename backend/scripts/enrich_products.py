@@ -11,7 +11,7 @@ This script analyzes product names and descriptions to:
 import asyncio
 import logging
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
 
@@ -254,16 +254,6 @@ async def update_pharmacy_ratings(conn: AsyncConnection) -> None:
 
 async def update_availability_status(conn: AsyncConnection) -> None:
     """Update availability status based on existing availability field."""
-    
-    # Map existing availability values to standardized status
-    availability_mapping = {
-        "available": "available",
-        "in stock": "available",
-        "dostępny": "available",
-        "out of stock": "out_of_stock",
-        "niedostępny": "out_of_stock",
-        "unavailable": "out_of_stock"
-    }
     
     # Update availability_status based on availability field
     update_query = """

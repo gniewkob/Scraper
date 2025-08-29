@@ -2,7 +2,6 @@
 """Test script to verify the new API endpoints work correctly."""
 
 import asyncio
-import json
 from backend.routes.search import search_products, get_statistics, get_cities, get_best_deals
 
 async def test_search_endpoint():
@@ -23,7 +22,7 @@ async def test_search_endpoint():
             sort_order="asc",
             conn=mock_conn
         )
-        print(f"✅ Search endpoint test passed")
+        print("✅ Search endpoint test passed")
         print(f"   Response structure: {list(result.keys())}")
         
     except Exception as e:
@@ -37,7 +36,7 @@ async def test_stats_endpoint():
     
     try:
         result = await get_statistics(conn=mock_conn)
-        print(f"✅ Stats endpoint test passed")
+        print("✅ Stats endpoint test passed")
         print(f"   Response structure: {list(result.keys())}")
         
     except Exception as e:
@@ -51,7 +50,7 @@ async def test_cities_endpoint():
     
     try:
         result = await get_cities(conn=mock_conn)
-        print(f"✅ Cities endpoint test passed")
+        print("✅ Cities endpoint test passed")
         print(f"   Response structure: {list(result.keys()) if result else 'Empty'}")
         
     except Exception as e:
@@ -65,7 +64,7 @@ async def test_best_deals_endpoint():
     
     try:
         result = await get_best_deals(limit=5, conn=mock_conn)
-        print(f"✅ Best deals endpoint test passed")
+        print("✅ Best deals endpoint test passed")
         print(f"   Response structure: {list(result.keys()) if result else 'Empty'}")
         
     except Exception as e:
@@ -86,5 +85,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 
