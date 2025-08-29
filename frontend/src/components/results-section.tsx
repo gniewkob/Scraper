@@ -101,11 +101,12 @@ export function ResultsSection({
                     </h4>
                     <p className="text-muted-foreground text-sm flex items-center gap-2">
                       {product.name}
-                      {product.strain_type && product.strain_type !== "unknown" && (
-                        <Badge variant="outline" className="text-xs">
-                          {product.strain_type} 💎
-                        </Badge>
-                      )}
+                      {product.strain_type &&
+                        product.strain_type !== "unknown" && (
+                          <Badge variant="outline" className="text-xs">
+                            {product.strain_type} 💎
+                          </Badge>
+                        )}
                     </p>
                   </div>
                   {index === 0 && (
@@ -175,4 +176,3 @@ export function ResultsSection({
     </div>
   )
 }
-
