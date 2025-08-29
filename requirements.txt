@@ -28,3 +28,4 @@ celery==5.5.3
 aiosqlite==0.21.0
 tenacity
 prometheus-client
+asyncpg==0.29.0

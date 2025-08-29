@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import logging
 from typing import Dict, Optional, AsyncIterator
 
 from sqlalchemy import select, text
@@ -21,6 +22,7 @@ from . import cities
 
 # cache of engines keyed by URL so modules can share a single instance
 _ENGINE_CACHE: Dict[str, AsyncEngine] = {}
+logger = logging.getLogger(__name__)
 
 
 def _ensure_db_dir(db_url: Optional[str], db_path: Optional[str]) -> None:
@@ -55,13 +57,34 @@ def get_engine(db_url: Optional[str] = None, db_path: Optional[str] = None) -> A
 
     engine = _ENGINE_CACHE.get(db_url)
     if engine is None:
-        engine = create_async_engine(
-            db_url,
-            pool_pre_ping=True,
-            pool_size=settings.db_pool_size,
-            max_overflow=settings.db_max_overflow,
-            future=True,
-        )
+        try:
+            engine = create_async_engine(
+                db_url,
+                pool_pre_ping=True,
+                pool_size=settings.db_pool_size,
+                max_overflow=settings.db_max_overflow,
+                future=True,
+            )
+        except ModuleNotFoundError as e:
+            # Graceful fallback for missing optional DB drivers (e.g., asyncpg during local dev)
+            if "asyncpg" in str(e):
+                from scraper.core.config import config as cfg
+
+                fb_path = db_path or cfg.DB_PATH
+                fb_url = f"sqlite+aiosqlite:///{fb_path}"
+                logger.warning(
+                    "Postgres driver 'asyncpg' missing. Falling back to SQLite at %s",
+                    fb_path,
+                )
+                engine = create_async_engine(
+                    fb_url,
+                    pool_pre_ping=True,
+                    future=True,
+                )
+                # Note: cache under the fallback URL to avoid mixing pools
+                _ENGINE_CACHE[fb_url] = engine
+                return engine
+            raise
 
         _ENGINE_CACHE[db_url] = engine  # cache fresh engine
     return engine
@@ -151,4 +174,3 @@ async def get_connection() -> AsyncIterator[AsyncConnection]:
     engine = get_engine()
     async with engine.begin() as conn:
         yield conn
-

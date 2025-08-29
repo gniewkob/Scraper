@@ -8,10 +8,9 @@
    - Environments: .env
 
  ✓ Starting...
- ✓ Ready in 2.6s
+ ✓ Ready in 2.2s
  ○ Compiling / ...
- ✓ Compiled / in 2.8s (887 modules)
- GET / 200 in 3385ms
- GET / 200 in 104ms
- GET / 200 in 168ms
-[?25h
+ ✓ Compiled / in 3.1s (887 modules)
+ GET / 200 in 3787ms
+ GET / 200 in 175ms
+ GET / 200 in 214ms

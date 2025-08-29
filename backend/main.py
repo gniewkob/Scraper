@@ -9,7 +9,9 @@ from typing import Any, Dict, List
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.db import dispose_engines, get_cities
+from backend.db import dispose_engines, get_cities, get_engine
+from backend.capabilities import refresh_capabilities, get_capabilities
+import os
 from backend.medical_api import router as medical_router
 from backend.routes import alerts, products, search
 from backend.utils import send_confirmation_sms  # noqa: F401
@@ -33,7 +35,15 @@ async def lifespan(app: FastAPI):
     """Manage application lifecycle."""
     # Startup
     logger.info("Application starting...")
-    
+    # Detect DB-driven capabilities once at startup
+    try:
+        engine = get_engine()
+        async with engine.begin() as conn:
+            await refresh_capabilities(conn)
+        logger.info(f"Capabilities: {get_capabilities()}")
+    except Exception as e:
+        logger.warning(f"Capability detection skipped due to error: {e}")
+
     yield
     
     # Shutdown
@@ -48,13 +58,39 @@ app = FastAPI(lifespan=lifespan)
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
 if allowed_origins_env:
     allow_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+    # Expand localhost/127.0.0.1 counterparts automatically for convenience in dev
+    try:
+        from urllib.parse import urlparse
+        extras = []
+        for origin in allow_origins:
+            parsed = urlparse(origin)
+            host = parsed.hostname
+            port = f":{parsed.port}" if parsed.port else ""
+            if host == "localhost":
+                extras.append(f"{parsed.scheme}://127.0.0.1{port}")
+            elif host == "127.0.0.1":
+                extras.append(f"{parsed.scheme}://localhost{port}")
+        for e in extras:
+            if e not in allow_origins:
+                allow_origins.append(e)
+    except Exception:
+        pass
 else:
     # Default to localhost dev origins plus known proxy domains used in production.
     # These proxy domains (smart.bodora.pl and backend.bodora.pl) route to localhost:PORT on the host.
+    # Include both localhost and 127.0.0.1 variants to avoid CORS preflight failures in some setups.
     allow_origins = [
+        # Common dev servers
         "http://localhost:3000",
-        "http://localhost:38273",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
         "http://localhost:61973",
+        "http://127.0.0.1:61973",
+        # Backend direct access (useful when opening static dashboard directly)
+        "http://localhost:38273",
+        "http://127.0.0.1:38273",
+        # Known proxy domains used in development / preview
         "https://smart.bodora.pl",  # → localhost:61973
         "https://backend.bodora.pl",  # → localhost:38273
     ]
@@ -119,7 +155,9 @@ def compute_price_info(offers: List[Dict[str, Any]]) -> Dict[str, Any]:
 # Include routers
 app.include_router(products.router)
 app.include_router(alerts.router)
-app.include_router(medical_router)
+# Enable mock API only when explicitly requested (default off)
+if os.getenv("ENABLE_MOCK_API", "false").lower() in ("1", "true", "yes"): 
+    app.include_router(medical_router)
 app.include_router(search.router)
 
 
@@ -127,6 +165,12 @@ app.include_router(search.router)
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy"}
+
+
+@app.get("/api/capabilities")
+async def capabilities():
+    """Return runtime feature flags derived from DB schema."""
+    return get_capabilities()
 
 
 # City coordinates cache

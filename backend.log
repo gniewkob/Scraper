@@ -1,23 +1,49 @@
-INFO:     Started server process [1769]
+INFO:     Started server process [30290]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:38273 (Press CTRL+C to quit)
-INFO:     127.0.0.1:59974 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59987 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59994 - "OPTIONS /api/cities HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:59995 - "OPTIONS /api/stats HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:59998 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60010 - "OPTIONS /api/cities HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60011 - "OPTIONS /api/stats HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60010 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60011 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60010 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60011 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60010 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60011 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60010 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     127.0.0.1:60011 - "OPTIONS /api/search HTTP/1.1" 400 Bad Request
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [1769]
+INFO:     127.0.0.1:55733 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55738 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55805 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55803 - "GET /api/cities_stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55804 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55807 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55805 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55807 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55803 - "GET /api/cities_stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55804 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55807 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55805 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55828 - "GET /api/cities_stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55829 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55832 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55831 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55871 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55869 - "GET /api/cities_stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55870 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55873 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55872 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55871 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55880 - "GET /api/stats?product_name=Cannabis+Flos+Thc+22+Cbd+1+Aurora+Delahaze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55880 - "GET /api/stats?product_name=Cannabis+Flos+Thc+20+Cbd+0+5+Canopy+Growth+Bakerstreet HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56316 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56315 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56314 - "GET /api/cities_stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56318 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56317 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56316 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56331 - "GET /api/stats?product_name=Cannabis+Flos+Thc+25+Cbd+0+5+Canopy+Growth+Original+Gangster+Deluxe+D+Krypton+Marihuana+Lec HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56332 - "GET /api/search?product_name=Cannabis+Flos+Thc+25+Cbd+0+5+Canopy+Growth+Original+Gangster+Deluxe+D+Krypton+Marihuana+Lec&sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56333 - "GET /api/stats?product_name=Cannabis+Flos+Thc+25+Cbd+0+5+Canopy+Growth+Original+Gangster+Deluxe+D+Krypton+Marihuana+Lec HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56830 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56829 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56832 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56828 - "GET /api/cities_stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56831 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56830 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56862 - "GET /api/search?sort_by=price&sort_order=asc&limit=10&offset=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "GET /api/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56864 - "GET /api/search?sort_by=price&sort_order=asc&limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "GET /api/stats HTTP/1.1" 200 OK

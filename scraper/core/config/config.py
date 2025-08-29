@@ -9,8 +9,8 @@ DB_PATH = os.getenv(
 
 # Ustawienia połączeń zewnętrznych baz/API
 # --------------------------------------------------
-# Pełny URL połączenia ma najwyższy priorytet
-DB_URL = os.getenv("DB_URL")
+# Pełny URL połączenia ma najwyższy priorytet. Wspieramy zarówno DATABASE_URL jak i DB_URL.
+DB_URL = os.getenv("DATABASE_URL") or os.getenv("DB_URL")
 if DB_URL:
     DB_TYPE = DB_URL.split("://", 1)[0]
 else:

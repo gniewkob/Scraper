@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react"
 import { TrendingUp, Users, MapPin, Clock } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import { apiClient, type StatsResponse } from "@/lib/api"
+import { apiClient, type StatsResponse, type SearchFilters } from "@/lib/api"
 
-export function StatsSection() {
+interface Props { filters?: Partial<SearchFilters> | null }
+
+export function StatsSection({ filters }: Props) {
   const [stats, setStats] = useState<StatsResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -15,7 +17,7 @@ export function StatsSection() {
       try {
         setLoading(true)
         setError(null)
-        const statsData = await apiClient.getStats()
+        const statsData = await apiClient.getStats(filters || undefined)
         setStats(statsData)
       } catch (error) {
         console.error("Failed to load stats:", error)
@@ -25,7 +27,7 @@ export function StatsSection() {
       }
     }
     loadStats()
-  }, [])
+  }, [filters])
 
   if (loading) {
     return (
