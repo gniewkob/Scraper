@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # Python dependencies (pip)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["deps", "python"]
+    commit-message:
+      prefix: "chore(deps)"
+    allow:
+      - dependency-type: "all"
+    ignore:
+      # Ignore pre-releases
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Node (frontend)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["deps", "frontend"]
+    commit-message:
+      prefix: "chore(deps)"
+    allow:
+      - dependency-type: "all"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
