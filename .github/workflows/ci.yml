@@ -90,31 +90,31 @@ jobs:
           set -e
           if [ ! -f audit.json ]; then pip-audit -l -f json --progress-spinner off > audit.json || true; fi
           python - <<'PY'
-import json, sys
-from pathlib import Path
-p = Path('audit.json')
-if not p.exists():
-    print('No audit.json found; skipping fail-on-critical.')
-    sys.exit(0)
-data = json.loads(p.read_text() or '[]')
-crit = []
-for pkg in data:
-    for v in pkg.get('vulns', []) or []:
-        sev = (v.get('severity') or v.get('advisory', {}).get('severity') or '').upper()
-        if sev == 'CRITICAL':
-            crit.append({
-                'package': f"{pkg.get('name')}=={pkg.get('version')}",
-                'id': v.get('id'),
-                'severity': sev,
-                'fix_versions': v.get('fix_versions')
-            })
-if crit:
-    print('Critical vulnerabilities found:')
-    for c in crit:
-        print(f" - {c['package']}: {c['id']} (severity={c['severity']}) fix: {c['fix_versions']}")
-    sys.exit(1)
-print('No critical vulnerabilities found.')
-PY
+          import json, sys
+          from pathlib import Path
+          p = Path('audit.json')
+          if not p.exists():
+              print('No audit.json found; skipping fail-on-critical.')
+              sys.exit(0)
+          data = json.loads(p.read_text() or '[]')
+          crit = []
+          for pkg in data:
+              for v in (pkg.get('vulns') or []):
+                  sev = (v.get('severity') or (v.get('advisory') or {}).get('severity') or '').upper()
+                  if sev == 'CRITICAL':
+                      crit.append({
+                          'package': f"{pkg.get('name')}=={pkg.get('version')}",
+                          'id': v.get('id'),
+                          'severity': sev,
+                          'fix_versions': v.get('fix_versions')
+                      })
+          if crit:
+              print('Critical vulnerabilities found:')
+              for c in crit:
+                  print(f" - {c['package']}: {c['id']} (severity={c['severity']}) fix: {c['fix_versions']}")
+              sys.exit(1)
+          print('No critical vulnerabilities found.')
+          PY
 
       # --- Systemowe biblioteki dla Chrome (Ubuntu 24.04) ---
       - name: Install system deps for headless browsers
