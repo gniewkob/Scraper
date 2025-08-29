@@ -1,1 +1,5853 @@
-"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[143],{1539:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Zap",[["path",{d:"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",key:"1xq2db"}]])},2085:(e,t,r)=>{r.d(t,{F:()=>i});var n=r(2596);let o=e=>"boolean"==typeof e?`${e}`:0===e?"0":e,l=n.$,i=(e,t)=>r=>{var n;if((null==t?void 0:t.variants)==null)return l(e,null==r?void 0:r.class,null==r?void 0:r.className);let{variants:i,defaultVariants:a}=t,s=Object.keys(i).map(e=>{let t=null==r?void 0:r[e],n=null==a?void 0:a[e];if(null===t)return null;let l=o(t)||o(n);return i[e][l]}),c=r&&Object.entries(r).reduce((e,t)=>{let[r,n]=t;return void 0===n||(e[r]=n),e},{});return l(e,s,null==t?void 0:null===(n=t.compoundVariants)||void 0===n?void 0:n.reduce((e,t)=>{let{class:r,className:n,...o}=t;return Object.entries(o).every(e=>{let[t,r]=e;return Array.isArray(r)?r.includes({...a,...c}[t]):({...a,...c})[t]===r})?[...e,r,n]:e},[]),null==r?void 0:r.class,null==r?void 0:r.className)}},2596:(e,t,r)=>{r.d(t,{$:()=>n});function n(){for(var e,t,r=0,n="",o=arguments.length;r<o;r++)(e=arguments[r])&&(t=function e(t){var r,n,o="";if("string"==typeof t||"number"==typeof t)o+=t;else if("object"==typeof t){if(Array.isArray(t)){var l=t.length;for(r=0;r<l;r++)t[r]&&(n=e(t[r]))&&(o&&(o+=" "),o+=n)}else for(n in t)t[n]&&(o&&(o+=" "),o+=n)}return o}(e))&&(n&&(n+=" "),n+=t);return n}},3109:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("TrendingUp",[["polyline",{points:"22 7 13.5 15.5 8.5 10.5 2 17",key:"126l90"}],["polyline",{points:"16 7 22 7 22 13",key:"kwv8wd"}]])},3311:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Sparkles",[["path",{d:"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z",key:"4pj2yx"}],["path",{d:"M20 3v4",key:"1olli1"}],["path",{d:"M22 5h-4",key:"1gvqau"}],["path",{d:"M4 17v2",key:"vumght"}],["path",{d:"M5 18H3",key:"zchphs"}]])},3384:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Leaf",[["path",{d:"M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z",key:"nnexq3"}],["path",{d:"M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12",key:"mt58a7"}]])},4186:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Clock",[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["polyline",{points:"12 6 12 12 16 14",key:"68esgv"}]])},4516:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("MapPin",[["path",{d:"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",key:"1r0f0z"}],["circle",{cx:"12",cy:"10",r:"3",key:"ilqhr7"}]])},5196:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Check",[["path",{d:"M20 6 9 17l-5-5",key:"1gmf2c"}]])},6474:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("ChevronDown",[["path",{d:"m6 9 6 6 6-6",key:"qrunsl"}]])},6634:(e,t,r)=>{r.d(t,{DX:()=>a,TL:()=>i});var n=r(2115);function o(e,t){if("function"==typeof e)return e(t);null!=e&&(e.current=t)}var l=r(5155);function i(e){let t=function(e){let t=n.forwardRef((e,t)=>{let{children:r,...l}=e;if(n.isValidElement(r)){var i;let e,a;let s=(i=r,(a=(e=Object.getOwnPropertyDescriptor(i.props,"ref")?.get)&&"isReactWarning"in e&&e.isReactWarning)?i.ref:(a=(e=Object.getOwnPropertyDescriptor(i,"ref")?.get)&&"isReactWarning"in e&&e.isReactWarning)?i.props.ref:i.props.ref||i.ref),c=function(e,t){let r={...t};for(let n in t){let o=e[n],l=t[n];/^on[A-Z]/.test(n)?o&&l?r[n]=(...e)=>{let t=l(...e);return o(...e),t}:o&&(r[n]=o):"style"===n?r[n]={...o,...l}:"className"===n&&(r[n]=[o,l].filter(Boolean).join(" "))}return{...e,...r}}(l,r.props);return r.type!==n.Fragment&&(c.ref=t?function(...e){return t=>{let r=!1,n=e.map(e=>{let n=o(e,t);return r||"function"!=typeof n||(r=!0),n});if(r)return()=>{for(let t=0;t<n.length;t++){let r=n[t];"function"==typeof r?r():o(e[t],null)}}}}(t,s):s),n.cloneElement(r,c)}return n.Children.count(r)>1?n.Children.only(null):null});return t.displayName=`${e}.SlotClone`,t}(e),r=n.forwardRef((e,r)=>{let{children:o,...i}=e,a=n.Children.toArray(o),s=a.find(c);if(s){let e=s.props.children,o=a.map(t=>t!==s?t:n.Children.count(e)>1?n.Children.only(null):n.isValidElement(e)?e.props.children:null);return(0,l.jsx)(t,{...i,ref:r,children:n.isValidElement(e)?n.cloneElement(e,void 0,o):null})}return(0,l.jsx)(t,{...i,ref:r,children:o})});return r.displayName=`${e}.Slot`,r}var a=i("Slot"),s=Symbol("radix.slottable");function c(e){return n.isValidElement(e)&&"function"==typeof e.type&&"__radixId"in e.type&&e.type.__radixId===s}},7027:(e,t,r)=>{r.d(t,{UC:()=>nv,In:()=>nh,q7:()=>ny,VF:()=>nw,p4:()=>nb,ZL:()=>nm,bL:()=>nd,wn:()=>nE,PP:()=>nx,l9:()=>nf,WT:()=>np,LM:()=>ng});var n,o,l,i=r(2115),a=r.t(i,2),s=r(7650);function c(e,[t,r]){return Math.min(r,Math.max(t,e))}var u=!!("undefined"!=typeof window&&window.document&&window.document.createElement);function d(e,t,{checkForDefaultPrevented:r=!0}={}){return function(n){if(e?.(n),!1===r||!n.defaultPrevented)return t?.(n)}}function f(e,t,r){if(!t.has(e))throw TypeError("attempted to "+r+" private field on non-instance");return t.get(e)}function p(e,t){var r=f(e,t,"get");return r.get?r.get.call(e):r.value}function h(e,t,r){var n=f(e,t,"set");return!function(e,t,r){if(t.set)t.set.call(e,r);else{if(!t.writable)throw TypeError("attempted to set read only private field");t.value=r}}(e,n,r),r}var m=r(5155);function v(e,t=[]){let r=[],n=()=>{let t=r.map(e=>i.createContext(e));return function(r){let n=r?.[e]||t;return i.useMemo(()=>({[`__scope${e}`]:{...r,[e]:n}}),[r,n])}};return n.scopeName=e,[function(t,n){let o=i.createContext(n),l=r.length;r=[...r,n];let a=t=>{let{scope:r,children:n,...a}=t,s=r?.[e]?.[l]||o,c=i.useMemo(()=>a,Object.values(a));return(0,m.jsx)(s.Provider,{value:c,children:n})};return a.displayName=t+"Provider",[a,function(r,a){let s=a?.[e]?.[l]||o,c=i.useContext(s);if(c)return c;if(void 0!==n)return n;throw Error(`\`${r}\` must be used within \`${t}\``)}]},function(...e){let t=e[0];if(1===e.length)return t;let r=()=>{let r=e.map(e=>({useScope:e(),scopeName:e.scopeName}));return function(e){let n=r.reduce((t,{useScope:r,scopeName:n})=>{let o=r(e)[`__scope${n}`];return{...t,...o}},{});return i.useMemo(()=>({[`__scope${t.scopeName}`]:n}),[n])}};return r.scopeName=t.scopeName,r}(n,...t)]}function g(e,t){if("function"==typeof e)return e(t);null!=e&&(e.current=t)}function y(...e){return i.useCallback(function(...e){return t=>{let r=!1,n=e.map(e=>{let n=g(e,t);return r||"function"!=typeof n||(r=!0),n});if(r)return()=>{for(let t=0;t<n.length;t++){let r=n[t];"function"==typeof r?r():g(e[t],null)}}}}(...e),e)}var b=r(6634),w=new WeakMap;function x(e,t){if("at"in Array.prototype)return Array.prototype.at.call(e,t);let r=function(e,t){let r=e.length,n=E(t),o=n>=0?n:r+n;return o<0||o>=r?-1:o}(e,t);return -1===r?void 0:e[r]}function E(e){return e!=e||0===e?0:Math.trunc(e)}n=new WeakMap;var S=i.createContext(void 0),k=["a","button","div","form","h2","h3","img","input","label","li","nav","ol","p","select","span","svg","ul"].reduce((e,t)=>{let r=(0,b.TL)(`Primitive.${t}`),n=i.forwardRef((e,n)=>{let{asChild:o,...l}=e;return"undefined"!=typeof window&&(window[Symbol.for("radix-ui")]=!0),(0,m.jsx)(o?r:t,{...l,ref:n})});return n.displayName=`Primitive.${t}`,{...e,[t]:n}},{});function C(e){let t=i.useRef(e);return i.useEffect(()=>{t.current=e}),i.useMemo(()=>(...e)=>t.current?.(...e),[])}var R="dismissableLayer.update",A=i.createContext({layers:new Set,layersWithOutsidePointerEventsDisabled:new Set,branches:new Set}),T=i.forwardRef((e,t)=>{var r,n;let{disableOutsidePointerEvents:l=!1,onEscapeKeyDown:a,onPointerDownOutside:s,onFocusOutside:c,onInteractOutside:u,onDismiss:f,...p}=e,h=i.useContext(A),[v,g]=i.useState(null),b=null!==(n=null==v?void 0:v.ownerDocument)&&void 0!==n?n:null===(r=globalThis)||void 0===r?void 0:r.document,[,w]=i.useState({}),x=y(t,e=>g(e)),E=Array.from(h.layers),[S]=[...h.layersWithOutsidePointerEventsDisabled].slice(-1),T=E.indexOf(S),j=v?E.indexOf(v):-1,M=h.layersWithOutsidePointerEventsDisabled.size>0,N=j>=T,O=function(e){var t;let r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null===(t=globalThis)||void 0===t?void 0:t.document,n=C(e),o=i.useRef(!1),l=i.useRef(()=>{});return i.useEffect(()=>{let e=e=>{if(e.target&&!o.current){let t=function(){L("dismissableLayer.pointerDownOutside",n,o,{discrete:!0})},o={originalEvent:e};"touch"===e.pointerType?(r.removeEventListener("click",l.current),l.current=t,r.addEventListener("click",l.current,{once:!0})):t()}else r.removeEventListener("click",l.current);o.current=!1},t=window.setTimeout(()=>{r.addEventListener("pointerdown",e)},0);return()=>{window.clearTimeout(t),r.removeEventListener("pointerdown",e),r.removeEventListener("click",l.current)}},[r,n]),{onPointerDownCapture:()=>o.current=!0}}(e=>{let t=e.target,r=[...h.branches].some(e=>e.contains(t));!N||r||(null==s||s(e),null==u||u(e),e.defaultPrevented||null==f||f())},b),D=function(e){var t;let r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null===(t=globalThis)||void 0===t?void 0:t.document,n=C(e),o=i.useRef(!1);return i.useEffect(()=>{let e=e=>{e.target&&!o.current&&L("dismissableLayer.focusOutside",n,{originalEvent:e},{discrete:!1})};return r.addEventListener("focusin",e),()=>r.removeEventListener("focusin",e)},[r,n]),{onFocusCapture:()=>o.current=!0,onBlurCapture:()=>o.current=!1}}(e=>{let t=e.target;[...h.branches].some(e=>e.contains(t))||(null==c||c(e),null==u||u(e),e.defaultPrevented||null==f||f())},b);return!function(e,t=globalThis?.document){let r=C(e);i.useEffect(()=>{let e=e=>{"Escape"===e.key&&r(e)};return t.addEventListener("keydown",e,{capture:!0}),()=>t.removeEventListener("keydown",e,{capture:!0})},[r,t])}(e=>{j===h.layers.size-1&&(null==a||a(e),!e.defaultPrevented&&f&&(e.preventDefault(),f()))},b),i.useEffect(()=>{if(v)return l&&(0===h.layersWithOutsidePointerEventsDisabled.size&&(o=b.body.style.pointerEvents,b.body.style.pointerEvents="none"),h.layersWithOutsidePointerEventsDisabled.add(v)),h.layers.add(v),P(),()=>{l&&1===h.layersWithOutsidePointerEventsDisabled.size&&(b.body.style.pointerEvents=o)}},[v,b,l,h]),i.useEffect(()=>()=>{v&&(h.layers.delete(v),h.layersWithOutsidePointerEventsDisabled.delete(v),P())},[v,h]),i.useEffect(()=>{let e=()=>w({});return document.addEventListener(R,e),()=>document.removeEventListener(R,e)},[]),(0,m.jsx)(k.div,{...p,ref:x,style:{pointerEvents:M?N?"auto":"none":void 0,...e.style},onFocusCapture:d(e.onFocusCapture,D.onFocusCapture),onBlurCapture:d(e.onBlurCapture,D.onBlurCapture),onPointerDownCapture:d(e.onPointerDownCapture,O.onPointerDownCapture)})});function P(){let e=new CustomEvent(R);document.dispatchEvent(e)}function L(e,t,r,n){let{discrete:o}=n,l=r.originalEvent.target,i=new CustomEvent(e,{bubbles:!1,cancelable:!0,detail:r});if(t&&l.addEventListener(e,t,{once:!0}),o)l&&s.flushSync(()=>l.dispatchEvent(i));else l.dispatchEvent(i)}T.displayName="DismissableLayer",i.forwardRef((e,t)=>{let r=i.useContext(A),n=i.useRef(null),o=y(t,n);return i.useEffect(()=>{let e=n.current;if(e)return r.branches.add(e),()=>{r.branches.delete(e)}},[r.branches]),(0,m.jsx)(k.div,{...e,ref:o})}).displayName="DismissableLayerBranch";var j=0;function M(){let e=document.createElement("span");return e.setAttribute("data-radix-focus-guard",""),e.tabIndex=0,e.style.outline="none",e.style.opacity="0",e.style.position="fixed",e.style.pointerEvents="none",e}var N="focusScope.autoFocusOnMount",O="focusScope.autoFocusOnUnmount",D={bubbles:!1,cancelable:!0},z=i.forwardRef((e,t)=>{let{loop:r=!1,trapped:n=!1,onMountAutoFocus:o,onUnmountAutoFocus:l,...a}=e,[s,c]=i.useState(null),u=C(o),d=C(l),f=i.useRef(null),p=y(t,e=>c(e)),h=i.useRef({paused:!1,pause(){this.paused=!0},resume(){this.paused=!1}}).current;i.useEffect(()=>{if(n){let e=function(e){if(h.paused||!s)return;let t=e.target;s.contains(t)?f.current=t:F(f.current,{select:!0})},t=function(e){if(h.paused||!s)return;let t=e.relatedTarget;null===t||s.contains(t)||F(f.current,{select:!0})};document.addEventListener("focusin",e),document.addEventListener("focusout",t);let r=new MutationObserver(function(e){if(document.activeElement===document.body)for(let t of e)t.removedNodes.length>0&&F(s)});return s&&r.observe(s,{childList:!0,subtree:!0}),()=>{document.removeEventListener("focusin",e),document.removeEventListener("focusout",t),r.disconnect()}}},[n,s,h.paused]),i.useEffect(()=>{if(s){H.add(h);let e=document.activeElement;if(!s.contains(e)){let t=new CustomEvent(N,D);s.addEventListener(N,u),s.dispatchEvent(t),t.defaultPrevented||(function(e){let{select:t=!1}=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},r=document.activeElement;for(let n of e)if(F(n,{select:t}),document.activeElement!==r)return}(I(s).filter(e=>"A"!==e.tagName),{select:!0}),document.activeElement===e&&F(s))}return()=>{s.removeEventListener(N,u),setTimeout(()=>{let t=new CustomEvent(O,D);s.addEventListener(O,d),s.dispatchEvent(t),t.defaultPrevented||F(null!=e?e:document.body,{select:!0}),s.removeEventListener(O,d),H.remove(h)},0)}}},[s,u,d,h]);let v=i.useCallback(e=>{if(!r&&!n||h.paused)return;let t="Tab"===e.key&&!e.altKey&&!e.ctrlKey&&!e.metaKey,o=document.activeElement;if(t&&o){let t=e.currentTarget,[n,l]=function(e){let t=I(e);return[W(t,e),W(t.reverse(),e)]}(t);n&&l?e.shiftKey||o!==l?e.shiftKey&&o===n&&(e.preventDefault(),r&&F(l,{select:!0})):(e.preventDefault(),r&&F(n,{select:!0})):o===t&&e.preventDefault()}},[r,n,h.paused]);return(0,m.jsx)(k.div,{tabIndex:-1,...a,ref:p,onKeyDown:v})});function I(e){let t=[],r=document.createTreeWalker(e,NodeFilter.SHOW_ELEMENT,{acceptNode:e=>{let t="INPUT"===e.tagName&&"hidden"===e.type;return e.disabled||e.hidden||t?NodeFilter.FILTER_SKIP:e.tabIndex>=0?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP}});for(;r.nextNode();)t.push(r.currentNode);return t}function W(e,t){for(let r of e)if(!function(e,t){let{upTo:r}=t;if("hidden"===getComputedStyle(e).visibility)return!0;for(;e&&(void 0===r||e!==r);){if("none"===getComputedStyle(e).display)return!0;e=e.parentElement}return!1}(r,{upTo:t}))return r}function F(e){let{select:t=!1}=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};if(e&&e.focus){var r;let n=document.activeElement;e.focus({preventScroll:!0}),e!==n&&(r=e)instanceof HTMLInputElement&&"select"in r&&t&&e.select()}}z.displayName="FocusScope";var H=function(){let e=[];return{add(t){let r=e[0];t!==r&&(null==r||r.pause()),(e=B(e,t)).unshift(t)},remove(t){var r;null===(r=(e=B(e,t))[0])||void 0===r||r.resume()}}}();function B(e,t){let r=[...e],n=r.indexOf(t);return -1!==n&&r.splice(n,1),r}var _=globalThis?.document?i.useLayoutEffect:()=>{},V=a[" useId ".trim().toString()]||(()=>void 0),$=0;function K(e){let[t,r]=i.useState(V());return _(()=>{e||r(e=>e??String($++))},[e]),e||(t?`radix-${t}`:"")}let q=["top","right","bottom","left"],U=Math.min,X=Math.max,Y=Math.round,G=Math.floor,Z=e=>({x:e,y:e}),Q={left:"right",right:"left",bottom:"top",top:"bottom"},J={start:"end",end:"start"};function ee(e,t){return"function"==typeof e?e(t):e}function et(e){return e.split("-")[0]}function er(e){return e.split("-")[1]}function en(e){return"x"===e?"y":"x"}function eo(e){return"y"===e?"height":"width"}let el=new Set(["top","bottom"]);function ei(e){return el.has(et(e))?"y":"x"}function ea(e){return e.replace(/start|end/g,e=>J[e])}let es=["left","right"],ec=["right","left"],eu=["top","bottom"],ed=["bottom","top"];function ef(e){return e.replace(/left|right|bottom|top/g,e=>Q[e])}function ep(e){return"number"!=typeof e?{top:0,right:0,bottom:0,left:0,...e}:{top:e,right:e,bottom:e,left:e}}function eh(e){let{x:t,y:r,width:n,height:o}=e;return{width:n,height:o,top:r,left:t,right:t+n,bottom:r+o,x:t,y:r}}function em(e,t,r){let n,{reference:o,floating:l}=e,i=ei(t),a=en(ei(t)),s=eo(a),c=et(t),u="y"===i,d=o.x+o.width/2-l.width/2,f=o.y+o.height/2-l.height/2,p=o[s]/2-l[s]/2;switch(c){case"top":n={x:d,y:o.y-l.height};break;case"bottom":n={x:d,y:o.y+o.height};break;case"right":n={x:o.x+o.width,y:f};break;case"left":n={x:o.x-l.width,y:f};break;default:n={x:o.x,y:o.y}}switch(er(t)){case"start":n[a]-=p*(r&&u?-1:1);break;case"end":n[a]+=p*(r&&u?-1:1)}return n}let ev=async(e,t,r)=>{let{placement:n="bottom",strategy:o="absolute",middleware:l=[],platform:i}=r,a=l.filter(Boolean),s=await (null==i.isRTL?void 0:i.isRTL(t)),c=await i.getElementRects({reference:e,floating:t,strategy:o}),{x:u,y:d}=em(c,n,s),f=n,p={},h=0;for(let r=0;r<a.length;r++){let{name:l,fn:m}=a[r],{x:v,y:g,data:y,reset:b}=await m({x:u,y:d,initialPlacement:n,placement:f,strategy:o,middlewareData:p,rects:c,platform:i,elements:{reference:e,floating:t}});u=null!=v?v:u,d=null!=g?g:d,p={...p,[l]:{...p[l],...y}},b&&h<=50&&(h++,"object"==typeof b&&(b.placement&&(f=b.placement),b.rects&&(c=!0===b.rects?await i.getElementRects({reference:e,floating:t,strategy:o}):b.rects),{x:u,y:d}=em(c,f,s)),r=-1)}return{x:u,y:d,placement:f,strategy:o,middlewareData:p}};async function eg(e,t){var r;void 0===t&&(t={});let{x:n,y:o,platform:l,rects:i,elements:a,strategy:s}=e,{boundary:c="clippingAncestors",rootBoundary:u="viewport",elementContext:d="floating",altBoundary:f=!1,padding:p=0}=ee(t,e),h=ep(p),m=a[f?"floating"===d?"reference":"floating":d],v=eh(await l.getClippingRect({element:null==(r=await (null==l.isElement?void 0:l.isElement(m)))||r?m:m.contextElement||await (null==l.getDocumentElement?void 0:l.getDocumentElement(a.floating)),boundary:c,rootBoundary:u,strategy:s})),g="floating"===d?{x:n,y:o,width:i.floating.width,height:i.floating.height}:i.reference,y=await (null==l.getOffsetParent?void 0:l.getOffsetParent(a.floating)),b=await (null==l.isElement?void 0:l.isElement(y))&&await (null==l.getScale?void 0:l.getScale(y))||{x:1,y:1},w=eh(l.convertOffsetParentRelativeRectToViewportRelativeRect?await l.convertOffsetParentRelativeRectToViewportRelativeRect({elements:a,rect:g,offsetParent:y,strategy:s}):g);return{top:(v.top-w.top+h.top)/b.y,bottom:(w.bottom-v.bottom+h.bottom)/b.y,left:(v.left-w.left+h.left)/b.x,right:(w.right-v.right+h.right)/b.x}}function ey(e,t){return{top:e.top-t.height,right:e.right-t.width,bottom:e.bottom-t.height,left:e.left-t.width}}function eb(e){return q.some(t=>e[t]>=0)}let ew=new Set(["left","top"]);async function ex(e,t){let{placement:r,platform:n,elements:o}=e,l=await (null==n.isRTL?void 0:n.isRTL(o.floating)),i=et(r),a=er(r),s="y"===ei(r),c=ew.has(i)?-1:1,u=l&&s?-1:1,d=ee(t,e),{mainAxis:f,crossAxis:p,alignmentAxis:h}="number"==typeof d?{mainAxis:d,crossAxis:0,alignmentAxis:null}:{mainAxis:d.mainAxis||0,crossAxis:d.crossAxis||0,alignmentAxis:d.alignmentAxis};return a&&"number"==typeof h&&(p="end"===a?-1*h:h),s?{x:p*u,y:f*c}:{x:f*c,y:p*u}}function eE(){return"undefined"!=typeof window}function eS(e){return eR(e)?(e.nodeName||"").toLowerCase():"#document"}function ek(e){var t;return(null==e||null==(t=e.ownerDocument)?void 0:t.defaultView)||window}function eC(e){var t;return null==(t=(eR(e)?e.ownerDocument:e.document)||window.document)?void 0:t.documentElement}function eR(e){return!!eE()&&(e instanceof Node||e instanceof ek(e).Node)}function eA(e){return!!eE()&&(e instanceof Element||e instanceof ek(e).Element)}function eT(e){return!!eE()&&(e instanceof HTMLElement||e instanceof ek(e).HTMLElement)}function eP(e){return!!eE()&&"undefined"!=typeof ShadowRoot&&(e instanceof ShadowRoot||e instanceof ek(e).ShadowRoot)}let eL=new Set(["inline","contents"]);function ej(e){let{overflow:t,overflowX:r,overflowY:n,display:o}=e_(e);return/auto|scroll|overlay|hidden|clip/.test(t+n+r)&&!eL.has(o)}let eM=new Set(["table","td","th"]),eN=[":popover-open",":modal"];function eO(e){return eN.some(t=>{try{return e.matches(t)}catch(e){return!1}})}let eD=["transform","translate","scale","rotate","perspective"],ez=["transform","translate","scale","rotate","perspective","filter"],eI=["paint","layout","strict","content"];function eW(e){let t=eF(),r=eA(e)?e_(e):e;return eD.some(e=>!!r[e]&&"none"!==r[e])||!!r.containerType&&"normal"!==r.containerType||!t&&!!r.backdropFilter&&"none"!==r.backdropFilter||!t&&!!r.filter&&"none"!==r.filter||ez.some(e=>(r.willChange||"").includes(e))||eI.some(e=>(r.contain||"").includes(e))}function eF(){return"undefined"!=typeof CSS&&!!CSS.supports&&CSS.supports("-webkit-backdrop-filter","none")}let eH=new Set(["html","body","#document"]);function eB(e){return eH.has(eS(e))}function e_(e){return ek(e).getComputedStyle(e)}function eV(e){return eA(e)?{scrollLeft:e.scrollLeft,scrollTop:e.scrollTop}:{scrollLeft:e.scrollX,scrollTop:e.scrollY}}function e$(e){if("html"===eS(e))return e;let t=e.assignedSlot||e.parentNode||eP(e)&&e.host||eC(e);return eP(t)?t.host:t}function eK(e,t,r){var n;void 0===t&&(t=[]),void 0===r&&(r=!0);let o=function e(t){let r=e$(t);return eB(r)?t.ownerDocument?t.ownerDocument.body:t.body:eT(r)&&ej(r)?r:e(r)}(e),l=o===(null==(n=e.ownerDocument)?void 0:n.body),i=ek(o);if(l){let e=eq(i);return t.concat(i,i.visualViewport||[],ej(o)?o:[],e&&r?eK(e):[])}return t.concat(o,eK(o,[],r))}function eq(e){return e.parent&&Object.getPrototypeOf(e.parent)?e.frameElement:null}function eU(e){let t=e_(e),r=parseFloat(t.width)||0,n=parseFloat(t.height)||0,o=eT(e),l=o?e.offsetWidth:r,i=o?e.offsetHeight:n,a=Y(r)!==l||Y(n)!==i;return a&&(r=l,n=i),{width:r,height:n,$:a}}function eX(e){return eA(e)?e:e.contextElement}function eY(e){let t=eX(e);if(!eT(t))return Z(1);let r=t.getBoundingClientRect(),{width:n,height:o,$:l}=eU(t),i=(l?Y(r.width):r.width)/n,a=(l?Y(r.height):r.height)/o;return i&&Number.isFinite(i)||(i=1),a&&Number.isFinite(a)||(a=1),{x:i,y:a}}let eG=Z(0);function eZ(e){let t=ek(e);return eF()&&t.visualViewport?{x:t.visualViewport.offsetLeft,y:t.visualViewport.offsetTop}:eG}function eQ(e,t,r,n){var o;void 0===t&&(t=!1),void 0===r&&(r=!1);let l=e.getBoundingClientRect(),i=eX(e),a=Z(1);t&&(n?eA(n)&&(a=eY(n)):a=eY(e));let s=(void 0===(o=r)&&(o=!1),n&&(!o||n===ek(i))&&o)?eZ(i):Z(0),c=(l.left+s.x)/a.x,u=(l.top+s.y)/a.y,d=l.width/a.x,f=l.height/a.y;if(i){let e=ek(i),t=n&&eA(n)?ek(n):n,r=e,o=eq(r);for(;o&&n&&t!==r;){let e=eY(o),t=o.getBoundingClientRect(),n=e_(o),l=t.left+(o.clientLeft+parseFloat(n.paddingLeft))*e.x,i=t.top+(o.clientTop+parseFloat(n.paddingTop))*e.y;c*=e.x,u*=e.y,d*=e.x,f*=e.y,c+=l,u+=i,o=eq(r=ek(o))}}return eh({width:d,height:f,x:c,y:u})}function eJ(e,t){let r=eV(e).scrollLeft;return t?t.left+r:eQ(eC(e)).left+r}function e0(e,t,r){void 0===r&&(r=!1);let n=e.getBoundingClientRect();return{x:n.left+t.scrollLeft-(r?0:eJ(e,n)),y:n.top+t.scrollTop}}let e1=new Set(["absolute","fixed"]);function e2(e,t,r){let n;if("viewport"===t)n=function(e,t){let r=ek(e),n=eC(e),o=r.visualViewport,l=n.clientWidth,i=n.clientHeight,a=0,s=0;if(o){l=o.width,i=o.height;let e=eF();(!e||e&&"fixed"===t)&&(a=o.offsetLeft,s=o.offsetTop)}return{width:l,height:i,x:a,y:s}}(e,r);else if("document"===t)n=function(e){let t=eC(e),r=eV(e),n=e.ownerDocument.body,o=X(t.scrollWidth,t.clientWidth,n.scrollWidth,n.clientWidth),l=X(t.scrollHeight,t.clientHeight,n.scrollHeight,n.clientHeight),i=-r.scrollLeft+eJ(e),a=-r.scrollTop;return"rtl"===e_(n).direction&&(i+=X(t.clientWidth,n.clientWidth)-o),{width:o,height:l,x:i,y:a}}(eC(e));else if(eA(t))n=function(e,t){let r=eQ(e,!0,"fixed"===t),n=r.top+e.clientTop,o=r.left+e.clientLeft,l=eT(e)?eY(e):Z(1),i=e.clientWidth*l.x,a=e.clientHeight*l.y;return{width:i,height:a,x:o*l.x,y:n*l.y}}(t,r);else{let r=eZ(e);n={x:t.x-r.x,y:t.y-r.y,width:t.width,height:t.height}}return eh(n)}function e5(e){return"static"===e_(e).position}function e9(e,t){if(!eT(e)||"fixed"===e_(e).position)return null;if(t)return t(e);let r=e.offsetParent;return eC(e)===r&&(r=r.ownerDocument.body),r}function e6(e,t){var r;let n=ek(e);if(eO(e))return n;if(!eT(e)){let t=e$(e);for(;t&&!eB(t);){if(eA(t)&&!e5(t))return t;t=e$(t)}return n}let o=e9(e,t);for(;o&&(r=o,eM.has(eS(r)))&&e5(o);)o=e9(o,t);return o&&eB(o)&&e5(o)&&!eW(o)?n:o||function(e){let t=e$(e);for(;eT(t)&&!eB(t);){if(eW(t))return t;if(eO(t))break;t=e$(t)}return null}(e)||n}let e3=async function(e){let t=this.getOffsetParent||e6,r=this.getDimensions,n=await r(e.floating);return{reference:function(e,t,r){let n=eT(t),o=eC(t),l="fixed"===r,i=eQ(e,!0,l,t),a={scrollLeft:0,scrollTop:0},s=Z(0);if(n||!n&&!l){if(("body"!==eS(t)||ej(o))&&(a=eV(t)),n){let e=eQ(t,!0,l,t);s.x=e.x+t.clientLeft,s.y=e.y+t.clientTop}else o&&(s.x=eJ(o))}l&&!n&&o&&(s.x=eJ(o));let c=!o||n||l?Z(0):e0(o,a);return{x:i.left+a.scrollLeft-s.x-c.x,y:i.top+a.scrollTop-s.y-c.y,width:i.width,height:i.height}}(e.reference,await t(e.floating),e.strategy),floating:{x:0,y:0,width:n.width,height:n.height}}},e4={convertOffsetParentRelativeRectToViewportRelativeRect:function(e){let{elements:t,rect:r,offsetParent:n,strategy:o}=e,l="fixed"===o,i=eC(n),a=!!t&&eO(t.floating);if(n===i||a&&l)return r;let s={scrollLeft:0,scrollTop:0},c=Z(1),u=Z(0),d=eT(n);if((d||!d&&!l)&&(("body"!==eS(n)||ej(i))&&(s=eV(n)),eT(n))){let e=eQ(n);c=eY(n),u.x=e.x+n.clientLeft,u.y=e.y+n.clientTop}let f=!i||d||l?Z(0):e0(i,s,!0);return{width:r.width*c.x,height:r.height*c.y,x:r.x*c.x-s.scrollLeft*c.x+u.x+f.x,y:r.y*c.y-s.scrollTop*c.y+u.y+f.y}},getDocumentElement:eC,getClippingRect:function(e){let{element:t,boundary:r,rootBoundary:n,strategy:o}=e,l=[..."clippingAncestors"===r?eO(t)?[]:function(e,t){let r=t.get(e);if(r)return r;let n=eK(e,[],!1).filter(e=>eA(e)&&"body"!==eS(e)),o=null,l="fixed"===e_(e).position,i=l?e$(e):e;for(;eA(i)&&!eB(i);){let t=e_(i),r=eW(i);r||"fixed"!==t.position||(o=null),(l?!r&&!o:!r&&"static"===t.position&&!!o&&e1.has(o.position)||ej(i)&&!r&&function e(t,r){let n=e$(t);return!(n===r||!eA(n)||eB(n))&&("fixed"===e_(n).position||e(n,r))}(e,i))?n=n.filter(e=>e!==i):o=t,i=e$(i)}return t.set(e,n),n}(t,this._c):[].concat(r),n],i=l[0],a=l.reduce((e,r)=>{let n=e2(t,r,o);return e.top=X(n.top,e.top),e.right=U(n.right,e.right),e.bottom=U(n.bottom,e.bottom),e.left=X(n.left,e.left),e},e2(t,i,o));return{width:a.right-a.left,height:a.bottom-a.top,x:a.left,y:a.top}},getOffsetParent:e6,getElementRects:e3,getClientRects:function(e){return Array.from(e.getClientRects())},getDimensions:function(e){let{width:t,height:r}=eU(e);return{width:t,height:r}},getScale:eY,isElement:eA,isRTL:function(e){return"rtl"===e_(e).direction}};function e7(e,t){return e.x===t.x&&e.y===t.y&&e.width===t.width&&e.height===t.height}let e8=e=>({name:"arrow",options:e,async fn(t){let{x:r,y:n,placement:o,rects:l,platform:i,elements:a,middlewareData:s}=t,{element:c,padding:u=0}=ee(e,t)||{};if(null==c)return{};let d=ep(u),f={x:r,y:n},p=en(ei(o)),h=eo(p),m=await i.getDimensions(c),v="y"===p,g=v?"clientHeight":"clientWidth",y=l.reference[h]+l.reference[p]-f[p]-l.floating[h],b=f[p]-l.reference[p],w=await (null==i.getOffsetParent?void 0:i.getOffsetParent(c)),x=w?w[g]:0;x&&await (null==i.isElement?void 0:i.isElement(w))||(x=a.floating[g]||l.floating[h]);let E=x/2-m[h]/2-1,S=U(d[v?"top":"left"],E),k=U(d[v?"bottom":"right"],E),C=x-m[h]-k,R=x/2-m[h]/2+(y/2-b/2),A=X(S,U(R,C)),T=!s.arrow&&null!=er(o)&&R!==A&&l.reference[h]/2-(R<S?S:k)-m[h]/2<0,P=T?R<S?R-S:R-C:0;return{[p]:f[p]+P,data:{[p]:A,centerOffset:R-A-P,...T&&{alignmentOffset:P}},reset:T}}}),te=(e,t,r)=>{let n=new Map,o={platform:e4,...r},l={...o.platform,_c:n};return ev(e,t,{...o,platform:l})};var tt="undefined"!=typeof document?i.useLayoutEffect:function(){};function tr(e,t){let r,n,o;if(e===t)return!0;if(typeof e!=typeof t)return!1;if("function"==typeof e&&e.toString()===t.toString())return!0;if(e&&t&&"object"==typeof e){if(Array.isArray(e)){if((r=e.length)!==t.length)return!1;for(n=r;0!=n--;)if(!tr(e[n],t[n]))return!1;return!0}if((r=(o=Object.keys(e)).length)!==Object.keys(t).length)return!1;for(n=r;0!=n--;)if(!({}).hasOwnProperty.call(t,o[n]))return!1;for(n=r;0!=n--;){let r=o[n];if(("_owner"!==r||!e.$$typeof)&&!tr(e[r],t[r]))return!1}return!0}return e!=e&&t!=t}function tn(e){return"undefined"==typeof window?1:(e.ownerDocument.defaultView||window).devicePixelRatio||1}function to(e,t){let r=tn(e);return Math.round(t*r)/r}function tl(e){let t=i.useRef(e);return tt(()=>{t.current=e}),t}let ti=e=>({name:"arrow",options:e,fn(t){let{element:r,padding:n}="function"==typeof e?e(t):e;return r&&({}).hasOwnProperty.call(r,"current")?null!=r.current?e8({element:r.current,padding:n}).fn(t):{}:r?e8({element:r,padding:n}).fn(t):{}}}),ta=(e,t)=>({...function(e){return void 0===e&&(e=0),{name:"offset",options:e,async fn(t){var r,n;let{x:o,y:l,placement:i,middlewareData:a}=t,s=await ex(t,e);return i===(null==(r=a.offset)?void 0:r.placement)&&null!=(n=a.arrow)&&n.alignmentOffset?{}:{x:o+s.x,y:l+s.y,data:{...s,placement:i}}}}}(e),options:[e,t]}),ts=(e,t)=>({...function(e){return void 0===e&&(e={}),{name:"shift",options:e,async fn(t){let{x:r,y:n,placement:o}=t,{mainAxis:l=!0,crossAxis:i=!1,limiter:a={fn:e=>{let{x:t,y:r}=e;return{x:t,y:r}}},...s}=ee(e,t),c={x:r,y:n},u=await eg(t,s),d=ei(et(o)),f=en(d),p=c[f],h=c[d];if(l){let e="y"===f?"top":"left",t="y"===f?"bottom":"right",r=p+u[e],n=p-u[t];p=X(r,U(p,n))}if(i){let e="y"===d?"top":"left",t="y"===d?"bottom":"right",r=h+u[e],n=h-u[t];h=X(r,U(h,n))}let m=a.fn({...t,[f]:p,[d]:h});return{...m,data:{x:m.x-r,y:m.y-n,enabled:{[f]:l,[d]:i}}}}}}(e),options:[e,t]}),tc=(e,t)=>({...function(e){return void 0===e&&(e={}),{options:e,fn(t){let{x:r,y:n,placement:o,rects:l,middlewareData:i}=t,{offset:a=0,mainAxis:s=!0,crossAxis:c=!0}=ee(e,t),u={x:r,y:n},d=ei(o),f=en(d),p=u[f],h=u[d],m=ee(a,t),v="number"==typeof m?{mainAxis:m,crossAxis:0}:{mainAxis:0,crossAxis:0,...m};if(s){let e="y"===f?"height":"width",t=l.reference[f]-l.floating[e]+v.mainAxis,r=l.reference[f]+l.reference[e]-v.mainAxis;p<t?p=t:p>r&&(p=r)}if(c){var g,y;let e="y"===f?"width":"height",t=ew.has(et(o)),r=l.reference[d]-l.floating[e]+(t&&(null==(g=i.offset)?void 0:g[d])||0)+(t?0:v.crossAxis),n=l.reference[d]+l.reference[e]+(t?0:(null==(y=i.offset)?void 0:y[d])||0)-(t?v.crossAxis:0);h<r?h=r:h>n&&(h=n)}return{[f]:p,[d]:h}}}}(e),options:[e,t]}),tu=(e,t)=>({...function(e){return void 0===e&&(e={}),{name:"flip",options:e,async fn(t){var r,n,o,l,i;let{placement:a,middlewareData:s,rects:c,initialPlacement:u,platform:d,elements:f}=t,{mainAxis:p=!0,crossAxis:h=!0,fallbackPlacements:m,fallbackStrategy:v="bestFit",fallbackAxisSideDirection:g="none",flipAlignment:y=!0,...b}=ee(e,t);if(null!=(r=s.arrow)&&r.alignmentOffset)return{};let w=et(a),x=ei(u),E=et(u)===u,S=await (null==d.isRTL?void 0:d.isRTL(f.floating)),k=m||(E||!y?[ef(u)]:function(e){let t=ef(e);return[ea(e),t,ea(t)]}(u)),C="none"!==g;!m&&C&&k.push(...function(e,t,r,n){let o=er(e),l=function(e,t,r){switch(e){case"top":case"bottom":if(r)return t?ec:es;return t?es:ec;case"left":case"right":return t?eu:ed;default:return[]}}(et(e),"start"===r,n);return o&&(l=l.map(e=>e+"-"+o),t&&(l=l.concat(l.map(ea)))),l}(u,y,g,S));let R=[u,...k],A=await eg(t,b),T=[],P=(null==(n=s.flip)?void 0:n.overflows)||[];if(p&&T.push(A[w]),h){let e=function(e,t,r){void 0===r&&(r=!1);let n=er(e),o=en(ei(e)),l=eo(o),i="x"===o?n===(r?"end":"start")?"right":"left":"start"===n?"bottom":"top";return t.reference[l]>t.floating[l]&&(i=ef(i)),[i,ef(i)]}(a,c,S);T.push(A[e[0]],A[e[1]])}if(P=[...P,{placement:a,overflows:T}],!T.every(e=>e<=0)){let e=((null==(o=s.flip)?void 0:o.index)||0)+1,t=R[e];if(t&&("alignment"!==h||x===ei(t)||P.every(e=>ei(e.placement)!==x||e.overflows[0]>0)))return{data:{index:e,overflows:P},reset:{placement:t}};let r=null==(l=P.filter(e=>e.overflows[0]<=0).sort((e,t)=>e.overflows[1]-t.overflows[1])[0])?void 0:l.placement;if(!r)switch(v){case"bestFit":{let e=null==(i=P.filter(e=>{if(C){let t=ei(e.placement);return t===x||"y"===t}return!0}).map(e=>[e.placement,e.overflows.filter(e=>e>0).reduce((e,t)=>e+t,0)]).sort((e,t)=>e[1]-t[1])[0])?void 0:i[0];e&&(r=e);break}case"initialPlacement":r=u}if(a!==r)return{reset:{placement:r}}}return{}}}}(e),options:[e,t]}),td=(e,t)=>({...function(e){return void 0===e&&(e={}),{name:"size",options:e,async fn(t){var r,n;let o,l;let{placement:i,rects:a,platform:s,elements:c}=t,{apply:u=()=>{},...d}=ee(e,t),f=await eg(t,d),p=et(i),h=er(i),m="y"===ei(i),{width:v,height:g}=a.floating;"top"===p||"bottom"===p?(o=p,l=h===(await (null==s.isRTL?void 0:s.isRTL(c.floating))?"start":"end")?"left":"right"):(l=p,o="end"===h?"top":"bottom");let y=g-f.top-f.bottom,b=v-f.left-f.right,w=U(g-f[o],y),x=U(v-f[l],b),E=!t.middlewareData.shift,S=w,k=x;if(null!=(r=t.middlewareData.shift)&&r.enabled.x&&(k=b),null!=(n=t.middlewareData.shift)&&n.enabled.y&&(S=y),E&&!h){let e=X(f.left,0),t=X(f.right,0),r=X(f.top,0),n=X(f.bottom,0);m?k=v-2*(0!==e||0!==t?e+t:X(f.left,f.right)):S=g-2*(0!==r||0!==n?r+n:X(f.top,f.bottom))}await u({...t,availableWidth:k,availableHeight:S});let C=await s.getDimensions(c.floating);return v!==C.width||g!==C.height?{reset:{rects:!0}}:{}}}}(e),options:[e,t]}),tf=(e,t)=>({...function(e){return void 0===e&&(e={}),{name:"hide",options:e,async fn(t){let{rects:r}=t,{strategy:n="referenceHidden",...o}=ee(e,t);switch(n){case"referenceHidden":{let e=ey(await eg(t,{...o,elementContext:"reference"}),r.reference);return{data:{referenceHiddenOffsets:e,referenceHidden:eb(e)}}}case"escaped":{let e=ey(await eg(t,{...o,altBoundary:!0}),r.floating);return{data:{escapedOffsets:e,escaped:eb(e)}}}default:return{}}}}}(e),options:[e,t]}),tp=(e,t)=>({...ti(e),options:[e,t]});var th=i.forwardRef((e,t)=>{let{children:r,width:n=10,height:o=5,...l}=e;return(0,m.jsx)(k.svg,{...l,ref:t,width:n,height:o,viewBox:"0 0 30 10",preserveAspectRatio:"none",children:e.asChild?r:(0,m.jsx)("polygon",{points:"0,0 30,0 15,10"})})});th.displayName="Arrow";var tm="Popper",[tv,tg]=v(tm),[ty,tb]=tv(tm),tw=e=>{let{__scopePopper:t,children:r}=e,[n,o]=i.useState(null);return(0,m.jsx)(ty,{scope:t,anchor:n,onAnchorChange:o,children:r})};tw.displayName=tm;var tx="PopperAnchor",tE=i.forwardRef((e,t)=>{let{__scopePopper:r,virtualRef:n,...o}=e,l=tb(tx,r),a=i.useRef(null),s=y(t,a),c=i.useRef(null);return i.useEffect(()=>{let e=c.current;c.current=(null==n?void 0:n.current)||a.current,e!==c.current&&l.onAnchorChange(c.current)}),n?null:(0,m.jsx)(k.div,{...o,ref:s})});tE.displayName=tx;var tS="PopperContent",[tk,tC]=tv(tS),tR=i.forwardRef((e,t)=>{var r,n,o,l,a,c,u,d;let{__scopePopper:f,side:p="bottom",sideOffset:h=0,align:v="center",alignOffset:g=0,arrowPadding:b=0,avoidCollisions:w=!0,collisionBoundary:x=[],collisionPadding:E=0,sticky:S="partial",hideWhenDetached:R=!1,updatePositionStrategy:A="optimized",onPlaced:T,...P}=e,L=tb(tS,f),[j,M]=i.useState(null),N=y(t,e=>M(e)),[O,D]=i.useState(null),z=function(e){let[t,r]=i.useState(void 0);return _(()=>{if(e){r({width:e.offsetWidth,height:e.offsetHeight});let t=new ResizeObserver(t=>{let n,o;if(!Array.isArray(t)||!t.length)return;let l=t[0];if("borderBoxSize"in l){let e=l.borderBoxSize,t=Array.isArray(e)?e[0]:e;n=t.inlineSize,o=t.blockSize}else n=e.offsetWidth,o=e.offsetHeight;r({width:n,height:o})});return t.observe(e,{box:"border-box"}),()=>t.unobserve(e)}r(void 0)},[e]),t}(O),I=null!==(u=null==z?void 0:z.width)&&void 0!==u?u:0,W=null!==(d=null==z?void 0:z.height)&&void 0!==d?d:0,F="number"==typeof E?E:{top:0,right:0,bottom:0,left:0,...E},H=Array.isArray(x)?x:[x],B=H.length>0,V={padding:F,boundary:H.filter(tL),altBoundary:B},{refs:$,floatingStyles:K,placement:q,isPositioned:Y,middlewareData:Z}=function(e){void 0===e&&(e={});let{placement:t="bottom",strategy:r="absolute",middleware:n=[],platform:o,elements:{reference:l,floating:a}={},transform:c=!0,whileElementsMounted:u,open:d}=e,[f,p]=i.useState({x:0,y:0,strategy:r,placement:t,middlewareData:{},isPositioned:!1}),[h,m]=i.useState(n);tr(h,n)||m(n);let[v,g]=i.useState(null),[y,b]=i.useState(null),w=i.useCallback(e=>{e!==k.current&&(k.current=e,g(e))},[]),x=i.useCallback(e=>{e!==C.current&&(C.current=e,b(e))},[]),E=l||v,S=a||y,k=i.useRef(null),C=i.useRef(null),R=i.useRef(f),A=null!=u,T=tl(u),P=tl(o),L=tl(d),j=i.useCallback(()=>{if(!k.current||!C.current)return;let e={placement:t,strategy:r,middleware:h};P.current&&(e.platform=P.current),te(k.current,C.current,e).then(e=>{let t={...e,isPositioned:!1!==L.current};M.current&&!tr(R.current,t)&&(R.current=t,s.flushSync(()=>{p(t)}))})},[h,t,r,P,L]);tt(()=>{!1===d&&R.current.isPositioned&&(R.current.isPositioned=!1,p(e=>({...e,isPositioned:!1})))},[d]);let M=i.useRef(!1);tt(()=>(M.current=!0,()=>{M.current=!1}),[]),tt(()=>{if(E&&(k.current=E),S&&(C.current=S),E&&S){if(T.current)return T.current(E,S,j);j()}},[E,S,j,T,A]);let N=i.useMemo(()=>({reference:k,floating:C,setReference:w,setFloating:x}),[w,x]),O=i.useMemo(()=>({reference:E,floating:S}),[E,S]),D=i.useMemo(()=>{let e={position:r,left:0,top:0};if(!O.floating)return e;let t=to(O.floating,f.x),n=to(O.floating,f.y);return c?{...e,transform:"translate("+t+"px, "+n+"px)",...tn(O.floating)>=1.5&&{willChange:"transform"}}:{position:r,left:t,top:n}},[r,c,O.floating,f.x,f.y]);return i.useMemo(()=>({...f,update:j,refs:N,elements:O,floatingStyles:D}),[f,j,N,O,D])}({strategy:"fixed",placement:p+("center"!==v?"-"+v:""),whileElementsMounted:function(){for(var e=arguments.length,t=Array(e),r=0;r<e;r++)t[r]=arguments[r];return function(e,t,r,n){let o;void 0===n&&(n={});let{ancestorScroll:l=!0,ancestorResize:i=!0,elementResize:a="function"==typeof ResizeObserver,layoutShift:s="function"==typeof IntersectionObserver,animationFrame:c=!1}=n,u=eX(e),d=l||i?[...u?eK(u):[],...eK(t)]:[];d.forEach(e=>{l&&e.addEventListener("scroll",r,{passive:!0}),i&&e.addEventListener("resize",r)});let f=u&&s?function(e,t){let r,n=null,o=eC(e);function l(){var e;clearTimeout(r),null==(e=n)||e.disconnect(),n=null}return!function i(a,s){void 0===a&&(a=!1),void 0===s&&(s=1),l();let c=e.getBoundingClientRect(),{left:u,top:d,width:f,height:p}=c;if(a||t(),!f||!p)return;let h=G(d),m=G(o.clientWidth-(u+f)),v={rootMargin:-h+"px "+-m+"px "+-G(o.clientHeight-(d+p))+"px "+-G(u)+"px",threshold:X(0,U(1,s))||1},g=!0;function y(t){let n=t[0].intersectionRatio;if(n!==s){if(!g)return i();n?i(!1,n):r=setTimeout(()=>{i(!1,1e-7)},1e3)}1!==n||e7(c,e.getBoundingClientRect())||i(),g=!1}try{n=new IntersectionObserver(y,{...v,root:o.ownerDocument})}catch(e){n=new IntersectionObserver(y,v)}n.observe(e)}(!0),l}(u,r):null,p=-1,h=null;a&&(h=new ResizeObserver(e=>{let[n]=e;n&&n.target===u&&h&&(h.unobserve(t),cancelAnimationFrame(p),p=requestAnimationFrame(()=>{var e;null==(e=h)||e.observe(t)})),r()}),u&&!c&&h.observe(u),h.observe(t));let m=c?eQ(e):null;return c&&function t(){let n=eQ(e);m&&!e7(m,n)&&r(),m=n,o=requestAnimationFrame(t)}(),r(),()=>{var e;d.forEach(e=>{l&&e.removeEventListener("scroll",r),i&&e.removeEventListener("resize",r)}),null==f||f(),null==(e=h)||e.disconnect(),h=null,c&&cancelAnimationFrame(o)}}(...t,{animationFrame:"always"===A})},elements:{reference:L.anchor},middleware:[ta({mainAxis:h+W,alignmentAxis:g}),w&&ts({mainAxis:!0,crossAxis:!1,limiter:"partial"===S?tc():void 0,...V}),w&&tu({...V}),td({...V,apply:e=>{let{elements:t,rects:r,availableWidth:n,availableHeight:o}=e,{width:l,height:i}=r.reference,a=t.floating.style;a.setProperty("--radix-popper-available-width","".concat(n,"px")),a.setProperty("--radix-popper-available-height","".concat(o,"px")),a.setProperty("--radix-popper-anchor-width","".concat(l,"px")),a.setProperty("--radix-popper-anchor-height","".concat(i,"px"))}}),O&&tp({element:O,padding:b}),tj({arrowWidth:I,arrowHeight:W}),R&&tf({strategy:"referenceHidden",...V})]}),[Q,J]=tM(q),ee=C(T);_(()=>{Y&&(null==ee||ee())},[Y,ee]);let et=null===(r=Z.arrow)||void 0===r?void 0:r.x,er=null===(n=Z.arrow)||void 0===n?void 0:n.y,en=(null===(o=Z.arrow)||void 0===o?void 0:o.centerOffset)!==0,[eo,el]=i.useState();return _(()=>{j&&el(window.getComputedStyle(j).zIndex)},[j]),(0,m.jsx)("div",{ref:$.setFloating,"data-radix-popper-content-wrapper":"",style:{...K,transform:Y?K.transform:"translate(0, -200%)",minWidth:"max-content",zIndex:eo,"--radix-popper-transform-origin":[null===(l=Z.transformOrigin)||void 0===l?void 0:l.x,null===(a=Z.transformOrigin)||void 0===a?void 0:a.y].join(" "),...(null===(c=Z.hide)||void 0===c?void 0:c.referenceHidden)&&{visibility:"hidden",pointerEvents:"none"}},dir:e.dir,children:(0,m.jsx)(tk,{scope:f,placedSide:Q,onArrowChange:D,arrowX:et,arrowY:er,shouldHideArrow:en,children:(0,m.jsx)(k.div,{"data-side":Q,"data-align":J,...P,ref:N,style:{...P.style,animation:Y?void 0:"none"}})})})});tR.displayName=tS;var tA="PopperArrow",tT={top:"bottom",right:"left",bottom:"top",left:"right"},tP=i.forwardRef(function(e,t){let{__scopePopper:r,...n}=e,o=tC(tA,r),l=tT[o.placedSide];return(0,m.jsx)("span",{ref:o.onArrowChange,style:{position:"absolute",left:o.arrowX,top:o.arrowY,[l]:0,transformOrigin:{top:"",right:"0 0",bottom:"center 0",left:"100% 0"}[o.placedSide],transform:{top:"translateY(100%)",right:"translateY(50%) rotate(90deg) translateX(-50%)",bottom:"rotate(180deg)",left:"translateY(50%) rotate(-90deg) translateX(50%)"}[o.placedSide],visibility:o.shouldHideArrow?"hidden":void 0},children:(0,m.jsx)(th,{...n,ref:t,style:{...n.style,display:"block"}})})});function tL(e){return null!==e}tP.displayName=tA;var tj=e=>({name:"transformOrigin",options:e,fn(t){var r,n,o,l,i;let{placement:a,rects:s,middlewareData:c}=t,u=(null===(r=c.arrow)||void 0===r?void 0:r.centerOffset)!==0,d=u?0:e.arrowWidth,f=u?0:e.arrowHeight,[p,h]=tM(a),m={start:"0%",center:"50%",end:"100%"}[h],v=(null!==(l=null===(n=c.arrow)||void 0===n?void 0:n.x)&&void 0!==l?l:0)+d/2,g=(null!==(i=null===(o=c.arrow)||void 0===o?void 0:o.y)&&void 0!==i?i:0)+f/2,y="",b="";return"bottom"===p?(y=u?m:"".concat(v,"px"),b="".concat(-f,"px")):"top"===p?(y=u?m:"".concat(v,"px"),b="".concat(s.floating.height+f,"px")):"right"===p?(y="".concat(-f,"px"),b=u?m:"".concat(g,"px")):"left"===p&&(y="".concat(s.floating.width+f,"px"),b=u?m:"".concat(g,"px")),{data:{x:y,y:b}}}});function tM(e){let[t,r="center"]=e.split("-");return[t,r]}var tN=i.forwardRef((e,t)=>{var r,n;let{container:o,...l}=e,[a,c]=i.useState(!1);_(()=>c(!0),[]);let u=o||a&&(null===(n=globalThis)||void 0===n?void 0:null===(r=n.document)||void 0===r?void 0:r.body);return u?s.createPortal((0,m.jsx)(k.div,{...l,ref:t}),u):null});tN.displayName="Portal";var tO=a[" useInsertionEffect ".trim().toString()]||_;function tD({prop:e,defaultProp:t,onChange:r=()=>{},caller:n}){let[o,l,a]=function({defaultProp:e,onChange:t}){let[r,n]=i.useState(e),o=i.useRef(r),l=i.useRef(t);return tO(()=>{l.current=t},[t]),i.useEffect(()=>{o.current!==r&&(l.current?.(r),o.current=r)},[r,o]),[r,n,l]}({defaultProp:t,onChange:r}),s=void 0!==e,c=s?e:o;{let t=i.useRef(void 0!==e);i.useEffect(()=>{let e=t.current;if(e!==s){let t=s?"controlled":"uncontrolled";console.warn(`${n} is changing from ${e?"controlled":"uncontrolled"} to ${t}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`)}t.current=s},[s,n])}return[c,i.useCallback(t=>{if(s){let r="function"==typeof t?t(e):t;r!==e&&a.current?.(r)}else l(t)},[s,e,l,a])]}Symbol("RADIX:SYNC_STATE");var tz=Object.freeze({position:"absolute",border:0,width:1,height:1,padding:0,margin:-1,overflow:"hidden",clip:"rect(0, 0, 0, 0)",whiteSpace:"nowrap",wordWrap:"normal"});i.forwardRef((e,t)=>(0,m.jsx)(k.span,{...e,ref:t,style:{...tz,...e.style}})).displayName="VisuallyHidden";var tI=function(e){return"undefined"==typeof document?null:(Array.isArray(e)?e[0]:e).ownerDocument.body},tW=new WeakMap,tF=new WeakMap,tH={},tB=0,t_=function(e){return e&&(e.host||t_(e.parentNode))},tV=function(e,t,r,n){var o=(Array.isArray(e)?e:[e]).map(function(e){if(t.contains(e))return e;var r=t_(e);return r&&t.contains(r)?r:(console.error("aria-hidden",e,"in not contained inside",t,". Doing nothing"),null)}).filter(function(e){return!!e});tH[r]||(tH[r]=new WeakMap);var l=tH[r],i=[],a=new Set,s=new Set(o),c=function(e){!(!e||a.has(e))&&(a.add(e),c(e.parentNode))};o.forEach(c);var u=function(e){!(!e||s.has(e))&&Array.prototype.forEach.call(e.children,function(e){if(a.has(e))u(e);else try{var t=e.getAttribute(n),o=null!==t&&"false"!==t,s=(tW.get(e)||0)+1,c=(l.get(e)||0)+1;tW.set(e,s),l.set(e,c),i.push(e),1===s&&o&&tF.set(e,!0),1===c&&e.setAttribute(r,"true"),o||e.setAttribute(n,"true")}catch(t){console.error("aria-hidden: cannot operate on ",e,t)}})};return u(t),a.clear(),tB++,function(){i.forEach(function(e){var t=tW.get(e)-1,o=l.get(e)-1;tW.set(e,t),l.set(e,o),t||(tF.has(e)||e.removeAttribute(n),tF.delete(e)),o||e.removeAttribute(r)}),--tB||(tW=new WeakMap,tW=new WeakMap,tF=new WeakMap,tH={})}},t$=function(e,t,r){void 0===r&&(r="data-aria-hidden");var n=Array.from(Array.isArray(e)?e:[e]),o=t||tI(e);return o?(n.push.apply(n,Array.from(o.querySelectorAll("[aria-live], script"))),tV(n,o,r,"aria-hidden")):function(){return null}},tK=function(){return(tK=Object.assign||function(e){for(var t,r=1,n=arguments.length;r<n;r++)for(var o in t=arguments[r])Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o]);return e}).apply(this,arguments)};function tq(e,t){var r={};for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&0>t.indexOf(n)&&(r[n]=e[n]);if(null!=e&&"function"==typeof Object.getOwnPropertySymbols)for(var o=0,n=Object.getOwnPropertySymbols(e);o<n.length;o++)0>t.indexOf(n[o])&&Object.prototype.propertyIsEnumerable.call(e,n[o])&&(r[n[o]]=e[n[o]]);return r}Object.create;Object.create;var tU=("function"==typeof SuppressedError&&SuppressedError,"right-scroll-bar-position"),tX="width-before-scroll-bar";function tY(e,t){return"function"==typeof e?e(t):e&&(e.current=t),e}var tG="undefined"!=typeof window?i.useLayoutEffect:i.useEffect,tZ=new WeakMap;function tQ(e){return e}var tJ=function(e){void 0===e&&(e={});var t,r,n,o,l=(t=null,void 0===r&&(r=tQ),n=[],o=!1,{read:function(){if(o)throw Error("Sidecar: could not `read` from an `assigned` medium. `read` could be used only with `useMedium`.");return n.length?n[n.length-1]:null},useMedium:function(e){var t=r(e,o);return n.push(t),function(){n=n.filter(function(e){return e!==t})}},assignSyncMedium:function(e){for(o=!0;n.length;){var t=n;n=[],t.forEach(e)}n={push:function(t){return e(t)},filter:function(){return n}}},assignMedium:function(e){o=!0;var t=[];if(n.length){var r=n;n=[],r.forEach(e),t=n}var l=function(){var r=t;t=[],r.forEach(e)},i=function(){return Promise.resolve().then(l)};i(),n={push:function(e){t.push(e),i()},filter:function(e){return t=t.filter(e),n}}}});return l.options=tK({async:!0,ssr:!1},e),l}(),t0=function(){},t1=i.forwardRef(function(e,t){var r,n,o,l,a=i.useRef(null),s=i.useState({onScrollCapture:t0,onWheelCapture:t0,onTouchMoveCapture:t0}),c=s[0],u=s[1],d=e.forwardProps,f=e.children,p=e.className,h=e.removeScrollBar,m=e.enabled,v=e.shards,g=e.sideCar,y=e.noRelative,b=e.noIsolation,w=e.inert,x=e.allowPinchZoom,E=e.as,S=e.gapMode,k=tq(e,["forwardProps","children","className","removeScrollBar","enabled","shards","sideCar","noRelative","noIsolation","inert","allowPinchZoom","as","gapMode"]),C=(r=[a,t],n=function(e){return r.forEach(function(t){return tY(t,e)})},(o=(0,i.useState)(function(){return{value:null,callback:n,facade:{get current(){return o.value},set current(value){var e=o.value;e!==value&&(o.value=value,o.callback(value,e))}}}})[0]).callback=n,l=o.facade,tG(function(){var e=tZ.get(l);if(e){var t=new Set(e),n=new Set(r),o=l.current;t.forEach(function(e){n.has(e)||tY(e,null)}),n.forEach(function(e){t.has(e)||tY(e,o)})}tZ.set(l,r)},[r]),l),R=tK(tK({},k),c);return i.createElement(i.Fragment,null,m&&i.createElement(g,{sideCar:tJ,removeScrollBar:h,shards:v,noRelative:y,noIsolation:b,inert:w,setCallbacks:u,allowPinchZoom:!!x,lockRef:a,gapMode:S}),d?i.cloneElement(i.Children.only(f),tK(tK({},R),{ref:C})):i.createElement(void 0===E?"div":E,tK({},R,{className:p,ref:C}),f))});t1.defaultProps={enabled:!0,removeScrollBar:!0,inert:!1},t1.classNames={fullWidth:tX,zeroRight:tU};var t2=function(e){var t=e.sideCar,r=tq(e,["sideCar"]);if(!t)throw Error("Sidecar: please provide `sideCar` property to import the right car");var n=t.read();if(!n)throw Error("Sidecar medium not found");return i.createElement(n,tK({},r))};t2.isSideCarExport=!0;var t5=function(){var e=0,t=null;return{add:function(n){if(0==e&&(t=function(){if(!document)return null;var e=document.createElement("style");e.type="text/css";var t=l||r.nc;return t&&e.setAttribute("nonce",t),e}())){var o,i;(o=t).styleSheet?o.styleSheet.cssText=n:o.appendChild(document.createTextNode(n)),i=t,(document.head||document.getElementsByTagName("head")[0]).appendChild(i)}e++},remove:function(){--e||!t||(t.parentNode&&t.parentNode.removeChild(t),t=null)}}},t9=function(){var e=t5();return function(t,r){i.useEffect(function(){return e.add(t),function(){e.remove()}},[t&&r])}},t6=function(){var e=t9();return function(t){return e(t.styles,t.dynamic),null}},t3={left:0,top:0,right:0,gap:0},t4=function(e){return parseInt(e||"",10)||0},t7=function(e){var t=window.getComputedStyle(document.body),r=t["padding"===e?"paddingLeft":"marginLeft"],n=t["padding"===e?"paddingTop":"marginTop"],o=t["padding"===e?"paddingRight":"marginRight"];return[t4(r),t4(n),t4(o)]},t8=function(e){if(void 0===e&&(e="margin"),"undefined"==typeof window)return t3;var t=t7(e),r=document.documentElement.clientWidth,n=window.innerWidth;return{left:t[0],top:t[1],right:t[2],gap:Math.max(0,n-r+t[2]-t[0])}},re=t6(),rt="data-scroll-locked",rr=function(e,t,r,n){var o=e.left,l=e.top,i=e.right,a=e.gap;return void 0===r&&(r="margin"),"\n  .".concat("with-scroll-bars-hidden"," {\n   overflow: hidden ").concat(n,";\n   padding-right: ").concat(a,"px ").concat(n,";\n  }\n  body[").concat(rt,"] {\n    overflow: hidden ").concat(n,";\n    overscroll-behavior: contain;\n    ").concat([t&&"position: relative ".concat(n,";"),"margin"===r&&"\n    padding-left: ".concat(o,"px;\n    padding-top: ").concat(l,"px;\n    padding-right: ").concat(i,"px;\n    margin-left:0;\n    margin-top:0;\n    margin-right: ").concat(a,"px ").concat(n,";\n    "),"padding"===r&&"padding-right: ".concat(a,"px ").concat(n,";")].filter(Boolean).join(""),"\n  }\n  \n  .").concat(tU," {\n    right: ").concat(a,"px ").concat(n,";\n  }\n  \n  .").concat(tX," {\n    margin-right: ").concat(a,"px ").concat(n,";\n  }\n  \n  .").concat(tU," .").concat(tU," {\n    right: 0 ").concat(n,";\n  }\n  \n  .").concat(tX," .").concat(tX," {\n    margin-right: 0 ").concat(n,";\n  }\n  \n  body[").concat(rt,"] {\n    ").concat("--removed-body-scroll-bar-size",": ").concat(a,"px;\n  }\n")},rn=function(){var e=parseInt(document.body.getAttribute(rt)||"0",10);return isFinite(e)?e:0},ro=function(){i.useEffect(function(){return document.body.setAttribute(rt,(rn()+1).toString()),function(){var e=rn()-1;e<=0?document.body.removeAttribute(rt):document.body.setAttribute(rt,e.toString())}},[])},rl=function(e){var t=e.noRelative,r=e.noImportant,n=e.gapMode,o=void 0===n?"margin":n;ro();var l=i.useMemo(function(){return t8(o)},[o]);return i.createElement(re,{styles:rr(l,!t,o,r?"":"!important")})},ri=!1;if("undefined"!=typeof window)try{var ra=Object.defineProperty({},"passive",{get:function(){return ri=!0,!0}});window.addEventListener("test",ra,ra),window.removeEventListener("test",ra,ra)}catch(e){ri=!1}var rs=!!ri&&{passive:!1},rc=function(e,t){if(!(e instanceof Element))return!1;var r=window.getComputedStyle(e);return"hidden"!==r[t]&&(r.overflowY!==r.overflowX||"TEXTAREA"===e.tagName||"visible"!==r[t])},ru=function(e,t){var r=t.ownerDocument,n=t;do{if("undefined"!=typeof ShadowRoot&&n instanceof ShadowRoot&&(n=n.host),rd(e,n)){var o=rf(e,n);if(o[1]>o[2])return!0}n=n.parentNode}while(n&&n!==r.body);return!1},rd=function(e,t){return"v"===e?rc(t,"overflowY"):rc(t,"overflowX")},rf=function(e,t){return"v"===e?[t.scrollTop,t.scrollHeight,t.clientHeight]:[t.scrollLeft,t.scrollWidth,t.clientWidth]},rp=function(e,t,r,n,o){var l,i=(l=window.getComputedStyle(t).direction,"h"===e&&"rtl"===l?-1:1),a=i*n,s=r.target,c=t.contains(s),u=!1,d=a>0,f=0,p=0;do{if(!s)break;var h=rf(e,s),m=h[0],v=h[1]-h[2]-i*m;(m||v)&&rd(e,s)&&(f+=v,p+=m);var g=s.parentNode;s=g&&g.nodeType===Node.DOCUMENT_FRAGMENT_NODE?g.host:g}while(!c&&s!==document.body||c&&(t.contains(s)||t===s));return d&&(o&&1>Math.abs(f)||!o&&a>f)?u=!0:!d&&(o&&1>Math.abs(p)||!o&&-a>p)&&(u=!0),u},rh=function(e){return"changedTouches"in e?[e.changedTouches[0].clientX,e.changedTouches[0].clientY]:[0,0]},rm=function(e){return[e.deltaX,e.deltaY]},rv=function(e){return e&&"current"in e?e.current:e},rg=0,ry=[];let rb=(tJ.useMedium(function(e){var t=i.useRef([]),r=i.useRef([0,0]),n=i.useRef(),o=i.useState(rg++)[0],l=i.useState(t6)[0],a=i.useRef(e);i.useEffect(function(){a.current=e},[e]),i.useEffect(function(){if(e.inert){document.body.classList.add("block-interactivity-".concat(o));var t=(function(e,t,r){if(r||2==arguments.length)for(var n,o=0,l=t.length;o<l;o++)!n&&o in t||(n||(n=Array.prototype.slice.call(t,0,o)),n[o]=t[o]);return e.concat(n||Array.prototype.slice.call(t))})([e.lockRef.current],(e.shards||[]).map(rv),!0).filter(Boolean);return t.forEach(function(e){return e.classList.add("allow-interactivity-".concat(o))}),function(){document.body.classList.remove("block-interactivity-".concat(o)),t.forEach(function(e){return e.classList.remove("allow-interactivity-".concat(o))})}}},[e.inert,e.lockRef.current,e.shards]);var s=i.useCallback(function(e,t){if("touches"in e&&2===e.touches.length||"wheel"===e.type&&e.ctrlKey)return!a.current.allowPinchZoom;var o,l=rh(e),i=r.current,s="deltaX"in e?e.deltaX:i[0]-l[0],c="deltaY"in e?e.deltaY:i[1]-l[1],u=e.target,d=Math.abs(s)>Math.abs(c)?"h":"v";if("touches"in e&&"h"===d&&"range"===u.type)return!1;var f=ru(d,u);if(!f)return!0;if(f?o=d:(o="v"===d?"h":"v",f=ru(d,u)),!f)return!1;if(!n.current&&"changedTouches"in e&&(s||c)&&(n.current=o),!o)return!0;var p=n.current||o;return rp(p,t,e,"h"===p?s:c,!0)},[]),c=i.useCallback(function(e){if(ry.length&&ry[ry.length-1]===l){var r="deltaY"in e?rm(e):rh(e),n=t.current.filter(function(t){var n;return t.name===e.type&&(t.target===e.target||e.target===t.shadowParent)&&(n=t.delta)[0]===r[0]&&n[1]===r[1]})[0];if(n&&n.should){e.cancelable&&e.preventDefault();return}if(!n){var o=(a.current.shards||[]).map(rv).filter(Boolean).filter(function(t){return t.contains(e.target)});(o.length>0?s(e,o[0]):!a.current.noIsolation)&&e.cancelable&&e.preventDefault()}}},[]),u=i.useCallback(function(e,r,n,o){var l={name:e,delta:r,target:n,should:o,shadowParent:function(e){for(var t=null;null!==e;)e instanceof ShadowRoot&&(t=e.host,e=e.host),e=e.parentNode;return t}(n)};t.current.push(l),setTimeout(function(){t.current=t.current.filter(function(e){return e!==l})},1)},[]),d=i.useCallback(function(e){r.current=rh(e),n.current=void 0},[]),f=i.useCallback(function(t){u(t.type,rm(t),t.target,s(t,e.lockRef.current))},[]),p=i.useCallback(function(t){u(t.type,rh(t),t.target,s(t,e.lockRef.current))},[]);i.useEffect(function(){return ry.push(l),e.setCallbacks({onScrollCapture:f,onWheelCapture:f,onTouchMoveCapture:p}),document.addEventListener("wheel",c,rs),document.addEventListener("touchmove",c,rs),document.addEventListener("touchstart",d,rs),function(){ry=ry.filter(function(e){return e!==l}),document.removeEventListener("wheel",c,rs),document.removeEventListener("touchmove",c,rs),document.removeEventListener("touchstart",d,rs)}},[]);var h=e.removeScrollBar,m=e.inert;return i.createElement(i.Fragment,null,m?i.createElement(l,{styles:"\n  .block-interactivity-".concat(o," {pointer-events: none;}\n  .allow-interactivity-").concat(o," {pointer-events: all;}\n")}):null,h?i.createElement(rl,{noRelative:e.noRelative,gapMode:e.gapMode}):null)}),t2);var rw=i.forwardRef(function(e,t){return i.createElement(t1,tK({},e,{ref:t,sideCar:rb}))});rw.classNames=t1.classNames;var rx=[" ","Enter","ArrowUp","ArrowDown"],rE=[" ","Enter"],rS="Select",[rk,rC,rR]=function(e){let t=e+"CollectionProvider",[r,n]=v(t),[o,l]=r(t,{collectionRef:{current:null},itemMap:new Map}),a=e=>{let{scope:t,children:r}=e,n=i.useRef(null),l=i.useRef(new Map).current;return(0,m.jsx)(o,{scope:t,itemMap:l,collectionRef:n,children:r})};a.displayName=t;let s=e+"CollectionSlot",c=(0,b.TL)(s),u=i.forwardRef((e,t)=>{let{scope:r,children:n}=e,o=y(t,l(s,r).collectionRef);return(0,m.jsx)(c,{ref:o,children:n})});u.displayName=s;let d=e+"CollectionItemSlot",f="data-radix-collection-item",p=(0,b.TL)(d),h=i.forwardRef((e,t)=>{let{scope:r,children:n,...o}=e,a=i.useRef(null),s=y(t,a),c=l(d,r);return i.useEffect(()=>(c.itemMap.set(a,{ref:a,...o}),()=>void c.itemMap.delete(a))),(0,m.jsx)(p,{[f]:"",ref:s,children:n})});return h.displayName=d,[{Provider:a,Slot:u,ItemSlot:h},function(t){let r=l(e+"CollectionConsumer",t);return i.useCallback(()=>{let e=r.collectionRef.current;if(!e)return[];let t=Array.from(e.querySelectorAll("[".concat(f,"]")));return Array.from(r.itemMap.values()).sort((e,r)=>t.indexOf(e.ref.current)-t.indexOf(r.ref.current))},[r.collectionRef,r.itemMap])},n]}(rS),[rA,rT]=v(rS,[rR,tg]),rP=tg(),[rL,rj]=rA(rS),[rM,rN]=rA(rS),rO=e=>{let{__scopeSelect:t,children:r,open:n,defaultOpen:o,onOpenChange:l,value:a,defaultValue:s,onValueChange:c,dir:u,name:d,autoComplete:f,disabled:p,required:h,form:v}=e,g=rP(t),[y,b]=i.useState(null),[w,x]=i.useState(null),[E,k]=i.useState(!1),C=function(e){let t=i.useContext(S);return e||t||"ltr"}(u),[R,A]=tD({prop:n,defaultProp:null!=o&&o,onChange:l,caller:rS}),[T,P]=tD({prop:a,defaultProp:s,onChange:c,caller:rS}),L=i.useRef(null),j=!y||v||!!y.closest("form"),[M,N]=i.useState(new Set),O=Array.from(M).map(e=>e.props.value).join(";");return(0,m.jsx)(tw,{...g,children:(0,m.jsxs)(rL,{required:h,scope:t,trigger:y,onTriggerChange:b,valueNode:w,onValueNodeChange:x,valueNodeHasChildren:E,onValueNodeHasChildrenChange:k,contentId:K(),value:T,onValueChange:P,open:R,onOpenChange:A,dir:C,triggerPointerDownPosRef:L,disabled:p,children:[(0,m.jsx)(rk.Provider,{scope:t,children:(0,m.jsx)(rM,{scope:e.__scopeSelect,onNativeOptionAdd:i.useCallback(e=>{N(t=>new Set(t).add(e))},[]),onNativeOptionRemove:i.useCallback(e=>{N(t=>{let r=new Set(t);return r.delete(e),r})},[]),children:r})}),j?(0,m.jsxs)(na,{"aria-hidden":!0,required:h,tabIndex:-1,name:d,autoComplete:f,value:T,onChange:e=>P(e.target.value),disabled:p,form:v,children:[void 0===T?(0,m.jsx)("option",{value:""}):null,Array.from(M)]},O):null]})})};rO.displayName=rS;var rD="SelectTrigger",rz=i.forwardRef((e,t)=>{let{__scopeSelect:r,disabled:n=!1,...o}=e,l=rP(r),a=rj(rD,r),s=a.disabled||n,c=y(t,a.onTriggerChange),u=rC(r),f=i.useRef("touch"),[p,h,v]=nc(e=>{let t=u().filter(e=>!e.disabled),r=t.find(e=>e.value===a.value),n=nu(t,e,r);void 0!==n&&a.onValueChange(n.value)}),g=e=>{s||(a.onOpenChange(!0),v()),e&&(a.triggerPointerDownPosRef.current={x:Math.round(e.pageX),y:Math.round(e.pageY)})};return(0,m.jsx)(tE,{asChild:!0,...l,children:(0,m.jsx)(k.button,{type:"button",role:"combobox","aria-controls":a.contentId,"aria-expanded":a.open,"aria-required":a.required,"aria-autocomplete":"none",dir:a.dir,"data-state":a.open?"open":"closed",disabled:s,"data-disabled":s?"":void 0,"data-placeholder":ns(a.value)?"":void 0,...o,ref:c,onClick:d(o.onClick,e=>{e.currentTarget.focus(),"mouse"!==f.current&&g(e)}),onPointerDown:d(o.onPointerDown,e=>{f.current=e.pointerType;let t=e.target;t.hasPointerCapture(e.pointerId)&&t.releasePointerCapture(e.pointerId),0===e.button&&!1===e.ctrlKey&&"mouse"===e.pointerType&&(g(e),e.preventDefault())}),onKeyDown:d(o.onKeyDown,e=>{let t=""!==p.current;e.ctrlKey||e.altKey||e.metaKey||1!==e.key.length||h(e.key),(!t||" "!==e.key)&&rx.includes(e.key)&&(g(),e.preventDefault())})})})});rz.displayName=rD;var rI="SelectValue",rW=i.forwardRef((e,t)=>{let{__scopeSelect:r,className:n,style:o,children:l,placeholder:i="",...a}=e,s=rj(rI,r),{onValueNodeHasChildrenChange:c}=s,u=void 0!==l,d=y(t,s.onValueNodeChange);return _(()=>{c(u)},[c,u]),(0,m.jsx)(k.span,{...a,ref:d,style:{pointerEvents:"none"},children:ns(s.value)?(0,m.jsx)(m.Fragment,{children:i}):l})});rW.displayName=rI;var rF=i.forwardRef((e,t)=>{let{__scopeSelect:r,children:n,...o}=e;return(0,m.jsx)(k.span,{"aria-hidden":!0,...o,ref:t,children:n||"▼"})});rF.displayName="SelectIcon";var rH=e=>(0,m.jsx)(tN,{asChild:!0,...e});rH.displayName="SelectPortal";var rB="SelectContent",r_=i.forwardRef((e,t)=>{let r=rj(rB,e.__scopeSelect),[n,o]=i.useState();return(_(()=>{o(new DocumentFragment)},[]),r.open)?(0,m.jsx)(rq,{...e,ref:t}):n?s.createPortal((0,m.jsx)(rV,{scope:e.__scopeSelect,children:(0,m.jsx)(rk.Slot,{scope:e.__scopeSelect,children:(0,m.jsx)("div",{children:e.children})})}),n):null});r_.displayName=rB;var[rV,r$]=rA(rB),rK=(0,b.TL)("SelectContent.RemoveScroll"),rq=i.forwardRef((e,t)=>{let{__scopeSelect:r,position:n="item-aligned",onCloseAutoFocus:o,onEscapeKeyDown:l,onPointerDownOutside:a,side:s,sideOffset:c,align:u,alignOffset:f,arrowPadding:p,collisionBoundary:h,collisionPadding:v,sticky:g,hideWhenDetached:b,avoidCollisions:w,...x}=e,E=rj(rB,r),[S,k]=i.useState(null),[C,R]=i.useState(null),A=y(t,e=>k(e)),[P,L]=i.useState(null),[N,O]=i.useState(null),D=rC(r),[I,W]=i.useState(!1),F=i.useRef(!1);i.useEffect(()=>{if(S)return t$(S)},[S]),i.useEffect(()=>{var e,t;let r=document.querySelectorAll("[data-radix-focus-guard]");return document.body.insertAdjacentElement("afterbegin",null!==(e=r[0])&&void 0!==e?e:M()),document.body.insertAdjacentElement("beforeend",null!==(t=r[1])&&void 0!==t?t:M()),j++,()=>{1===j&&document.querySelectorAll("[data-radix-focus-guard]").forEach(e=>e.remove()),j--}},[]);let H=i.useCallback(e=>{let[t,...r]=D().map(e=>e.ref.current),[n]=r.slice(-1),o=document.activeElement;for(let r of e)if(r===o||(null==r||r.scrollIntoView({block:"nearest"}),r===t&&C&&(C.scrollTop=0),r===n&&C&&(C.scrollTop=C.scrollHeight),null==r||r.focus(),document.activeElement!==o))return},[D,C]),B=i.useCallback(()=>H([P,S]),[H,P,S]);i.useEffect(()=>{I&&B()},[I,B]);let{onOpenChange:_,triggerPointerDownPosRef:V}=E;i.useEffect(()=>{if(S){let e={x:0,y:0},t=t=>{var r,n,o,l;e={x:Math.abs(Math.round(t.pageX)-(null!==(o=null===(r=V.current)||void 0===r?void 0:r.x)&&void 0!==o?o:0)),y:Math.abs(Math.round(t.pageY)-(null!==(l=null===(n=V.current)||void 0===n?void 0:n.y)&&void 0!==l?l:0))}},r=r=>{e.x<=10&&e.y<=10?r.preventDefault():S.contains(r.target)||_(!1),document.removeEventListener("pointermove",t),V.current=null};return null!==V.current&&(document.addEventListener("pointermove",t),document.addEventListener("pointerup",r,{capture:!0,once:!0})),()=>{document.removeEventListener("pointermove",t),document.removeEventListener("pointerup",r,{capture:!0})}}},[S,_,V]),i.useEffect(()=>{let e=()=>_(!1);return window.addEventListener("blur",e),window.addEventListener("resize",e),()=>{window.removeEventListener("blur",e),window.removeEventListener("resize",e)}},[_]);let[$,K]=nc(e=>{let t=D().filter(e=>!e.disabled),r=t.find(e=>e.ref.current===document.activeElement),n=nu(t,e,r);n&&setTimeout(()=>n.ref.current.focus())}),q=i.useCallback((e,t,r)=>{let n=!F.current&&!r;(void 0!==E.value&&E.value===t||n)&&(L(e),n&&(F.current=!0))},[E.value]),U=i.useCallback(()=>null==S?void 0:S.focus(),[S]),X=i.useCallback((e,t,r)=>{let n=!F.current&&!r;(void 0!==E.value&&E.value===t||n)&&O(e)},[E.value]),Y="popper"===n?rX:rU,G=Y===rX?{side:s,sideOffset:c,align:u,alignOffset:f,arrowPadding:p,collisionBoundary:h,collisionPadding:v,sticky:g,hideWhenDetached:b,avoidCollisions:w}:{};return(0,m.jsx)(rV,{scope:r,content:S,viewport:C,onViewportChange:R,itemRefCallback:q,selectedItem:P,onItemLeave:U,itemTextRefCallback:X,focusSelectedItem:B,selectedItemText:N,position:n,isPositioned:I,searchRef:$,children:(0,m.jsx)(rw,{as:rK,allowPinchZoom:!0,children:(0,m.jsx)(z,{asChild:!0,trapped:E.open,onMountAutoFocus:e=>{e.preventDefault()},onUnmountAutoFocus:d(o,e=>{var t;null===(t=E.trigger)||void 0===t||t.focus({preventScroll:!0}),e.preventDefault()}),children:(0,m.jsx)(T,{asChild:!0,disableOutsidePointerEvents:!0,onEscapeKeyDown:l,onPointerDownOutside:a,onFocusOutside:e=>e.preventDefault(),onDismiss:()=>E.onOpenChange(!1),children:(0,m.jsx)(Y,{role:"listbox",id:E.contentId,"data-state":E.open?"open":"closed",dir:E.dir,onContextMenu:e=>e.preventDefault(),...x,...G,onPlaced:()=>W(!0),ref:A,style:{display:"flex",flexDirection:"column",outline:"none",...x.style},onKeyDown:d(x.onKeyDown,e=>{let t=e.ctrlKey||e.altKey||e.metaKey;if("Tab"===e.key&&e.preventDefault(),t||1!==e.key.length||K(e.key),["ArrowUp","ArrowDown","Home","End"].includes(e.key)){let t=D().filter(e=>!e.disabled).map(e=>e.ref.current);if(["ArrowUp","End"].includes(e.key)&&(t=t.slice().reverse()),["ArrowUp","ArrowDown"].includes(e.key)){let r=e.target,n=t.indexOf(r);t=t.slice(n+1)}setTimeout(()=>H(t)),e.preventDefault()}})})})})})})});rq.displayName="SelectContentImpl";var rU=i.forwardRef((e,t)=>{let{__scopeSelect:r,onPlaced:n,...o}=e,l=rj(rB,r),a=r$(rB,r),[s,u]=i.useState(null),[d,f]=i.useState(null),p=y(t,e=>f(e)),h=rC(r),v=i.useRef(!1),g=i.useRef(!0),{viewport:b,selectedItem:w,selectedItemText:x,focusSelectedItem:E}=a,S=i.useCallback(()=>{if(l.trigger&&l.valueNode&&s&&d&&b&&w&&x){let e=l.trigger.getBoundingClientRect(),t=d.getBoundingClientRect(),r=l.valueNode.getBoundingClientRect(),o=x.getBoundingClientRect();if("rtl"!==l.dir){let n=o.left-t.left,l=r.left-n,i=e.left-l,a=e.width+i,u=Math.max(a,t.width),d=c(l,[10,Math.max(10,window.innerWidth-10-u)]);s.style.minWidth=a+"px",s.style.left=d+"px"}else{let n=t.right-o.right,l=window.innerWidth-r.right-n,i=window.innerWidth-e.right-l,a=e.width+i,u=Math.max(a,t.width),d=c(l,[10,Math.max(10,window.innerWidth-10-u)]);s.style.minWidth=a+"px",s.style.right=d+"px"}let i=h(),a=window.innerHeight-20,u=b.scrollHeight,f=window.getComputedStyle(d),p=parseInt(f.borderTopWidth,10),m=parseInt(f.paddingTop,10),g=parseInt(f.borderBottomWidth,10),y=p+m+u+parseInt(f.paddingBottom,10)+g,E=Math.min(5*w.offsetHeight,y),S=window.getComputedStyle(b),k=parseInt(S.paddingTop,10),C=parseInt(S.paddingBottom,10),R=e.top+e.height/2-10,A=w.offsetHeight/2,T=p+m+(w.offsetTop+A);if(T<=R){let e=i.length>0&&w===i[i.length-1].ref.current;s.style.bottom="0px";let t=Math.max(a-R,A+(e?C:0)+(d.clientHeight-b.offsetTop-b.offsetHeight)+g);s.style.height=T+t+"px"}else{let e=i.length>0&&w===i[0].ref.current;s.style.top="0px";let t=Math.max(R,p+b.offsetTop+(e?k:0)+A);s.style.height=t+(y-T)+"px",b.scrollTop=T-R+b.offsetTop}s.style.margin="".concat(10,"px 0"),s.style.minHeight=E+"px",s.style.maxHeight=a+"px",null==n||n(),requestAnimationFrame(()=>v.current=!0)}},[h,l.trigger,l.valueNode,s,d,b,w,x,l.dir,n]);_(()=>S(),[S]);let[C,R]=i.useState();_(()=>{d&&R(window.getComputedStyle(d).zIndex)},[d]);let A=i.useCallback(e=>{e&&!0===g.current&&(S(),null==E||E(),g.current=!1)},[S,E]);return(0,m.jsx)(rY,{scope:r,contentWrapper:s,shouldExpandOnScrollRef:v,onScrollButtonChange:A,children:(0,m.jsx)("div",{ref:u,style:{display:"flex",flexDirection:"column",position:"fixed",zIndex:C},children:(0,m.jsx)(k.div,{...o,ref:p,style:{boxSizing:"border-box",maxHeight:"100%",...o.style}})})})});rU.displayName="SelectItemAlignedPosition";var rX=i.forwardRef((e,t)=>{let{__scopeSelect:r,align:n="start",collisionPadding:o=10,...l}=e,i=rP(r);return(0,m.jsx)(tR,{...i,...l,ref:t,align:n,collisionPadding:o,style:{boxSizing:"border-box",...l.style,"--radix-select-content-transform-origin":"var(--radix-popper-transform-origin)","--radix-select-content-available-width":"var(--radix-popper-available-width)","--radix-select-content-available-height":"var(--radix-popper-available-height)","--radix-select-trigger-width":"var(--radix-popper-anchor-width)","--radix-select-trigger-height":"var(--radix-popper-anchor-height)"}})});rX.displayName="SelectPopperPosition";var[rY,rG]=rA(rB,{}),rZ="SelectViewport",rQ=i.forwardRef((e,t)=>{let{__scopeSelect:r,nonce:n,...o}=e,l=r$(rZ,r),a=rG(rZ,r),s=y(t,l.onViewportChange),c=i.useRef(0);return(0,m.jsxs)(m.Fragment,{children:[(0,m.jsx)("style",{dangerouslySetInnerHTML:{__html:"[data-radix-select-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-select-viewport]::-webkit-scrollbar{display:none}"},nonce:n}),(0,m.jsx)(rk.Slot,{scope:r,children:(0,m.jsx)(k.div,{"data-radix-select-viewport":"",role:"presentation",...o,ref:s,style:{position:"relative",flex:1,overflow:"hidden auto",...o.style},onScroll:d(o.onScroll,e=>{let t=e.currentTarget,{contentWrapper:r,shouldExpandOnScrollRef:n}=a;if((null==n?void 0:n.current)&&r){let e=Math.abs(c.current-t.scrollTop);if(e>0){let n=window.innerHeight-20,o=Math.max(parseFloat(r.style.minHeight),parseFloat(r.style.height));if(o<n){let l=o+e,i=Math.min(n,l),a=l-i;r.style.height=i+"px","0px"===r.style.bottom&&(t.scrollTop=a>0?a:0,r.style.justifyContent="flex-end")}}}c.current=t.scrollTop})})})]})});rQ.displayName=rZ;var rJ="SelectGroup",[r0,r1]=rA(rJ);i.forwardRef((e,t)=>{let{__scopeSelect:r,...n}=e,o=K();return(0,m.jsx)(r0,{scope:r,id:o,children:(0,m.jsx)(k.div,{role:"group","aria-labelledby":o,...n,ref:t})})}).displayName=rJ;var r2="SelectLabel";i.forwardRef((e,t)=>{let{__scopeSelect:r,...n}=e,o=r1(r2,r);return(0,m.jsx)(k.div,{id:o.id,...n,ref:t})}).displayName=r2;var r5="SelectItem",[r9,r6]=rA(r5),r3=i.forwardRef((e,t)=>{let{__scopeSelect:r,value:n,disabled:o=!1,textValue:l,...a}=e,s=rj(r5,r),c=r$(r5,r),u=s.value===n,[f,p]=i.useState(null!=l?l:""),[h,v]=i.useState(!1),g=y(t,e=>{var t;return null===(t=c.itemRefCallback)||void 0===t?void 0:t.call(c,e,n,o)}),b=K(),w=i.useRef("touch"),x=()=>{o||(s.onValueChange(n),s.onOpenChange(!1))};if(""===n)throw Error("A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.");return(0,m.jsx)(r9,{scope:r,value:n,disabled:o,textId:b,isSelected:u,onItemTextChange:i.useCallback(e=>{p(t=>{var r;return t||(null!==(r=null==e?void 0:e.textContent)&&void 0!==r?r:"").trim()})},[]),children:(0,m.jsx)(rk.ItemSlot,{scope:r,value:n,disabled:o,textValue:f,children:(0,m.jsx)(k.div,{role:"option","aria-labelledby":b,"data-highlighted":h?"":void 0,"aria-selected":u&&h,"data-state":u?"checked":"unchecked","aria-disabled":o||void 0,"data-disabled":o?"":void 0,tabIndex:o?void 0:-1,...a,ref:g,onFocus:d(a.onFocus,()=>v(!0)),onBlur:d(a.onBlur,()=>v(!1)),onClick:d(a.onClick,()=>{"mouse"!==w.current&&x()}),onPointerUp:d(a.onPointerUp,()=>{"mouse"===w.current&&x()}),onPointerDown:d(a.onPointerDown,e=>{w.current=e.pointerType}),onPointerMove:d(a.onPointerMove,e=>{if(w.current=e.pointerType,o){var t;null===(t=c.onItemLeave)||void 0===t||t.call(c)}else"mouse"===w.current&&e.currentTarget.focus({preventScroll:!0})}),onPointerLeave:d(a.onPointerLeave,e=>{if(e.currentTarget===document.activeElement){var t;null===(t=c.onItemLeave)||void 0===t||t.call(c)}}),onKeyDown:d(a.onKeyDown,e=>{var t;((null===(t=c.searchRef)||void 0===t?void 0:t.current)===""||" "!==e.key)&&(rE.includes(e.key)&&x()," "===e.key&&e.preventDefault())})})})})});r3.displayName=r5;var r4="SelectItemText",r7=i.forwardRef((e,t)=>{let{__scopeSelect:r,className:n,style:o,...l}=e,a=rj(r4,r),c=r$(r4,r),u=r6(r4,r),d=rN(r4,r),[f,p]=i.useState(null),h=y(t,e=>p(e),u.onItemTextChange,e=>{var t;return null===(t=c.itemTextRefCallback)||void 0===t?void 0:t.call(c,e,u.value,u.disabled)}),v=null==f?void 0:f.textContent,g=i.useMemo(()=>(0,m.jsx)("option",{value:u.value,disabled:u.disabled,children:v},u.value),[u.disabled,u.value,v]),{onNativeOptionAdd:b,onNativeOptionRemove:w}=d;return _(()=>(b(g),()=>w(g)),[b,w,g]),(0,m.jsxs)(m.Fragment,{children:[(0,m.jsx)(k.span,{id:u.textId,...l,ref:h}),u.isSelected&&a.valueNode&&!a.valueNodeHasChildren?s.createPortal(l.children,a.valueNode):null]})});r7.displayName=r4;var r8="SelectItemIndicator",ne=i.forwardRef((e,t)=>{let{__scopeSelect:r,...n}=e;return r6(r8,r).isSelected?(0,m.jsx)(k.span,{"aria-hidden":!0,...n,ref:t}):null});ne.displayName=r8;var nt="SelectScrollUpButton",nr=i.forwardRef((e,t)=>{let r=r$(nt,e.__scopeSelect),n=rG(nt,e.__scopeSelect),[o,l]=i.useState(!1),a=y(t,n.onScrollButtonChange);return _(()=>{if(r.viewport&&r.isPositioned){let e=function(){l(t.scrollTop>0)},t=r.viewport;return e(),t.addEventListener("scroll",e),()=>t.removeEventListener("scroll",e)}},[r.viewport,r.isPositioned]),o?(0,m.jsx)(nl,{...e,ref:a,onAutoScroll:()=>{let{viewport:e,selectedItem:t}=r;e&&t&&(e.scrollTop=e.scrollTop-t.offsetHeight)}}):null});nr.displayName=nt;var nn="SelectScrollDownButton",no=i.forwardRef((e,t)=>{let r=r$(nn,e.__scopeSelect),n=rG(nn,e.__scopeSelect),[o,l]=i.useState(!1),a=y(t,n.onScrollButtonChange);return _(()=>{if(r.viewport&&r.isPositioned){let e=function(){let e=t.scrollHeight-t.clientHeight;l(Math.ceil(t.scrollTop)<e)},t=r.viewport;return e(),t.addEventListener("scroll",e),()=>t.removeEventListener("scroll",e)}},[r.viewport,r.isPositioned]),o?(0,m.jsx)(nl,{...e,ref:a,onAutoScroll:()=>{let{viewport:e,selectedItem:t}=r;e&&t&&(e.scrollTop=e.scrollTop+t.offsetHeight)}}):null});no.displayName=nn;var nl=i.forwardRef((e,t)=>{let{__scopeSelect:r,onAutoScroll:n,...o}=e,l=r$("SelectScrollButton",r),a=i.useRef(null),s=rC(r),c=i.useCallback(()=>{null!==a.current&&(window.clearInterval(a.current),a.current=null)},[]);return i.useEffect(()=>()=>c(),[c]),_(()=>{var e;let t=s().find(e=>e.ref.current===document.activeElement);null==t||null===(e=t.ref.current)||void 0===e||e.scrollIntoView({block:"nearest"})},[s]),(0,m.jsx)(k.div,{"aria-hidden":!0,...o,ref:t,style:{flexShrink:0,...o.style},onPointerDown:d(o.onPointerDown,()=>{null===a.current&&(a.current=window.setInterval(n,50))}),onPointerMove:d(o.onPointerMove,()=>{var e;null===(e=l.onItemLeave)||void 0===e||e.call(l),null===a.current&&(a.current=window.setInterval(n,50))}),onPointerLeave:d(o.onPointerLeave,()=>{c()})})});i.forwardRef((e,t)=>{let{__scopeSelect:r,...n}=e;return(0,m.jsx)(k.div,{"aria-hidden":!0,...n,ref:t})}).displayName="SelectSeparator";var ni="SelectArrow";i.forwardRef((e,t)=>{let{__scopeSelect:r,...n}=e,o=rP(r),l=rj(ni,r),i=r$(ni,r);return l.open&&"popper"===i.position?(0,m.jsx)(tP,{...o,...n,ref:t}):null}).displayName=ni;var na=i.forwardRef((e,t)=>{let{__scopeSelect:r,value:n,...o}=e,l=i.useRef(null),a=y(t,l),s=function(e){let t=i.useRef({value:e,previous:e});return i.useMemo(()=>(t.current.value!==e&&(t.current.previous=t.current.value,t.current.value=e),t.current.previous),[e])}(n);return i.useEffect(()=>{let e=l.current;if(!e)return;let t=Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype,"value").set;if(s!==n&&t){let r=new Event("change",{bubbles:!0});t.call(e,n),e.dispatchEvent(r)}},[s,n]),(0,m.jsx)(k.select,{...o,style:{...tz,...o.style},ref:a,defaultValue:n})});function ns(e){return""===e||void 0===e}function nc(e){let t=C(e),r=i.useRef(""),n=i.useRef(0),o=i.useCallback(e=>{let o=r.current+e;t(o),function e(t){r.current=t,window.clearTimeout(n.current),""!==t&&(n.current=window.setTimeout(()=>e(""),1e3))}(o)},[t]),l=i.useCallback(()=>{r.current="",window.clearTimeout(n.current)},[]);return i.useEffect(()=>()=>window.clearTimeout(n.current),[]),[r,o,l]}function nu(e,t,r){var n,o;let l=t.length>1&&Array.from(t).every(e=>e===t[0])?t[0]:t,i=r?e.indexOf(r):-1,a=(n=e,o=Math.max(i,0),n.map((e,t)=>n[(o+t)%n.length]));1===l.length&&(a=a.filter(e=>e!==r));let s=a.find(e=>e.textValue.toLowerCase().startsWith(l.toLowerCase()));return s!==r?s:void 0}na.displayName="SelectBubbleInput";var nd=rO,nf=rz,np=rW,nh=rF,nm=rH,nv=r_,ng=rQ,ny=r3,nb=r7,nw=ne,nx=nr,nE=no},7580:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Users",[["path",{d:"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2",key:"1yyitq"}],["circle",{cx:"9",cy:"7",r:"4",key:"nufk8"}],["path",{d:"M22 21v-2a4 4 0 0 0-3-3.87",key:"kshegd"}],["path",{d:"M16 3.13a4 4 0 0 1 0 7.75",key:"1da9ce"}]])},7863:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("ChevronUp",[["path",{d:"m18 15-6-6-6 6",key:"153udz"}]])},8500:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("TrendingDown",[["polyline",{points:"22 17 13.5 8.5 8.5 13.5 2 7",key:"1r2t7k"}],["polyline",{points:"16 17 22 17 22 11",key:"11uiuu"}]])},8564:(e,t,r)=>{r.d(t,{A:()=>n});let n=(0,r(9946).A)("Star",[["path",{d:"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z",key:"r04s7s"}]])},9688:(e,t,r)=>{r.d(t,{QP:()=>Y});let n=e=>{let t=a(e),{conflictingClassGroups:r,conflictingClassGroupModifiers:n}=e;return{getClassGroupId:e=>{let r=e.split("-");return""===r[0]&&1!==r.length&&r.shift(),o(r,t)||i(e)},getConflictingClassGroupIds:(e,t)=>{let o=r[e]||[];return t&&n[e]?[...o,...n[e]]:o}}},o=(e,t)=>{if(0===e.length)return t.classGroupId;let r=e[0],n=t.nextPart.get(r),l=n?o(e.slice(1),n):void 0;if(l)return l;if(0===t.validators.length)return;let i=e.join("-");return t.validators.find(({validator:e})=>e(i))?.classGroupId},l=/^\[(.+)\]$/,i=e=>{if(l.test(e)){let t=l.exec(e)[1],r=t?.substring(0,t.indexOf(":"));if(r)return"arbitrary.."+r}},a=e=>{let{theme:t,prefix:r}=e,n={nextPart:new Map,validators:[]};return d(Object.entries(e.classGroups),r).forEach(([e,r])=>{s(r,n,e,t)}),n},s=(e,t,r,n)=>{e.forEach(e=>{if("string"==typeof e){(""===e?t:c(t,e)).classGroupId=r;return}if("function"==typeof e){if(u(e)){s(e(n),t,r,n);return}t.validators.push({validator:e,classGroupId:r});return}Object.entries(e).forEach(([e,o])=>{s(o,c(t,e),r,n)})})},c=(e,t)=>{let r=e;return t.split("-").forEach(e=>{r.nextPart.has(e)||r.nextPart.set(e,{nextPart:new Map,validators:[]}),r=r.nextPart.get(e)}),r},u=e=>e.isThemeGetter,d=(e,t)=>t?e.map(([e,r])=>[e,r.map(e=>"string"==typeof e?t+e:"object"==typeof e?Object.fromEntries(Object.entries(e).map(([e,r])=>[t+e,r])):e)]):e,f=e=>{if(e<1)return{get:()=>void 0,set:()=>{}};let t=0,r=new Map,n=new Map,o=(o,l)=>{r.set(o,l),++t>e&&(t=0,n=r,r=new Map)};return{get(e){let t=r.get(e);return void 0!==t?t:void 0!==(t=n.get(e))?(o(e,t),t):void 0},set(e,t){r.has(e)?r.set(e,t):o(e,t)}}},p=e=>{let{separator:t,experimentalParseClassName:r}=e,n=1===t.length,o=t[0],l=t.length,i=e=>{let r;let i=[],a=0,s=0;for(let c=0;c<e.length;c++){let u=e[c];if(0===a){if(u===o&&(n||e.slice(c,c+l)===t)){i.push(e.slice(s,c)),s=c+l;continue}if("/"===u){r=c;continue}}"["===u?a++:"]"===u&&a--}let c=0===i.length?e:e.substring(s),u=c.startsWith("!"),d=u?c.substring(1):c;return{modifiers:i,hasImportantModifier:u,baseClassName:d,maybePostfixModifierPosition:r&&r>s?r-s:void 0}};return r?e=>r({className:e,parseClassName:i}):i},h=e=>{if(e.length<=1)return e;let t=[],r=[];return e.forEach(e=>{"["===e[0]?(t.push(...r.sort(),e),r=[]):r.push(e)}),t.push(...r.sort()),t},m=e=>({cache:f(e.cacheSize),parseClassName:p(e),...n(e)}),v=/\s+/,g=(e,t)=>{let{parseClassName:r,getClassGroupId:n,getConflictingClassGroupIds:o}=t,l=[],i=e.trim().split(v),a="";for(let e=i.length-1;e>=0;e-=1){let t=i[e],{modifiers:s,hasImportantModifier:c,baseClassName:u,maybePostfixModifierPosition:d}=r(t),f=!!d,p=n(f?u.substring(0,d):u);if(!p){if(!f||!(p=n(u))){a=t+(a.length>0?" "+a:a);continue}f=!1}let m=h(s).join(":"),v=c?m+"!":m,g=v+p;if(l.includes(g))continue;l.push(g);let y=o(p,f);for(let e=0;e<y.length;++e){let t=y[e];l.push(v+t)}a=t+(a.length>0?" "+a:a)}return a};function y(){let e,t,r=0,n="";for(;r<arguments.length;)(e=arguments[r++])&&(t=b(e))&&(n&&(n+=" "),n+=t);return n}let b=e=>{let t;if("string"==typeof e)return e;let r="";for(let n=0;n<e.length;n++)e[n]&&(t=b(e[n]))&&(r&&(r+=" "),r+=t);return r},w=e=>{let t=t=>t[e]||[];return t.isThemeGetter=!0,t},x=/^\[(?:([a-z-]+):)?(.+)\]$/i,E=/^\d+\/\d+$/,S=new Set(["px","full","screen"]),k=/^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/,C=/\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/,R=/^(rgba?|hsla?|hwb|(ok)?(lab|lch))\(.+\)$/,A=/^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/,T=/^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/,P=e=>j(e)||S.has(e)||E.test(e),L=e=>$(e,"length",K),j=e=>!!e&&!Number.isNaN(Number(e)),M=e=>$(e,"number",j),N=e=>!!e&&Number.isInteger(Number(e)),O=e=>e.endsWith("%")&&j(e.slice(0,-1)),D=e=>x.test(e),z=e=>k.test(e),I=new Set(["length","size","percentage"]),W=e=>$(e,I,q),F=e=>$(e,"position",q),H=new Set(["image","url"]),B=e=>$(e,H,X),_=e=>$(e,"",U),V=()=>!0,$=(e,t,r)=>{let n=x.exec(e);return!!n&&(n[1]?"string"==typeof t?n[1]===t:t.has(n[1]):r(n[2]))},K=e=>C.test(e)&&!R.test(e),q=()=>!1,U=e=>A.test(e),X=e=>T.test(e);Symbol.toStringTag;let Y=function(e,...t){let r,n,o;let l=function(a){return n=(r=m(t.reduce((e,t)=>t(e),e()))).cache.get,o=r.cache.set,l=i,i(a)};function i(e){let t=n(e);if(t)return t;let l=g(e,r);return o(e,l),l}return function(){return l(y.apply(null,arguments))}}(()=>{let e=w("colors"),t=w("spacing"),r=w("blur"),n=w("brightness"),o=w("borderColor"),l=w("borderRadius"),i=w("borderSpacing"),a=w("borderWidth"),s=w("contrast"),c=w("grayscale"),u=w("hueRotate"),d=w("invert"),f=w("gap"),p=w("gradientColorStops"),h=w("gradientColorStopPositions"),m=w("inset"),v=w("margin"),g=w("opacity"),y=w("padding"),b=w("saturate"),x=w("scale"),E=w("sepia"),S=w("skew"),k=w("space"),C=w("translate"),R=()=>["auto","contain","none"],A=()=>["auto","hidden","clip","visible","scroll"],T=()=>["auto",D,t],I=()=>[D,t],H=()=>["",P,L],$=()=>["auto",j,D],K=()=>["bottom","center","left","left-bottom","left-top","right","right-bottom","right-top","top"],q=()=>["solid","dashed","dotted","double","none"],U=()=>["normal","multiply","screen","overlay","darken","lighten","color-dodge","color-burn","hard-light","soft-light","difference","exclusion","hue","saturation","color","luminosity"],X=()=>["start","end","center","between","around","evenly","stretch"],Y=()=>["","0",D],G=()=>["auto","avoid","all","avoid-page","page","left","right","column"],Z=()=>[j,D];return{cacheSize:500,separator:":",theme:{colors:[V],spacing:[P,L],blur:["none","",z,D],brightness:Z(),borderColor:[e],borderRadius:["none","","full",z,D],borderSpacing:I(),borderWidth:H(),contrast:Z(),grayscale:Y(),hueRotate:Z(),invert:Y(),gap:I(),gradientColorStops:[e],gradientColorStopPositions:[O,L],inset:T(),margin:T(),opacity:Z(),padding:I(),saturate:Z(),scale:Z(),sepia:Y(),skew:Z(),space:I(),translate:I()},classGroups:{aspect:[{aspect:["auto","square","video",D]}],container:["container"],columns:[{columns:[z]}],"break-after":[{"break-after":G()}],"break-before":[{"break-before":G()}],"break-inside":[{"break-inside":["auto","avoid","avoid-page","avoid-column"]}],"box-decoration":[{"box-decoration":["slice","clone"]}],box:[{box:["border","content"]}],display:["block","inline-block","inline","flex","inline-flex","table","inline-table","table-caption","table-cell","table-column","table-column-group","table-footer-group","table-header-group","table-row-group","table-row","flow-root","grid","inline-grid","contents","list-item","hidden"],float:[{float:["right","left","none","start","end"]}],clear:[{clear:["left","right","both","none","start","end"]}],isolation:["isolate","isolation-auto"],"object-fit":[{object:["contain","cover","fill","none","scale-down"]}],"object-position":[{object:[...K(),D]}],overflow:[{overflow:A()}],"overflow-x":[{"overflow-x":A()}],"overflow-y":[{"overflow-y":A()}],overscroll:[{overscroll:R()}],"overscroll-x":[{"overscroll-x":R()}],"overscroll-y":[{"overscroll-y":R()}],position:["static","fixed","absolute","relative","sticky"],inset:[{inset:[m]}],"inset-x":[{"inset-x":[m]}],"inset-y":[{"inset-y":[m]}],start:[{start:[m]}],end:[{end:[m]}],top:[{top:[m]}],right:[{right:[m]}],bottom:[{bottom:[m]}],left:[{left:[m]}],visibility:["visible","invisible","collapse"],z:[{z:["auto",N,D]}],basis:[{basis:T()}],"flex-direction":[{flex:["row","row-reverse","col","col-reverse"]}],"flex-wrap":[{flex:["wrap","wrap-reverse","nowrap"]}],flex:[{flex:["1","auto","initial","none",D]}],grow:[{grow:Y()}],shrink:[{shrink:Y()}],order:[{order:["first","last","none",N,D]}],"grid-cols":[{"grid-cols":[V]}],"col-start-end":[{col:["auto",{span:["full",N,D]},D]}],"col-start":[{"col-start":$()}],"col-end":[{"col-end":$()}],"grid-rows":[{"grid-rows":[V]}],"row-start-end":[{row:["auto",{span:[N,D]},D]}],"row-start":[{"row-start":$()}],"row-end":[{"row-end":$()}],"grid-flow":[{"grid-flow":["row","col","dense","row-dense","col-dense"]}],"auto-cols":[{"auto-cols":["auto","min","max","fr",D]}],"auto-rows":[{"auto-rows":["auto","min","max","fr",D]}],gap:[{gap:[f]}],"gap-x":[{"gap-x":[f]}],"gap-y":[{"gap-y":[f]}],"justify-content":[{justify:["normal",...X()]}],"justify-items":[{"justify-items":["start","end","center","stretch"]}],"justify-self":[{"justify-self":["auto","start","end","center","stretch"]}],"align-content":[{content:["normal",...X(),"baseline"]}],"align-items":[{items:["start","end","center","baseline","stretch"]}],"align-self":[{self:["auto","start","end","center","stretch","baseline"]}],"place-content":[{"place-content":[...X(),"baseline"]}],"place-items":[{"place-items":["start","end","center","baseline","stretch"]}],"place-self":[{"place-self":["auto","start","end","center","stretch"]}],p:[{p:[y]}],px:[{px:[y]}],py:[{py:[y]}],ps:[{ps:[y]}],pe:[{pe:[y]}],pt:[{pt:[y]}],pr:[{pr:[y]}],pb:[{pb:[y]}],pl:[{pl:[y]}],m:[{m:[v]}],mx:[{mx:[v]}],my:[{my:[v]}],ms:[{ms:[v]}],me:[{me:[v]}],mt:[{mt:[v]}],mr:[{mr:[v]}],mb:[{mb:[v]}],ml:[{ml:[v]}],"space-x":[{"space-x":[k]}],"space-x-reverse":["space-x-reverse"],"space-y":[{"space-y":[k]}],"space-y-reverse":["space-y-reverse"],w:[{w:["auto","min","max","fit","svw","lvw","dvw",D,t]}],"min-w":[{"min-w":[D,t,"min","max","fit"]}],"max-w":[{"max-w":[D,t,"none","full","min","max","fit","prose",{screen:[z]},z]}],h:[{h:[D,t,"auto","min","max","fit","svh","lvh","dvh"]}],"min-h":[{"min-h":[D,t,"min","max","fit","svh","lvh","dvh"]}],"max-h":[{"max-h":[D,t,"min","max","fit","svh","lvh","dvh"]}],size:[{size:[D,t,"auto","min","max","fit"]}],"font-size":[{text:["base",z,L]}],"font-smoothing":["antialiased","subpixel-antialiased"],"font-style":["italic","not-italic"],"font-weight":[{font:["thin","extralight","light","normal","medium","semibold","bold","extrabold","black",M]}],"font-family":[{font:[V]}],"fvn-normal":["normal-nums"],"fvn-ordinal":["ordinal"],"fvn-slashed-zero":["slashed-zero"],"fvn-figure":["lining-nums","oldstyle-nums"],"fvn-spacing":["proportional-nums","tabular-nums"],"fvn-fraction":["diagonal-fractions","stacked-fractions"],tracking:[{tracking:["tighter","tight","normal","wide","wider","widest",D]}],"line-clamp":[{"line-clamp":["none",j,M]}],leading:[{leading:["none","tight","snug","normal","relaxed","loose",P,D]}],"list-image":[{"list-image":["none",D]}],"list-style-type":[{list:["none","disc","decimal",D]}],"list-style-position":[{list:["inside","outside"]}],"placeholder-color":[{placeholder:[e]}],"placeholder-opacity":[{"placeholder-opacity":[g]}],"text-alignment":[{text:["left","center","right","justify","start","end"]}],"text-color":[{text:[e]}],"text-opacity":[{"text-opacity":[g]}],"text-decoration":["underline","overline","line-through","no-underline"],"text-decoration-style":[{decoration:[...q(),"wavy"]}],"text-decoration-thickness":[{decoration:["auto","from-font",P,L]}],"underline-offset":[{"underline-offset":["auto",P,D]}],"text-decoration-color":[{decoration:[e]}],"text-transform":["uppercase","lowercase","capitalize","normal-case"],"text-overflow":["truncate","text-ellipsis","text-clip"],"text-wrap":[{text:["wrap","nowrap","balance","pretty"]}],indent:[{indent:I()}],"vertical-align":[{align:["baseline","top","middle","bottom","text-top","text-bottom","sub","super",D]}],whitespace:[{whitespace:["normal","nowrap","pre","pre-line","pre-wrap","break-spaces"]}],break:[{break:["normal","words","all","keep"]}],hyphens:[{hyphens:["none","manual","auto"]}],content:[{content:["none",D]}],"bg-attachment":[{bg:["fixed","local","scroll"]}],"bg-clip":[{"bg-clip":["border","padding","content","text"]}],"bg-opacity":[{"bg-opacity":[g]}],"bg-origin":[{"bg-origin":["border","padding","content"]}],"bg-position":[{bg:[...K(),F]}],"bg-repeat":[{bg:["no-repeat",{repeat:["","x","y","round","space"]}]}],"bg-size":[{bg:["auto","cover","contain",W]}],"bg-image":[{bg:["none",{"gradient-to":["t","tr","r","br","b","bl","l","tl"]},B]}],"bg-color":[{bg:[e]}],"gradient-from-pos":[{from:[h]}],"gradient-via-pos":[{via:[h]}],"gradient-to-pos":[{to:[h]}],"gradient-from":[{from:[p]}],"gradient-via":[{via:[p]}],"gradient-to":[{to:[p]}],rounded:[{rounded:[l]}],"rounded-s":[{"rounded-s":[l]}],"rounded-e":[{"rounded-e":[l]}],"rounded-t":[{"rounded-t":[l]}],"rounded-r":[{"rounded-r":[l]}],"rounded-b":[{"rounded-b":[l]}],"rounded-l":[{"rounded-l":[l]}],"rounded-ss":[{"rounded-ss":[l]}],"rounded-se":[{"rounded-se":[l]}],"rounded-ee":[{"rounded-ee":[l]}],"rounded-es":[{"rounded-es":[l]}],"rounded-tl":[{"rounded-tl":[l]}],"rounded-tr":[{"rounded-tr":[l]}],"rounded-br":[{"rounded-br":[l]}],"rounded-bl":[{"rounded-bl":[l]}],"border-w":[{border:[a]}],"border-w-x":[{"border-x":[a]}],"border-w-y":[{"border-y":[a]}],"border-w-s":[{"border-s":[a]}],"border-w-e":[{"border-e":[a]}],"border-w-t":[{"border-t":[a]}],"border-w-r":[{"border-r":[a]}],"border-w-b":[{"border-b":[a]}],"border-w-l":[{"border-l":[a]}],"border-opacity":[{"border-opacity":[g]}],"border-style":[{border:[...q(),"hidden"]}],"divide-x":[{"divide-x":[a]}],"divide-x-reverse":["divide-x-reverse"],"divide-y":[{"divide-y":[a]}],"divide-y-reverse":["divide-y-reverse"],"divide-opacity":[{"divide-opacity":[g]}],"divide-style":[{divide:q()}],"border-color":[{border:[o]}],"border-color-x":[{"border-x":[o]}],"border-color-y":[{"border-y":[o]}],"border-color-s":[{"border-s":[o]}],"border-color-e":[{"border-e":[o]}],"border-color-t":[{"border-t":[o]}],"border-color-r":[{"border-r":[o]}],"border-color-b":[{"border-b":[o]}],"border-color-l":[{"border-l":[o]}],"divide-color":[{divide:[o]}],"outline-style":[{outline:["",...q()]}],"outline-offset":[{"outline-offset":[P,D]}],"outline-w":[{outline:[P,L]}],"outline-color":[{outline:[e]}],"ring-w":[{ring:H()}],"ring-w-inset":["ring-inset"],"ring-color":[{ring:[e]}],"ring-opacity":[{"ring-opacity":[g]}],"ring-offset-w":[{"ring-offset":[P,L]}],"ring-offset-color":[{"ring-offset":[e]}],shadow:[{shadow:["","inner","none",z,_]}],"shadow-color":[{shadow:[V]}],opacity:[{opacity:[g]}],"mix-blend":[{"mix-blend":[...U(),"plus-lighter","plus-darker"]}],"bg-blend":[{"bg-blend":U()}],filter:[{filter:["","none"]}],blur:[{blur:[r]}],brightness:[{brightness:[n]}],contrast:[{contrast:[s]}],"drop-shadow":[{"drop-shadow":["","none",z,D]}],grayscale:[{grayscale:[c]}],"hue-rotate":[{"hue-rotate":[u]}],invert:[{invert:[d]}],saturate:[{saturate:[b]}],sepia:[{sepia:[E]}],"backdrop-filter":[{"backdrop-filter":["","none"]}],"backdrop-blur":[{"backdrop-blur":[r]}],"backdrop-brightness":[{"backdrop-brightness":[n]}],"backdrop-contrast":[{"backdrop-contrast":[s]}],"backdrop-grayscale":[{"backdrop-grayscale":[c]}],"backdrop-hue-rotate":[{"backdrop-hue-rotate":[u]}],"backdrop-invert":[{"backdrop-invert":[d]}],"backdrop-opacity":[{"backdrop-opacity":[g]}],"backdrop-saturate":[{"backdrop-saturate":[b]}],"backdrop-sepia":[{"backdrop-sepia":[E]}],"border-collapse":[{border:["collapse","separate"]}],"border-spacing":[{"border-spacing":[i]}],"border-spacing-x":[{"border-spacing-x":[i]}],"border-spacing-y":[{"border-spacing-y":[i]}],"table-layout":[{table:["auto","fixed"]}],caption:[{caption:["top","bottom"]}],transition:[{transition:["none","all","","colors","opacity","shadow","transform",D]}],duration:[{duration:Z()}],ease:[{ease:["linear","in","out","in-out",D]}],delay:[{delay:Z()}],animate:[{animate:["none","spin","ping","pulse","bounce",D]}],transform:[{transform:["","gpu","none"]}],scale:[{scale:[x]}],"scale-x":[{"scale-x":[x]}],"scale-y":[{"scale-y":[x]}],rotate:[{rotate:[N,D]}],"translate-x":[{"translate-x":[C]}],"translate-y":[{"translate-y":[C]}],"skew-x":[{"skew-x":[S]}],"skew-y":[{"skew-y":[S]}],"transform-origin":[{origin:["center","top","top-right","right","bottom-right","bottom","bottom-left","left","top-left",D]}],accent:[{accent:["auto",e]}],appearance:[{appearance:["none","auto"]}],cursor:[{cursor:["auto","default","pointer","wait","text","move","help","not-allowed","none","context-menu","progress","cell","crosshair","vertical-text","alias","copy","no-drop","grab","grabbing","all-scroll","col-resize","row-resize","n-resize","e-resize","s-resize","w-resize","ne-resize","nw-resize","se-resize","sw-resize","ew-resize","ns-resize","nesw-resize","nwse-resize","zoom-in","zoom-out",D]}],"caret-color":[{caret:[e]}],"pointer-events":[{"pointer-events":["none","auto"]}],resize:[{resize:["none","y","x",""]}],"scroll-behavior":[{scroll:["auto","smooth"]}],"scroll-m":[{"scroll-m":I()}],"scroll-mx":[{"scroll-mx":I()}],"scroll-my":[{"scroll-my":I()}],"scroll-ms":[{"scroll-ms":I()}],"scroll-me":[{"scroll-me":I()}],"scroll-mt":[{"scroll-mt":I()}],"scroll-mr":[{"scroll-mr":I()}],"scroll-mb":[{"scroll-mb":I()}],"scroll-ml":[{"scroll-ml":I()}],"scroll-p":[{"scroll-p":I()}],"scroll-px":[{"scroll-px":I()}],"scroll-py":[{"scroll-py":I()}],"scroll-ps":[{"scroll-ps":I()}],"scroll-pe":[{"scroll-pe":I()}],"scroll-pt":[{"scroll-pt":I()}],"scroll-pr":[{"scroll-pr":I()}],"scroll-pb":[{"scroll-pb":I()}],"scroll-pl":[{"scroll-pl":I()}],"snap-align":[{snap:["start","end","center","align-none"]}],"snap-stop":[{snap:["normal","always"]}],"snap-type":[{snap:["none","x","y","both"]}],"snap-strictness":[{snap:["mandatory","proximity"]}],touch:[{touch:["auto","none","manipulation"]}],"touch-x":[{"touch-pan":["x","left","right"]}],"touch-y":[{"touch-pan":["y","up","down"]}],"touch-pz":["touch-pinch-zoom"],select:[{select:["none","text","all","auto"]}],"will-change":[{"will-change":["auto","scroll","contents","transform",D]}],fill:[{fill:[e,"none"]}],"stroke-w":[{stroke:[P,L,M]}],stroke:[{stroke:[e,"none"]}],sr:["sr-only","not-sr-only"],"forced-color-adjust":[{"forced-color-adjust":["auto","none"]}]},conflictingClassGroups:{overflow:["overflow-x","overflow-y"],overscroll:["overscroll-x","overscroll-y"],inset:["inset-x","inset-y","start","end","top","right","bottom","left"],"inset-x":["right","left"],"inset-y":["top","bottom"],flex:["basis","grow","shrink"],gap:["gap-x","gap-y"],p:["px","py","ps","pe","pt","pr","pb","pl"],px:["pr","pl"],py:["pt","pb"],m:["mx","my","ms","me","mt","mr","mb","ml"],mx:["mr","ml"],my:["mt","mb"],size:["w","h"],"font-size":["leading"],"fvn-normal":["fvn-ordinal","fvn-slashed-zero","fvn-figure","fvn-spacing","fvn-fraction"],"fvn-ordinal":["fvn-normal"],"fvn-slashed-zero":["fvn-normal"],"fvn-figure":["fvn-normal"],"fvn-spacing":["fvn-normal"],"fvn-fraction":["fvn-normal"],"line-clamp":["display","overflow"],rounded:["rounded-s","rounded-e","rounded-t","rounded-r","rounded-b","rounded-l","rounded-ss","rounded-se","rounded-ee","rounded-es","rounded-tl","rounded-tr","rounded-br","rounded-bl"],"rounded-s":["rounded-ss","rounded-es"],"rounded-e":["rounded-se","rounded-ee"],"rounded-t":["rounded-tl","rounded-tr"],"rounded-r":["rounded-tr","rounded-br"],"rounded-b":["rounded-br","rounded-bl"],"rounded-l":["rounded-tl","rounded-bl"],"border-spacing":["border-spacing-x","border-spacing-y"],"border-w":["border-w-s","border-w-e","border-w-t","border-w-r","border-w-b","border-w-l"],"border-w-x":["border-w-r","border-w-l"],"border-w-y":["border-w-t","border-w-b"],"border-color":["border-color-s","border-color-e","border-color-t","border-color-r","border-color-b","border-color-l"],"border-color-x":["border-color-r","border-color-l"],"border-color-y":["border-color-t","border-color-b"],"scroll-m":["scroll-mx","scroll-my","scroll-ms","scroll-me","scroll-mt","scroll-mr","scroll-mb","scroll-ml"],"scroll-mx":["scroll-mr","scroll-ml"],"scroll-my":["scroll-mt","scroll-mb"],"scroll-p":["scroll-px","scroll-py","scroll-ps","scroll-pe","scroll-pt","scroll-pr","scroll-pb","scroll-pl"],"scroll-px":["scroll-pr","scroll-pl"],"scroll-py":["scroll-pt","scroll-pb"],touch:["touch-x","touch-y","touch-pz"],"touch-x":["touch"],"touch-y":["touch"],"touch-pz":["touch"]},conflictingClassGroupModifiers:{"font-size":["leading"]}}})},9946:(e,t,r)=>{r.d(t,{A:()=>s});var n=r(2115);let o=e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase(),l=function(){for(var e=arguments.length,t=Array(e),r=0;r<e;r++)t[r]=arguments[r];return t.filter((e,t,r)=>!!e&&""!==e.trim()&&r.indexOf(e)===t).join(" ").trim()};var i={xmlns:"http://www.w3.org/2000/svg",width:24,height:24,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"};let a=(0,n.forwardRef)((e,t)=>{let{color:r="currentColor",size:o=24,strokeWidth:a=2,absoluteStrokeWidth:s,className:c="",children:u,iconNode:d,...f}=e;return(0,n.createElement)("svg",{ref:t,...i,width:o,height:o,stroke:r,strokeWidth:s?24*Number(a)/Number(o):a,className:l("lucide",c),...f},[...d.map(e=>{let[t,r]=e;return(0,n.createElement)(t,r)}),...Array.isArray(u)?u:[u]])}),s=(e,t)=>{let r=(0,n.forwardRef)((r,i)=>{let{className:s,...c}=r;return(0,n.createElement)(a,{ref:i,iconNode:t,className:l("lucide-".concat(o(e)),s),...c})});return r.displayName="".concat(e),r}}}]);
+"use strict"
+;(self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
+  [143],
+  {
+    1539: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Zap", [
+        [
+          "path",
+          {
+            d: "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
+            key: "1xq2db",
+          },
+        ],
+      ])
+    },
+    2085: (e, t, r) => {
+      r.d(t, { F: () => i })
+      var n = r(2596)
+      let o = (e) => ("boolean" == typeof e ? `${e}` : 0 === e ? "0" : e),
+        l = n.$,
+        i = (e, t) => (r) => {
+          var n
+          if ((null == t ? void 0 : t.variants) == null)
+            return l(
+              e,
+              null == r ? void 0 : r.class,
+              null == r ? void 0 : r.className,
+            )
+          let { variants: i, defaultVariants: a } = t,
+            s = Object.keys(i).map((e) => {
+              let t = null == r ? void 0 : r[e],
+                n = null == a ? void 0 : a[e]
+              if (null === t) return null
+              let l = o(t) || o(n)
+              return i[e][l]
+            }),
+            c =
+              r &&
+              Object.entries(r).reduce((e, t) => {
+                let [r, n] = t
+                return (void 0 === n || (e[r] = n), e)
+              }, {})
+          return l(
+            e,
+            s,
+            null == t
+              ? void 0
+              : null === (n = t.compoundVariants) || void 0 === n
+                ? void 0
+                : n.reduce((e, t) => {
+                    let { class: r, className: n, ...o } = t
+                    return Object.entries(o).every((e) => {
+                      let [t, r] = e
+                      return Array.isArray(r)
+                        ? r.includes({ ...a, ...c }[t])
+                        : { ...a, ...c }[t] === r
+                    })
+                      ? [...e, r, n]
+                      : e
+                  }, []),
+            null == r ? void 0 : r.class,
+            null == r ? void 0 : r.className,
+          )
+        }
+    },
+    2596: (e, t, r) => {
+      r.d(t, { $: () => n })
+      function n() {
+        for (var e, t, r = 0, n = "", o = arguments.length; r < o; r++)
+          (e = arguments[r]) &&
+            (t = (function e(t) {
+              var r,
+                n,
+                o = ""
+              if ("string" == typeof t || "number" == typeof t) o += t
+              else if ("object" == typeof t) {
+                if (Array.isArray(t)) {
+                  var l = t.length
+                  for (r = 0; r < l; r++)
+                    t[r] && (n = e(t[r])) && (o && (o += " "), (o += n))
+                } else for (n in t) t[n] && (o && (o += " "), (o += n))
+              }
+              return o
+            })(e)) &&
+            (n && (n += " "), (n += t))
+        return n
+      }
+    },
+    3109: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("TrendingUp", [
+        ["polyline", { points: "22 7 13.5 15.5 8.5 10.5 2 17", key: "126l90" }],
+        ["polyline", { points: "16 7 22 7 22 13", key: "kwv8wd" }],
+      ])
+    },
+    3311: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Sparkles", [
+        [
+          "path",
+          {
+            d: "M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z",
+            key: "4pj2yx",
+          },
+        ],
+        ["path", { d: "M20 3v4", key: "1olli1" }],
+        ["path", { d: "M22 5h-4", key: "1gvqau" }],
+        ["path", { d: "M4 17v2", key: "vumght" }],
+        ["path", { d: "M5 18H3", key: "zchphs" }],
+      ])
+    },
+    3384: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Leaf", [
+        [
+          "path",
+          {
+            d: "M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z",
+            key: "nnexq3",
+          },
+        ],
+        [
+          "path",
+          {
+            d: "M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12",
+            key: "mt58a7",
+          },
+        ],
+      ])
+    },
+    4186: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Clock", [
+        ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+        ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }],
+      ])
+    },
+    4516: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("MapPin", [
+        [
+          "path",
+          {
+            d: "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",
+            key: "1r0f0z",
+          },
+        ],
+        ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
+      ])
+    },
+    5196: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Check", [
+        ["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }],
+      ])
+    },
+    6474: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("ChevronDown", [
+        ["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }],
+      ])
+    },
+    6634: (e, t, r) => {
+      r.d(t, { DX: () => a, TL: () => i })
+      var n = r(2115)
+      function o(e, t) {
+        if ("function" == typeof e) return e(t)
+        null != e && (e.current = t)
+      }
+      var l = r(5155)
+      function i(e) {
+        let t = (function (e) {
+            let t = n.forwardRef((e, t) => {
+              let { children: r, ...l } = e
+              if (n.isValidElement(r)) {
+                var i
+                let e, a
+                let s =
+                    ((i = r),
+                    (a =
+                      (e = Object.getOwnPropertyDescriptor(
+                        i.props,
+                        "ref",
+                      )?.get) &&
+                      "isReactWarning" in e &&
+                      e.isReactWarning)
+                      ? i.ref
+                      : (a =
+                            (e = Object.getOwnPropertyDescriptor(
+                              i,
+                              "ref",
+                            )?.get) &&
+                            "isReactWarning" in e &&
+                            e.isReactWarning)
+                        ? i.props.ref
+                        : i.props.ref || i.ref),
+                  c = (function (e, t) {
+                    let r = { ...t }
+                    for (let n in t) {
+                      let o = e[n],
+                        l = t[n]
+                      ;/^on[A-Z]/.test(n)
+                        ? o && l
+                          ? (r[n] = (...e) => {
+                              let t = l(...e)
+                              return (o(...e), t)
+                            })
+                          : o && (r[n] = o)
+                        : "style" === n
+                          ? (r[n] = { ...o, ...l })
+                          : "className" === n &&
+                            (r[n] = [o, l].filter(Boolean).join(" "))
+                    }
+                    return { ...e, ...r }
+                  })(l, r.props)
+                return (
+                  r.type !== n.Fragment &&
+                    (c.ref = t
+                      ? (function (...e) {
+                          return (t) => {
+                            let r = !1,
+                              n = e.map((e) => {
+                                let n = o(e, t)
+                                return (
+                                  r || "function" != typeof n || (r = !0),
+                                  n
+                                )
+                              })
+                            if (r)
+                              return () => {
+                                for (let t = 0; t < n.length; t++) {
+                                  let r = n[t]
+                                  "function" == typeof r ? r() : o(e[t], null)
+                                }
+                              }
+                          }
+                        })(t, s)
+                      : s),
+                  n.cloneElement(r, c)
+                )
+              }
+              return n.Children.count(r) > 1 ? n.Children.only(null) : null
+            })
+            return ((t.displayName = `${e}.SlotClone`), t)
+          })(e),
+          r = n.forwardRef((e, r) => {
+            let { children: o, ...i } = e,
+              a = n.Children.toArray(o),
+              s = a.find(c)
+            if (s) {
+              let e = s.props.children,
+                o = a.map((t) =>
+                  t !== s
+                    ? t
+                    : n.Children.count(e) > 1
+                      ? n.Children.only(null)
+                      : n.isValidElement(e)
+                        ? e.props.children
+                        : null,
+                )
+              return (0, l.jsx)(t, {
+                ...i,
+                ref: r,
+                children: n.isValidElement(e)
+                  ? n.cloneElement(e, void 0, o)
+                  : null,
+              })
+            }
+            return (0, l.jsx)(t, { ...i, ref: r, children: o })
+          })
+        return ((r.displayName = `${e}.Slot`), r)
+      }
+      var a = i("Slot"),
+        s = Symbol("radix.slottable")
+      function c(e) {
+        return (
+          n.isValidElement(e) &&
+          "function" == typeof e.type &&
+          "__radixId" in e.type &&
+          e.type.__radixId === s
+        )
+      }
+    },
+    7027: (e, t, r) => {
+      r.d(t, {
+        UC: () => nv,
+        In: () => nh,
+        q7: () => ny,
+        VF: () => nw,
+        p4: () => nb,
+        ZL: () => nm,
+        bL: () => nd,
+        wn: () => nE,
+        PP: () => nx,
+        l9: () => nf,
+        WT: () => np,
+        LM: () => ng,
+      })
+      var n,
+        o,
+        l,
+        i = r(2115),
+        a = r.t(i, 2),
+        s = r(7650)
+      function c(e, [t, r]) {
+        return Math.min(r, Math.max(t, e))
+      }
+      var u = !!(
+        "undefined" != typeof window &&
+        window.document &&
+        window.document.createElement
+      )
+      function d(e, t, { checkForDefaultPrevented: r = !0 } = {}) {
+        return function (n) {
+          if ((e?.(n), !1 === r || !n.defaultPrevented)) return t?.(n)
+        }
+      }
+      function f(e, t, r) {
+        if (!t.has(e))
+          throw TypeError(
+            "attempted to " + r + " private field on non-instance",
+          )
+        return t.get(e)
+      }
+      function p(e, t) {
+        var r = f(e, t, "get")
+        return r.get ? r.get.call(e) : r.value
+      }
+      function h(e, t, r) {
+        var n = f(e, t, "set")
+        return (
+          !(function (e, t, r) {
+            if (t.set) t.set.call(e, r)
+            else {
+              if (!t.writable)
+                throw TypeError("attempted to set read only private field")
+              t.value = r
+            }
+          })(e, n, r),
+          r
+        )
+      }
+      var m = r(5155)
+      function v(e, t = []) {
+        let r = [],
+          n = () => {
+            let t = r.map((e) => i.createContext(e))
+            return function (r) {
+              let n = r?.[e] || t
+              return i.useMemo(
+                () => ({ [`__scope${e}`]: { ...r, [e]: n } }),
+                [r, n],
+              )
+            }
+          }
+        return (
+          (n.scopeName = e),
+          [
+            function (t, n) {
+              let o = i.createContext(n),
+                l = r.length
+              r = [...r, n]
+              let a = (t) => {
+                let { scope: r, children: n, ...a } = t,
+                  s = r?.[e]?.[l] || o,
+                  c = i.useMemo(() => a, Object.values(a))
+                return (0, m.jsx)(s.Provider, { value: c, children: n })
+              }
+              return (
+                (a.displayName = t + "Provider"),
+                [
+                  a,
+                  function (r, a) {
+                    let s = a?.[e]?.[l] || o,
+                      c = i.useContext(s)
+                    if (c) return c
+                    if (void 0 !== n) return n
+                    throw Error(`\`${r}\` must be used within \`${t}\``)
+                  },
+                ]
+              )
+            },
+            (function (...e) {
+              let t = e[0]
+              if (1 === e.length) return t
+              let r = () => {
+                let r = e.map((e) => ({
+                  useScope: e(),
+                  scopeName: e.scopeName,
+                }))
+                return function (e) {
+                  let n = r.reduce((t, { useScope: r, scopeName: n }) => {
+                    let o = r(e)[`__scope${n}`]
+                    return { ...t, ...o }
+                  }, {})
+                  return i.useMemo(
+                    () => ({ [`__scope${t.scopeName}`]: n }),
+                    [n],
+                  )
+                }
+              }
+              return ((r.scopeName = t.scopeName), r)
+            })(n, ...t),
+          ]
+        )
+      }
+      function g(e, t) {
+        if ("function" == typeof e) return e(t)
+        null != e && (e.current = t)
+      }
+      function y(...e) {
+        return i.useCallback(
+          (function (...e) {
+            return (t) => {
+              let r = !1,
+                n = e.map((e) => {
+                  let n = g(e, t)
+                  return (r || "function" != typeof n || (r = !0), n)
+                })
+              if (r)
+                return () => {
+                  for (let t = 0; t < n.length; t++) {
+                    let r = n[t]
+                    "function" == typeof r ? r() : g(e[t], null)
+                  }
+                }
+            }
+          })(...e),
+          e,
+        )
+      }
+      var b = r(6634),
+        w = new WeakMap()
+      function x(e, t) {
+        if ("at" in Array.prototype) return Array.prototype.at.call(e, t)
+        let r = (function (e, t) {
+          let r = e.length,
+            n = E(t),
+            o = n >= 0 ? n : r + n
+          return o < 0 || o >= r ? -1 : o
+        })(e, t)
+        return -1 === r ? void 0 : e[r]
+      }
+      function E(e) {
+        return e != e || 0 === e ? 0 : Math.trunc(e)
+      }
+      n = new WeakMap()
+      var S = i.createContext(void 0),
+        k = [
+          "a",
+          "button",
+          "div",
+          "form",
+          "h2",
+          "h3",
+          "img",
+          "input",
+          "label",
+          "li",
+          "nav",
+          "ol",
+          "p",
+          "select",
+          "span",
+          "svg",
+          "ul",
+        ].reduce((e, t) => {
+          let r = (0, b.TL)(`Primitive.${t}`),
+            n = i.forwardRef((e, n) => {
+              let { asChild: o, ...l } = e
+              return (
+                "undefined" != typeof window &&
+                  (window[Symbol.for("radix-ui")] = !0),
+                (0, m.jsx)(o ? r : t, { ...l, ref: n })
+              )
+            })
+          return ((n.displayName = `Primitive.${t}`), { ...e, [t]: n })
+        }, {})
+      function C(e) {
+        let t = i.useRef(e)
+        return (
+          i.useEffect(() => {
+            t.current = e
+          }),
+          i.useMemo(
+            () =>
+              (...e) =>
+                t.current?.(...e),
+            [],
+          )
+        )
+      }
+      var R = "dismissableLayer.update",
+        A = i.createContext({
+          layers: new Set(),
+          layersWithOutsidePointerEventsDisabled: new Set(),
+          branches: new Set(),
+        }),
+        T = i.forwardRef((e, t) => {
+          var r, n
+          let {
+              disableOutsidePointerEvents: l = !1,
+              onEscapeKeyDown: a,
+              onPointerDownOutside: s,
+              onFocusOutside: c,
+              onInteractOutside: u,
+              onDismiss: f,
+              ...p
+            } = e,
+            h = i.useContext(A),
+            [v, g] = i.useState(null),
+            b =
+              null !== (n = null == v ? void 0 : v.ownerDocument) &&
+              void 0 !== n
+                ? n
+                : null === (r = globalThis) || void 0 === r
+                  ? void 0
+                  : r.document,
+            [, w] = i.useState({}),
+            x = y(t, (e) => g(e)),
+            E = Array.from(h.layers),
+            [S] = [...h.layersWithOutsidePointerEventsDisabled].slice(-1),
+            T = E.indexOf(S),
+            j = v ? E.indexOf(v) : -1,
+            M = h.layersWithOutsidePointerEventsDisabled.size > 0,
+            N = j >= T,
+            O = (function (e) {
+              var t
+              let r =
+                  arguments.length > 1 && void 0 !== arguments[1]
+                    ? arguments[1]
+                    : null === (t = globalThis) || void 0 === t
+                      ? void 0
+                      : t.document,
+                n = C(e),
+                o = i.useRef(!1),
+                l = i.useRef(() => {})
+              return (
+                i.useEffect(() => {
+                  let e = (e) => {
+                      if (e.target && !o.current) {
+                        let t = function () {
+                            L("dismissableLayer.pointerDownOutside", n, o, {
+                              discrete: !0,
+                            })
+                          },
+                          o = { originalEvent: e }
+                        "touch" === e.pointerType
+                          ? (r.removeEventListener("click", l.current),
+                            (l.current = t),
+                            r.addEventListener("click", l.current, {
+                              once: !0,
+                            }))
+                          : t()
+                      } else r.removeEventListener("click", l.current)
+                      o.current = !1
+                    },
+                    t = window.setTimeout(() => {
+                      r.addEventListener("pointerdown", e)
+                    }, 0)
+                  return () => {
+                    ;(window.clearTimeout(t),
+                      r.removeEventListener("pointerdown", e),
+                      r.removeEventListener("click", l.current))
+                  }
+                }, [r, n]),
+                { onPointerDownCapture: () => (o.current = !0) }
+              )
+            })((e) => {
+              let t = e.target,
+                r = [...h.branches].some((e) => e.contains(t))
+              !N ||
+                r ||
+                (null == s || s(e),
+                null == u || u(e),
+                e.defaultPrevented || null == f || f())
+            }, b),
+            D = (function (e) {
+              var t
+              let r =
+                  arguments.length > 1 && void 0 !== arguments[1]
+                    ? arguments[1]
+                    : null === (t = globalThis) || void 0 === t
+                      ? void 0
+                      : t.document,
+                n = C(e),
+                o = i.useRef(!1)
+              return (
+                i.useEffect(() => {
+                  let e = (e) => {
+                    e.target &&
+                      !o.current &&
+                      L(
+                        "dismissableLayer.focusOutside",
+                        n,
+                        { originalEvent: e },
+                        { discrete: !1 },
+                      )
+                  }
+                  return (
+                    r.addEventListener("focusin", e),
+                    () => r.removeEventListener("focusin", e)
+                  )
+                }, [r, n]),
+                {
+                  onFocusCapture: () => (o.current = !0),
+                  onBlurCapture: () => (o.current = !1),
+                }
+              )
+            })((e) => {
+              let t = e.target
+              ;[...h.branches].some((e) => e.contains(t)) ||
+                (null == c || c(e),
+                null == u || u(e),
+                e.defaultPrevented || null == f || f())
+            }, b)
+          return (
+            !(function (e, t = globalThis?.document) {
+              let r = C(e)
+              i.useEffect(() => {
+                let e = (e) => {
+                  "Escape" === e.key && r(e)
+                }
+                return (
+                  t.addEventListener("keydown", e, { capture: !0 }),
+                  () => t.removeEventListener("keydown", e, { capture: !0 })
+                )
+              }, [r, t])
+            })((e) => {
+              j === h.layers.size - 1 &&
+                (null == a || a(e),
+                !e.defaultPrevented && f && (e.preventDefault(), f()))
+            }, b),
+            i.useEffect(() => {
+              if (v)
+                return (
+                  l &&
+                    (0 === h.layersWithOutsidePointerEventsDisabled.size &&
+                      ((o = b.body.style.pointerEvents),
+                      (b.body.style.pointerEvents = "none")),
+                    h.layersWithOutsidePointerEventsDisabled.add(v)),
+                  h.layers.add(v),
+                  P(),
+                  () => {
+                    l &&
+                      1 === h.layersWithOutsidePointerEventsDisabled.size &&
+                      (b.body.style.pointerEvents = o)
+                  }
+                )
+            }, [v, b, l, h]),
+            i.useEffect(
+              () => () => {
+                v &&
+                  (h.layers.delete(v),
+                  h.layersWithOutsidePointerEventsDisabled.delete(v),
+                  P())
+              },
+              [v, h],
+            ),
+            i.useEffect(() => {
+              let e = () => w({})
+              return (
+                document.addEventListener(R, e),
+                () => document.removeEventListener(R, e)
+              )
+            }, []),
+            (0, m.jsx)(k.div, {
+              ...p,
+              ref: x,
+              style: {
+                pointerEvents: M ? (N ? "auto" : "none") : void 0,
+                ...e.style,
+              },
+              onFocusCapture: d(e.onFocusCapture, D.onFocusCapture),
+              onBlurCapture: d(e.onBlurCapture, D.onBlurCapture),
+              onPointerDownCapture: d(
+                e.onPointerDownCapture,
+                O.onPointerDownCapture,
+              ),
+            })
+          )
+        })
+      function P() {
+        let e = new CustomEvent(R)
+        document.dispatchEvent(e)
+      }
+      function L(e, t, r, n) {
+        let { discrete: o } = n,
+          l = r.originalEvent.target,
+          i = new CustomEvent(e, { bubbles: !1, cancelable: !0, detail: r })
+        if ((t && l.addEventListener(e, t, { once: !0 }), o))
+          l && s.flushSync(() => l.dispatchEvent(i))
+        else l.dispatchEvent(i)
+      }
+      ;((T.displayName = "DismissableLayer"),
+        (i.forwardRef((e, t) => {
+          let r = i.useContext(A),
+            n = i.useRef(null),
+            o = y(t, n)
+          return (
+            i.useEffect(() => {
+              let e = n.current
+              if (e)
+                return (
+                  r.branches.add(e),
+                  () => {
+                    r.branches.delete(e)
+                  }
+                )
+            }, [r.branches]),
+            (0, m.jsx)(k.div, { ...e, ref: o })
+          )
+        }).displayName = "DismissableLayerBranch"))
+      var j = 0
+      function M() {
+        let e = document.createElement("span")
+        return (
+          e.setAttribute("data-radix-focus-guard", ""),
+          (e.tabIndex = 0),
+          (e.style.outline = "none"),
+          (e.style.opacity = "0"),
+          (e.style.position = "fixed"),
+          (e.style.pointerEvents = "none"),
+          e
+        )
+      }
+      var N = "focusScope.autoFocusOnMount",
+        O = "focusScope.autoFocusOnUnmount",
+        D = { bubbles: !1, cancelable: !0 },
+        z = i.forwardRef((e, t) => {
+          let {
+              loop: r = !1,
+              trapped: n = !1,
+              onMountAutoFocus: o,
+              onUnmountAutoFocus: l,
+              ...a
+            } = e,
+            [s, c] = i.useState(null),
+            u = C(o),
+            d = C(l),
+            f = i.useRef(null),
+            p = y(t, (e) => c(e)),
+            h = i.useRef({
+              paused: !1,
+              pause() {
+                this.paused = !0
+              },
+              resume() {
+                this.paused = !1
+              },
+            }).current
+          ;(i.useEffect(() => {
+            if (n) {
+              let e = function (e) {
+                  if (h.paused || !s) return
+                  let t = e.target
+                  s.contains(t) ? (f.current = t) : F(f.current, { select: !0 })
+                },
+                t = function (e) {
+                  if (h.paused || !s) return
+                  let t = e.relatedTarget
+                  null === t || s.contains(t) || F(f.current, { select: !0 })
+                }
+              ;(document.addEventListener("focusin", e),
+                document.addEventListener("focusout", t))
+              let r = new MutationObserver(function (e) {
+                if (document.activeElement === document.body)
+                  for (let t of e) t.removedNodes.length > 0 && F(s)
+              })
+              return (
+                s && r.observe(s, { childList: !0, subtree: !0 }),
+                () => {
+                  ;(document.removeEventListener("focusin", e),
+                    document.removeEventListener("focusout", t),
+                    r.disconnect())
+                }
+              )
+            }
+          }, [n, s, h.paused]),
+            i.useEffect(() => {
+              if (s) {
+                H.add(h)
+                let e = document.activeElement
+                if (!s.contains(e)) {
+                  let t = new CustomEvent(N, D)
+                  ;(s.addEventListener(N, u),
+                    s.dispatchEvent(t),
+                    t.defaultPrevented ||
+                      ((function (e) {
+                        let { select: t = !1 } =
+                            arguments.length > 1 && void 0 !== arguments[1]
+                              ? arguments[1]
+                              : {},
+                          r = document.activeElement
+                        for (let n of e)
+                          if (
+                            (F(n, { select: t }), document.activeElement !== r)
+                          )
+                            return
+                      })(
+                        I(s).filter((e) => "A" !== e.tagName),
+                        { select: !0 },
+                      ),
+                      document.activeElement === e && F(s)))
+                }
+                return () => {
+                  ;(s.removeEventListener(N, u),
+                    setTimeout(() => {
+                      let t = new CustomEvent(O, D)
+                      ;(s.addEventListener(O, d),
+                        s.dispatchEvent(t),
+                        t.defaultPrevented ||
+                          F(null != e ? e : document.body, { select: !0 }),
+                        s.removeEventListener(O, d),
+                        H.remove(h))
+                    }, 0))
+                }
+              }
+            }, [s, u, d, h]))
+          let v = i.useCallback(
+            (e) => {
+              if ((!r && !n) || h.paused) return
+              let t = "Tab" === e.key && !e.altKey && !e.ctrlKey && !e.metaKey,
+                o = document.activeElement
+              if (t && o) {
+                let t = e.currentTarget,
+                  [n, l] = (function (e) {
+                    let t = I(e)
+                    return [W(t, e), W(t.reverse(), e)]
+                  })(t)
+                n && l
+                  ? e.shiftKey || o !== l
+                    ? e.shiftKey &&
+                      o === n &&
+                      (e.preventDefault(), r && F(l, { select: !0 }))
+                    : (e.preventDefault(), r && F(n, { select: !0 }))
+                  : o === t && e.preventDefault()
+              }
+            },
+            [r, n, h.paused],
+          )
+          return (0, m.jsx)(k.div, { tabIndex: -1, ...a, ref: p, onKeyDown: v })
+        })
+      function I(e) {
+        let t = [],
+          r = document.createTreeWalker(e, NodeFilter.SHOW_ELEMENT, {
+            acceptNode: (e) => {
+              let t = "INPUT" === e.tagName && "hidden" === e.type
+              return e.disabled || e.hidden || t
+                ? NodeFilter.FILTER_SKIP
+                : e.tabIndex >= 0
+                  ? NodeFilter.FILTER_ACCEPT
+                  : NodeFilter.FILTER_SKIP
+            },
+          })
+        for (; r.nextNode(); ) t.push(r.currentNode)
+        return t
+      }
+      function W(e, t) {
+        for (let r of e)
+          if (
+            !(function (e, t) {
+              let { upTo: r } = t
+              if ("hidden" === getComputedStyle(e).visibility) return !0
+              for (; e && (void 0 === r || e !== r); ) {
+                if ("none" === getComputedStyle(e).display) return !0
+                e = e.parentElement
+              }
+              return !1
+            })(r, { upTo: t })
+          )
+            return r
+      }
+      function F(e) {
+        let { select: t = !1 } =
+          arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}
+        if (e && e.focus) {
+          var r
+          let n = document.activeElement
+          ;(e.focus({ preventScroll: !0 }),
+            e !== n &&
+              (r = e) instanceof HTMLInputElement &&
+              "select" in r &&
+              t &&
+              e.select())
+        }
+      }
+      z.displayName = "FocusScope"
+      var H = (function () {
+        let e = []
+        return {
+          add(t) {
+            let r = e[0]
+            ;(t !== r && (null == r || r.pause()), (e = B(e, t)).unshift(t))
+          },
+          remove(t) {
+            var r
+            null === (r = (e = B(e, t))[0]) || void 0 === r || r.resume()
+          },
+        }
+      })()
+      function B(e, t) {
+        let r = [...e],
+          n = r.indexOf(t)
+        return (-1 !== n && r.splice(n, 1), r)
+      }
+      var _ = globalThis?.document ? i.useLayoutEffect : () => {},
+        V = a[" useId ".trim().toString()] || (() => void 0),
+        $ = 0
+      function K(e) {
+        let [t, r] = i.useState(V())
+        return (
+          _(() => {
+            e || r((e) => e ?? String($++))
+          }, [e]),
+          e || (t ? `radix-${t}` : "")
+        )
+      }
+      let q = ["top", "right", "bottom", "left"],
+        U = Math.min,
+        X = Math.max,
+        Y = Math.round,
+        G = Math.floor,
+        Z = (e) => ({ x: e, y: e }),
+        Q = { left: "right", right: "left", bottom: "top", top: "bottom" },
+        J = { start: "end", end: "start" }
+      function ee(e, t) {
+        return "function" == typeof e ? e(t) : e
+      }
+      function et(e) {
+        return e.split("-")[0]
+      }
+      function er(e) {
+        return e.split("-")[1]
+      }
+      function en(e) {
+        return "x" === e ? "y" : "x"
+      }
+      function eo(e) {
+        return "y" === e ? "height" : "width"
+      }
+      let el = new Set(["top", "bottom"])
+      function ei(e) {
+        return el.has(et(e)) ? "y" : "x"
+      }
+      function ea(e) {
+        return e.replace(/start|end/g, (e) => J[e])
+      }
+      let es = ["left", "right"],
+        ec = ["right", "left"],
+        eu = ["top", "bottom"],
+        ed = ["bottom", "top"]
+      function ef(e) {
+        return e.replace(/left|right|bottom|top/g, (e) => Q[e])
+      }
+      function ep(e) {
+        return "number" != typeof e
+          ? { top: 0, right: 0, bottom: 0, left: 0, ...e }
+          : { top: e, right: e, bottom: e, left: e }
+      }
+      function eh(e) {
+        let { x: t, y: r, width: n, height: o } = e
+        return {
+          width: n,
+          height: o,
+          top: r,
+          left: t,
+          right: t + n,
+          bottom: r + o,
+          x: t,
+          y: r,
+        }
+      }
+      function em(e, t, r) {
+        let n,
+          { reference: o, floating: l } = e,
+          i = ei(t),
+          a = en(ei(t)),
+          s = eo(a),
+          c = et(t),
+          u = "y" === i,
+          d = o.x + o.width / 2 - l.width / 2,
+          f = o.y + o.height / 2 - l.height / 2,
+          p = o[s] / 2 - l[s] / 2
+        switch (c) {
+          case "top":
+            n = { x: d, y: o.y - l.height }
+            break
+          case "bottom":
+            n = { x: d, y: o.y + o.height }
+            break
+          case "right":
+            n = { x: o.x + o.width, y: f }
+            break
+          case "left":
+            n = { x: o.x - l.width, y: f }
+            break
+          default:
+            n = { x: o.x, y: o.y }
+        }
+        switch (er(t)) {
+          case "start":
+            n[a] -= p * (r && u ? -1 : 1)
+            break
+          case "end":
+            n[a] += p * (r && u ? -1 : 1)
+        }
+        return n
+      }
+      let ev = async (e, t, r) => {
+        let {
+            placement: n = "bottom",
+            strategy: o = "absolute",
+            middleware: l = [],
+            platform: i,
+          } = r,
+          a = l.filter(Boolean),
+          s = await (null == i.isRTL ? void 0 : i.isRTL(t)),
+          c = await i.getElementRects({
+            reference: e,
+            floating: t,
+            strategy: o,
+          }),
+          { x: u, y: d } = em(c, n, s),
+          f = n,
+          p = {},
+          h = 0
+        for (let r = 0; r < a.length; r++) {
+          let { name: l, fn: m } = a[r],
+            {
+              x: v,
+              y: g,
+              data: y,
+              reset: b,
+            } = await m({
+              x: u,
+              y: d,
+              initialPlacement: n,
+              placement: f,
+              strategy: o,
+              middlewareData: p,
+              rects: c,
+              platform: i,
+              elements: { reference: e, floating: t },
+            })
+          ;((u = null != v ? v : u),
+            (d = null != g ? g : d),
+            (p = { ...p, [l]: { ...p[l], ...y } }),
+            b &&
+              h <= 50 &&
+              (h++,
+              "object" == typeof b &&
+                (b.placement && (f = b.placement),
+                b.rects &&
+                  (c =
+                    !0 === b.rects
+                      ? await i.getElementRects({
+                          reference: e,
+                          floating: t,
+                          strategy: o,
+                        })
+                      : b.rects),
+                ({ x: u, y: d } = em(c, f, s))),
+              (r = -1)))
+        }
+        return { x: u, y: d, placement: f, strategy: o, middlewareData: p }
+      }
+      async function eg(e, t) {
+        var r
+        void 0 === t && (t = {})
+        let { x: n, y: o, platform: l, rects: i, elements: a, strategy: s } = e,
+          {
+            boundary: c = "clippingAncestors",
+            rootBoundary: u = "viewport",
+            elementContext: d = "floating",
+            altBoundary: f = !1,
+            padding: p = 0,
+          } = ee(t, e),
+          h = ep(p),
+          m = a[f ? ("floating" === d ? "reference" : "floating") : d],
+          v = eh(
+            await l.getClippingRect({
+              element:
+                null ==
+                  (r = await (null == l.isElement ? void 0 : l.isElement(m))) ||
+                r
+                  ? m
+                  : m.contextElement ||
+                    (await (null == l.getDocumentElement
+                      ? void 0
+                      : l.getDocumentElement(a.floating))),
+              boundary: c,
+              rootBoundary: u,
+              strategy: s,
+            }),
+          ),
+          g =
+            "floating" === d
+              ? {
+                  x: n,
+                  y: o,
+                  width: i.floating.width,
+                  height: i.floating.height,
+                }
+              : i.reference,
+          y = await (null == l.getOffsetParent
+            ? void 0
+            : l.getOffsetParent(a.floating)),
+          b = ((await (null == l.isElement ? void 0 : l.isElement(y))) &&
+            (await (null == l.getScale ? void 0 : l.getScale(y)))) || {
+            x: 1,
+            y: 1,
+          },
+          w = eh(
+            l.convertOffsetParentRelativeRectToViewportRelativeRect
+              ? await l.convertOffsetParentRelativeRectToViewportRelativeRect({
+                  elements: a,
+                  rect: g,
+                  offsetParent: y,
+                  strategy: s,
+                })
+              : g,
+          )
+        return {
+          top: (v.top - w.top + h.top) / b.y,
+          bottom: (w.bottom - v.bottom + h.bottom) / b.y,
+          left: (v.left - w.left + h.left) / b.x,
+          right: (w.right - v.right + h.right) / b.x,
+        }
+      }
+      function ey(e, t) {
+        return {
+          top: e.top - t.height,
+          right: e.right - t.width,
+          bottom: e.bottom - t.height,
+          left: e.left - t.width,
+        }
+      }
+      function eb(e) {
+        return q.some((t) => e[t] >= 0)
+      }
+      let ew = new Set(["left", "top"])
+      async function ex(e, t) {
+        let { placement: r, platform: n, elements: o } = e,
+          l = await (null == n.isRTL ? void 0 : n.isRTL(o.floating)),
+          i = et(r),
+          a = er(r),
+          s = "y" === ei(r),
+          c = ew.has(i) ? -1 : 1,
+          u = l && s ? -1 : 1,
+          d = ee(t, e),
+          {
+            mainAxis: f,
+            crossAxis: p,
+            alignmentAxis: h,
+          } = "number" == typeof d
+            ? { mainAxis: d, crossAxis: 0, alignmentAxis: null }
+            : {
+                mainAxis: d.mainAxis || 0,
+                crossAxis: d.crossAxis || 0,
+                alignmentAxis: d.alignmentAxis,
+              }
+        return (
+          a && "number" == typeof h && (p = "end" === a ? -1 * h : h),
+          s ? { x: p * u, y: f * c } : { x: f * c, y: p * u }
+        )
+      }
+      function eE() {
+        return "undefined" != typeof window
+      }
+      function eS(e) {
+        return eR(e) ? (e.nodeName || "").toLowerCase() : "#document"
+      }
+      function ek(e) {
+        var t
+        return (
+          (null == e || null == (t = e.ownerDocument)
+            ? void 0
+            : t.defaultView) || window
+        )
+      }
+      function eC(e) {
+        var t
+        return null ==
+          (t = (eR(e) ? e.ownerDocument : e.document) || window.document)
+          ? void 0
+          : t.documentElement
+      }
+      function eR(e) {
+        return !!eE() && (e instanceof Node || e instanceof ek(e).Node)
+      }
+      function eA(e) {
+        return !!eE() && (e instanceof Element || e instanceof ek(e).Element)
+      }
+      function eT(e) {
+        return (
+          !!eE() && (e instanceof HTMLElement || e instanceof ek(e).HTMLElement)
+        )
+      }
+      function eP(e) {
+        return (
+          !!eE() &&
+          "undefined" != typeof ShadowRoot &&
+          (e instanceof ShadowRoot || e instanceof ek(e).ShadowRoot)
+        )
+      }
+      let eL = new Set(["inline", "contents"])
+      function ej(e) {
+        let { overflow: t, overflowX: r, overflowY: n, display: o } = e_(e)
+        return /auto|scroll|overlay|hidden|clip/.test(t + n + r) && !eL.has(o)
+      }
+      let eM = new Set(["table", "td", "th"]),
+        eN = [":popover-open", ":modal"]
+      function eO(e) {
+        return eN.some((t) => {
+          try {
+            return e.matches(t)
+          } catch (e) {
+            return !1
+          }
+        })
+      }
+      let eD = ["transform", "translate", "scale", "rotate", "perspective"],
+        ez = [
+          "transform",
+          "translate",
+          "scale",
+          "rotate",
+          "perspective",
+          "filter",
+        ],
+        eI = ["paint", "layout", "strict", "content"]
+      function eW(e) {
+        let t = eF(),
+          r = eA(e) ? e_(e) : e
+        return (
+          eD.some((e) => !!r[e] && "none" !== r[e]) ||
+          (!!r.containerType && "normal" !== r.containerType) ||
+          (!t && !!r.backdropFilter && "none" !== r.backdropFilter) ||
+          (!t && !!r.filter && "none" !== r.filter) ||
+          ez.some((e) => (r.willChange || "").includes(e)) ||
+          eI.some((e) => (r.contain || "").includes(e))
+        )
+      }
+      function eF() {
+        return (
+          "undefined" != typeof CSS &&
+          !!CSS.supports &&
+          CSS.supports("-webkit-backdrop-filter", "none")
+        )
+      }
+      let eH = new Set(["html", "body", "#document"])
+      function eB(e) {
+        return eH.has(eS(e))
+      }
+      function e_(e) {
+        return ek(e).getComputedStyle(e)
+      }
+      function eV(e) {
+        return eA(e)
+          ? { scrollLeft: e.scrollLeft, scrollTop: e.scrollTop }
+          : { scrollLeft: e.scrollX, scrollTop: e.scrollY }
+      }
+      function e$(e) {
+        if ("html" === eS(e)) return e
+        let t = e.assignedSlot || e.parentNode || (eP(e) && e.host) || eC(e)
+        return eP(t) ? t.host : t
+      }
+      function eK(e, t, r) {
+        var n
+        ;(void 0 === t && (t = []), void 0 === r && (r = !0))
+        let o = (function e(t) {
+            let r = e$(t)
+            return eB(r)
+              ? t.ownerDocument
+                ? t.ownerDocument.body
+                : t.body
+              : eT(r) && ej(r)
+                ? r
+                : e(r)
+          })(e),
+          l = o === (null == (n = e.ownerDocument) ? void 0 : n.body),
+          i = ek(o)
+        if (l) {
+          let e = eq(i)
+          return t.concat(
+            i,
+            i.visualViewport || [],
+            ej(o) ? o : [],
+            e && r ? eK(e) : [],
+          )
+        }
+        return t.concat(o, eK(o, [], r))
+      }
+      function eq(e) {
+        return e.parent && Object.getPrototypeOf(e.parent)
+          ? e.frameElement
+          : null
+      }
+      function eU(e) {
+        let t = e_(e),
+          r = parseFloat(t.width) || 0,
+          n = parseFloat(t.height) || 0,
+          o = eT(e),
+          l = o ? e.offsetWidth : r,
+          i = o ? e.offsetHeight : n,
+          a = Y(r) !== l || Y(n) !== i
+        return (a && ((r = l), (n = i)), { width: r, height: n, $: a })
+      }
+      function eX(e) {
+        return eA(e) ? e : e.contextElement
+      }
+      function eY(e) {
+        let t = eX(e)
+        if (!eT(t)) return Z(1)
+        let r = t.getBoundingClientRect(),
+          { width: n, height: o, $: l } = eU(t),
+          i = (l ? Y(r.width) : r.width) / n,
+          a = (l ? Y(r.height) : r.height) / o
+        return (
+          (i && Number.isFinite(i)) || (i = 1),
+          (a && Number.isFinite(a)) || (a = 1),
+          { x: i, y: a }
+        )
+      }
+      let eG = Z(0)
+      function eZ(e) {
+        let t = ek(e)
+        return eF() && t.visualViewport
+          ? { x: t.visualViewport.offsetLeft, y: t.visualViewport.offsetTop }
+          : eG
+      }
+      function eQ(e, t, r, n) {
+        var o
+        ;(void 0 === t && (t = !1), void 0 === r && (r = !1))
+        let l = e.getBoundingClientRect(),
+          i = eX(e),
+          a = Z(1)
+        t && (n ? eA(n) && (a = eY(n)) : (a = eY(e)))
+        let s = (void 0 === (o = r) && (o = !1), n && (!o || n === ek(i)) && o)
+            ? eZ(i)
+            : Z(0),
+          c = (l.left + s.x) / a.x,
+          u = (l.top + s.y) / a.y,
+          d = l.width / a.x,
+          f = l.height / a.y
+        if (i) {
+          let e = ek(i),
+            t = n && eA(n) ? ek(n) : n,
+            r = e,
+            o = eq(r)
+          for (; o && n && t !== r; ) {
+            let e = eY(o),
+              t = o.getBoundingClientRect(),
+              n = e_(o),
+              l = t.left + (o.clientLeft + parseFloat(n.paddingLeft)) * e.x,
+              i = t.top + (o.clientTop + parseFloat(n.paddingTop)) * e.y
+            ;((c *= e.x),
+              (u *= e.y),
+              (d *= e.x),
+              (f *= e.y),
+              (c += l),
+              (u += i),
+              (o = eq((r = ek(o)))))
+          }
+        }
+        return eh({ width: d, height: f, x: c, y: u })
+      }
+      function eJ(e, t) {
+        let r = eV(e).scrollLeft
+        return t ? t.left + r : eQ(eC(e)).left + r
+      }
+      function e0(e, t, r) {
+        void 0 === r && (r = !1)
+        let n = e.getBoundingClientRect()
+        return {
+          x: n.left + t.scrollLeft - (r ? 0 : eJ(e, n)),
+          y: n.top + t.scrollTop,
+        }
+      }
+      let e1 = new Set(["absolute", "fixed"])
+      function e2(e, t, r) {
+        let n
+        if ("viewport" === t)
+          n = (function (e, t) {
+            let r = ek(e),
+              n = eC(e),
+              o = r.visualViewport,
+              l = n.clientWidth,
+              i = n.clientHeight,
+              a = 0,
+              s = 0
+            if (o) {
+              ;((l = o.width), (i = o.height))
+              let e = eF()
+              ;(!e || (e && "fixed" === t)) &&
+                ((a = o.offsetLeft), (s = o.offsetTop))
+            }
+            return { width: l, height: i, x: a, y: s }
+          })(e, r)
+        else if ("document" === t)
+          n = (function (e) {
+            let t = eC(e),
+              r = eV(e),
+              n = e.ownerDocument.body,
+              o = X(t.scrollWidth, t.clientWidth, n.scrollWidth, n.clientWidth),
+              l = X(
+                t.scrollHeight,
+                t.clientHeight,
+                n.scrollHeight,
+                n.clientHeight,
+              ),
+              i = -r.scrollLeft + eJ(e),
+              a = -r.scrollTop
+            return (
+              "rtl" === e_(n).direction &&
+                (i += X(t.clientWidth, n.clientWidth) - o),
+              { width: o, height: l, x: i, y: a }
+            )
+          })(eC(e))
+        else if (eA(t))
+          n = (function (e, t) {
+            let r = eQ(e, !0, "fixed" === t),
+              n = r.top + e.clientTop,
+              o = r.left + e.clientLeft,
+              l = eT(e) ? eY(e) : Z(1),
+              i = e.clientWidth * l.x,
+              a = e.clientHeight * l.y
+            return { width: i, height: a, x: o * l.x, y: n * l.y }
+          })(t, r)
+        else {
+          let r = eZ(e)
+          n = { x: t.x - r.x, y: t.y - r.y, width: t.width, height: t.height }
+        }
+        return eh(n)
+      }
+      function e5(e) {
+        return "static" === e_(e).position
+      }
+      function e9(e, t) {
+        if (!eT(e) || "fixed" === e_(e).position) return null
+        if (t) return t(e)
+        let r = e.offsetParent
+        return (eC(e) === r && (r = r.ownerDocument.body), r)
+      }
+      function e6(e, t) {
+        var r
+        let n = ek(e)
+        if (eO(e)) return n
+        if (!eT(e)) {
+          let t = e$(e)
+          for (; t && !eB(t); ) {
+            if (eA(t) && !e5(t)) return t
+            t = e$(t)
+          }
+          return n
+        }
+        let o = e9(e, t)
+        for (; o && ((r = o), eM.has(eS(r))) && e5(o); ) o = e9(o, t)
+        return o && eB(o) && e5(o) && !eW(o)
+          ? n
+          : o ||
+              (function (e) {
+                let t = e$(e)
+                for (; eT(t) && !eB(t); ) {
+                  if (eW(t)) return t
+                  if (eO(t)) break
+                  t = e$(t)
+                }
+                return null
+              })(e) ||
+              n
+      }
+      let e3 = async function (e) {
+          let t = this.getOffsetParent || e6,
+            r = this.getDimensions,
+            n = await r(e.floating)
+          return {
+            reference: (function (e, t, r) {
+              let n = eT(t),
+                o = eC(t),
+                l = "fixed" === r,
+                i = eQ(e, !0, l, t),
+                a = { scrollLeft: 0, scrollTop: 0 },
+                s = Z(0)
+              if (n || (!n && !l)) {
+                if ((("body" !== eS(t) || ej(o)) && (a = eV(t)), n)) {
+                  let e = eQ(t, !0, l, t)
+                  ;((s.x = e.x + t.clientLeft), (s.y = e.y + t.clientTop))
+                } else o && (s.x = eJ(o))
+              }
+              l && !n && o && (s.x = eJ(o))
+              let c = !o || n || l ? Z(0) : e0(o, a)
+              return {
+                x: i.left + a.scrollLeft - s.x - c.x,
+                y: i.top + a.scrollTop - s.y - c.y,
+                width: i.width,
+                height: i.height,
+              }
+            })(e.reference, await t(e.floating), e.strategy),
+            floating: { x: 0, y: 0, width: n.width, height: n.height },
+          }
+        },
+        e4 = {
+          convertOffsetParentRelativeRectToViewportRelativeRect: function (e) {
+            let { elements: t, rect: r, offsetParent: n, strategy: o } = e,
+              l = "fixed" === o,
+              i = eC(n),
+              a = !!t && eO(t.floating)
+            if (n === i || (a && l)) return r
+            let s = { scrollLeft: 0, scrollTop: 0 },
+              c = Z(1),
+              u = Z(0),
+              d = eT(n)
+            if (
+              (d || (!d && !l)) &&
+              (("body" !== eS(n) || ej(i)) && (s = eV(n)), eT(n))
+            ) {
+              let e = eQ(n)
+              ;((c = eY(n)),
+                (u.x = e.x + n.clientLeft),
+                (u.y = e.y + n.clientTop))
+            }
+            let f = !i || d || l ? Z(0) : e0(i, s, !0)
+            return {
+              width: r.width * c.x,
+              height: r.height * c.y,
+              x: r.x * c.x - s.scrollLeft * c.x + u.x + f.x,
+              y: r.y * c.y - s.scrollTop * c.y + u.y + f.y,
+            }
+          },
+          getDocumentElement: eC,
+          getClippingRect: function (e) {
+            let { element: t, boundary: r, rootBoundary: n, strategy: o } = e,
+              l = [
+                ...("clippingAncestors" === r
+                  ? eO(t)
+                    ? []
+                    : (function (e, t) {
+                        let r = t.get(e)
+                        if (r) return r
+                        let n = eK(e, [], !1).filter(
+                            (e) => eA(e) && "body" !== eS(e),
+                          ),
+                          o = null,
+                          l = "fixed" === e_(e).position,
+                          i = l ? e$(e) : e
+                        for (; eA(i) && !eB(i); ) {
+                          let t = e_(i),
+                            r = eW(i)
+                          ;(r || "fixed" !== t.position || (o = null),
+                            (
+                              l
+                                ? !r && !o
+                                : (!r &&
+                                    "static" === t.position &&
+                                    !!o &&
+                                    e1.has(o.position)) ||
+                                  (ej(i) &&
+                                    !r &&
+                                    (function e(t, r) {
+                                      let n = e$(t)
+                                      return (
+                                        !(n === r || !eA(n) || eB(n)) &&
+                                        ("fixed" === e_(n).position || e(n, r))
+                                      )
+                                    })(e, i))
+                            )
+                              ? (n = n.filter((e) => e !== i))
+                              : (o = t),
+                            (i = e$(i)))
+                        }
+                        return (t.set(e, n), n)
+                      })(t, this._c)
+                  : [].concat(r)),
+                n,
+              ],
+              i = l[0],
+              a = l.reduce(
+                (e, r) => {
+                  let n = e2(t, r, o)
+                  return (
+                    (e.top = X(n.top, e.top)),
+                    (e.right = U(n.right, e.right)),
+                    (e.bottom = U(n.bottom, e.bottom)),
+                    (e.left = X(n.left, e.left)),
+                    e
+                  )
+                },
+                e2(t, i, o),
+              )
+            return {
+              width: a.right - a.left,
+              height: a.bottom - a.top,
+              x: a.left,
+              y: a.top,
+            }
+          },
+          getOffsetParent: e6,
+          getElementRects: e3,
+          getClientRects: function (e) {
+            return Array.from(e.getClientRects())
+          },
+          getDimensions: function (e) {
+            let { width: t, height: r } = eU(e)
+            return { width: t, height: r }
+          },
+          getScale: eY,
+          isElement: eA,
+          isRTL: function (e) {
+            return "rtl" === e_(e).direction
+          },
+        }
+      function e7(e, t) {
+        return (
+          e.x === t.x &&
+          e.y === t.y &&
+          e.width === t.width &&
+          e.height === t.height
+        )
+      }
+      let e8 = (e) => ({
+          name: "arrow",
+          options: e,
+          async fn(t) {
+            let {
+                x: r,
+                y: n,
+                placement: o,
+                rects: l,
+                platform: i,
+                elements: a,
+                middlewareData: s,
+              } = t,
+              { element: c, padding: u = 0 } = ee(e, t) || {}
+            if (null == c) return {}
+            let d = ep(u),
+              f = { x: r, y: n },
+              p = en(ei(o)),
+              h = eo(p),
+              m = await i.getDimensions(c),
+              v = "y" === p,
+              g = v ? "clientHeight" : "clientWidth",
+              y = l.reference[h] + l.reference[p] - f[p] - l.floating[h],
+              b = f[p] - l.reference[p],
+              w = await (null == i.getOffsetParent
+                ? void 0
+                : i.getOffsetParent(c)),
+              x = w ? w[g] : 0
+            ;(x && (await (null == i.isElement ? void 0 : i.isElement(w)))) ||
+              (x = a.floating[g] || l.floating[h])
+            let E = x / 2 - m[h] / 2 - 1,
+              S = U(d[v ? "top" : "left"], E),
+              k = U(d[v ? "bottom" : "right"], E),
+              C = x - m[h] - k,
+              R = x / 2 - m[h] / 2 + (y / 2 - b / 2),
+              A = X(S, U(R, C)),
+              T =
+                !s.arrow &&
+                null != er(o) &&
+                R !== A &&
+                l.reference[h] / 2 - (R < S ? S : k) - m[h] / 2 < 0,
+              P = T ? (R < S ? R - S : R - C) : 0
+            return {
+              [p]: f[p] + P,
+              data: {
+                [p]: A,
+                centerOffset: R - A - P,
+                ...(T && { alignmentOffset: P }),
+              },
+              reset: T,
+            }
+          },
+        }),
+        te = (e, t, r) => {
+          let n = new Map(),
+            o = { platform: e4, ...r },
+            l = { ...o.platform, _c: n }
+          return ev(e, t, { ...o, platform: l })
+        }
+      var tt =
+        "undefined" != typeof document ? i.useLayoutEffect : function () {}
+      function tr(e, t) {
+        let r, n, o
+        if (e === t) return !0
+        if (typeof e != typeof t) return !1
+        if ("function" == typeof e && e.toString() === t.toString()) return !0
+        if (e && t && "object" == typeof e) {
+          if (Array.isArray(e)) {
+            if ((r = e.length) !== t.length) return !1
+            for (n = r; 0 != n--; ) if (!tr(e[n], t[n])) return !1
+            return !0
+          }
+          if ((r = (o = Object.keys(e)).length) !== Object.keys(t).length)
+            return !1
+          for (n = r; 0 != n--; )
+            if (!{}.hasOwnProperty.call(t, o[n])) return !1
+          for (n = r; 0 != n--; ) {
+            let r = o[n]
+            if (("_owner" !== r || !e.$$typeof) && !tr(e[r], t[r])) return !1
+          }
+          return !0
+        }
+        return e != e && t != t
+      }
+      function tn(e) {
+        return "undefined" == typeof window
+          ? 1
+          : (e.ownerDocument.defaultView || window).devicePixelRatio || 1
+      }
+      function to(e, t) {
+        let r = tn(e)
+        return Math.round(t * r) / r
+      }
+      function tl(e) {
+        let t = i.useRef(e)
+        return (
+          tt(() => {
+            t.current = e
+          }),
+          t
+        )
+      }
+      let ti = (e) => ({
+          name: "arrow",
+          options: e,
+          fn(t) {
+            let { element: r, padding: n } = "function" == typeof e ? e(t) : e
+            return r && {}.hasOwnProperty.call(r, "current")
+              ? null != r.current
+                ? e8({ element: r.current, padding: n }).fn(t)
+                : {}
+              : r
+                ? e8({ element: r, padding: n }).fn(t)
+                : {}
+          },
+        }),
+        ta = (e, t) => ({
+          ...(function (e) {
+            return (
+              void 0 === e && (e = 0),
+              {
+                name: "offset",
+                options: e,
+                async fn(t) {
+                  var r, n
+                  let { x: o, y: l, placement: i, middlewareData: a } = t,
+                    s = await ex(t, e)
+                  return i ===
+                    (null == (r = a.offset) ? void 0 : r.placement) &&
+                    null != (n = a.arrow) &&
+                    n.alignmentOffset
+                    ? {}
+                    : { x: o + s.x, y: l + s.y, data: { ...s, placement: i } }
+                },
+              }
+            )
+          })(e),
+          options: [e, t],
+        }),
+        ts = (e, t) => ({
+          ...(function (e) {
+            return (
+              void 0 === e && (e = {}),
+              {
+                name: "shift",
+                options: e,
+                async fn(t) {
+                  let { x: r, y: n, placement: o } = t,
+                    {
+                      mainAxis: l = !0,
+                      crossAxis: i = !1,
+                      limiter: a = {
+                        fn: (e) => {
+                          let { x: t, y: r } = e
+                          return { x: t, y: r }
+                        },
+                      },
+                      ...s
+                    } = ee(e, t),
+                    c = { x: r, y: n },
+                    u = await eg(t, s),
+                    d = ei(et(o)),
+                    f = en(d),
+                    p = c[f],
+                    h = c[d]
+                  if (l) {
+                    let e = "y" === f ? "top" : "left",
+                      t = "y" === f ? "bottom" : "right",
+                      r = p + u[e],
+                      n = p - u[t]
+                    p = X(r, U(p, n))
+                  }
+                  if (i) {
+                    let e = "y" === d ? "top" : "left",
+                      t = "y" === d ? "bottom" : "right",
+                      r = h + u[e],
+                      n = h - u[t]
+                    h = X(r, U(h, n))
+                  }
+                  let m = a.fn({ ...t, [f]: p, [d]: h })
+                  return {
+                    ...m,
+                    data: {
+                      x: m.x - r,
+                      y: m.y - n,
+                      enabled: { [f]: l, [d]: i },
+                    },
+                  }
+                },
+              }
+            )
+          })(e),
+          options: [e, t],
+        }),
+        tc = (e, t) => ({
+          ...(function (e) {
+            return (
+              void 0 === e && (e = {}),
+              {
+                options: e,
+                fn(t) {
+                  let {
+                      x: r,
+                      y: n,
+                      placement: o,
+                      rects: l,
+                      middlewareData: i,
+                    } = t,
+                    {
+                      offset: a = 0,
+                      mainAxis: s = !0,
+                      crossAxis: c = !0,
+                    } = ee(e, t),
+                    u = { x: r, y: n },
+                    d = ei(o),
+                    f = en(d),
+                    p = u[f],
+                    h = u[d],
+                    m = ee(a, t),
+                    v =
+                      "number" == typeof m
+                        ? { mainAxis: m, crossAxis: 0 }
+                        : { mainAxis: 0, crossAxis: 0, ...m }
+                  if (s) {
+                    let e = "y" === f ? "height" : "width",
+                      t = l.reference[f] - l.floating[e] + v.mainAxis,
+                      r = l.reference[f] + l.reference[e] - v.mainAxis
+                    p < t ? (p = t) : p > r && (p = r)
+                  }
+                  if (c) {
+                    var g, y
+                    let e = "y" === f ? "width" : "height",
+                      t = ew.has(et(o)),
+                      r =
+                        l.reference[d] -
+                        l.floating[e] +
+                        ((t && (null == (g = i.offset) ? void 0 : g[d])) || 0) +
+                        (t ? 0 : v.crossAxis),
+                      n =
+                        l.reference[d] +
+                        l.reference[e] +
+                        (t
+                          ? 0
+                          : (null == (y = i.offset) ? void 0 : y[d]) || 0) -
+                        (t ? v.crossAxis : 0)
+                    h < r ? (h = r) : h > n && (h = n)
+                  }
+                  return { [f]: p, [d]: h }
+                },
+              }
+            )
+          })(e),
+          options: [e, t],
+        }),
+        tu = (e, t) => ({
+          ...(function (e) {
+            return (
+              void 0 === e && (e = {}),
+              {
+                name: "flip",
+                options: e,
+                async fn(t) {
+                  var r, n, o, l, i
+                  let {
+                      placement: a,
+                      middlewareData: s,
+                      rects: c,
+                      initialPlacement: u,
+                      platform: d,
+                      elements: f,
+                    } = t,
+                    {
+                      mainAxis: p = !0,
+                      crossAxis: h = !0,
+                      fallbackPlacements: m,
+                      fallbackStrategy: v = "bestFit",
+                      fallbackAxisSideDirection: g = "none",
+                      flipAlignment: y = !0,
+                      ...b
+                    } = ee(e, t)
+                  if (null != (r = s.arrow) && r.alignmentOffset) return {}
+                  let w = et(a),
+                    x = ei(u),
+                    E = et(u) === u,
+                    S = await (null == d.isRTL ? void 0 : d.isRTL(f.floating)),
+                    k =
+                      m ||
+                      (E || !y
+                        ? [ef(u)]
+                        : (function (e) {
+                            let t = ef(e)
+                            return [ea(e), t, ea(t)]
+                          })(u)),
+                    C = "none" !== g
+                  !m &&
+                    C &&
+                    k.push(
+                      ...(function (e, t, r, n) {
+                        let o = er(e),
+                          l = (function (e, t, r) {
+                            switch (e) {
+                              case "top":
+                              case "bottom":
+                                if (r) return t ? ec : es
+                                return t ? es : ec
+                              case "left":
+                              case "right":
+                                return t ? eu : ed
+                              default:
+                                return []
+                            }
+                          })(et(e), "start" === r, n)
+                        return (
+                          o &&
+                            ((l = l.map((e) => e + "-" + o)),
+                            t && (l = l.concat(l.map(ea)))),
+                          l
+                        )
+                      })(u, y, g, S),
+                    )
+                  let R = [u, ...k],
+                    A = await eg(t, b),
+                    T = [],
+                    P = (null == (n = s.flip) ? void 0 : n.overflows) || []
+                  if ((p && T.push(A[w]), h)) {
+                    let e = (function (e, t, r) {
+                      void 0 === r && (r = !1)
+                      let n = er(e),
+                        o = en(ei(e)),
+                        l = eo(o),
+                        i =
+                          "x" === o
+                            ? n === (r ? "end" : "start")
+                              ? "right"
+                              : "left"
+                            : "start" === n
+                              ? "bottom"
+                              : "top"
+                      return (
+                        t.reference[l] > t.floating[l] && (i = ef(i)),
+                        [i, ef(i)]
+                      )
+                    })(a, c, S)
+                    T.push(A[e[0]], A[e[1]])
+                  }
+                  if (
+                    ((P = [...P, { placement: a, overflows: T }]),
+                    !T.every((e) => e <= 0))
+                  ) {
+                    let e =
+                        ((null == (o = s.flip) ? void 0 : o.index) || 0) + 1,
+                      t = R[e]
+                    if (
+                      t &&
+                      ("alignment" !== h ||
+                        x === ei(t) ||
+                        P.every(
+                          (e) => ei(e.placement) !== x || e.overflows[0] > 0,
+                        ))
+                    )
+                      return {
+                        data: { index: e, overflows: P },
+                        reset: { placement: t },
+                      }
+                    let r =
+                      null ==
+                      (l = P.filter((e) => e.overflows[0] <= 0).sort(
+                        (e, t) => e.overflows[1] - t.overflows[1],
+                      )[0])
+                        ? void 0
+                        : l.placement
+                    if (!r)
+                      switch (v) {
+                        case "bestFit": {
+                          let e =
+                            null ==
+                            (i = P.filter((e) => {
+                              if (C) {
+                                let t = ei(e.placement)
+                                return t === x || "y" === t
+                              }
+                              return !0
+                            })
+                              .map((e) => [
+                                e.placement,
+                                e.overflows
+                                  .filter((e) => e > 0)
+                                  .reduce((e, t) => e + t, 0),
+                              ])
+                              .sort((e, t) => e[1] - t[1])[0])
+                              ? void 0
+                              : i[0]
+                          e && (r = e)
+                          break
+                        }
+                        case "initialPlacement":
+                          r = u
+                      }
+                    if (a !== r) return { reset: { placement: r } }
+                  }
+                  return {}
+                },
+              }
+            )
+          })(e),
+          options: [e, t],
+        }),
+        td = (e, t) => ({
+          ...(function (e) {
+            return (
+              void 0 === e && (e = {}),
+              {
+                name: "size",
+                options: e,
+                async fn(t) {
+                  var r, n
+                  let o, l
+                  let { placement: i, rects: a, platform: s, elements: c } = t,
+                    { apply: u = () => {}, ...d } = ee(e, t),
+                    f = await eg(t, d),
+                    p = et(i),
+                    h = er(i),
+                    m = "y" === ei(i),
+                    { width: v, height: g } = a.floating
+                  "top" === p || "bottom" === p
+                    ? ((o = p),
+                      (l =
+                        h ===
+                        ((await (null == s.isRTL
+                          ? void 0
+                          : s.isRTL(c.floating)))
+                          ? "start"
+                          : "end")
+                          ? "left"
+                          : "right"))
+                    : ((l = p), (o = "end" === h ? "top" : "bottom"))
+                  let y = g - f.top - f.bottom,
+                    b = v - f.left - f.right,
+                    w = U(g - f[o], y),
+                    x = U(v - f[l], b),
+                    E = !t.middlewareData.shift,
+                    S = w,
+                    k = x
+                  if (
+                    (null != (r = t.middlewareData.shift) &&
+                      r.enabled.x &&
+                      (k = b),
+                    null != (n = t.middlewareData.shift) &&
+                      n.enabled.y &&
+                      (S = y),
+                    E && !h)
+                  ) {
+                    let e = X(f.left, 0),
+                      t = X(f.right, 0),
+                      r = X(f.top, 0),
+                      n = X(f.bottom, 0)
+                    m
+                      ? (k =
+                          v -
+                          2 * (0 !== e || 0 !== t ? e + t : X(f.left, f.right)))
+                      : (S =
+                          g -
+                          2 * (0 !== r || 0 !== n ? r + n : X(f.top, f.bottom)))
+                  }
+                  await u({ ...t, availableWidth: k, availableHeight: S })
+                  let C = await s.getDimensions(c.floating)
+                  return v !== C.width || g !== C.height
+                    ? { reset: { rects: !0 } }
+                    : {}
+                },
+              }
+            )
+          })(e),
+          options: [e, t],
+        }),
+        tf = (e, t) => ({
+          ...(function (e) {
+            return (
+              void 0 === e && (e = {}),
+              {
+                name: "hide",
+                options: e,
+                async fn(t) {
+                  let { rects: r } = t,
+                    { strategy: n = "referenceHidden", ...o } = ee(e, t)
+                  switch (n) {
+                    case "referenceHidden": {
+                      let e = ey(
+                        await eg(t, { ...o, elementContext: "reference" }),
+                        r.reference,
+                      )
+                      return {
+                        data: {
+                          referenceHiddenOffsets: e,
+                          referenceHidden: eb(e),
+                        },
+                      }
+                    }
+                    case "escaped": {
+                      let e = ey(
+                        await eg(t, { ...o, altBoundary: !0 }),
+                        r.floating,
+                      )
+                      return { data: { escapedOffsets: e, escaped: eb(e) } }
+                    }
+                    default:
+                      return {}
+                  }
+                },
+              }
+            )
+          })(e),
+          options: [e, t],
+        }),
+        tp = (e, t) => ({ ...ti(e), options: [e, t] })
+      var th = i.forwardRef((e, t) => {
+        let { children: r, width: n = 10, height: o = 5, ...l } = e
+        return (0, m.jsx)(k.svg, {
+          ...l,
+          ref: t,
+          width: n,
+          height: o,
+          viewBox: "0 0 30 10",
+          preserveAspectRatio: "none",
+          children: e.asChild
+            ? r
+            : (0, m.jsx)("polygon", { points: "0,0 30,0 15,10" }),
+        })
+      })
+      th.displayName = "Arrow"
+      var tm = "Popper",
+        [tv, tg] = v(tm),
+        [ty, tb] = tv(tm),
+        tw = (e) => {
+          let { __scopePopper: t, children: r } = e,
+            [n, o] = i.useState(null)
+          return (0, m.jsx)(ty, {
+            scope: t,
+            anchor: n,
+            onAnchorChange: o,
+            children: r,
+          })
+        }
+      tw.displayName = tm
+      var tx = "PopperAnchor",
+        tE = i.forwardRef((e, t) => {
+          let { __scopePopper: r, virtualRef: n, ...o } = e,
+            l = tb(tx, r),
+            a = i.useRef(null),
+            s = y(t, a),
+            c = i.useRef(null)
+          return (
+            i.useEffect(() => {
+              let e = c.current
+              ;((c.current = (null == n ? void 0 : n.current) || a.current),
+                e !== c.current && l.onAnchorChange(c.current))
+            }),
+            n ? null : (0, m.jsx)(k.div, { ...o, ref: s })
+          )
+        })
+      tE.displayName = tx
+      var tS = "PopperContent",
+        [tk, tC] = tv(tS),
+        tR = i.forwardRef((e, t) => {
+          var r, n, o, l, a, c, u, d
+          let {
+              __scopePopper: f,
+              side: p = "bottom",
+              sideOffset: h = 0,
+              align: v = "center",
+              alignOffset: g = 0,
+              arrowPadding: b = 0,
+              avoidCollisions: w = !0,
+              collisionBoundary: x = [],
+              collisionPadding: E = 0,
+              sticky: S = "partial",
+              hideWhenDetached: R = !1,
+              updatePositionStrategy: A = "optimized",
+              onPlaced: T,
+              ...P
+            } = e,
+            L = tb(tS, f),
+            [j, M] = i.useState(null),
+            N = y(t, (e) => M(e)),
+            [O, D] = i.useState(null),
+            z = (function (e) {
+              let [t, r] = i.useState(void 0)
+              return (
+                _(() => {
+                  if (e) {
+                    r({ width: e.offsetWidth, height: e.offsetHeight })
+                    let t = new ResizeObserver((t) => {
+                      let n, o
+                      if (!Array.isArray(t) || !t.length) return
+                      let l = t[0]
+                      if ("borderBoxSize" in l) {
+                        let e = l.borderBoxSize,
+                          t = Array.isArray(e) ? e[0] : e
+                        ;((n = t.inlineSize), (o = t.blockSize))
+                      } else ((n = e.offsetWidth), (o = e.offsetHeight))
+                      r({ width: n, height: o })
+                    })
+                    return (
+                      t.observe(e, { box: "border-box" }),
+                      () => t.unobserve(e)
+                    )
+                  }
+                  r(void 0)
+                }, [e]),
+                t
+              )
+            })(O),
+            I =
+              null !== (u = null == z ? void 0 : z.width) && void 0 !== u
+                ? u
+                : 0,
+            W =
+              null !== (d = null == z ? void 0 : z.height) && void 0 !== d
+                ? d
+                : 0,
+            F =
+              "number" == typeof E
+                ? E
+                : { top: 0, right: 0, bottom: 0, left: 0, ...E },
+            H = Array.isArray(x) ? x : [x],
+            B = H.length > 0,
+            V = { padding: F, boundary: H.filter(tL), altBoundary: B },
+            {
+              refs: $,
+              floatingStyles: K,
+              placement: q,
+              isPositioned: Y,
+              middlewareData: Z,
+            } = (function (e) {
+              void 0 === e && (e = {})
+              let {
+                  placement: t = "bottom",
+                  strategy: r = "absolute",
+                  middleware: n = [],
+                  platform: o,
+                  elements: { reference: l, floating: a } = {},
+                  transform: c = !0,
+                  whileElementsMounted: u,
+                  open: d,
+                } = e,
+                [f, p] = i.useState({
+                  x: 0,
+                  y: 0,
+                  strategy: r,
+                  placement: t,
+                  middlewareData: {},
+                  isPositioned: !1,
+                }),
+                [h, m] = i.useState(n)
+              tr(h, n) || m(n)
+              let [v, g] = i.useState(null),
+                [y, b] = i.useState(null),
+                w = i.useCallback((e) => {
+                  e !== k.current && ((k.current = e), g(e))
+                }, []),
+                x = i.useCallback((e) => {
+                  e !== C.current && ((C.current = e), b(e))
+                }, []),
+                E = l || v,
+                S = a || y,
+                k = i.useRef(null),
+                C = i.useRef(null),
+                R = i.useRef(f),
+                A = null != u,
+                T = tl(u),
+                P = tl(o),
+                L = tl(d),
+                j = i.useCallback(() => {
+                  if (!k.current || !C.current) return
+                  let e = { placement: t, strategy: r, middleware: h }
+                  ;(P.current && (e.platform = P.current),
+                    te(k.current, C.current, e).then((e) => {
+                      let t = { ...e, isPositioned: !1 !== L.current }
+                      M.current &&
+                        !tr(R.current, t) &&
+                        ((R.current = t),
+                        s.flushSync(() => {
+                          p(t)
+                        }))
+                    }))
+                }, [h, t, r, P, L])
+              tt(() => {
+                !1 === d &&
+                  R.current.isPositioned &&
+                  ((R.current.isPositioned = !1),
+                  p((e) => ({ ...e, isPositioned: !1 })))
+              }, [d])
+              let M = i.useRef(!1)
+              ;(tt(
+                () => (
+                  (M.current = !0),
+                  () => {
+                    M.current = !1
+                  }
+                ),
+                [],
+              ),
+                tt(() => {
+                  if ((E && (k.current = E), S && (C.current = S), E && S)) {
+                    if (T.current) return T.current(E, S, j)
+                    j()
+                  }
+                }, [E, S, j, T, A]))
+              let N = i.useMemo(
+                  () => ({
+                    reference: k,
+                    floating: C,
+                    setReference: w,
+                    setFloating: x,
+                  }),
+                  [w, x],
+                ),
+                O = i.useMemo(() => ({ reference: E, floating: S }), [E, S]),
+                D = i.useMemo(() => {
+                  let e = { position: r, left: 0, top: 0 }
+                  if (!O.floating) return e
+                  let t = to(O.floating, f.x),
+                    n = to(O.floating, f.y)
+                  return c
+                    ? {
+                        ...e,
+                        transform: "translate(" + t + "px, " + n + "px)",
+                        ...(tn(O.floating) >= 1.5 && {
+                          willChange: "transform",
+                        }),
+                      }
+                    : { position: r, left: t, top: n }
+                }, [r, c, O.floating, f.x, f.y])
+              return i.useMemo(
+                () => ({
+                  ...f,
+                  update: j,
+                  refs: N,
+                  elements: O,
+                  floatingStyles: D,
+                }),
+                [f, j, N, O, D],
+              )
+            })({
+              strategy: "fixed",
+              placement: p + ("center" !== v ? "-" + v : ""),
+              whileElementsMounted: function () {
+                for (var e = arguments.length, t = Array(e), r = 0; r < e; r++)
+                  t[r] = arguments[r]
+                return (function (e, t, r, n) {
+                  let o
+                  void 0 === n && (n = {})
+                  let {
+                      ancestorScroll: l = !0,
+                      ancestorResize: i = !0,
+                      elementResize: a = "function" == typeof ResizeObserver,
+                      layoutShift: s = "function" ==
+                        typeof IntersectionObserver,
+                      animationFrame: c = !1,
+                    } = n,
+                    u = eX(e),
+                    d = l || i ? [...(u ? eK(u) : []), ...eK(t)] : []
+                  d.forEach((e) => {
+                    ;(l && e.addEventListener("scroll", r, { passive: !0 }),
+                      i && e.addEventListener("resize", r))
+                  })
+                  let f =
+                      u && s
+                        ? (function (e, t) {
+                            let r,
+                              n = null,
+                              o = eC(e)
+                            function l() {
+                              var e
+                              ;(clearTimeout(r),
+                                null == (e = n) || e.disconnect(),
+                                (n = null))
+                            }
+                            return (
+                              !(function i(a, s) {
+                                ;(void 0 === a && (a = !1),
+                                  void 0 === s && (s = 1),
+                                  l())
+                                let c = e.getBoundingClientRect(),
+                                  { left: u, top: d, width: f, height: p } = c
+                                if ((a || t(), !f || !p)) return
+                                let h = G(d),
+                                  m = G(o.clientWidth - (u + f)),
+                                  v = {
+                                    rootMargin:
+                                      -h +
+                                      "px " +
+                                      -m +
+                                      "px " +
+                                      -G(o.clientHeight - (d + p)) +
+                                      "px " +
+                                      -G(u) +
+                                      "px",
+                                    threshold: X(0, U(1, s)) || 1,
+                                  },
+                                  g = !0
+                                function y(t) {
+                                  let n = t[0].intersectionRatio
+                                  if (n !== s) {
+                                    if (!g) return i()
+                                    n
+                                      ? i(!1, n)
+                                      : (r = setTimeout(() => {
+                                          i(!1, 1e-7)
+                                        }, 1e3))
+                                  }
+                                  ;(1 !== n ||
+                                    e7(c, e.getBoundingClientRect()) ||
+                                    i(),
+                                    (g = !1))
+                                }
+                                try {
+                                  n = new IntersectionObserver(y, {
+                                    ...v,
+                                    root: o.ownerDocument,
+                                  })
+                                } catch (e) {
+                                  n = new IntersectionObserver(y, v)
+                                }
+                                n.observe(e)
+                              })(!0),
+                              l
+                            )
+                          })(u, r)
+                        : null,
+                    p = -1,
+                    h = null
+                  a &&
+                    ((h = new ResizeObserver((e) => {
+                      let [n] = e
+                      ;(n &&
+                        n.target === u &&
+                        h &&
+                        (h.unobserve(t),
+                        cancelAnimationFrame(p),
+                        (p = requestAnimationFrame(() => {
+                          var e
+                          null == (e = h) || e.observe(t)
+                        }))),
+                        r())
+                    })),
+                    u && !c && h.observe(u),
+                    h.observe(t))
+                  let m = c ? eQ(e) : null
+                  return (
+                    c &&
+                      (function t() {
+                        let n = eQ(e)
+                        ;(m && !e7(m, n) && r(),
+                          (m = n),
+                          (o = requestAnimationFrame(t)))
+                      })(),
+                    r(),
+                    () => {
+                      var e
+                      ;(d.forEach((e) => {
+                        ;(l && e.removeEventListener("scroll", r),
+                          i && e.removeEventListener("resize", r))
+                      }),
+                        null == f || f(),
+                        null == (e = h) || e.disconnect(),
+                        (h = null),
+                        c && cancelAnimationFrame(o))
+                    }
+                  )
+                })(...t, { animationFrame: "always" === A })
+              },
+              elements: { reference: L.anchor },
+              middleware: [
+                ta({ mainAxis: h + W, alignmentAxis: g }),
+                w &&
+                  ts({
+                    mainAxis: !0,
+                    crossAxis: !1,
+                    limiter: "partial" === S ? tc() : void 0,
+                    ...V,
+                  }),
+                w && tu({ ...V }),
+                td({
+                  ...V,
+                  apply: (e) => {
+                    let {
+                        elements: t,
+                        rects: r,
+                        availableWidth: n,
+                        availableHeight: o,
+                      } = e,
+                      { width: l, height: i } = r.reference,
+                      a = t.floating.style
+                    ;(a.setProperty(
+                      "--radix-popper-available-width",
+                      "".concat(n, "px"),
+                    ),
+                      a.setProperty(
+                        "--radix-popper-available-height",
+                        "".concat(o, "px"),
+                      ),
+                      a.setProperty(
+                        "--radix-popper-anchor-width",
+                        "".concat(l, "px"),
+                      ),
+                      a.setProperty(
+                        "--radix-popper-anchor-height",
+                        "".concat(i, "px"),
+                      ))
+                  },
+                }),
+                O && tp({ element: O, padding: b }),
+                tj({ arrowWidth: I, arrowHeight: W }),
+                R && tf({ strategy: "referenceHidden", ...V }),
+              ],
+            }),
+            [Q, J] = tM(q),
+            ee = C(T)
+          _(() => {
+            Y && (null == ee || ee())
+          }, [Y, ee])
+          let et = null === (r = Z.arrow) || void 0 === r ? void 0 : r.x,
+            er = null === (n = Z.arrow) || void 0 === n ? void 0 : n.y,
+            en =
+              (null === (o = Z.arrow) || void 0 === o
+                ? void 0
+                : o.centerOffset) !== 0,
+            [eo, el] = i.useState()
+          return (
+            _(() => {
+              j && el(window.getComputedStyle(j).zIndex)
+            }, [j]),
+            (0, m.jsx)("div", {
+              ref: $.setFloating,
+              "data-radix-popper-content-wrapper": "",
+              style: {
+                ...K,
+                transform: Y ? K.transform : "translate(0, -200%)",
+                minWidth: "max-content",
+                zIndex: eo,
+                "--radix-popper-transform-origin": [
+                  null === (l = Z.transformOrigin) || void 0 === l
+                    ? void 0
+                    : l.x,
+                  null === (a = Z.transformOrigin) || void 0 === a
+                    ? void 0
+                    : a.y,
+                ].join(" "),
+                ...((null === (c = Z.hide) || void 0 === c
+                  ? void 0
+                  : c.referenceHidden) && {
+                  visibility: "hidden",
+                  pointerEvents: "none",
+                }),
+              },
+              dir: e.dir,
+              children: (0, m.jsx)(tk, {
+                scope: f,
+                placedSide: Q,
+                onArrowChange: D,
+                arrowX: et,
+                arrowY: er,
+                shouldHideArrow: en,
+                children: (0, m.jsx)(k.div, {
+                  "data-side": Q,
+                  "data-align": J,
+                  ...P,
+                  ref: N,
+                  style: { ...P.style, animation: Y ? void 0 : "none" },
+                }),
+              }),
+            })
+          )
+        })
+      tR.displayName = tS
+      var tA = "PopperArrow",
+        tT = { top: "bottom", right: "left", bottom: "top", left: "right" },
+        tP = i.forwardRef(function (e, t) {
+          let { __scopePopper: r, ...n } = e,
+            o = tC(tA, r),
+            l = tT[o.placedSide]
+          return (0, m.jsx)("span", {
+            ref: o.onArrowChange,
+            style: {
+              position: "absolute",
+              left: o.arrowX,
+              top: o.arrowY,
+              [l]: 0,
+              transformOrigin: {
+                top: "",
+                right: "0 0",
+                bottom: "center 0",
+                left: "100% 0",
+              }[o.placedSide],
+              transform: {
+                top: "translateY(100%)",
+                right: "translateY(50%) rotate(90deg) translateX(-50%)",
+                bottom: "rotate(180deg)",
+                left: "translateY(50%) rotate(-90deg) translateX(50%)",
+              }[o.placedSide],
+              visibility: o.shouldHideArrow ? "hidden" : void 0,
+            },
+            children: (0, m.jsx)(th, {
+              ...n,
+              ref: t,
+              style: { ...n.style, display: "block" },
+            }),
+          })
+        })
+      function tL(e) {
+        return null !== e
+      }
+      tP.displayName = tA
+      var tj = (e) => ({
+        name: "transformOrigin",
+        options: e,
+        fn(t) {
+          var r, n, o, l, i
+          let { placement: a, rects: s, middlewareData: c } = t,
+            u =
+              (null === (r = c.arrow) || void 0 === r
+                ? void 0
+                : r.centerOffset) !== 0,
+            d = u ? 0 : e.arrowWidth,
+            f = u ? 0 : e.arrowHeight,
+            [p, h] = tM(a),
+            m = { start: "0%", center: "50%", end: "100%" }[h],
+            v =
+              (null !==
+                (l = null === (n = c.arrow) || void 0 === n ? void 0 : n.x) &&
+              void 0 !== l
+                ? l
+                : 0) +
+              d / 2,
+            g =
+              (null !==
+                (i = null === (o = c.arrow) || void 0 === o ? void 0 : o.y) &&
+              void 0 !== i
+                ? i
+                : 0) +
+              f / 2,
+            y = "",
+            b = ""
+          return (
+            "bottom" === p
+              ? ((y = u ? m : "".concat(v, "px")), (b = "".concat(-f, "px")))
+              : "top" === p
+                ? ((y = u ? m : "".concat(v, "px")),
+                  (b = "".concat(s.floating.height + f, "px")))
+                : "right" === p
+                  ? ((y = "".concat(-f, "px")),
+                    (b = u ? m : "".concat(g, "px")))
+                  : "left" === p &&
+                    ((y = "".concat(s.floating.width + f, "px")),
+                    (b = u ? m : "".concat(g, "px"))),
+            { data: { x: y, y: b } }
+          )
+        },
+      })
+      function tM(e) {
+        let [t, r = "center"] = e.split("-")
+        return [t, r]
+      }
+      var tN = i.forwardRef((e, t) => {
+        var r, n
+        let { container: o, ...l } = e,
+          [a, c] = i.useState(!1)
+        _(() => c(!0), [])
+        let u =
+          o ||
+          (a &&
+            (null === (n = globalThis) || void 0 === n
+              ? void 0
+              : null === (r = n.document) || void 0 === r
+                ? void 0
+                : r.body))
+        return u ? s.createPortal((0, m.jsx)(k.div, { ...l, ref: t }), u) : null
+      })
+      tN.displayName = "Portal"
+      var tO = a[" useInsertionEffect ".trim().toString()] || _
+      function tD({
+        prop: e,
+        defaultProp: t,
+        onChange: r = () => {},
+        caller: n,
+      }) {
+        let [o, l, a] = (function ({ defaultProp: e, onChange: t }) {
+            let [r, n] = i.useState(e),
+              o = i.useRef(r),
+              l = i.useRef(t)
+            return (
+              tO(() => {
+                l.current = t
+              }, [t]),
+              i.useEffect(() => {
+                o.current !== r && (l.current?.(r), (o.current = r))
+              }, [r, o]),
+              [r, n, l]
+            )
+          })({ defaultProp: t, onChange: r }),
+          s = void 0 !== e,
+          c = s ? e : o
+        {
+          let t = i.useRef(void 0 !== e)
+          i.useEffect(() => {
+            let e = t.current
+            if (e !== s) {
+              let t = s ? "controlled" : "uncontrolled"
+              console.warn(
+                `${n} is changing from ${e ? "controlled" : "uncontrolled"} to ${t}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`,
+              )
+            }
+            t.current = s
+          }, [s, n])
+        }
+        return [
+          c,
+          i.useCallback(
+            (t) => {
+              if (s) {
+                let r = "function" == typeof t ? t(e) : t
+                r !== e && a.current?.(r)
+              } else l(t)
+            },
+            [s, e, l, a],
+          ),
+        ]
+      }
+      Symbol("RADIX:SYNC_STATE")
+      var tz = Object.freeze({
+        position: "absolute",
+        border: 0,
+        width: 1,
+        height: 1,
+        padding: 0,
+        margin: -1,
+        overflow: "hidden",
+        clip: "rect(0, 0, 0, 0)",
+        whiteSpace: "nowrap",
+        wordWrap: "normal",
+      })
+      i.forwardRef((e, t) =>
+        (0, m.jsx)(k.span, { ...e, ref: t, style: { ...tz, ...e.style } }),
+      ).displayName = "VisuallyHidden"
+      var tI = function (e) {
+          return "undefined" == typeof document
+            ? null
+            : (Array.isArray(e) ? e[0] : e).ownerDocument.body
+        },
+        tW = new WeakMap(),
+        tF = new WeakMap(),
+        tH = {},
+        tB = 0,
+        t_ = function (e) {
+          return e && (e.host || t_(e.parentNode))
+        },
+        tV = function (e, t, r, n) {
+          var o = (Array.isArray(e) ? e : [e])
+            .map(function (e) {
+              if (t.contains(e)) return e
+              var r = t_(e)
+              return r && t.contains(r)
+                ? r
+                : (console.error(
+                    "aria-hidden",
+                    e,
+                    "in not contained inside",
+                    t,
+                    ". Doing nothing",
+                  ),
+                  null)
+            })
+            .filter(function (e) {
+              return !!e
+            })
+          tH[r] || (tH[r] = new WeakMap())
+          var l = tH[r],
+            i = [],
+            a = new Set(),
+            s = new Set(o),
+            c = function (e) {
+              !(!e || a.has(e)) && (a.add(e), c(e.parentNode))
+            }
+          o.forEach(c)
+          var u = function (e) {
+            !(!e || s.has(e)) &&
+              Array.prototype.forEach.call(e.children, function (e) {
+                if (a.has(e)) u(e)
+                else
+                  try {
+                    var t = e.getAttribute(n),
+                      o = null !== t && "false" !== t,
+                      s = (tW.get(e) || 0) + 1,
+                      c = (l.get(e) || 0) + 1
+                    ;(tW.set(e, s),
+                      l.set(e, c),
+                      i.push(e),
+                      1 === s && o && tF.set(e, !0),
+                      1 === c && e.setAttribute(r, "true"),
+                      o || e.setAttribute(n, "true"))
+                  } catch (t) {
+                    console.error("aria-hidden: cannot operate on ", e, t)
+                  }
+              })
+          }
+          return (
+            u(t),
+            a.clear(),
+            tB++,
+            function () {
+              ;(i.forEach(function (e) {
+                var t = tW.get(e) - 1,
+                  o = l.get(e) - 1
+                ;(tW.set(e, t),
+                  l.set(e, o),
+                  t || (tF.has(e) || e.removeAttribute(n), tF.delete(e)),
+                  o || e.removeAttribute(r))
+              }),
+                --tB ||
+                  ((tW = new WeakMap()),
+                  (tW = new WeakMap()),
+                  (tF = new WeakMap()),
+                  (tH = {})))
+            }
+          )
+        },
+        t$ = function (e, t, r) {
+          void 0 === r && (r = "data-aria-hidden")
+          var n = Array.from(Array.isArray(e) ? e : [e]),
+            o = t || tI(e)
+          return o
+            ? (n.push.apply(
+                n,
+                Array.from(o.querySelectorAll("[aria-live], script")),
+              ),
+              tV(n, o, r, "aria-hidden"))
+            : function () {
+                return null
+              }
+        },
+        tK = function () {
+          return (tK =
+            Object.assign ||
+            function (e) {
+              for (var t, r = 1, n = arguments.length; r < n; r++)
+                for (var o in (t = arguments[r]))
+                  Object.prototype.hasOwnProperty.call(t, o) && (e[o] = t[o])
+              return e
+            }).apply(this, arguments)
+        }
+      function tq(e, t) {
+        var r = {}
+        for (var n in e)
+          Object.prototype.hasOwnProperty.call(e, n) &&
+            0 > t.indexOf(n) &&
+            (r[n] = e[n])
+        if (null != e && "function" == typeof Object.getOwnPropertySymbols)
+          for (
+            var o = 0, n = Object.getOwnPropertySymbols(e);
+            o < n.length;
+            o++
+          )
+            0 > t.indexOf(n[o]) &&
+              Object.prototype.propertyIsEnumerable.call(e, n[o]) &&
+              (r[n[o]] = e[n[o]])
+        return r
+      }
+      Object.create
+      Object.create
+      var tU =
+          ("function" == typeof SuppressedError && SuppressedError,
+          "right-scroll-bar-position"),
+        tX = "width-before-scroll-bar"
+      function tY(e, t) {
+        return ("function" == typeof e ? e(t) : e && (e.current = t), e)
+      }
+      var tG = "undefined" != typeof window ? i.useLayoutEffect : i.useEffect,
+        tZ = new WeakMap()
+      function tQ(e) {
+        return e
+      }
+      var tJ = (function (e) {
+          void 0 === e && (e = {})
+          var t,
+            r,
+            n,
+            o,
+            l =
+              ((t = null),
+              void 0 === r && (r = tQ),
+              (n = []),
+              (o = !1),
+              {
+                read: function () {
+                  if (o)
+                    throw Error(
+                      "Sidecar: could not `read` from an `assigned` medium. `read` could be used only with `useMedium`.",
+                    )
+                  return n.length ? n[n.length - 1] : null
+                },
+                useMedium: function (e) {
+                  var t = r(e, o)
+                  return (
+                    n.push(t),
+                    function () {
+                      n = n.filter(function (e) {
+                        return e !== t
+                      })
+                    }
+                  )
+                },
+                assignSyncMedium: function (e) {
+                  for (o = !0; n.length; ) {
+                    var t = n
+                    ;((n = []), t.forEach(e))
+                  }
+                  n = {
+                    push: function (t) {
+                      return e(t)
+                    },
+                    filter: function () {
+                      return n
+                    },
+                  }
+                },
+                assignMedium: function (e) {
+                  o = !0
+                  var t = []
+                  if (n.length) {
+                    var r = n
+                    ;((n = []), r.forEach(e), (t = n))
+                  }
+                  var l = function () {
+                      var r = t
+                      ;((t = []), r.forEach(e))
+                    },
+                    i = function () {
+                      return Promise.resolve().then(l)
+                    }
+                  ;(i(),
+                    (n = {
+                      push: function (e) {
+                        ;(t.push(e), i())
+                      },
+                      filter: function (e) {
+                        return ((t = t.filter(e)), n)
+                      },
+                    }))
+                },
+              })
+          return ((l.options = tK({ async: !0, ssr: !1 }, e)), l)
+        })(),
+        t0 = function () {},
+        t1 = i.forwardRef(function (e, t) {
+          var r,
+            n,
+            o,
+            l,
+            a = i.useRef(null),
+            s = i.useState({
+              onScrollCapture: t0,
+              onWheelCapture: t0,
+              onTouchMoveCapture: t0,
+            }),
+            c = s[0],
+            u = s[1],
+            d = e.forwardProps,
+            f = e.children,
+            p = e.className,
+            h = e.removeScrollBar,
+            m = e.enabled,
+            v = e.shards,
+            g = e.sideCar,
+            y = e.noRelative,
+            b = e.noIsolation,
+            w = e.inert,
+            x = e.allowPinchZoom,
+            E = e.as,
+            S = e.gapMode,
+            k = tq(e, [
+              "forwardProps",
+              "children",
+              "className",
+              "removeScrollBar",
+              "enabled",
+              "shards",
+              "sideCar",
+              "noRelative",
+              "noIsolation",
+              "inert",
+              "allowPinchZoom",
+              "as",
+              "gapMode",
+            ]),
+            C =
+              ((r = [a, t]),
+              (n = function (e) {
+                return r.forEach(function (t) {
+                  return tY(t, e)
+                })
+              }),
+              ((o = (0, i.useState)(function () {
+                return {
+                  value: null,
+                  callback: n,
+                  facade: {
+                    get current() {
+                      return o.value
+                    },
+                    set current(value) {
+                      var e = o.value
+                      e !== value && ((o.value = value), o.callback(value, e))
+                    },
+                  },
+                }
+              })[0]).callback = n),
+              (l = o.facade),
+              tG(
+                function () {
+                  var e = tZ.get(l)
+                  if (e) {
+                    var t = new Set(e),
+                      n = new Set(r),
+                      o = l.current
+                    ;(t.forEach(function (e) {
+                      n.has(e) || tY(e, null)
+                    }),
+                      n.forEach(function (e) {
+                        t.has(e) || tY(e, o)
+                      }))
+                  }
+                  tZ.set(l, r)
+                },
+                [r],
+              ),
+              l),
+            R = tK(tK({}, k), c)
+          return i.createElement(
+            i.Fragment,
+            null,
+            m &&
+              i.createElement(g, {
+                sideCar: tJ,
+                removeScrollBar: h,
+                shards: v,
+                noRelative: y,
+                noIsolation: b,
+                inert: w,
+                setCallbacks: u,
+                allowPinchZoom: !!x,
+                lockRef: a,
+                gapMode: S,
+              }),
+            d
+              ? i.cloneElement(i.Children.only(f), tK(tK({}, R), { ref: C }))
+              : i.createElement(
+                  void 0 === E ? "div" : E,
+                  tK({}, R, { className: p, ref: C }),
+                  f,
+                ),
+          )
+        })
+      ;((t1.defaultProps = { enabled: !0, removeScrollBar: !0, inert: !1 }),
+        (t1.classNames = { fullWidth: tX, zeroRight: tU }))
+      var t2 = function (e) {
+        var t = e.sideCar,
+          r = tq(e, ["sideCar"])
+        if (!t)
+          throw Error(
+            "Sidecar: please provide `sideCar` property to import the right car",
+          )
+        var n = t.read()
+        if (!n) throw Error("Sidecar medium not found")
+        return i.createElement(n, tK({}, r))
+      }
+      t2.isSideCarExport = !0
+      var t5 = function () {
+          var e = 0,
+            t = null
+          return {
+            add: function (n) {
+              if (
+                0 == e &&
+                (t = (function () {
+                  if (!document) return null
+                  var e = document.createElement("style")
+                  e.type = "text/css"
+                  var t = l || r.nc
+                  return (t && e.setAttribute("nonce", t), e)
+                })())
+              ) {
+                var o, i
+                ;((o = t).styleSheet
+                  ? (o.styleSheet.cssText = n)
+                  : o.appendChild(document.createTextNode(n)),
+                  (i = t),
+                  (
+                    document.head || document.getElementsByTagName("head")[0]
+                  ).appendChild(i))
+              }
+              e++
+            },
+            remove: function () {
+              --e ||
+                !t ||
+                (t.parentNode && t.parentNode.removeChild(t), (t = null))
+            },
+          }
+        },
+        t9 = function () {
+          var e = t5()
+          return function (t, r) {
+            i.useEffect(
+              function () {
+                return (
+                  e.add(t),
+                  function () {
+                    e.remove()
+                  }
+                )
+              },
+              [t && r],
+            )
+          }
+        },
+        t6 = function () {
+          var e = t9()
+          return function (t) {
+            return (e(t.styles, t.dynamic), null)
+          }
+        },
+        t3 = { left: 0, top: 0, right: 0, gap: 0 },
+        t4 = function (e) {
+          return parseInt(e || "", 10) || 0
+        },
+        t7 = function (e) {
+          var t = window.getComputedStyle(document.body),
+            r = t["padding" === e ? "paddingLeft" : "marginLeft"],
+            n = t["padding" === e ? "paddingTop" : "marginTop"],
+            o = t["padding" === e ? "paddingRight" : "marginRight"]
+          return [t4(r), t4(n), t4(o)]
+        },
+        t8 = function (e) {
+          if ((void 0 === e && (e = "margin"), "undefined" == typeof window))
+            return t3
+          var t = t7(e),
+            r = document.documentElement.clientWidth,
+            n = window.innerWidth
+          return {
+            left: t[0],
+            top: t[1],
+            right: t[2],
+            gap: Math.max(0, n - r + t[2] - t[0]),
+          }
+        },
+        re = t6(),
+        rt = "data-scroll-locked",
+        rr = function (e, t, r, n) {
+          var o = e.left,
+            l = e.top,
+            i = e.right,
+            a = e.gap
+          return (
+            void 0 === r && (r = "margin"),
+            "\n  ."
+              .concat("with-scroll-bars-hidden", " {\n   overflow: hidden ")
+              .concat(n, ";\n   padding-right: ")
+              .concat(a, "px ")
+              .concat(n, ";\n  }\n  body[")
+              .concat(rt, "] {\n    overflow: hidden ")
+              .concat(n, ";\n    overscroll-behavior: contain;\n    ")
+              .concat(
+                [
+                  t && "position: relative ".concat(n, ";"),
+                  "margin" === r &&
+                    "\n    padding-left: "
+                      .concat(o, "px;\n    padding-top: ")
+                      .concat(l, "px;\n    padding-right: ")
+                      .concat(
+                        i,
+                        "px;\n    margin-left:0;\n    margin-top:0;\n    margin-right: ",
+                      )
+                      .concat(a, "px ")
+                      .concat(n, ";\n    "),
+                  "padding" === r &&
+                    "padding-right: ".concat(a, "px ").concat(n, ";"),
+                ]
+                  .filter(Boolean)
+                  .join(""),
+                "\n  }\n  \n  .",
+              )
+              .concat(tU, " {\n    right: ")
+              .concat(a, "px ")
+              .concat(n, ";\n  }\n  \n  .")
+              .concat(tX, " {\n    margin-right: ")
+              .concat(a, "px ")
+              .concat(n, ";\n  }\n  \n  .")
+              .concat(tU, " .")
+              .concat(tU, " {\n    right: 0 ")
+              .concat(n, ";\n  }\n  \n  .")
+              .concat(tX, " .")
+              .concat(tX, " {\n    margin-right: 0 ")
+              .concat(n, ";\n  }\n  \n  body[")
+              .concat(rt, "] {\n    ")
+              .concat("--removed-body-scroll-bar-size", ": ")
+              .concat(a, "px;\n  }\n")
+          )
+        },
+        rn = function () {
+          var e = parseInt(document.body.getAttribute(rt) || "0", 10)
+          return isFinite(e) ? e : 0
+        },
+        ro = function () {
+          i.useEffect(function () {
+            return (
+              document.body.setAttribute(rt, (rn() + 1).toString()),
+              function () {
+                var e = rn() - 1
+                e <= 0
+                  ? document.body.removeAttribute(rt)
+                  : document.body.setAttribute(rt, e.toString())
+              }
+            )
+          }, [])
+        },
+        rl = function (e) {
+          var t = e.noRelative,
+            r = e.noImportant,
+            n = e.gapMode,
+            o = void 0 === n ? "margin" : n
+          ro()
+          var l = i.useMemo(
+            function () {
+              return t8(o)
+            },
+            [o],
+          )
+          return i.createElement(re, {
+            styles: rr(l, !t, o, r ? "" : "!important"),
+          })
+        },
+        ri = !1
+      if ("undefined" != typeof window)
+        try {
+          var ra = Object.defineProperty({}, "passive", {
+            get: function () {
+              return ((ri = !0), !0)
+            },
+          })
+          ;(window.addEventListener("test", ra, ra),
+            window.removeEventListener("test", ra, ra))
+        } catch (e) {
+          ri = !1
+        }
+      var rs = !!ri && { passive: !1 },
+        rc = function (e, t) {
+          if (!(e instanceof Element)) return !1
+          var r = window.getComputedStyle(e)
+          return (
+            "hidden" !== r[t] &&
+            (r.overflowY !== r.overflowX ||
+              "TEXTAREA" === e.tagName ||
+              "visible" !== r[t])
+          )
+        },
+        ru = function (e, t) {
+          var r = t.ownerDocument,
+            n = t
+          do {
+            if (
+              ("undefined" != typeof ShadowRoot &&
+                n instanceof ShadowRoot &&
+                (n = n.host),
+              rd(e, n))
+            ) {
+              var o = rf(e, n)
+              if (o[1] > o[2]) return !0
+            }
+            n = n.parentNode
+          } while (n && n !== r.body)
+          return !1
+        },
+        rd = function (e, t) {
+          return "v" === e ? rc(t, "overflowY") : rc(t, "overflowX")
+        },
+        rf = function (e, t) {
+          return "v" === e
+            ? [t.scrollTop, t.scrollHeight, t.clientHeight]
+            : [t.scrollLeft, t.scrollWidth, t.clientWidth]
+        },
+        rp = function (e, t, r, n, o) {
+          var l,
+            i =
+              ((l = window.getComputedStyle(t).direction),
+              "h" === e && "rtl" === l ? -1 : 1),
+            a = i * n,
+            s = r.target,
+            c = t.contains(s),
+            u = !1,
+            d = a > 0,
+            f = 0,
+            p = 0
+          do {
+            if (!s) break
+            var h = rf(e, s),
+              m = h[0],
+              v = h[1] - h[2] - i * m
+            ;(m || v) && rd(e, s) && ((f += v), (p += m))
+            var g = s.parentNode
+            s = g && g.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? g.host : g
+          } while (
+            (!c && s !== document.body) ||
+            (c && (t.contains(s) || t === s))
+          )
+          return (
+            d && ((o && 1 > Math.abs(f)) || (!o && a > f))
+              ? (u = !0)
+              : !d && ((o && 1 > Math.abs(p)) || (!o && -a > p)) && (u = !0),
+            u
+          )
+        },
+        rh = function (e) {
+          return "changedTouches" in e
+            ? [e.changedTouches[0].clientX, e.changedTouches[0].clientY]
+            : [0, 0]
+        },
+        rm = function (e) {
+          return [e.deltaX, e.deltaY]
+        },
+        rv = function (e) {
+          return e && "current" in e ? e.current : e
+        },
+        rg = 0,
+        ry = []
+      let rb =
+        (tJ.useMedium(function (e) {
+          var t = i.useRef([]),
+            r = i.useRef([0, 0]),
+            n = i.useRef(),
+            o = i.useState(rg++)[0],
+            l = i.useState(t6)[0],
+            a = i.useRef(e)
+          ;(i.useEffect(
+            function () {
+              a.current = e
+            },
+            [e],
+          ),
+            i.useEffect(
+              function () {
+                if (e.inert) {
+                  document.body.classList.add("block-interactivity-".concat(o))
+                  var t = (function (e, t, r) {
+                    if (r || 2 == arguments.length)
+                      for (var n, o = 0, l = t.length; o < l; o++)
+                        (!n && o in t) ||
+                          (n || (n = Array.prototype.slice.call(t, 0, o)),
+                          (n[o] = t[o]))
+                    return e.concat(n || Array.prototype.slice.call(t))
+                  })([e.lockRef.current], (e.shards || []).map(rv), !0).filter(
+                    Boolean,
+                  )
+                  return (
+                    t.forEach(function (e) {
+                      return e.classList.add("allow-interactivity-".concat(o))
+                    }),
+                    function () {
+                      ;(document.body.classList.remove(
+                        "block-interactivity-".concat(o),
+                      ),
+                        t.forEach(function (e) {
+                          return e.classList.remove(
+                            "allow-interactivity-".concat(o),
+                          )
+                        }))
+                    }
+                  )
+                }
+              },
+              [e.inert, e.lockRef.current, e.shards],
+            ))
+          var s = i.useCallback(function (e, t) {
+              if (
+                ("touches" in e && 2 === e.touches.length) ||
+                ("wheel" === e.type && e.ctrlKey)
+              )
+                return !a.current.allowPinchZoom
+              var o,
+                l = rh(e),
+                i = r.current,
+                s = "deltaX" in e ? e.deltaX : i[0] - l[0],
+                c = "deltaY" in e ? e.deltaY : i[1] - l[1],
+                u = e.target,
+                d = Math.abs(s) > Math.abs(c) ? "h" : "v"
+              if ("touches" in e && "h" === d && "range" === u.type) return !1
+              var f = ru(d, u)
+              if (!f) return !0
+              if (
+                (f ? (o = d) : ((o = "v" === d ? "h" : "v"), (f = ru(d, u))),
+                !f)
+              )
+                return !1
+              if (
+                (!n.current &&
+                  "changedTouches" in e &&
+                  (s || c) &&
+                  (n.current = o),
+                !o)
+              )
+                return !0
+              var p = n.current || o
+              return rp(p, t, e, "h" === p ? s : c, !0)
+            }, []),
+            c = i.useCallback(function (e) {
+              if (ry.length && ry[ry.length - 1] === l) {
+                var r = "deltaY" in e ? rm(e) : rh(e),
+                  n = t.current.filter(function (t) {
+                    var n
+                    return (
+                      t.name === e.type &&
+                      (t.target === e.target || e.target === t.shadowParent) &&
+                      (n = t.delta)[0] === r[0] &&
+                      n[1] === r[1]
+                    )
+                  })[0]
+                if (n && n.should) {
+                  e.cancelable && e.preventDefault()
+                  return
+                }
+                if (!n) {
+                  var o = (a.current.shards || [])
+                    .map(rv)
+                    .filter(Boolean)
+                    .filter(function (t) {
+                      return t.contains(e.target)
+                    })
+                  ;(o.length > 0 ? s(e, o[0]) : !a.current.noIsolation) &&
+                    e.cancelable &&
+                    e.preventDefault()
+                }
+              }
+            }, []),
+            u = i.useCallback(function (e, r, n, o) {
+              var l = {
+                name: e,
+                delta: r,
+                target: n,
+                should: o,
+                shadowParent: (function (e) {
+                  for (var t = null; null !== e; )
+                    (e instanceof ShadowRoot && ((t = e.host), (e = e.host)),
+                      (e = e.parentNode))
+                  return t
+                })(n),
+              }
+              ;(t.current.push(l),
+                setTimeout(function () {
+                  t.current = t.current.filter(function (e) {
+                    return e !== l
+                  })
+                }, 1))
+            }, []),
+            d = i.useCallback(function (e) {
+              ;((r.current = rh(e)), (n.current = void 0))
+            }, []),
+            f = i.useCallback(function (t) {
+              u(t.type, rm(t), t.target, s(t, e.lockRef.current))
+            }, []),
+            p = i.useCallback(function (t) {
+              u(t.type, rh(t), t.target, s(t, e.lockRef.current))
+            }, [])
+          i.useEffect(function () {
+            return (
+              ry.push(l),
+              e.setCallbacks({
+                onScrollCapture: f,
+                onWheelCapture: f,
+                onTouchMoveCapture: p,
+              }),
+              document.addEventListener("wheel", c, rs),
+              document.addEventListener("touchmove", c, rs),
+              document.addEventListener("touchstart", d, rs),
+              function () {
+                ;((ry = ry.filter(function (e) {
+                  return e !== l
+                })),
+                  document.removeEventListener("wheel", c, rs),
+                  document.removeEventListener("touchmove", c, rs),
+                  document.removeEventListener("touchstart", d, rs))
+              }
+            )
+          }, [])
+          var h = e.removeScrollBar,
+            m = e.inert
+          return i.createElement(
+            i.Fragment,
+            null,
+            m
+              ? i.createElement(l, {
+                  styles: "\n  .block-interactivity-"
+                    .concat(
+                      o,
+                      " {pointer-events: none;}\n  .allow-interactivity-",
+                    )
+                    .concat(o, " {pointer-events: all;}\n"),
+                })
+              : null,
+            h
+              ? i.createElement(rl, {
+                  noRelative: e.noRelative,
+                  gapMode: e.gapMode,
+                })
+              : null,
+          )
+        }),
+        t2)
+      var rw = i.forwardRef(function (e, t) {
+        return i.createElement(t1, tK({}, e, { ref: t, sideCar: rb }))
+      })
+      rw.classNames = t1.classNames
+      var rx = [" ", "Enter", "ArrowUp", "ArrowDown"],
+        rE = [" ", "Enter"],
+        rS = "Select",
+        [rk, rC, rR] = (function (e) {
+          let t = e + "CollectionProvider",
+            [r, n] = v(t),
+            [o, l] = r(t, {
+              collectionRef: { current: null },
+              itemMap: new Map(),
+            }),
+            a = (e) => {
+              let { scope: t, children: r } = e,
+                n = i.useRef(null),
+                l = i.useRef(new Map()).current
+              return (0, m.jsx)(o, {
+                scope: t,
+                itemMap: l,
+                collectionRef: n,
+                children: r,
+              })
+            }
+          a.displayName = t
+          let s = e + "CollectionSlot",
+            c = (0, b.TL)(s),
+            u = i.forwardRef((e, t) => {
+              let { scope: r, children: n } = e,
+                o = y(t, l(s, r).collectionRef)
+              return (0, m.jsx)(c, { ref: o, children: n })
+            })
+          u.displayName = s
+          let d = e + "CollectionItemSlot",
+            f = "data-radix-collection-item",
+            p = (0, b.TL)(d),
+            h = i.forwardRef((e, t) => {
+              let { scope: r, children: n, ...o } = e,
+                a = i.useRef(null),
+                s = y(t, a),
+                c = l(d, r)
+              return (
+                i.useEffect(
+                  () => (
+                    c.itemMap.set(a, { ref: a, ...o }),
+                    () => void c.itemMap.delete(a)
+                  ),
+                ),
+                (0, m.jsx)(p, { [f]: "", ref: s, children: n })
+              )
+            })
+          return (
+            (h.displayName = d),
+            [
+              { Provider: a, Slot: u, ItemSlot: h },
+              function (t) {
+                let r = l(e + "CollectionConsumer", t)
+                return i.useCallback(() => {
+                  let e = r.collectionRef.current
+                  if (!e) return []
+                  let t = Array.from(e.querySelectorAll("[".concat(f, "]")))
+                  return Array.from(r.itemMap.values()).sort(
+                    (e, r) =>
+                      t.indexOf(e.ref.current) - t.indexOf(r.ref.current),
+                  )
+                }, [r.collectionRef, r.itemMap])
+              },
+              n,
+            ]
+          )
+        })(rS),
+        [rA, rT] = v(rS, [rR, tg]),
+        rP = tg(),
+        [rL, rj] = rA(rS),
+        [rM, rN] = rA(rS),
+        rO = (e) => {
+          let {
+              __scopeSelect: t,
+              children: r,
+              open: n,
+              defaultOpen: o,
+              onOpenChange: l,
+              value: a,
+              defaultValue: s,
+              onValueChange: c,
+              dir: u,
+              name: d,
+              autoComplete: f,
+              disabled: p,
+              required: h,
+              form: v,
+            } = e,
+            g = rP(t),
+            [y, b] = i.useState(null),
+            [w, x] = i.useState(null),
+            [E, k] = i.useState(!1),
+            C = (function (e) {
+              let t = i.useContext(S)
+              return e || t || "ltr"
+            })(u),
+            [R, A] = tD({
+              prop: n,
+              defaultProp: null != o && o,
+              onChange: l,
+              caller: rS,
+            }),
+            [T, P] = tD({ prop: a, defaultProp: s, onChange: c, caller: rS }),
+            L = i.useRef(null),
+            j = !y || v || !!y.closest("form"),
+            [M, N] = i.useState(new Set()),
+            O = Array.from(M)
+              .map((e) => e.props.value)
+              .join(";")
+          return (0, m.jsx)(tw, {
+            ...g,
+            children: (0, m.jsxs)(rL, {
+              required: h,
+              scope: t,
+              trigger: y,
+              onTriggerChange: b,
+              valueNode: w,
+              onValueNodeChange: x,
+              valueNodeHasChildren: E,
+              onValueNodeHasChildrenChange: k,
+              contentId: K(),
+              value: T,
+              onValueChange: P,
+              open: R,
+              onOpenChange: A,
+              dir: C,
+              triggerPointerDownPosRef: L,
+              disabled: p,
+              children: [
+                (0, m.jsx)(rk.Provider, {
+                  scope: t,
+                  children: (0, m.jsx)(rM, {
+                    scope: e.__scopeSelect,
+                    onNativeOptionAdd: i.useCallback((e) => {
+                      N((t) => new Set(t).add(e))
+                    }, []),
+                    onNativeOptionRemove: i.useCallback((e) => {
+                      N((t) => {
+                        let r = new Set(t)
+                        return (r.delete(e), r)
+                      })
+                    }, []),
+                    children: r,
+                  }),
+                }),
+                j
+                  ? (0, m.jsxs)(
+                      na,
+                      {
+                        "aria-hidden": !0,
+                        required: h,
+                        tabIndex: -1,
+                        name: d,
+                        autoComplete: f,
+                        value: T,
+                        onChange: (e) => P(e.target.value),
+                        disabled: p,
+                        form: v,
+                        children: [
+                          void 0 === T
+                            ? (0, m.jsx)("option", { value: "" })
+                            : null,
+                          Array.from(M),
+                        ],
+                      },
+                      O,
+                    )
+                  : null,
+              ],
+            }),
+          })
+        }
+      rO.displayName = rS
+      var rD = "SelectTrigger",
+        rz = i.forwardRef((e, t) => {
+          let { __scopeSelect: r, disabled: n = !1, ...o } = e,
+            l = rP(r),
+            a = rj(rD, r),
+            s = a.disabled || n,
+            c = y(t, a.onTriggerChange),
+            u = rC(r),
+            f = i.useRef("touch"),
+            [p, h, v] = nc((e) => {
+              let t = u().filter((e) => !e.disabled),
+                r = t.find((e) => e.value === a.value),
+                n = nu(t, e, r)
+              void 0 !== n && a.onValueChange(n.value)
+            }),
+            g = (e) => {
+              ;(s || (a.onOpenChange(!0), v()),
+                e &&
+                  (a.triggerPointerDownPosRef.current = {
+                    x: Math.round(e.pageX),
+                    y: Math.round(e.pageY),
+                  }))
+            }
+          return (0, m.jsx)(tE, {
+            asChild: !0,
+            ...l,
+            children: (0, m.jsx)(k.button, {
+              type: "button",
+              role: "combobox",
+              "aria-controls": a.contentId,
+              "aria-expanded": a.open,
+              "aria-required": a.required,
+              "aria-autocomplete": "none",
+              dir: a.dir,
+              "data-state": a.open ? "open" : "closed",
+              disabled: s,
+              "data-disabled": s ? "" : void 0,
+              "data-placeholder": ns(a.value) ? "" : void 0,
+              ...o,
+              ref: c,
+              onClick: d(o.onClick, (e) => {
+                ;(e.currentTarget.focus(), "mouse" !== f.current && g(e))
+              }),
+              onPointerDown: d(o.onPointerDown, (e) => {
+                f.current = e.pointerType
+                let t = e.target
+                ;(t.hasPointerCapture(e.pointerId) &&
+                  t.releasePointerCapture(e.pointerId),
+                  0 === e.button &&
+                    !1 === e.ctrlKey &&
+                    "mouse" === e.pointerType &&
+                    (g(e), e.preventDefault()))
+              }),
+              onKeyDown: d(o.onKeyDown, (e) => {
+                let t = "" !== p.current
+                ;(e.ctrlKey ||
+                  e.altKey ||
+                  e.metaKey ||
+                  1 !== e.key.length ||
+                  h(e.key),
+                  (!t || " " !== e.key) &&
+                    rx.includes(e.key) &&
+                    (g(), e.preventDefault()))
+              }),
+            }),
+          })
+        })
+      rz.displayName = rD
+      var rI = "SelectValue",
+        rW = i.forwardRef((e, t) => {
+          let {
+              __scopeSelect: r,
+              className: n,
+              style: o,
+              children: l,
+              placeholder: i = "",
+              ...a
+            } = e,
+            s = rj(rI, r),
+            { onValueNodeHasChildrenChange: c } = s,
+            u = void 0 !== l,
+            d = y(t, s.onValueNodeChange)
+          return (
+            _(() => {
+              c(u)
+            }, [c, u]),
+            (0, m.jsx)(k.span, {
+              ...a,
+              ref: d,
+              style: { pointerEvents: "none" },
+              children: ns(s.value)
+                ? (0, m.jsx)(m.Fragment, { children: i })
+                : l,
+            })
+          )
+        })
+      rW.displayName = rI
+      var rF = i.forwardRef((e, t) => {
+        let { __scopeSelect: r, children: n, ...o } = e
+        return (0, m.jsx)(k.span, {
+          "aria-hidden": !0,
+          ...o,
+          ref: t,
+          children: n || "▼",
+        })
+      })
+      rF.displayName = "SelectIcon"
+      var rH = (e) => (0, m.jsx)(tN, { asChild: !0, ...e })
+      rH.displayName = "SelectPortal"
+      var rB = "SelectContent",
+        r_ = i.forwardRef((e, t) => {
+          let r = rj(rB, e.__scopeSelect),
+            [n, o] = i.useState()
+          return (_(() => {
+            o(new DocumentFragment())
+          }, []),
+          r.open)
+            ? (0, m.jsx)(rq, { ...e, ref: t })
+            : n
+              ? s.createPortal(
+                  (0, m.jsx)(rV, {
+                    scope: e.__scopeSelect,
+                    children: (0, m.jsx)(rk.Slot, {
+                      scope: e.__scopeSelect,
+                      children: (0, m.jsx)("div", { children: e.children }),
+                    }),
+                  }),
+                  n,
+                )
+              : null
+        })
+      r_.displayName = rB
+      var [rV, r$] = rA(rB),
+        rK = (0, b.TL)("SelectContent.RemoveScroll"),
+        rq = i.forwardRef((e, t) => {
+          let {
+              __scopeSelect: r,
+              position: n = "item-aligned",
+              onCloseAutoFocus: o,
+              onEscapeKeyDown: l,
+              onPointerDownOutside: a,
+              side: s,
+              sideOffset: c,
+              align: u,
+              alignOffset: f,
+              arrowPadding: p,
+              collisionBoundary: h,
+              collisionPadding: v,
+              sticky: g,
+              hideWhenDetached: b,
+              avoidCollisions: w,
+              ...x
+            } = e,
+            E = rj(rB, r),
+            [S, k] = i.useState(null),
+            [C, R] = i.useState(null),
+            A = y(t, (e) => k(e)),
+            [P, L] = i.useState(null),
+            [N, O] = i.useState(null),
+            D = rC(r),
+            [I, W] = i.useState(!1),
+            F = i.useRef(!1)
+          ;(i.useEffect(() => {
+            if (S) return t$(S)
+          }, [S]),
+            i.useEffect(() => {
+              var e, t
+              let r = document.querySelectorAll("[data-radix-focus-guard]")
+              return (
+                document.body.insertAdjacentElement(
+                  "afterbegin",
+                  null !== (e = r[0]) && void 0 !== e ? e : M(),
+                ),
+                document.body.insertAdjacentElement(
+                  "beforeend",
+                  null !== (t = r[1]) && void 0 !== t ? t : M(),
+                ),
+                j++,
+                () => {
+                  ;(1 === j &&
+                    document
+                      .querySelectorAll("[data-radix-focus-guard]")
+                      .forEach((e) => e.remove()),
+                    j--)
+                }
+              )
+            }, []))
+          let H = i.useCallback(
+              (e) => {
+                let [t, ...r] = D().map((e) => e.ref.current),
+                  [n] = r.slice(-1),
+                  o = document.activeElement
+                for (let r of e)
+                  if (
+                    r === o ||
+                    (null == r || r.scrollIntoView({ block: "nearest" }),
+                    r === t && C && (C.scrollTop = 0),
+                    r === n && C && (C.scrollTop = C.scrollHeight),
+                    null == r || r.focus(),
+                    document.activeElement !== o)
+                  )
+                    return
+              },
+              [D, C],
+            ),
+            B = i.useCallback(() => H([P, S]), [H, P, S])
+          i.useEffect(() => {
+            I && B()
+          }, [I, B])
+          let { onOpenChange: _, triggerPointerDownPosRef: V } = E
+          ;(i.useEffect(() => {
+            if (S) {
+              let e = { x: 0, y: 0 },
+                t = (t) => {
+                  var r, n, o, l
+                  e = {
+                    x: Math.abs(
+                      Math.round(t.pageX) -
+                        (null !==
+                          (o =
+                            null === (r = V.current) || void 0 === r
+                              ? void 0
+                              : r.x) && void 0 !== o
+                          ? o
+                          : 0),
+                    ),
+                    y: Math.abs(
+                      Math.round(t.pageY) -
+                        (null !==
+                          (l =
+                            null === (n = V.current) || void 0 === n
+                              ? void 0
+                              : n.y) && void 0 !== l
+                          ? l
+                          : 0),
+                    ),
+                  }
+                },
+                r = (r) => {
+                  ;(e.x <= 10 && e.y <= 10
+                    ? r.preventDefault()
+                    : S.contains(r.target) || _(!1),
+                    document.removeEventListener("pointermove", t),
+                    (V.current = null))
+                }
+              return (
+                null !== V.current &&
+                  (document.addEventListener("pointermove", t),
+                  document.addEventListener("pointerup", r, {
+                    capture: !0,
+                    once: !0,
+                  })),
+                () => {
+                  ;(document.removeEventListener("pointermove", t),
+                    document.removeEventListener("pointerup", r, {
+                      capture: !0,
+                    }))
+                }
+              )
+            }
+          }, [S, _, V]),
+            i.useEffect(() => {
+              let e = () => _(!1)
+              return (
+                window.addEventListener("blur", e),
+                window.addEventListener("resize", e),
+                () => {
+                  ;(window.removeEventListener("blur", e),
+                    window.removeEventListener("resize", e))
+                }
+              )
+            }, [_]))
+          let [$, K] = nc((e) => {
+              let t = D().filter((e) => !e.disabled),
+                r = t.find((e) => e.ref.current === document.activeElement),
+                n = nu(t, e, r)
+              n && setTimeout(() => n.ref.current.focus())
+            }),
+            q = i.useCallback(
+              (e, t, r) => {
+                let n = !F.current && !r
+                ;((void 0 !== E.value && E.value === t) || n) &&
+                  (L(e), n && (F.current = !0))
+              },
+              [E.value],
+            ),
+            U = i.useCallback(() => (null == S ? void 0 : S.focus()), [S]),
+            X = i.useCallback(
+              (e, t, r) => {
+                let n = !F.current && !r
+                ;((void 0 !== E.value && E.value === t) || n) && O(e)
+              },
+              [E.value],
+            ),
+            Y = "popper" === n ? rX : rU,
+            G =
+              Y === rX
+                ? {
+                    side: s,
+                    sideOffset: c,
+                    align: u,
+                    alignOffset: f,
+                    arrowPadding: p,
+                    collisionBoundary: h,
+                    collisionPadding: v,
+                    sticky: g,
+                    hideWhenDetached: b,
+                    avoidCollisions: w,
+                  }
+                : {}
+          return (0, m.jsx)(rV, {
+            scope: r,
+            content: S,
+            viewport: C,
+            onViewportChange: R,
+            itemRefCallback: q,
+            selectedItem: P,
+            onItemLeave: U,
+            itemTextRefCallback: X,
+            focusSelectedItem: B,
+            selectedItemText: N,
+            position: n,
+            isPositioned: I,
+            searchRef: $,
+            children: (0, m.jsx)(rw, {
+              as: rK,
+              allowPinchZoom: !0,
+              children: (0, m.jsx)(z, {
+                asChild: !0,
+                trapped: E.open,
+                onMountAutoFocus: (e) => {
+                  e.preventDefault()
+                },
+                onUnmountAutoFocus: d(o, (e) => {
+                  var t
+                  ;(null === (t = E.trigger) ||
+                    void 0 === t ||
+                    t.focus({ preventScroll: !0 }),
+                    e.preventDefault())
+                }),
+                children: (0, m.jsx)(T, {
+                  asChild: !0,
+                  disableOutsidePointerEvents: !0,
+                  onEscapeKeyDown: l,
+                  onPointerDownOutside: a,
+                  onFocusOutside: (e) => e.preventDefault(),
+                  onDismiss: () => E.onOpenChange(!1),
+                  children: (0, m.jsx)(Y, {
+                    role: "listbox",
+                    id: E.contentId,
+                    "data-state": E.open ? "open" : "closed",
+                    dir: E.dir,
+                    onContextMenu: (e) => e.preventDefault(),
+                    ...x,
+                    ...G,
+                    onPlaced: () => W(!0),
+                    ref: A,
+                    style: {
+                      display: "flex",
+                      flexDirection: "column",
+                      outline: "none",
+                      ...x.style,
+                    },
+                    onKeyDown: d(x.onKeyDown, (e) => {
+                      let t = e.ctrlKey || e.altKey || e.metaKey
+                      if (
+                        ("Tab" === e.key && e.preventDefault(),
+                        t || 1 !== e.key.length || K(e.key),
+                        ["ArrowUp", "ArrowDown", "Home", "End"].includes(e.key))
+                      ) {
+                        let t = D()
+                          .filter((e) => !e.disabled)
+                          .map((e) => e.ref.current)
+                        if (
+                          (["ArrowUp", "End"].includes(e.key) &&
+                            (t = t.slice().reverse()),
+                          ["ArrowUp", "ArrowDown"].includes(e.key))
+                        ) {
+                          let r = e.target,
+                            n = t.indexOf(r)
+                          t = t.slice(n + 1)
+                        }
+                        ;(setTimeout(() => H(t)), e.preventDefault())
+                      }
+                    }),
+                  }),
+                }),
+              }),
+            }),
+          })
+        })
+      rq.displayName = "SelectContentImpl"
+      var rU = i.forwardRef((e, t) => {
+        let { __scopeSelect: r, onPlaced: n, ...o } = e,
+          l = rj(rB, r),
+          a = r$(rB, r),
+          [s, u] = i.useState(null),
+          [d, f] = i.useState(null),
+          p = y(t, (e) => f(e)),
+          h = rC(r),
+          v = i.useRef(!1),
+          g = i.useRef(!0),
+          {
+            viewport: b,
+            selectedItem: w,
+            selectedItemText: x,
+            focusSelectedItem: E,
+          } = a,
+          S = i.useCallback(() => {
+            if (l.trigger && l.valueNode && s && d && b && w && x) {
+              let e = l.trigger.getBoundingClientRect(),
+                t = d.getBoundingClientRect(),
+                r = l.valueNode.getBoundingClientRect(),
+                o = x.getBoundingClientRect()
+              if ("rtl" !== l.dir) {
+                let n = o.left - t.left,
+                  l = r.left - n,
+                  i = e.left - l,
+                  a = e.width + i,
+                  u = Math.max(a, t.width),
+                  d = c(l, [10, Math.max(10, window.innerWidth - 10 - u)])
+                ;((s.style.minWidth = a + "px"), (s.style.left = d + "px"))
+              } else {
+                let n = t.right - o.right,
+                  l = window.innerWidth - r.right - n,
+                  i = window.innerWidth - e.right - l,
+                  a = e.width + i,
+                  u = Math.max(a, t.width),
+                  d = c(l, [10, Math.max(10, window.innerWidth - 10 - u)])
+                ;((s.style.minWidth = a + "px"), (s.style.right = d + "px"))
+              }
+              let i = h(),
+                a = window.innerHeight - 20,
+                u = b.scrollHeight,
+                f = window.getComputedStyle(d),
+                p = parseInt(f.borderTopWidth, 10),
+                m = parseInt(f.paddingTop, 10),
+                g = parseInt(f.borderBottomWidth, 10),
+                y = p + m + u + parseInt(f.paddingBottom, 10) + g,
+                E = Math.min(5 * w.offsetHeight, y),
+                S = window.getComputedStyle(b),
+                k = parseInt(S.paddingTop, 10),
+                C = parseInt(S.paddingBottom, 10),
+                R = e.top + e.height / 2 - 10,
+                A = w.offsetHeight / 2,
+                T = p + m + (w.offsetTop + A)
+              if (T <= R) {
+                let e = i.length > 0 && w === i[i.length - 1].ref.current
+                s.style.bottom = "0px"
+                let t = Math.max(
+                  a - R,
+                  A +
+                    (e ? C : 0) +
+                    (d.clientHeight - b.offsetTop - b.offsetHeight) +
+                    g,
+                )
+                s.style.height = T + t + "px"
+              } else {
+                let e = i.length > 0 && w === i[0].ref.current
+                s.style.top = "0px"
+                let t = Math.max(R, p + b.offsetTop + (e ? k : 0) + A)
+                ;((s.style.height = t + (y - T) + "px"),
+                  (b.scrollTop = T - R + b.offsetTop))
+              }
+              ;((s.style.margin = "".concat(10, "px 0")),
+                (s.style.minHeight = E + "px"),
+                (s.style.maxHeight = a + "px"),
+                null == n || n(),
+                requestAnimationFrame(() => (v.current = !0)))
+            }
+          }, [h, l.trigger, l.valueNode, s, d, b, w, x, l.dir, n])
+        _(() => S(), [S])
+        let [C, R] = i.useState()
+        _(() => {
+          d && R(window.getComputedStyle(d).zIndex)
+        }, [d])
+        let A = i.useCallback(
+          (e) => {
+            e && !0 === g.current && (S(), null == E || E(), (g.current = !1))
+          },
+          [S, E],
+        )
+        return (0, m.jsx)(rY, {
+          scope: r,
+          contentWrapper: s,
+          shouldExpandOnScrollRef: v,
+          onScrollButtonChange: A,
+          children: (0, m.jsx)("div", {
+            ref: u,
+            style: {
+              display: "flex",
+              flexDirection: "column",
+              position: "fixed",
+              zIndex: C,
+            },
+            children: (0, m.jsx)(k.div, {
+              ...o,
+              ref: p,
+              style: { boxSizing: "border-box", maxHeight: "100%", ...o.style },
+            }),
+          }),
+        })
+      })
+      rU.displayName = "SelectItemAlignedPosition"
+      var rX = i.forwardRef((e, t) => {
+        let {
+            __scopeSelect: r,
+            align: n = "start",
+            collisionPadding: o = 10,
+            ...l
+          } = e,
+          i = rP(r)
+        return (0, m.jsx)(tR, {
+          ...i,
+          ...l,
+          ref: t,
+          align: n,
+          collisionPadding: o,
+          style: {
+            boxSizing: "border-box",
+            ...l.style,
+            "--radix-select-content-transform-origin":
+              "var(--radix-popper-transform-origin)",
+            "--radix-select-content-available-width":
+              "var(--radix-popper-available-width)",
+            "--radix-select-content-available-height":
+              "var(--radix-popper-available-height)",
+            "--radix-select-trigger-width": "var(--radix-popper-anchor-width)",
+            "--radix-select-trigger-height":
+              "var(--radix-popper-anchor-height)",
+          },
+        })
+      })
+      rX.displayName = "SelectPopperPosition"
+      var [rY, rG] = rA(rB, {}),
+        rZ = "SelectViewport",
+        rQ = i.forwardRef((e, t) => {
+          let { __scopeSelect: r, nonce: n, ...o } = e,
+            l = r$(rZ, r),
+            a = rG(rZ, r),
+            s = y(t, l.onViewportChange),
+            c = i.useRef(0)
+          return (0, m.jsxs)(m.Fragment, {
+            children: [
+              (0, m.jsx)("style", {
+                dangerouslySetInnerHTML: {
+                  __html:
+                    "[data-radix-select-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-select-viewport]::-webkit-scrollbar{display:none}",
+                },
+                nonce: n,
+              }),
+              (0, m.jsx)(rk.Slot, {
+                scope: r,
+                children: (0, m.jsx)(k.div, {
+                  "data-radix-select-viewport": "",
+                  role: "presentation",
+                  ...o,
+                  ref: s,
+                  style: {
+                    position: "relative",
+                    flex: 1,
+                    overflow: "hidden auto",
+                    ...o.style,
+                  },
+                  onScroll: d(o.onScroll, (e) => {
+                    let t = e.currentTarget,
+                      { contentWrapper: r, shouldExpandOnScrollRef: n } = a
+                    if ((null == n ? void 0 : n.current) && r) {
+                      let e = Math.abs(c.current - t.scrollTop)
+                      if (e > 0) {
+                        let n = window.innerHeight - 20,
+                          o = Math.max(
+                            parseFloat(r.style.minHeight),
+                            parseFloat(r.style.height),
+                          )
+                        if (o < n) {
+                          let l = o + e,
+                            i = Math.min(n, l),
+                            a = l - i
+                          ;((r.style.height = i + "px"),
+                            "0px" === r.style.bottom &&
+                              ((t.scrollTop = a > 0 ? a : 0),
+                              (r.style.justifyContent = "flex-end")))
+                        }
+                      }
+                    }
+                    c.current = t.scrollTop
+                  }),
+                }),
+              }),
+            ],
+          })
+        })
+      rQ.displayName = rZ
+      var rJ = "SelectGroup",
+        [r0, r1] = rA(rJ)
+      i.forwardRef((e, t) => {
+        let { __scopeSelect: r, ...n } = e,
+          o = K()
+        return (0, m.jsx)(r0, {
+          scope: r,
+          id: o,
+          children: (0, m.jsx)(k.div, {
+            role: "group",
+            "aria-labelledby": o,
+            ...n,
+            ref: t,
+          }),
+        })
+      }).displayName = rJ
+      var r2 = "SelectLabel"
+      i.forwardRef((e, t) => {
+        let { __scopeSelect: r, ...n } = e,
+          o = r1(r2, r)
+        return (0, m.jsx)(k.div, { id: o.id, ...n, ref: t })
+      }).displayName = r2
+      var r5 = "SelectItem",
+        [r9, r6] = rA(r5),
+        r3 = i.forwardRef((e, t) => {
+          let {
+              __scopeSelect: r,
+              value: n,
+              disabled: o = !1,
+              textValue: l,
+              ...a
+            } = e,
+            s = rj(r5, r),
+            c = r$(r5, r),
+            u = s.value === n,
+            [f, p] = i.useState(null != l ? l : ""),
+            [h, v] = i.useState(!1),
+            g = y(t, (e) => {
+              var t
+              return null === (t = c.itemRefCallback) || void 0 === t
+                ? void 0
+                : t.call(c, e, n, o)
+            }),
+            b = K(),
+            w = i.useRef("touch"),
+            x = () => {
+              o || (s.onValueChange(n), s.onOpenChange(!1))
+            }
+          if ("" === n)
+            throw Error(
+              "A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.",
+            )
+          return (0, m.jsx)(r9, {
+            scope: r,
+            value: n,
+            disabled: o,
+            textId: b,
+            isSelected: u,
+            onItemTextChange: i.useCallback((e) => {
+              p((t) => {
+                var r
+                return (
+                  t ||
+                  (null !== (r = null == e ? void 0 : e.textContent) &&
+                  void 0 !== r
+                    ? r
+                    : ""
+                  ).trim()
+                )
+              })
+            }, []),
+            children: (0, m.jsx)(rk.ItemSlot, {
+              scope: r,
+              value: n,
+              disabled: o,
+              textValue: f,
+              children: (0, m.jsx)(k.div, {
+                role: "option",
+                "aria-labelledby": b,
+                "data-highlighted": h ? "" : void 0,
+                "aria-selected": u && h,
+                "data-state": u ? "checked" : "unchecked",
+                "aria-disabled": o || void 0,
+                "data-disabled": o ? "" : void 0,
+                tabIndex: o ? void 0 : -1,
+                ...a,
+                ref: g,
+                onFocus: d(a.onFocus, () => v(!0)),
+                onBlur: d(a.onBlur, () => v(!1)),
+                onClick: d(a.onClick, () => {
+                  "mouse" !== w.current && x()
+                }),
+                onPointerUp: d(a.onPointerUp, () => {
+                  "mouse" === w.current && x()
+                }),
+                onPointerDown: d(a.onPointerDown, (e) => {
+                  w.current = e.pointerType
+                }),
+                onPointerMove: d(a.onPointerMove, (e) => {
+                  if (((w.current = e.pointerType), o)) {
+                    var t
+                    null === (t = c.onItemLeave) || void 0 === t || t.call(c)
+                  } else
+                    "mouse" === w.current &&
+                      e.currentTarget.focus({ preventScroll: !0 })
+                }),
+                onPointerLeave: d(a.onPointerLeave, (e) => {
+                  if (e.currentTarget === document.activeElement) {
+                    var t
+                    null === (t = c.onItemLeave) || void 0 === t || t.call(c)
+                  }
+                }),
+                onKeyDown: d(a.onKeyDown, (e) => {
+                  var t
+                  ;((null === (t = c.searchRef) || void 0 === t
+                    ? void 0
+                    : t.current) === "" ||
+                    " " !== e.key) &&
+                    (rE.includes(e.key) && x(),
+                    " " === e.key && e.preventDefault())
+                }),
+              }),
+            }),
+          })
+        })
+      r3.displayName = r5
+      var r4 = "SelectItemText",
+        r7 = i.forwardRef((e, t) => {
+          let { __scopeSelect: r, className: n, style: o, ...l } = e,
+            a = rj(r4, r),
+            c = r$(r4, r),
+            u = r6(r4, r),
+            d = rN(r4, r),
+            [f, p] = i.useState(null),
+            h = y(
+              t,
+              (e) => p(e),
+              u.onItemTextChange,
+              (e) => {
+                var t
+                return null === (t = c.itemTextRefCallback) || void 0 === t
+                  ? void 0
+                  : t.call(c, e, u.value, u.disabled)
+              },
+            ),
+            v = null == f ? void 0 : f.textContent,
+            g = i.useMemo(
+              () =>
+                (0, m.jsx)(
+                  "option",
+                  { value: u.value, disabled: u.disabled, children: v },
+                  u.value,
+                ),
+              [u.disabled, u.value, v],
+            ),
+            { onNativeOptionAdd: b, onNativeOptionRemove: w } = d
+          return (
+            _(() => (b(g), () => w(g)), [b, w, g]),
+            (0, m.jsxs)(m.Fragment, {
+              children: [
+                (0, m.jsx)(k.span, { id: u.textId, ...l, ref: h }),
+                u.isSelected && a.valueNode && !a.valueNodeHasChildren
+                  ? s.createPortal(l.children, a.valueNode)
+                  : null,
+              ],
+            })
+          )
+        })
+      r7.displayName = r4
+      var r8 = "SelectItemIndicator",
+        ne = i.forwardRef((e, t) => {
+          let { __scopeSelect: r, ...n } = e
+          return r6(r8, r).isSelected
+            ? (0, m.jsx)(k.span, { "aria-hidden": !0, ...n, ref: t })
+            : null
+        })
+      ne.displayName = r8
+      var nt = "SelectScrollUpButton",
+        nr = i.forwardRef((e, t) => {
+          let r = r$(nt, e.__scopeSelect),
+            n = rG(nt, e.__scopeSelect),
+            [o, l] = i.useState(!1),
+            a = y(t, n.onScrollButtonChange)
+          return (
+            _(() => {
+              if (r.viewport && r.isPositioned) {
+                let e = function () {
+                    l(t.scrollTop > 0)
+                  },
+                  t = r.viewport
+                return (
+                  e(),
+                  t.addEventListener("scroll", e),
+                  () => t.removeEventListener("scroll", e)
+                )
+              }
+            }, [r.viewport, r.isPositioned]),
+            o
+              ? (0, m.jsx)(nl, {
+                  ...e,
+                  ref: a,
+                  onAutoScroll: () => {
+                    let { viewport: e, selectedItem: t } = r
+                    e && t && (e.scrollTop = e.scrollTop - t.offsetHeight)
+                  },
+                })
+              : null
+          )
+        })
+      nr.displayName = nt
+      var nn = "SelectScrollDownButton",
+        no = i.forwardRef((e, t) => {
+          let r = r$(nn, e.__scopeSelect),
+            n = rG(nn, e.__scopeSelect),
+            [o, l] = i.useState(!1),
+            a = y(t, n.onScrollButtonChange)
+          return (
+            _(() => {
+              if (r.viewport && r.isPositioned) {
+                let e = function () {
+                    let e = t.scrollHeight - t.clientHeight
+                    l(Math.ceil(t.scrollTop) < e)
+                  },
+                  t = r.viewport
+                return (
+                  e(),
+                  t.addEventListener("scroll", e),
+                  () => t.removeEventListener("scroll", e)
+                )
+              }
+            }, [r.viewport, r.isPositioned]),
+            o
+              ? (0, m.jsx)(nl, {
+                  ...e,
+                  ref: a,
+                  onAutoScroll: () => {
+                    let { viewport: e, selectedItem: t } = r
+                    e && t && (e.scrollTop = e.scrollTop + t.offsetHeight)
+                  },
+                })
+              : null
+          )
+        })
+      no.displayName = nn
+      var nl = i.forwardRef((e, t) => {
+        let { __scopeSelect: r, onAutoScroll: n, ...o } = e,
+          l = r$("SelectScrollButton", r),
+          a = i.useRef(null),
+          s = rC(r),
+          c = i.useCallback(() => {
+            null !== a.current &&
+              (window.clearInterval(a.current), (a.current = null))
+          }, [])
+        return (
+          i.useEffect(() => () => c(), [c]),
+          _(() => {
+            var e
+            let t = s().find((e) => e.ref.current === document.activeElement)
+            null == t ||
+              null === (e = t.ref.current) ||
+              void 0 === e ||
+              e.scrollIntoView({ block: "nearest" })
+          }, [s]),
+          (0, m.jsx)(k.div, {
+            "aria-hidden": !0,
+            ...o,
+            ref: t,
+            style: { flexShrink: 0, ...o.style },
+            onPointerDown: d(o.onPointerDown, () => {
+              null === a.current && (a.current = window.setInterval(n, 50))
+            }),
+            onPointerMove: d(o.onPointerMove, () => {
+              var e
+              ;(null === (e = l.onItemLeave) || void 0 === e || e.call(l),
+                null === a.current && (a.current = window.setInterval(n, 50)))
+            }),
+            onPointerLeave: d(o.onPointerLeave, () => {
+              c()
+            }),
+          })
+        )
+      })
+      i.forwardRef((e, t) => {
+        let { __scopeSelect: r, ...n } = e
+        return (0, m.jsx)(k.div, { "aria-hidden": !0, ...n, ref: t })
+      }).displayName = "SelectSeparator"
+      var ni = "SelectArrow"
+      i.forwardRef((e, t) => {
+        let { __scopeSelect: r, ...n } = e,
+          o = rP(r),
+          l = rj(ni, r),
+          i = r$(ni, r)
+        return l.open && "popper" === i.position
+          ? (0, m.jsx)(tP, { ...o, ...n, ref: t })
+          : null
+      }).displayName = ni
+      var na = i.forwardRef((e, t) => {
+        let { __scopeSelect: r, value: n, ...o } = e,
+          l = i.useRef(null),
+          a = y(t, l),
+          s = (function (e) {
+            let t = i.useRef({ value: e, previous: e })
+            return i.useMemo(
+              () => (
+                t.current.value !== e &&
+                  ((t.current.previous = t.current.value),
+                  (t.current.value = e)),
+                t.current.previous
+              ),
+              [e],
+            )
+          })(n)
+        return (
+          i.useEffect(() => {
+            let e = l.current
+            if (!e) return
+            let t = Object.getOwnPropertyDescriptor(
+              window.HTMLSelectElement.prototype,
+              "value",
+            ).set
+            if (s !== n && t) {
+              let r = new Event("change", { bubbles: !0 })
+              ;(t.call(e, n), e.dispatchEvent(r))
+            }
+          }, [s, n]),
+          (0, m.jsx)(k.select, {
+            ...o,
+            style: { ...tz, ...o.style },
+            ref: a,
+            defaultValue: n,
+          })
+        )
+      })
+      function ns(e) {
+        return "" === e || void 0 === e
+      }
+      function nc(e) {
+        let t = C(e),
+          r = i.useRef(""),
+          n = i.useRef(0),
+          o = i.useCallback(
+            (e) => {
+              let o = r.current + e
+              ;(t(o),
+                (function e(t) {
+                  ;((r.current = t),
+                    window.clearTimeout(n.current),
+                    "" !== t &&
+                      (n.current = window.setTimeout(() => e(""), 1e3)))
+                })(o))
+            },
+            [t],
+          ),
+          l = i.useCallback(() => {
+            ;((r.current = ""), window.clearTimeout(n.current))
+          }, [])
+        return (
+          i.useEffect(() => () => window.clearTimeout(n.current), []),
+          [r, o, l]
+        )
+      }
+      function nu(e, t, r) {
+        var n, o
+        let l =
+            t.length > 1 && Array.from(t).every((e) => e === t[0]) ? t[0] : t,
+          i = r ? e.indexOf(r) : -1,
+          a =
+            ((n = e),
+            (o = Math.max(i, 0)),
+            n.map((e, t) => n[(o + t) % n.length]))
+        1 === l.length && (a = a.filter((e) => e !== r))
+        let s = a.find((e) =>
+          e.textValue.toLowerCase().startsWith(l.toLowerCase()),
+        )
+        return s !== r ? s : void 0
+      }
+      na.displayName = "SelectBubbleInput"
+      var nd = rO,
+        nf = rz,
+        np = rW,
+        nh = rF,
+        nm = rH,
+        nv = r_,
+        ng = rQ,
+        ny = r3,
+        nb = r7,
+        nw = ne,
+        nx = nr,
+        nE = no
+    },
+    7580: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Users", [
+        [
+          "path",
+          { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" },
+        ],
+        ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+        ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+        ["path", { d: "M16 3.13a4 4 0 0 1 0 7.75", key: "1da9ce" }],
+      ])
+    },
+    7863: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("ChevronUp", [
+        ["path", { d: "m18 15-6-6-6 6", key: "153udz" }],
+      ])
+    },
+    8500: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("TrendingDown", [
+        ["polyline", { points: "22 17 13.5 8.5 8.5 13.5 2 7", key: "1r2t7k" }],
+        ["polyline", { points: "16 17 22 17 22 11", key: "11uiuu" }],
+      ])
+    },
+    8564: (e, t, r) => {
+      r.d(t, { A: () => n })
+      let n = (0, r(9946).A)("Star", [
+        [
+          "path",
+          {
+            d: "M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z",
+            key: "r04s7s",
+          },
+        ],
+      ])
+    },
+    9688: (e, t, r) => {
+      r.d(t, { QP: () => Y })
+      let n = (e) => {
+          let t = a(e),
+            { conflictingClassGroups: r, conflictingClassGroupModifiers: n } = e
+          return {
+            getClassGroupId: (e) => {
+              let r = e.split("-")
+              return (
+                "" === r[0] && 1 !== r.length && r.shift(),
+                o(r, t) || i(e)
+              )
+            },
+            getConflictingClassGroupIds: (e, t) => {
+              let o = r[e] || []
+              return t && n[e] ? [...o, ...n[e]] : o
+            },
+          }
+        },
+        o = (e, t) => {
+          if (0 === e.length) return t.classGroupId
+          let r = e[0],
+            n = t.nextPart.get(r),
+            l = n ? o(e.slice(1), n) : void 0
+          if (l) return l
+          if (0 === t.validators.length) return
+          let i = e.join("-")
+          return t.validators.find(({ validator: e }) => e(i))?.classGroupId
+        },
+        l = /^\[(.+)\]$/,
+        i = (e) => {
+          if (l.test(e)) {
+            let t = l.exec(e)[1],
+              r = t?.substring(0, t.indexOf(":"))
+            if (r) return "arbitrary.." + r
+          }
+        },
+        a = (e) => {
+          let { theme: t, prefix: r } = e,
+            n = { nextPart: new Map(), validators: [] }
+          return (
+            d(Object.entries(e.classGroups), r).forEach(([e, r]) => {
+              s(r, n, e, t)
+            }),
+            n
+          )
+        },
+        s = (e, t, r, n) => {
+          e.forEach((e) => {
+            if ("string" == typeof e) {
+              ;("" === e ? t : c(t, e)).classGroupId = r
+              return
+            }
+            if ("function" == typeof e) {
+              if (u(e)) {
+                s(e(n), t, r, n)
+                return
+              }
+              t.validators.push({ validator: e, classGroupId: r })
+              return
+            }
+            Object.entries(e).forEach(([e, o]) => {
+              s(o, c(t, e), r, n)
+            })
+          })
+        },
+        c = (e, t) => {
+          let r = e
+          return (
+            t.split("-").forEach((e) => {
+              ;(r.nextPart.has(e) ||
+                r.nextPart.set(e, { nextPart: new Map(), validators: [] }),
+                (r = r.nextPart.get(e)))
+            }),
+            r
+          )
+        },
+        u = (e) => e.isThemeGetter,
+        d = (e, t) =>
+          t
+            ? e.map(([e, r]) => [
+                e,
+                r.map((e) =>
+                  "string" == typeof e
+                    ? t + e
+                    : "object" == typeof e
+                      ? Object.fromEntries(
+                          Object.entries(e).map(([e, r]) => [t + e, r]),
+                        )
+                      : e,
+                ),
+              ])
+            : e,
+        f = (e) => {
+          if (e < 1) return { get: () => void 0, set: () => {} }
+          let t = 0,
+            r = new Map(),
+            n = new Map(),
+            o = (o, l) => {
+              ;(r.set(o, l), ++t > e && ((t = 0), (n = r), (r = new Map())))
+            }
+          return {
+            get(e) {
+              let t = r.get(e)
+              return void 0 !== t
+                ? t
+                : void 0 !== (t = n.get(e))
+                  ? (o(e, t), t)
+                  : void 0
+            },
+            set(e, t) {
+              r.has(e) ? r.set(e, t) : o(e, t)
+            },
+          }
+        },
+        p = (e) => {
+          let { separator: t, experimentalParseClassName: r } = e,
+            n = 1 === t.length,
+            o = t[0],
+            l = t.length,
+            i = (e) => {
+              let r
+              let i = [],
+                a = 0,
+                s = 0
+              for (let c = 0; c < e.length; c++) {
+                let u = e[c]
+                if (0 === a) {
+                  if (u === o && (n || e.slice(c, c + l) === t)) {
+                    ;(i.push(e.slice(s, c)), (s = c + l))
+                    continue
+                  }
+                  if ("/" === u) {
+                    r = c
+                    continue
+                  }
+                }
+                "[" === u ? a++ : "]" === u && a--
+              }
+              let c = 0 === i.length ? e : e.substring(s),
+                u = c.startsWith("!"),
+                d = u ? c.substring(1) : c
+              return {
+                modifiers: i,
+                hasImportantModifier: u,
+                baseClassName: d,
+                maybePostfixModifierPosition: r && r > s ? r - s : void 0,
+              }
+            }
+          return r ? (e) => r({ className: e, parseClassName: i }) : i
+        },
+        h = (e) => {
+          if (e.length <= 1) return e
+          let t = [],
+            r = []
+          return (
+            e.forEach((e) => {
+              "[" === e[0] ? (t.push(...r.sort(), e), (r = [])) : r.push(e)
+            }),
+            t.push(...r.sort()),
+            t
+          )
+        },
+        m = (e) => ({ cache: f(e.cacheSize), parseClassName: p(e), ...n(e) }),
+        v = /\s+/,
+        g = (e, t) => {
+          let {
+              parseClassName: r,
+              getClassGroupId: n,
+              getConflictingClassGroupIds: o,
+            } = t,
+            l = [],
+            i = e.trim().split(v),
+            a = ""
+          for (let e = i.length - 1; e >= 0; e -= 1) {
+            let t = i[e],
+              {
+                modifiers: s,
+                hasImportantModifier: c,
+                baseClassName: u,
+                maybePostfixModifierPosition: d,
+              } = r(t),
+              f = !!d,
+              p = n(f ? u.substring(0, d) : u)
+            if (!p) {
+              if (!f || !(p = n(u))) {
+                a = t + (a.length > 0 ? " " + a : a)
+                continue
+              }
+              f = !1
+            }
+            let m = h(s).join(":"),
+              v = c ? m + "!" : m,
+              g = v + p
+            if (l.includes(g)) continue
+            l.push(g)
+            let y = o(p, f)
+            for (let e = 0; e < y.length; ++e) {
+              let t = y[e]
+              l.push(v + t)
+            }
+            a = t + (a.length > 0 ? " " + a : a)
+          }
+          return a
+        }
+      function y() {
+        let e,
+          t,
+          r = 0,
+          n = ""
+        for (; r < arguments.length; )
+          (e = arguments[r++]) && (t = b(e)) && (n && (n += " "), (n += t))
+        return n
+      }
+      let b = (e) => {
+          let t
+          if ("string" == typeof e) return e
+          let r = ""
+          for (let n = 0; n < e.length; n++)
+            e[n] && (t = b(e[n])) && (r && (r += " "), (r += t))
+          return r
+        },
+        w = (e) => {
+          let t = (t) => t[e] || []
+          return ((t.isThemeGetter = !0), t)
+        },
+        x = /^\[(?:([a-z-]+):)?(.+)\]$/i,
+        E = /^\d+\/\d+$/,
+        S = new Set(["px", "full", "screen"]),
+        k = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/,
+        C =
+          /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/,
+        R = /^(rgba?|hsla?|hwb|(ok)?(lab|lch))\(.+\)$/,
+        A = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/,
+        T =
+          /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/,
+        P = (e) => j(e) || S.has(e) || E.test(e),
+        L = (e) => $(e, "length", K),
+        j = (e) => !!e && !Number.isNaN(Number(e)),
+        M = (e) => $(e, "number", j),
+        N = (e) => !!e && Number.isInteger(Number(e)),
+        O = (e) => e.endsWith("%") && j(e.slice(0, -1)),
+        D = (e) => x.test(e),
+        z = (e) => k.test(e),
+        I = new Set(["length", "size", "percentage"]),
+        W = (e) => $(e, I, q),
+        F = (e) => $(e, "position", q),
+        H = new Set(["image", "url"]),
+        B = (e) => $(e, H, X),
+        _ = (e) => $(e, "", U),
+        V = () => !0,
+        $ = (e, t, r) => {
+          let n = x.exec(e)
+          return (
+            !!n &&
+            (n[1] ? ("string" == typeof t ? n[1] === t : t.has(n[1])) : r(n[2]))
+          )
+        },
+        K = (e) => C.test(e) && !R.test(e),
+        q = () => !1,
+        U = (e) => A.test(e),
+        X = (e) => T.test(e)
+      Symbol.toStringTag
+      let Y = (function (e, ...t) {
+        let r, n, o
+        let l = function (a) {
+          return (
+            (n = (r = m(t.reduce((e, t) => t(e), e()))).cache.get),
+            (o = r.cache.set),
+            (l = i),
+            i(a)
+          )
+        }
+        function i(e) {
+          let t = n(e)
+          if (t) return t
+          let l = g(e, r)
+          return (o(e, l), l)
+        }
+        return function () {
+          return l(y.apply(null, arguments))
+        }
+      })(() => {
+        let e = w("colors"),
+          t = w("spacing"),
+          r = w("blur"),
+          n = w("brightness"),
+          o = w("borderColor"),
+          l = w("borderRadius"),
+          i = w("borderSpacing"),
+          a = w("borderWidth"),
+          s = w("contrast"),
+          c = w("grayscale"),
+          u = w("hueRotate"),
+          d = w("invert"),
+          f = w("gap"),
+          p = w("gradientColorStops"),
+          h = w("gradientColorStopPositions"),
+          m = w("inset"),
+          v = w("margin"),
+          g = w("opacity"),
+          y = w("padding"),
+          b = w("saturate"),
+          x = w("scale"),
+          E = w("sepia"),
+          S = w("skew"),
+          k = w("space"),
+          C = w("translate"),
+          R = () => ["auto", "contain", "none"],
+          A = () => ["auto", "hidden", "clip", "visible", "scroll"],
+          T = () => ["auto", D, t],
+          I = () => [D, t],
+          H = () => ["", P, L],
+          $ = () => ["auto", j, D],
+          K = () => [
+            "bottom",
+            "center",
+            "left",
+            "left-bottom",
+            "left-top",
+            "right",
+            "right-bottom",
+            "right-top",
+            "top",
+          ],
+          q = () => ["solid", "dashed", "dotted", "double", "none"],
+          U = () => [
+            "normal",
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity",
+          ],
+          X = () => [
+            "start",
+            "end",
+            "center",
+            "between",
+            "around",
+            "evenly",
+            "stretch",
+          ],
+          Y = () => ["", "0", D],
+          G = () => [
+            "auto",
+            "avoid",
+            "all",
+            "avoid-page",
+            "page",
+            "left",
+            "right",
+            "column",
+          ],
+          Z = () => [j, D]
+        return {
+          cacheSize: 500,
+          separator: ":",
+          theme: {
+            colors: [V],
+            spacing: [P, L],
+            blur: ["none", "", z, D],
+            brightness: Z(),
+            borderColor: [e],
+            borderRadius: ["none", "", "full", z, D],
+            borderSpacing: I(),
+            borderWidth: H(),
+            contrast: Z(),
+            grayscale: Y(),
+            hueRotate: Z(),
+            invert: Y(),
+            gap: I(),
+            gradientColorStops: [e],
+            gradientColorStopPositions: [O, L],
+            inset: T(),
+            margin: T(),
+            opacity: Z(),
+            padding: I(),
+            saturate: Z(),
+            scale: Z(),
+            sepia: Y(),
+            skew: Z(),
+            space: I(),
+            translate: I(),
+          },
+          classGroups: {
+            aspect: [{ aspect: ["auto", "square", "video", D] }],
+            container: ["container"],
+            columns: [{ columns: [z] }],
+            "break-after": [{ "break-after": G() }],
+            "break-before": [{ "break-before": G() }],
+            "break-inside": [
+              {
+                "break-inside": ["auto", "avoid", "avoid-page", "avoid-column"],
+              },
+            ],
+            "box-decoration": [{ "box-decoration": ["slice", "clone"] }],
+            box: [{ box: ["border", "content"] }],
+            display: [
+              "block",
+              "inline-block",
+              "inline",
+              "flex",
+              "inline-flex",
+              "table",
+              "inline-table",
+              "table-caption",
+              "table-cell",
+              "table-column",
+              "table-column-group",
+              "table-footer-group",
+              "table-header-group",
+              "table-row-group",
+              "table-row",
+              "flow-root",
+              "grid",
+              "inline-grid",
+              "contents",
+              "list-item",
+              "hidden",
+            ],
+            float: [{ float: ["right", "left", "none", "start", "end"] }],
+            clear: [
+              { clear: ["left", "right", "both", "none", "start", "end"] },
+            ],
+            isolation: ["isolate", "isolation-auto"],
+            "object-fit": [
+              { object: ["contain", "cover", "fill", "none", "scale-down"] },
+            ],
+            "object-position": [{ object: [...K(), D] }],
+            overflow: [{ overflow: A() }],
+            "overflow-x": [{ "overflow-x": A() }],
+            "overflow-y": [{ "overflow-y": A() }],
+            overscroll: [{ overscroll: R() }],
+            "overscroll-x": [{ "overscroll-x": R() }],
+            "overscroll-y": [{ "overscroll-y": R() }],
+            position: ["static", "fixed", "absolute", "relative", "sticky"],
+            inset: [{ inset: [m] }],
+            "inset-x": [{ "inset-x": [m] }],
+            "inset-y": [{ "inset-y": [m] }],
+            start: [{ start: [m] }],
+            end: [{ end: [m] }],
+            top: [{ top: [m] }],
+            right: [{ right: [m] }],
+            bottom: [{ bottom: [m] }],
+            left: [{ left: [m] }],
+            visibility: ["visible", "invisible", "collapse"],
+            z: [{ z: ["auto", N, D] }],
+            basis: [{ basis: T() }],
+            "flex-direction": [
+              { flex: ["row", "row-reverse", "col", "col-reverse"] },
+            ],
+            "flex-wrap": [{ flex: ["wrap", "wrap-reverse", "nowrap"] }],
+            flex: [{ flex: ["1", "auto", "initial", "none", D] }],
+            grow: [{ grow: Y() }],
+            shrink: [{ shrink: Y() }],
+            order: [{ order: ["first", "last", "none", N, D] }],
+            "grid-cols": [{ "grid-cols": [V] }],
+            "col-start-end": [{ col: ["auto", { span: ["full", N, D] }, D] }],
+            "col-start": [{ "col-start": $() }],
+            "col-end": [{ "col-end": $() }],
+            "grid-rows": [{ "grid-rows": [V] }],
+            "row-start-end": [{ row: ["auto", { span: [N, D] }, D] }],
+            "row-start": [{ "row-start": $() }],
+            "row-end": [{ "row-end": $() }],
+            "grid-flow": [
+              {
+                "grid-flow": ["row", "col", "dense", "row-dense", "col-dense"],
+              },
+            ],
+            "auto-cols": [{ "auto-cols": ["auto", "min", "max", "fr", D] }],
+            "auto-rows": [{ "auto-rows": ["auto", "min", "max", "fr", D] }],
+            gap: [{ gap: [f] }],
+            "gap-x": [{ "gap-x": [f] }],
+            "gap-y": [{ "gap-y": [f] }],
+            "justify-content": [{ justify: ["normal", ...X()] }],
+            "justify-items": [
+              { "justify-items": ["start", "end", "center", "stretch"] },
+            ],
+            "justify-self": [
+              { "justify-self": ["auto", "start", "end", "center", "stretch"] },
+            ],
+            "align-content": [{ content: ["normal", ...X(), "baseline"] }],
+            "align-items": [
+              { items: ["start", "end", "center", "baseline", "stretch"] },
+            ],
+            "align-self": [
+              {
+                self: ["auto", "start", "end", "center", "stretch", "baseline"],
+              },
+            ],
+            "place-content": [{ "place-content": [...X(), "baseline"] }],
+            "place-items": [
+              {
+                "place-items": [
+                  "start",
+                  "end",
+                  "center",
+                  "baseline",
+                  "stretch",
+                ],
+              },
+            ],
+            "place-self": [
+              { "place-self": ["auto", "start", "end", "center", "stretch"] },
+            ],
+            p: [{ p: [y] }],
+            px: [{ px: [y] }],
+            py: [{ py: [y] }],
+            ps: [{ ps: [y] }],
+            pe: [{ pe: [y] }],
+            pt: [{ pt: [y] }],
+            pr: [{ pr: [y] }],
+            pb: [{ pb: [y] }],
+            pl: [{ pl: [y] }],
+            m: [{ m: [v] }],
+            mx: [{ mx: [v] }],
+            my: [{ my: [v] }],
+            ms: [{ ms: [v] }],
+            me: [{ me: [v] }],
+            mt: [{ mt: [v] }],
+            mr: [{ mr: [v] }],
+            mb: [{ mb: [v] }],
+            ml: [{ ml: [v] }],
+            "space-x": [{ "space-x": [k] }],
+            "space-x-reverse": ["space-x-reverse"],
+            "space-y": [{ "space-y": [k] }],
+            "space-y-reverse": ["space-y-reverse"],
+            w: [
+              { w: ["auto", "min", "max", "fit", "svw", "lvw", "dvw", D, t] },
+            ],
+            "min-w": [{ "min-w": [D, t, "min", "max", "fit"] }],
+            "max-w": [
+              {
+                "max-w": [
+                  D,
+                  t,
+                  "none",
+                  "full",
+                  "min",
+                  "max",
+                  "fit",
+                  "prose",
+                  { screen: [z] },
+                  z,
+                ],
+              },
+            ],
+            h: [
+              { h: [D, t, "auto", "min", "max", "fit", "svh", "lvh", "dvh"] },
+            ],
+            "min-h": [
+              { "min-h": [D, t, "min", "max", "fit", "svh", "lvh", "dvh"] },
+            ],
+            "max-h": [
+              { "max-h": [D, t, "min", "max", "fit", "svh", "lvh", "dvh"] },
+            ],
+            size: [{ size: [D, t, "auto", "min", "max", "fit"] }],
+            "font-size": [{ text: ["base", z, L] }],
+            "font-smoothing": ["antialiased", "subpixel-antialiased"],
+            "font-style": ["italic", "not-italic"],
+            "font-weight": [
+              {
+                font: [
+                  "thin",
+                  "extralight",
+                  "light",
+                  "normal",
+                  "medium",
+                  "semibold",
+                  "bold",
+                  "extrabold",
+                  "black",
+                  M,
+                ],
+              },
+            ],
+            "font-family": [{ font: [V] }],
+            "fvn-normal": ["normal-nums"],
+            "fvn-ordinal": ["ordinal"],
+            "fvn-slashed-zero": ["slashed-zero"],
+            "fvn-figure": ["lining-nums", "oldstyle-nums"],
+            "fvn-spacing": ["proportional-nums", "tabular-nums"],
+            "fvn-fraction": ["diagonal-fractions", "stacked-fractions"],
+            tracking: [
+              {
+                tracking: [
+                  "tighter",
+                  "tight",
+                  "normal",
+                  "wide",
+                  "wider",
+                  "widest",
+                  D,
+                ],
+              },
+            ],
+            "line-clamp": [{ "line-clamp": ["none", j, M] }],
+            leading: [
+              {
+                leading: [
+                  "none",
+                  "tight",
+                  "snug",
+                  "normal",
+                  "relaxed",
+                  "loose",
+                  P,
+                  D,
+                ],
+              },
+            ],
+            "list-image": [{ "list-image": ["none", D] }],
+            "list-style-type": [{ list: ["none", "disc", "decimal", D] }],
+            "list-style-position": [{ list: ["inside", "outside"] }],
+            "placeholder-color": [{ placeholder: [e] }],
+            "placeholder-opacity": [{ "placeholder-opacity": [g] }],
+            "text-alignment": [
+              { text: ["left", "center", "right", "justify", "start", "end"] },
+            ],
+            "text-color": [{ text: [e] }],
+            "text-opacity": [{ "text-opacity": [g] }],
+            "text-decoration": [
+              "underline",
+              "overline",
+              "line-through",
+              "no-underline",
+            ],
+            "text-decoration-style": [{ decoration: [...q(), "wavy"] }],
+            "text-decoration-thickness": [
+              { decoration: ["auto", "from-font", P, L] },
+            ],
+            "underline-offset": [{ "underline-offset": ["auto", P, D] }],
+            "text-decoration-color": [{ decoration: [e] }],
+            "text-transform": [
+              "uppercase",
+              "lowercase",
+              "capitalize",
+              "normal-case",
+            ],
+            "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
+            "text-wrap": [{ text: ["wrap", "nowrap", "balance", "pretty"] }],
+            indent: [{ indent: I() }],
+            "vertical-align": [
+              {
+                align: [
+                  "baseline",
+                  "top",
+                  "middle",
+                  "bottom",
+                  "text-top",
+                  "text-bottom",
+                  "sub",
+                  "super",
+                  D,
+                ],
+              },
+            ],
+            whitespace: [
+              {
+                whitespace: [
+                  "normal",
+                  "nowrap",
+                  "pre",
+                  "pre-line",
+                  "pre-wrap",
+                  "break-spaces",
+                ],
+              },
+            ],
+            break: [{ break: ["normal", "words", "all", "keep"] }],
+            hyphens: [{ hyphens: ["none", "manual", "auto"] }],
+            content: [{ content: ["none", D] }],
+            "bg-attachment": [{ bg: ["fixed", "local", "scroll"] }],
+            "bg-clip": [
+              { "bg-clip": ["border", "padding", "content", "text"] },
+            ],
+            "bg-opacity": [{ "bg-opacity": [g] }],
+            "bg-origin": [{ "bg-origin": ["border", "padding", "content"] }],
+            "bg-position": [{ bg: [...K(), F] }],
+            "bg-repeat": [
+              {
+                bg: ["no-repeat", { repeat: ["", "x", "y", "round", "space"] }],
+              },
+            ],
+            "bg-size": [{ bg: ["auto", "cover", "contain", W] }],
+            "bg-image": [
+              {
+                bg: [
+                  "none",
+                  {
+                    "gradient-to": ["t", "tr", "r", "br", "b", "bl", "l", "tl"],
+                  },
+                  B,
+                ],
+              },
+            ],
+            "bg-color": [{ bg: [e] }],
+            "gradient-from-pos": [{ from: [h] }],
+            "gradient-via-pos": [{ via: [h] }],
+            "gradient-to-pos": [{ to: [h] }],
+            "gradient-from": [{ from: [p] }],
+            "gradient-via": [{ via: [p] }],
+            "gradient-to": [{ to: [p] }],
+            rounded: [{ rounded: [l] }],
+            "rounded-s": [{ "rounded-s": [l] }],
+            "rounded-e": [{ "rounded-e": [l] }],
+            "rounded-t": [{ "rounded-t": [l] }],
+            "rounded-r": [{ "rounded-r": [l] }],
+            "rounded-b": [{ "rounded-b": [l] }],
+            "rounded-l": [{ "rounded-l": [l] }],
+            "rounded-ss": [{ "rounded-ss": [l] }],
+            "rounded-se": [{ "rounded-se": [l] }],
+            "rounded-ee": [{ "rounded-ee": [l] }],
+            "rounded-es": [{ "rounded-es": [l] }],
+            "rounded-tl": [{ "rounded-tl": [l] }],
+            "rounded-tr": [{ "rounded-tr": [l] }],
+            "rounded-br": [{ "rounded-br": [l] }],
+            "rounded-bl": [{ "rounded-bl": [l] }],
+            "border-w": [{ border: [a] }],
+            "border-w-x": [{ "border-x": [a] }],
+            "border-w-y": [{ "border-y": [a] }],
+            "border-w-s": [{ "border-s": [a] }],
+            "border-w-e": [{ "border-e": [a] }],
+            "border-w-t": [{ "border-t": [a] }],
+            "border-w-r": [{ "border-r": [a] }],
+            "border-w-b": [{ "border-b": [a] }],
+            "border-w-l": [{ "border-l": [a] }],
+            "border-opacity": [{ "border-opacity": [g] }],
+            "border-style": [{ border: [...q(), "hidden"] }],
+            "divide-x": [{ "divide-x": [a] }],
+            "divide-x-reverse": ["divide-x-reverse"],
+            "divide-y": [{ "divide-y": [a] }],
+            "divide-y-reverse": ["divide-y-reverse"],
+            "divide-opacity": [{ "divide-opacity": [g] }],
+            "divide-style": [{ divide: q() }],
+            "border-color": [{ border: [o] }],
+            "border-color-x": [{ "border-x": [o] }],
+            "border-color-y": [{ "border-y": [o] }],
+            "border-color-s": [{ "border-s": [o] }],
+            "border-color-e": [{ "border-e": [o] }],
+            "border-color-t": [{ "border-t": [o] }],
+            "border-color-r": [{ "border-r": [o] }],
+            "border-color-b": [{ "border-b": [o] }],
+            "border-color-l": [{ "border-l": [o] }],
+            "divide-color": [{ divide: [o] }],
+            "outline-style": [{ outline: ["", ...q()] }],
+            "outline-offset": [{ "outline-offset": [P, D] }],
+            "outline-w": [{ outline: [P, L] }],
+            "outline-color": [{ outline: [e] }],
+            "ring-w": [{ ring: H() }],
+            "ring-w-inset": ["ring-inset"],
+            "ring-color": [{ ring: [e] }],
+            "ring-opacity": [{ "ring-opacity": [g] }],
+            "ring-offset-w": [{ "ring-offset": [P, L] }],
+            "ring-offset-color": [{ "ring-offset": [e] }],
+            shadow: [{ shadow: ["", "inner", "none", z, _] }],
+            "shadow-color": [{ shadow: [V] }],
+            opacity: [{ opacity: [g] }],
+            "mix-blend": [
+              { "mix-blend": [...U(), "plus-lighter", "plus-darker"] },
+            ],
+            "bg-blend": [{ "bg-blend": U() }],
+            filter: [{ filter: ["", "none"] }],
+            blur: [{ blur: [r] }],
+            brightness: [{ brightness: [n] }],
+            contrast: [{ contrast: [s] }],
+            "drop-shadow": [{ "drop-shadow": ["", "none", z, D] }],
+            grayscale: [{ grayscale: [c] }],
+            "hue-rotate": [{ "hue-rotate": [u] }],
+            invert: [{ invert: [d] }],
+            saturate: [{ saturate: [b] }],
+            sepia: [{ sepia: [E] }],
+            "backdrop-filter": [{ "backdrop-filter": ["", "none"] }],
+            "backdrop-blur": [{ "backdrop-blur": [r] }],
+            "backdrop-brightness": [{ "backdrop-brightness": [n] }],
+            "backdrop-contrast": [{ "backdrop-contrast": [s] }],
+            "backdrop-grayscale": [{ "backdrop-grayscale": [c] }],
+            "backdrop-hue-rotate": [{ "backdrop-hue-rotate": [u] }],
+            "backdrop-invert": [{ "backdrop-invert": [d] }],
+            "backdrop-opacity": [{ "backdrop-opacity": [g] }],
+            "backdrop-saturate": [{ "backdrop-saturate": [b] }],
+            "backdrop-sepia": [{ "backdrop-sepia": [E] }],
+            "border-collapse": [{ border: ["collapse", "separate"] }],
+            "border-spacing": [{ "border-spacing": [i] }],
+            "border-spacing-x": [{ "border-spacing-x": [i] }],
+            "border-spacing-y": [{ "border-spacing-y": [i] }],
+            "table-layout": [{ table: ["auto", "fixed"] }],
+            caption: [{ caption: ["top", "bottom"] }],
+            transition: [
+              {
+                transition: [
+                  "none",
+                  "all",
+                  "",
+                  "colors",
+                  "opacity",
+                  "shadow",
+                  "transform",
+                  D,
+                ],
+              },
+            ],
+            duration: [{ duration: Z() }],
+            ease: [{ ease: ["linear", "in", "out", "in-out", D] }],
+            delay: [{ delay: Z() }],
+            animate: [
+              { animate: ["none", "spin", "ping", "pulse", "bounce", D] },
+            ],
+            transform: [{ transform: ["", "gpu", "none"] }],
+            scale: [{ scale: [x] }],
+            "scale-x": [{ "scale-x": [x] }],
+            "scale-y": [{ "scale-y": [x] }],
+            rotate: [{ rotate: [N, D] }],
+            "translate-x": [{ "translate-x": [C] }],
+            "translate-y": [{ "translate-y": [C] }],
+            "skew-x": [{ "skew-x": [S] }],
+            "skew-y": [{ "skew-y": [S] }],
+            "transform-origin": [
+              {
+                origin: [
+                  "center",
+                  "top",
+                  "top-right",
+                  "right",
+                  "bottom-right",
+                  "bottom",
+                  "bottom-left",
+                  "left",
+                  "top-left",
+                  D,
+                ],
+              },
+            ],
+            accent: [{ accent: ["auto", e] }],
+            appearance: [{ appearance: ["none", "auto"] }],
+            cursor: [
+              {
+                cursor: [
+                  "auto",
+                  "default",
+                  "pointer",
+                  "wait",
+                  "text",
+                  "move",
+                  "help",
+                  "not-allowed",
+                  "none",
+                  "context-menu",
+                  "progress",
+                  "cell",
+                  "crosshair",
+                  "vertical-text",
+                  "alias",
+                  "copy",
+                  "no-drop",
+                  "grab",
+                  "grabbing",
+                  "all-scroll",
+                  "col-resize",
+                  "row-resize",
+                  "n-resize",
+                  "e-resize",
+                  "s-resize",
+                  "w-resize",
+                  "ne-resize",
+                  "nw-resize",
+                  "se-resize",
+                  "sw-resize",
+                  "ew-resize",
+                  "ns-resize",
+                  "nesw-resize",
+                  "nwse-resize",
+                  "zoom-in",
+                  "zoom-out",
+                  D,
+                ],
+              },
+            ],
+            "caret-color": [{ caret: [e] }],
+            "pointer-events": [{ "pointer-events": ["none", "auto"] }],
+            resize: [{ resize: ["none", "y", "x", ""] }],
+            "scroll-behavior": [{ scroll: ["auto", "smooth"] }],
+            "scroll-m": [{ "scroll-m": I() }],
+            "scroll-mx": [{ "scroll-mx": I() }],
+            "scroll-my": [{ "scroll-my": I() }],
+            "scroll-ms": [{ "scroll-ms": I() }],
+            "scroll-me": [{ "scroll-me": I() }],
+            "scroll-mt": [{ "scroll-mt": I() }],
+            "scroll-mr": [{ "scroll-mr": I() }],
+            "scroll-mb": [{ "scroll-mb": I() }],
+            "scroll-ml": [{ "scroll-ml": I() }],
+            "scroll-p": [{ "scroll-p": I() }],
+            "scroll-px": [{ "scroll-px": I() }],
+            "scroll-py": [{ "scroll-py": I() }],
+            "scroll-ps": [{ "scroll-ps": I() }],
+            "scroll-pe": [{ "scroll-pe": I() }],
+            "scroll-pt": [{ "scroll-pt": I() }],
+            "scroll-pr": [{ "scroll-pr": I() }],
+            "scroll-pb": [{ "scroll-pb": I() }],
+            "scroll-pl": [{ "scroll-pl": I() }],
+            "snap-align": [{ snap: ["start", "end", "center", "align-none"] }],
+            "snap-stop": [{ snap: ["normal", "always"] }],
+            "snap-type": [{ snap: ["none", "x", "y", "both"] }],
+            "snap-strictness": [{ snap: ["mandatory", "proximity"] }],
+            touch: [{ touch: ["auto", "none", "manipulation"] }],
+            "touch-x": [{ "touch-pan": ["x", "left", "right"] }],
+            "touch-y": [{ "touch-pan": ["y", "up", "down"] }],
+            "touch-pz": ["touch-pinch-zoom"],
+            select: [{ select: ["none", "text", "all", "auto"] }],
+            "will-change": [
+              { "will-change": ["auto", "scroll", "contents", "transform", D] },
+            ],
+            fill: [{ fill: [e, "none"] }],
+            "stroke-w": [{ stroke: [P, L, M] }],
+            stroke: [{ stroke: [e, "none"] }],
+            sr: ["sr-only", "not-sr-only"],
+            "forced-color-adjust": [
+              { "forced-color-adjust": ["auto", "none"] },
+            ],
+          },
+          conflictingClassGroups: {
+            overflow: ["overflow-x", "overflow-y"],
+            overscroll: ["overscroll-x", "overscroll-y"],
+            inset: [
+              "inset-x",
+              "inset-y",
+              "start",
+              "end",
+              "top",
+              "right",
+              "bottom",
+              "left",
+            ],
+            "inset-x": ["right", "left"],
+            "inset-y": ["top", "bottom"],
+            flex: ["basis", "grow", "shrink"],
+            gap: ["gap-x", "gap-y"],
+            p: ["px", "py", "ps", "pe", "pt", "pr", "pb", "pl"],
+            px: ["pr", "pl"],
+            py: ["pt", "pb"],
+            m: ["mx", "my", "ms", "me", "mt", "mr", "mb", "ml"],
+            mx: ["mr", "ml"],
+            my: ["mt", "mb"],
+            size: ["w", "h"],
+            "font-size": ["leading"],
+            "fvn-normal": [
+              "fvn-ordinal",
+              "fvn-slashed-zero",
+              "fvn-figure",
+              "fvn-spacing",
+              "fvn-fraction",
+            ],
+            "fvn-ordinal": ["fvn-normal"],
+            "fvn-slashed-zero": ["fvn-normal"],
+            "fvn-figure": ["fvn-normal"],
+            "fvn-spacing": ["fvn-normal"],
+            "fvn-fraction": ["fvn-normal"],
+            "line-clamp": ["display", "overflow"],
+            rounded: [
+              "rounded-s",
+              "rounded-e",
+              "rounded-t",
+              "rounded-r",
+              "rounded-b",
+              "rounded-l",
+              "rounded-ss",
+              "rounded-se",
+              "rounded-ee",
+              "rounded-es",
+              "rounded-tl",
+              "rounded-tr",
+              "rounded-br",
+              "rounded-bl",
+            ],
+            "rounded-s": ["rounded-ss", "rounded-es"],
+            "rounded-e": ["rounded-se", "rounded-ee"],
+            "rounded-t": ["rounded-tl", "rounded-tr"],
+            "rounded-r": ["rounded-tr", "rounded-br"],
+            "rounded-b": ["rounded-br", "rounded-bl"],
+            "rounded-l": ["rounded-tl", "rounded-bl"],
+            "border-spacing": ["border-spacing-x", "border-spacing-y"],
+            "border-w": [
+              "border-w-s",
+              "border-w-e",
+              "border-w-t",
+              "border-w-r",
+              "border-w-b",
+              "border-w-l",
+            ],
+            "border-w-x": ["border-w-r", "border-w-l"],
+            "border-w-y": ["border-w-t", "border-w-b"],
+            "border-color": [
+              "border-color-s",
+              "border-color-e",
+              "border-color-t",
+              "border-color-r",
+              "border-color-b",
+              "border-color-l",
+            ],
+            "border-color-x": ["border-color-r", "border-color-l"],
+            "border-color-y": ["border-color-t", "border-color-b"],
+            "scroll-m": [
+              "scroll-mx",
+              "scroll-my",
+              "scroll-ms",
+              "scroll-me",
+              "scroll-mt",
+              "scroll-mr",
+              "scroll-mb",
+              "scroll-ml",
+            ],
+            "scroll-mx": ["scroll-mr", "scroll-ml"],
+            "scroll-my": ["scroll-mt", "scroll-mb"],
+            "scroll-p": [
+              "scroll-px",
+              "scroll-py",
+              "scroll-ps",
+              "scroll-pe",
+              "scroll-pt",
+              "scroll-pr",
+              "scroll-pb",
+              "scroll-pl",
+            ],
+            "scroll-px": ["scroll-pr", "scroll-pl"],
+            "scroll-py": ["scroll-pt", "scroll-pb"],
+            touch: ["touch-x", "touch-y", "touch-pz"],
+            "touch-x": ["touch"],
+            "touch-y": ["touch"],
+            "touch-pz": ["touch"],
+          },
+          conflictingClassGroupModifiers: { "font-size": ["leading"] },
+        }
+      })
+    },
+    9946: (e, t, r) => {
+      r.d(t, { A: () => s })
+      var n = r(2115)
+      let o = (e) => e.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase(),
+        l = function () {
+          for (var e = arguments.length, t = Array(e), r = 0; r < e; r++)
+            t[r] = arguments[r]
+          return t
+            .filter((e, t, r) => !!e && "" !== e.trim() && r.indexOf(e) === t)
+            .join(" ")
+            .trim()
+        }
+      var i = {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: 24,
+        height: 24,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: 2,
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+      }
+      let a = (0, n.forwardRef)((e, t) => {
+          let {
+            color: r = "currentColor",
+            size: o = 24,
+            strokeWidth: a = 2,
+            absoluteStrokeWidth: s,
+            className: c = "",
+            children: u,
+            iconNode: d,
+            ...f
+          } = e
+          return (0, n.createElement)(
+            "svg",
+            {
+              ref: t,
+              ...i,
+              width: o,
+              height: o,
+              stroke: r,
+              strokeWidth: s ? (24 * Number(a)) / Number(o) : a,
+              className: l("lucide", c),
+              ...f,
+            },
+            [
+              ...d.map((e) => {
+                let [t, r] = e
+                return (0, n.createElement)(t, r)
+              }),
+              ...(Array.isArray(u) ? u : [u]),
+            ],
+          )
+        }),
+        s = (e, t) => {
+          let r = (0, n.forwardRef)((r, i) => {
+            let { className: s, ...c } = r
+            return (0, n.createElement)(a, {
+              ref: i,
+              iconNode: t,
+              className: l("lucide-".concat(o(e)), s),
+              ...c,
+            })
+          })
+          return ((r.displayName = "".concat(e)), r)
+        }
+    },
+  },
+])
