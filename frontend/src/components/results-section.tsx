@@ -96,14 +96,16 @@ export function ResultsSection({
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
-                      🌿 {product.dispensary}
+                      🌿 {product.pharmacy}
                       {index === 0 && <span className="text-sm">👑</span>}
                     </h4>
                     <p className="text-muted-foreground text-sm flex items-center gap-2">
                       {product.name}
-                      <Badge variant="outline" className="text-xs">
-                        {product.strain_type} 💎
-                      </Badge>
+                      {product.strain_type && product.strain_type !== "unknown" && (
+                        <Badge variant="outline" className="text-xs">
+                          {product.strain_type} 💎
+                        </Badge>
+                      )}
                     </p>
                   </div>
                   {index === 0 && (
@@ -117,12 +119,14 @@ export function ResultsSection({
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="w-4 h-4" />
                     📍 {product.location}
-                    {product.distance && ` • ${product.distance}km`}
+                    {product.distance && ` • ${product.distance.toFixed(1)}km`}
                   </div>
-                  <div className="flex items-center gap-1 text-sm">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-foreground">{product.rating}</span>
-                  </div>
+                  {product.rating && (
+                    <div className="flex items-center gap-1 text-sm">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-foreground">{product.rating}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-4 text-sm">
@@ -133,9 +137,18 @@ export function ResultsSection({
                     {product.availability ? "✅ Dostępny" : "⚠️ Niedostępny"}
                   </Badge>
                   <div className="text-xs text-muted-foreground">
-                    THC: {product.thc_content}% | CBD: {product.cbd_content}%
+                    {product.thc_content && `THC: ${product.thc_content}%`}
+                    {product.thc_content && product.cbd_content && " | "}
+                    {product.cbd_content && `CBD: ${product.cbd_content}%`}
+                    {product.unit && ` • ${product.unit}`}
                   </div>
                 </div>
+
+                {product.expiration && (
+                  <div className="text-xs text-muted-foreground mt-2">
+                    📅 Ważność: {product.expiration}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-4">
@@ -144,6 +157,9 @@ export function ResultsSection({
                     <span className="text-2xl font-bold text-foreground">
                       {product.price.toFixed(2)} zł
                     </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Ostatnia aktualizacja: {product.fetched_at}
                   </div>
                 </div>
 
@@ -159,3 +175,4 @@ export function ResultsSection({
     </div>
   )
 }
+

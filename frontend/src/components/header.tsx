@@ -39,7 +39,7 @@ export function Header() {
         </div>
         <div className="flex items-center gap-2 glow-purple p-2 rounded-lg">
           <MapPin className="w-4 h-4 text-accent" />
-          <span>🏪 Lokalne dispensary</span>
+          <span>🏪 Lokalne apteki</span>
         </div>
         <div className="flex items-center gap-2 glow-green p-2 rounded-lg">
           <Zap className="w-4 h-4 text-primary" />

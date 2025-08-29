@@ -8,22 +8,18 @@ import { apiClient, type StatsResponse } from "@/lib/api"
 export function StatsSection() {
   const [stats, setStats] = useState<StatsResponse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const loadStats = async () => {
       try {
+        setLoading(true)
+        setError(null)
         const statsData = await apiClient.getStats()
         setStats(statsData)
       } catch (error) {
         console.error("Failed to load stats:", error)
-        // Fallback to mock data
-        setStats({
-          total_products: 1247,
-          total_dispensaries: 248,
-          avg_price: 127.5,
-          cities_covered: 67,
-          last_updated: "2 min temu",
-        })
+        setError("Nie udało się załadować statystyk")
       } finally {
         setLoading(false)
       }
@@ -31,7 +27,7 @@ export function StatsSection() {
     loadStats()
   }, [])
 
-  if (loading || !stats) {
+  if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {[...Array(4)].map((_, index) => (
@@ -40,6 +36,24 @@ export function StatsSection() {
             className="p-6 bg-card/30 backdrop-blur-sm neon-border animate-pulse"
           >
             <div className="h-16 bg-muted/20 rounded"></div>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        {[...Array(4)].map((_, index) => (
+          <Card
+            key={index}
+            className="p-6 bg-card/30 backdrop-blur-sm neon-border"
+          >
+            <div className="text-center text-muted-foreground">
+              <div className="text-lg mb-2">⚠️</div>
+              <div className="text-sm">{error || "Błąd ładowania"}</div>
+            </div>
           </Card>
         ))}
       </div>
@@ -57,8 +71,8 @@ export function StatsSection() {
     },
     {
       icon: Users,
-      label: "Aktywne dispensary",
-      value: stats.total_dispensaries.toString(),
+      label: "Aktywne apteki",
+      value: stats.total_pharmacies.toString(),
       change: "+5",
       positive: true,
       emoji: "🏪",
@@ -74,8 +88,8 @@ export function StatsSection() {
     {
       icon: Clock,
       label: "Ostatnia aktualizacja",
-      value: stats.last_updated.split(" ")[0],
-      change: stats.last_updated.split(" ").slice(1).join(" "),
+      value: stats.last_updated.split(" ")[0] || "Dzisiaj",
+      change: stats.last_updated.split(" ").slice(1).join(" ") || "Teraz",
       positive: null,
       emoji: "⚡",
     },

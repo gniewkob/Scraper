@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { apiClient, type SearchFilters } from "@/lib/api"
+import { apiClient, type SearchFilters, type CityInfo } from "@/lib/api"
 
 interface SearchSectionProps {
   onSearch: (filters: SearchFilters) => void
@@ -23,25 +23,21 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
   const [product, setProduct] = useState("")
   const [city, setCity] = useState("")
   const [maxPrice, setMaxPrice] = useState("")
-  const [cities, setCities] = useState<string[]>([])
+  const [cities, setCities] = useState<CityInfo[]>([])
+  const [citiesLoading, setCitiesLoading] = useState(true)
 
   useEffect(() => {
     const loadCities = async () => {
       try {
+        setCitiesLoading(true)
         const citiesData = await apiClient.getCities()
         setCities(citiesData)
       } catch (error) {
         console.error("Failed to load cities:", error)
-        // Fallback to default cities
-        setCities([
-          "Warszawa",
-          "Kraków",
-          "Gdańsk",
-          "Wrocław",
-          "Poznań",
-          "Katowice",
-          "Łódź",
-        ])
+        // Fallback to empty array - let user know there was an error
+        setCities([])
+      } finally {
+        setCitiesLoading(false)
       }
     }
     loadCities()
@@ -50,8 +46,8 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
   const handleSearch = () => {
     const filters: SearchFilters = {}
 
-    if (city) filters.city = city
-    if (product) filters.strain_type = product
+    if (city && city !== "all") filters.city = city
+    if (product && product !== "all") filters.strain_type = product
     if (maxPrice) filters.max_price = Number.parseFloat(maxPrice)
 
     onSearch(filters)
@@ -95,13 +91,13 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
           </label>
           <Select value={city} onValueChange={setCity}>
             <SelectTrigger className="bg-input border-border hover:border-accent/50 transition-colors neon-border">
-              <SelectValue placeholder="🌍 Wszystkie miasta..." />
+              <SelectValue placeholder={citiesLoading ? "🔄 Ładowanie..." : "🌍 Wszystkie miasta..."} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">🌍 Wszystkie miasta</SelectItem>
-              {cities.map((cityName) => (
-                <SelectItem key={cityName} value={cityName.toLowerCase()}>
-                  🏛️ {cityName}
+              {cities.map((cityInfo) => (
+                <SelectItem key={cityInfo.name} value={cityInfo.name.toLowerCase()}>
+                  🏛️ {cityInfo.name} ({cityInfo.pharmacy_count} aptek)
                 </SelectItem>
               ))}
             </SelectContent>
