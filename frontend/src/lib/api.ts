@@ -7,7 +7,7 @@ export interface Product {
   thc_content?: number
   cbd_content?: number
   price: number
-  pharmacy: string  // Changed from dispensary to match backend
+  pharmacy: string // Changed from dispensary to match backend
   location: string
   distance?: number
   availability: boolean

@@ -116,9 +116,7 @@ export function ResultsSection({
                       )}
                       {index === 0 && <span className="text-sm">👑</span>}
                     </h4>
-                    <p className="text-muted-foreground text-sm flex items-center gap-2">
-                      🌿 {product.pharmacy}
-                    </p>
+                    <p className="text-muted-foreground text-sm flex items-center gap-2">🌿 {product.pharmacy}</p>
                   </div>
                   {index === 0 && (
                     <Badge className="bg-primary text-primary-foreground glow-green">
