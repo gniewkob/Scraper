@@ -8,6 +8,8 @@ from typing import Optional, List, Dict, Any, Union
 import logging
 
 from backend.db import get_connection
+from backend import cities as cities_cfg
+from backend.capabilities import get_capabilities
 from backend.routes.utils import haversine, CITY_REGEX
 
 logger = logging.getLogger(__name__)
@@ -18,6 +20,7 @@ router = APIRouter()
 async def search_products(
     city: Optional[str] = Query(None, min_length=1, max_length=50, pattern=CITY_REGEX),
     strain_type: Optional[str] = Query(None, min_length=1, max_length=50),
+    product_name: Optional[str] = Query(None, min_length=1, max_length=100),
     max_price: Optional[float] = Query(None, gt=0),
     min_thc: Optional[float] = Query(None, ge=0, le=100),
     max_thc: Optional[float] = Query(None, ge=0, le=100),
@@ -26,7 +29,7 @@ async def search_products(
     radius: Optional[float] = Query(None, gt=0, le=1000),
     lat: Optional[float] = Query(None, ge=-90, le=90),
     lon: Optional[float] = Query(None, ge=-180, le=180),
-    limit: int = Query(50, ge=1, le=100),
+    limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
     sort_by: str = Query("price", pattern=r"^(price|rating|distance|name)$"),
     sort_order: str = Query("asc", pattern=r"^(asc|desc)$"),
@@ -42,20 +45,13 @@ async def search_products(
         SELECT DISTINCT
             p.id,
             p.name,
-            p.strain_type,
-            p.thc_content,
-            p.cbd_content,
-            p.category,
-            p.image_url,
+            pp.id as offer_id,
             pp.pharmacy_name,
             pp.address,
             pp.price,
             pp.unit,
             pp.expiration,
             pp.fetched_at,
-            pp.availability_status,
-            pp.pharmacy_rating,
-            pp.delivery_options,
             pp.pharmacy_lat,
             pp.pharmacy_lon,
             pp.map_url
@@ -68,12 +64,24 @@ async def search_products(
     
     # Add filters
     if city:
-        base_query += " AND (pp.address LIKE :city1 OR pp.address LIKE :city2)"
-        params.update({"city1": f"%{city}%", "city2": f"%{city}%"})
+        base_query += " AND LOWER(pp.address) LIKE LOWER(:city)"
+        params.update({"city": f"%{city}%"})
+    if product_name and product_name != "all":
+        base_query += " AND LOWER(p.name) LIKE LOWER(:pname)"
+        params["pname"] = f"%{product_name}%"
     
+    # Strain filtering depending on capabilities
     if strain_type and strain_type != "all":
-        base_query += " AND p.strain_type = :strain_type"
-        params["strain_type"] = strain_type
+        caps = get_capabilities()
+        if caps.get("strain_filter") and caps.get("strain_source") == "column":
+            base_query += " AND LOWER(p.strain_type) = LOWER(:strain_type)"
+            params["strain_type"] = strain_type
+        elif caps.get("strain_filter") and caps.get("strain_source") == "mapping_table":
+            base_query += " AND EXISTS (SELECT 1 FROM product_strain ps WHERE ps.product_id = p.id AND LOWER(ps.strain_type) = LOWER(:strain_type))"
+            params["strain_type"] = strain_type
+        else:
+            # Unsupported, ignore
+            pass
     
     if max_price:
         base_query += " AND pp.price <= :max_price"
@@ -123,28 +131,29 @@ async def search_products(
         for row in rows:
             # Calculate distance if coordinates provided
             distance = None
-            if lat is not None and lon is not None and row["pharmacy_lat"] and row["pharmacy_lon"]:
-                distance = haversine(lat, lon, row["pharmacy_lat"], row["pharmacy_lon"])
+            if lat is not None and lon is not None and row.get("pharmacy_lat") and row.get("pharmacy_lon"):
+                distance = haversine(lat, lon, row.get("pharmacy_lat"), row.get("pharmacy_lon"))
                 if radius and distance > radius:
                     continue
             
             product = {
-                "id": str(row["id"]),
-                "name": row["name"],
-                "strain_type": row["strain_type"] or "unknown",
-                "thc_content": row["thc_content"],
-                "cbd_content": row["cbd_content"],
-                "price": float(row["price"]) if row["price"] else 0,
-                "pharmacy": row["pharmacy_name"],
-                "location": row["address"] or "Unknown",
+                "id": str(row.get("id")),
+                "name": row.get("name"),
+                "offer_id": str(row.get("offer_id")) if row.get("offer_id") is not None else None,
+                "strain_type": (row.get("strain_type") or "unknown"),
+                "thc_content": row.get("thc_content"),
+                "cbd_content": row.get("cbd_content"),
+                "price": float(row.get("price")) if row.get("price") else 0,
+                "pharmacy": row.get("pharmacy_name"),
+                "location": row.get("address") or "Unknown",
                 "distance": distance,
-                "availability": row["availability_status"] == "available" if row["availability_status"] else True,
-                "rating": float(row["pharmacy_rating"]) if row["pharmacy_rating"] else 4.0,
-                "unit": row["unit"] or "g",
-                "expiration": row["expiration"],
-                "fetched_at": row["fetched_at"],
-                "map_url": row["map_url"],
-                "delivery_options": row["delivery_options"]
+                "availability": (row.get("availability_status") == "available") if row.get("availability_status") is not None else True,
+                "rating": float(row.get("pharmacy_rating")) if row.get("pharmacy_rating") else None,
+                "unit": row.get("unit") or "g",
+                "expiration": row.get("expiration"),
+                "fetched_at": row.get("fetched_at"),
+                "map_url": row.get("map_url"),
+                "delivery_options": row.get("delivery_options"),
             }
             products.append(product)
         
@@ -158,12 +167,18 @@ async def search_products(
         count_params: Dict[str, Union[str, float]] = {}
         
         if city:
-            count_query += " AND (pp.address LIKE :city1 OR pp.address LIKE :city2)"
-            count_params.update({"city1": f"%{city}%", "city2": f"%{city}%"})
+            count_query += " AND LOWER(pp.address) LIKE LOWER(:city)"
+            count_params.update({"city": f"%{city}%"})
         
+        # Strain filter for count when supported
         if strain_type and strain_type != "all":
-            count_query += " AND p.strain_type = :strain_type"
-            count_params["strain_type"] = strain_type
+            caps = get_capabilities()
+            if caps.get("strain_filter") and caps.get("strain_source") == "column":
+                count_query += " AND LOWER(p.strain_type) = LOWER(:strain_type)"
+                count_params["strain_type"] = strain_type
+            elif caps.get("strain_filter") and caps.get("strain_source") == "mapping_table":
+                count_query += " AND EXISTS (SELECT 1 FROM product_strain ps WHERE ps.product_id = p.id AND LOWER(ps.strain_type) = LOWER(:strain_type))"
+                count_params["strain_type"] = strain_type
         
         if max_price:
             count_query += " AND pp.price <= :max_price"
@@ -201,51 +216,132 @@ async def search_products(
 
 
 @router.get("/api/stats", response_class=JSONResponse)
-async def get_statistics(conn: AsyncConnection = Depends(get_connection)):
-    """Get system statistics for the dashboard."""
-    
+async def get_statistics(
+    city: Optional[str] = Query(None, min_length=1, max_length=50, pattern=CITY_REGEX),
+    product_name: Optional[str] = Query(None, min_length=1, max_length=100),
+    strain_type: Optional[str] = Query(None, min_length=1, max_length=50),
+    max_price: Optional[float] = Query(None, gt=0),
+    conn: AsyncConnection = Depends(get_connection),
+):
+    """Get statistics, optionally filtered by city/product/strain."""
+
     try:
-        # Get total products
-        total_products = (await conn.execute(
-            text("SELECT COUNT(*) FROM products WHERE active = true")
-        )).scalar()
-        
-        # Get total unique pharmacies
-        total_pharmacies = (await conn.execute(
-            text("SELECT COUNT(DISTINCT pharmacy_name) FROM pharmacy_prices")
-        )).scalar()
-        
-        # Get average price
-        avg_price_result = (await conn.execute(
-            text("SELECT AVG(price) FROM pharmacy_prices WHERE price > 0")
-        )).scalar()
+        where = ["p.active = true"]
+        params: Dict[str, Union[str, float]] = {}
+
+        if city:
+            where.append("LOWER(pp.address) LIKE LOWER(:city)")
+            params["city"] = f"%{city}%"
+        if product_name:
+            where.append("LOWER(p.name) LIKE LOWER(:pname)")
+            params["pname"] = f"%{product_name}%"
+        if max_price is not None:
+            where.append("pp.price <= :max_price")
+            params["max_price"] = max_price
+        # Optional strain filter (only if schema supports; use EXISTS to be safe)
+        if strain_type and strain_type != "all":
+            # Try products.strain_type
+            where_strain_column = "LOWER(p.strain_type) = LOWER(:stype)"
+            where_strain_map = (
+                "EXISTS (SELECT 1 FROM product_strain ps WHERE ps.product_id = p.id AND LOWER(ps.strain_type) = LOWER(:stype))"
+            )
+            # Use a tolerant OR so query works regardless of presence
+            where.append(f"(({where_strain_column}) OR ({where_strain_map}))")
+            params["stype"] = strain_type
+
+        where_clause = " AND ".join(where)
+
+        # Total products within filters
+        total_products = (
+            await conn.execute(
+                text(
+                    f"""
+                    SELECT COUNT(DISTINCT p.id)
+                    FROM products p
+                    JOIN pharmacy_prices pp ON p.id = pp.product_id
+                    WHERE {where_clause}
+                    """
+                ),
+                params,
+            )
+        ).scalar()
+
+        # Total pharmacies within filters
+        total_pharmacies = (
+            await conn.execute(
+                text(
+                    f"""
+                    SELECT COUNT(DISTINCT pp.pharmacy_name)
+                    FROM products p
+                    JOIN pharmacy_prices pp ON p.id = pp.product_id
+                    WHERE {where_clause}
+                    """
+                ),
+                params,
+            )
+        ).scalar()
+
+        # Average price within filters
+        avg_price_result = (
+            await conn.execute(
+                text(
+                    f"""
+                    SELECT AVG(pp.price)
+                    FROM products p
+                    JOIN pharmacy_prices pp ON p.id = pp.product_id
+                    WHERE {where_clause} AND pp.price > 0
+                    """
+                ),
+                params,
+            )
+        ).scalar()
         avg_price = float(avg_price_result) if avg_price_result else 0
-        
-        # Get cities covered
-        cities_result = (await conn.execute(
-            text("SELECT COUNT(DISTINCT address) FROM pharmacy_prices WHERE address IS NOT NULL")
-        )).scalar()
+
+        # Cities covered within filters
+        cities_result = (
+            await conn.execute(
+                text(
+                    f"""
+                    SELECT COUNT(DISTINCT pp.address)
+                    FROM products p
+                    JOIN pharmacy_prices pp ON p.id = pp.product_id
+                    WHERE {where_clause} AND pp.address IS NOT NULL
+                    """
+                ),
+                params,
+            )
+        ).scalar()
         cities_covered = cities_result or 0
-        
-        # Get last update time
-        last_updated_result = (await conn.execute(
-            text("SELECT MAX(fetched_at) FROM pharmacy_prices")
-        )).scalar()
+
+        # Last updated within filters
+        last_updated_result = (
+            await conn.execute(
+                text(
+                    f"""
+                    SELECT MAX(pp.fetched_at)
+                    FROM products p
+                    JOIN pharmacy_prices pp ON p.id = pp.product_id
+                    WHERE {where_clause}
+                    """
+                ),
+                params,
+            )
+        ).scalar()
         last_updated = last_updated_result or "Unknown"
-        
+
         return {
             "total_products": total_products,
             "total_pharmacies": total_pharmacies,
             "avg_price": round(avg_price, 2),
             "cities_covered": cities_covered,
-            "last_updated": str(last_updated)
+            "last_updated": str(last_updated),
         }
-        
+
     except Exception as e:
         logger.error(f"Stats query failed: {e}")
         return JSONResponse(
-            {"error": "Failed to get statistics", "details": str(e)}, 
-            status_code=500
+            {"error": "Failed to get statistics", "details": str(e)},
+            status_code=500,
         )
 
 
@@ -258,7 +354,7 @@ async def get_cities_stats(conn: AsyncConnection = Depends(get_connection)):
     """
     
     try:
-        # Get cities with pharmacy count
+        # Pull aggregated data per address (street-level). We'll map addresses to known city names.
         cities_query = """
             SELECT 
                 address,
@@ -267,32 +363,45 @@ async def get_cities_stats(conn: AsyncConnection = Depends(get_connection)):
             FROM pharmacy_prices 
             WHERE address IS NOT NULL 
             GROUP BY address 
-            ORDER BY pharmacy_count DESC
         """
-        
         rows = (await conn.execute(text(cities_query))).mappings().all()
-        
-        cities = []
+
+        # Build a quick lookup of known cities (lowercased) for substring matching
+        known_cities = cities_cfg.get_city_list()
+        known_lower = [(c, c.lower()) for c in known_cities]
+
+        # Aggregate by detected city name
+        agg: Dict[str, Dict[str, Any]] = {}
         for row in rows:
-            # Extract city name from address (simple approach)
-            address = row["address"]
-            city_name = address.split(",")[0].strip() if address else "Unknown"
-            
-            cities.append({
-                "name": city_name,
-                "pharmacy_count": row["pharmacy_count"],
-                "avg_price": round(float(row["avg_price"]), 2) if row["avg_price"] else 0.0
-            })
-        
-        # Remove duplicates and sort by pharmacy count
-        unique_cities = {}
-        for city in cities:
-            name = city["name"]
-            if name not in unique_cities or city["pharmacy_count"] > unique_cities[name]["pharmacy_count"]:
-                unique_cities[name] = city
-        
-        return list(unique_cities.values())
-        
+            address = (row.get("address") or "").lower()
+            matched_city = None
+            for orig, low in known_lower:
+                if low in address:
+                    matched_city = orig
+                    break
+            # If none matched, skip as we can't attribute to a known city
+            if not matched_city:
+                continue
+
+            entry = agg.setdefault(matched_city, {"name": matched_city, "pharmacy_count": 0, "_price_sum": 0.0, "_price_cnt": 0})
+            entry["pharmacy_count"] += int(row["pharmacy_count"] or 0)
+            avg_price = row["avg_price"]
+            if avg_price is not None:
+                entry["_price_sum"] += float(avg_price)
+                entry["_price_cnt"] += 1
+
+        # Finalize avg_price and sort
+        result = []
+        for city_name, data in agg.items():
+            cnt = data.pop("_price_cnt")
+            s = data.pop("_price_sum")
+            data["avg_price"] = round(s / cnt, 2) if cnt else 0.0
+            result.append(data)
+
+        # Sort by pharmacy_count desc
+        result.sort(key=lambda x: x.get("pharmacy_count", 0), reverse=True)
+        return result
+
     except Exception as e:
         logger.error(f"Cities query failed: {e}")
         return JSONResponse(
@@ -314,16 +423,13 @@ async def get_best_deals(
             SELECT 
                 p.id,
                 p.name,
-                p.strain_type,
-                p.thc_content,
-                p.cbd_content,
+                pp.id as offer_id,
                 pp.pharmacy_name,
                 pp.address,
                 pp.price,
                 pp.unit,
                 pp.expiration,
                 pp.fetched_at,
-                pp.pharmacy_rating,
                 pp.map_url
             FROM products p
             INNER JOIN pharmacy_prices pp ON p.id = pp.product_id
@@ -345,16 +451,17 @@ async def get_best_deals(
             deal = {
                 "id": str(row["id"]),
                 "name": row["name"],
-                "strain_type": row["strain_type"] or "unknown",
-                "thc_content": row["thc_content"],
-                "cbd_content": row["cbd_content"],
-                "price": float(row["price"]),
+                "offer_id": str(row.get("offer_id")) if row.get("offer_id") is not None else None,
+                "strain_type": "unknown",
+                "thc_content": None,
+                "cbd_content": None,
+                "price": float(row["price"]) if row.get("price") is not None else 0.0,
                 "pharmacy": row["pharmacy_name"],
                 "location": row["address"] or "Unknown",
                 "unit": row["unit"] or "g",
                 "expiration": row["expiration"],
                 "fetched_at": row["fetched_at"],
-                "rating": float(row["pharmacy_rating"]) if row["pharmacy_rating"] else 4.0,
+                "rating": None,
                 "map_url": row["map_url"]
             }
             deals.append(deal)

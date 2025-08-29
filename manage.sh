@@ -28,6 +28,7 @@ FRONTEND_PID_FILE="$FRONTEND_DIR/frontend.pid"
 
 # Katalog na PID-y backendu
 PID_DIR="$PROJECT_DIR/.pids"
+SSH_TUNNEL_PID_FILE="$PID_DIR/ssh_tunnel.pid"
 
 # Tworzenie katalogu na PID-y jeśli nie istnieje
 mkdir -p "$PID_DIR"
@@ -72,6 +73,87 @@ kill_process() {
     fi
 }
 
+# Start SSH tunnel for Postgres if enabled via env
+start_ssh_tunnel() {
+    # USE_SSH_TUNNEL can be: 1/true/yes
+    v=$(printf '%s' "${USE_SSH_TUNNEL}" | tr '[:upper:]' '[:lower:]')
+    case "$v" in
+        1|true|yes) ;;
+        *) return ;;
+    esac
+
+    # Required env vars
+    : "${SSH_TUNNEL_HOST:?Set SSH_TUNNEL_HOST in .env}"
+    : "${SSH_TUNNEL_USER:?Set SSH_TUNNEL_USER in .env}"
+    REMOTE_DB_HOST="${REMOTE_DB_HOST:-127.0.0.1}"
+    REMOTE_DB_PORT="${REMOTE_DB_PORT:-5432}"
+    LOCAL_TUNNEL_PORT="${LOCAL_TUNNEL_PORT:-55432}"
+    SSH_TUNNEL_PORT="${SSH_TUNNEL_PORT:-22}"
+
+    if check_process "$SSH_TUNNEL_PID_FILE"; then
+        echo -e "${YELLOW}Tunel SSH już działa${NC}"
+        return
+    fi
+
+    echo -e "${GREEN}Uruchamianie tunelu SSH: localhost:${LOCAL_TUNNEL_PORT} → ${REMOTE_DB_HOST}:${REMOTE_DB_PORT} przez ${SSH_TUNNEL_USER}@${SSH_TUNNEL_HOST}:${SSH_TUNNEL_PORT}${NC}"
+
+    # -f: background, -N: no command, just forward, ExitOnForwardFailure to fail early
+    # ServerAlive keeps the tunnel healthy
+    ssh -f -N \
+        -o ExitOnForwardFailure=yes \
+        -o ServerAliveInterval=60 \
+        -o ServerAliveCountMax=3 \
+        -L "${LOCAL_TUNNEL_PORT}:${REMOTE_DB_HOST}:${REMOTE_DB_PORT}" \
+        -p "${SSH_TUNNEL_PORT}" \
+        "${SSH_TUNNEL_USER}@${SSH_TUNNEL_HOST}"
+
+    local status=$?
+    if [ $status -ne 0 ]; then
+        echo -e "${RED}Nie udało się uruchomić tunelu SSH (kod: $status). Sprawdź dostęp i klucze SSH.${NC}"
+        return 1
+    fi
+
+    # Zapisz PID najnowszego procesu ssh dla naszego portu
+    # shellcheck disable=SC2009
+    local pid
+    pid=$(ps aux | rg "ssh .* -L ${LOCAL_TUNNEL_PORT}:" | rg -v rg | awk '{print $2}' | tail -n1)
+    if [ -n "$pid" ]; then
+        echo "$pid" > "$SSH_TUNNEL_PID_FILE"
+        echo -e "${GREEN}Tunel SSH uruchomiony (PID: $pid)${NC}"
+    else
+        echo -e "${YELLOW}Tunel SSH mógł się uruchomić, ale nie udało się ustalić PID${NC}"
+    fi
+
+    # Rewrite DB_URL to use the tunnel (localhost:LOCAL_TUNNEL_PORT) if DB_URL points to Postgres
+    if [ -n "$DB_URL" ] && [[ "$DB_URL" == postgresql* ]]; then
+        # Use Python's urllib.parse to safely replace host/port
+        DB_URL=$(python3 - <<'PY'
+import os
+from urllib.parse import urlsplit, urlunsplit
+db_url = os.environ['DB_URL']
+local_port = os.environ.get('LOCAL_TUNNEL_PORT','55432')
+u = urlsplit(db_url)
+userinfo = ''
+if u.username:
+    userinfo = u.username
+    if u.password is not None:
+        userinfo += ':' + u.password
+    userinfo += '@'
+netloc = f"{userinfo}127.0.0.1:{local_port}"
+print(urlunsplit((u.scheme, netloc, u.path, u.query, u.fragment)))
+PY
+)
+        export DB_URL
+        echo -e "${YELLOW}DB_URL przełączony na tunel: 127.0.0.1:${LOCAL_TUNNEL_PORT}${NC}"
+    fi
+}
+
+stop_ssh_tunnel() {
+    if [ -f "$SSH_TUNNEL_PID_FILE" ]; then
+        kill_process "$SSH_TUNNEL_PID_FILE" "SSH Tunnel"
+    fi
+}
+
 # Funkcja startująca backend
 start_backend() {
     if check_process "$PID_DIR/backend.pid"; then
@@ -87,10 +169,32 @@ start_backend() {
         export $(cat .env | grep -v '^#' | xargs)
     fi
 
+    # Prefer DATABASE_URL if provided (e.g., tunneling via localhost:PORT)
+    if [ -n "$DATABASE_URL" ]; then
+        export DB_URL="$DATABASE_URL"
+    fi
+
+    # Aktywuj lokalne środowisko wirtualne jeśli istnieje (aby mieć sterowniki jak asyncpg)
+    if [ -d "$PROJECT_DIR/.venv" ] && [ -f "$PROJECT_DIR/.venv/bin/activate" ]; then
+        # shellcheck disable=SC1090
+        . "$PROJECT_DIR/.venv/bin/activate"
+    fi
+
+    # Upewnij się, że sterownik asyncpg jest dostępny dla połączenia Postgres
+    if [ -n "$DB_URL" ] && [[ "$DB_URL" == postgresql* ]]; then
+        python3 - <<'PY' >/dev/null 2>&1 || pip3 install -q asyncpg || true
+import importlib, sys
+sys.exit(0 if importlib.util.find_spec('asyncpg') else 1)
+PY
+    fi
+
     # Ensure ALLOWED_ORIGINS contains local frontend and known proxy domains when not set
     if [ -z "$ALLOWED_ORIGINS" ]; then
         export ALLOWED_ORIGINS="http://127.0.0.1:$FRONTEND_PORT,https://smart.bodora.pl,https://backend.bodora.pl"
     fi
+
+    # Optionally start SSH tunnel for Postgres and rewrite DB_URL
+    start_ssh_tunnel || true
 
     # Export BACKEND_PORT for consistency
     export BACKEND_PORT="$BACKEND_PORT"
@@ -160,6 +264,7 @@ start_frontend() {
 
 # Funkcja zatrzymująca backend
 stop_backend() {
+    stop_ssh_tunnel || true
     kill_process "$PID_DIR/backend.pid" "Backend"
 }
 

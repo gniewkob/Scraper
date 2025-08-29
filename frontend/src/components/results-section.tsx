@@ -8,12 +8,20 @@ interface ResultsSectionProps {
   products: Product[]
   loading: boolean
   searchPerformed: boolean
+  totalCount?: number
+  limit?: number
+  offset?: number
+  onPageChange?: (offset: number) => void
 }
 
 export function ResultsSection({
   products,
   loading,
   searchPerformed,
+  totalCount,
+  limit = 10,
+  offset = 0,
+  onPageChange,
 }: ResultsSectionProps) {
   if (loading) {
     return (
@@ -81,7 +89,11 @@ export function ResultsSection({
       <div className="grid gap-4">
         {products.map((product, index) => (
           <Card
-            key={product.id}
+            // Prefer unique offer_id from backend (pp.id). Fallback to composite.
+            key={
+              product.offer_id ||
+              `${product.id}-${product.pharmacy}-${product.location}-${product.fetched_at || index}`
+            }
             className={`p-6 bg-card/40 backdrop-blur-sm neon-border hover:bg-card/60 transition-all duration-300 hover:scale-[1.02] relative overflow-hidden ${
               index === 0 ? "ring-2 ring-primary/30 glow-green" : ""
             }`}
@@ -96,16 +108,16 @@ export function ResultsSection({
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
-                      🌿 {product.pharmacy}
-                      {index === 0 && <span className="text-sm">👑</span>}
-                    </h4>
-                    <p className="text-muted-foreground text-sm flex items-center gap-2">
                       {product.name}
                       {product.strain_type && product.strain_type !== "unknown" && (
                         <Badge variant="outline" className="text-xs">
-                          {product.strain_type} 💎
+                          {product.strain_type}
                         </Badge>
                       )}
+                      {index === 0 && <span className="text-sm">👑</span>}
+                    </h4>
+                    <p className="text-muted-foreground text-sm flex items-center gap-2">
+                      🌿 {product.pharmacy}
                     </p>
                   </div>
                   {index === 0 && (
@@ -163,16 +175,51 @@ export function ResultsSection({
                   </div>
                 </div>
 
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 hover:scale-105 glow-green">
-                  <Zap className="w-4 h-4 mr-2" />
-                  🚀 Teleportuj się
-                </Button>
+                {(() => {
+                  const mapUrl = product.map_url || (product.location ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(product.location)}` : undefined)
+                  return mapUrl ? (
+                    <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 hover:scale-105 glow-green">
+                      <a href={mapUrl} target="_blank" rel="noopener noreferrer">
+                        <Zap className="w-4 h-4 mr-2" />
+                        🚀 Teleportuj się
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button disabled className="bg-primary/50 text-primary-foreground">
+                      <Zap className="w-4 h-4 mr-2" />
+                      Brak lokalizacji
+                    </Button>
+                  )
+                })()}
               </div>
             </div>
           </Card>
         ))}
       </div>
+
+      {typeof totalCount === 'number' && onPageChange && (
+        <div className="flex items-center justify-between mt-4">
+          <button
+            type="button"
+            className="px-3 py-1 rounded bg-input disabled:opacity-50"
+            onClick={() => onPageChange(Math.max(0, offset - limit))}
+            disabled={offset <= 0}
+          >
+            ◀️ Poprzednie
+          </button>
+          <div className="text-sm text-muted-foreground">
+            Strona {Math.floor(offset / limit) + 1} z {Math.max(1, Math.ceil(totalCount / limit))}
+          </div>
+          <button
+            type="button"
+            className="px-3 py-1 rounded bg-input disabled:opacity-50"
+            onClick={() => onPageChange(offset + limit)}
+            disabled={offset + limit >= totalCount}
+          >
+            Następne ▶️
+          </button>
+        </div>
+      )}
     </div>
   )
 }
-

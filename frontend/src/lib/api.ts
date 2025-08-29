@@ -2,6 +2,7 @@
 export interface Product {
   id: string
   name: string
+  offer_id?: string
   strain_type?: "indica" | "sativa" | "hybrid" | "unknown"
   thc_content?: number
   cbd_content?: number
@@ -20,6 +21,7 @@ export interface Product {
 
 export interface SearchFilters {
   city?: string
+  product_name?: string
   strain_type?: string
   max_price?: number
   min_thc?: number
@@ -31,6 +33,9 @@ export interface SearchFilters {
   lon?: number
   sort_by?: "price" | "rating" | "distance" | "name"
   sort_order?: "asc" | "desc"
+  limit?: number
+  offset?: number
+  mode?: "cheapest" | "deals"
 }
 
 export interface SearchResponse {
@@ -57,6 +62,11 @@ export interface CityInfo {
   name: string
   pharmacy_count: number
   avg_price: number
+}
+
+export interface Capabilities {
+  strain_filter?: boolean
+  strain_source?: 'column' | 'mapping_table' | null
 }
 
 // Build API base url from public env (Next.js exposes NEXT_PUBLIC_* to browser).
@@ -89,12 +99,17 @@ class ApiClient {
     options?: RequestInit,
   ): Promise<T> {
     try {
+      const headers: HeadersInit = {
+        ...(options?.headers || {}),
+      }
+      // Only set Content-Type when sending a body; avoids unnecessary CORS preflights on GET
+      if (options?.body !== undefined && !(headers as any)["Content-Type"]) {
+        (headers as any)["Content-Type"] = "application/json"
+      }
+
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...options?.headers,
-        },
         ...options,
+        headers,
       })
 
       if (!response.ok) {
@@ -112,6 +127,7 @@ class ApiClient {
     const params = new URLSearchParams()
 
     if (filters.city) params.append("city", filters.city)
+    if (filters.product_name && filters.product_name !== "all") params.append("product_name", filters.product_name)
     if (filters.strain_type && filters.strain_type !== "all") params.append("strain_type", filters.strain_type)
     if (filters.max_price) params.append("max_price", filters.max_price.toString())
     if (filters.min_thc) params.append("min_thc", filters.min_thc.toString())
@@ -123,6 +139,8 @@ class ApiClient {
     if (filters.lon) params.append("lon", filters.lon.toString())
     if (filters.sort_by) params.append("sort_by", filters.sort_by)
     if (filters.sort_order) params.append("sort_order", filters.sort_order)
+    if (filters.limit) params.append("limit", String(filters.limit))
+    if (filters.offset) params.append("offset", String(filters.offset))
 
     const queryString = params.toString()
     const endpoint = `/search${queryString ? `?${queryString}` : ""}`
@@ -130,12 +148,40 @@ class ApiClient {
     return await this.makeRequest<SearchResponse>(endpoint)
   }
 
-  async getStats(): Promise<StatsResponse> {
-    return await this.makeRequest<StatsResponse>("/stats")
+  async getStats(filters?: Partial<SearchFilters>): Promise<StatsResponse> {
+    const params = new URLSearchParams()
+    if (filters?.city) params.append("city", filters.city)
+    if (filters?.product_name) params.append("product_name", filters.product_name)
+    if (filters?.strain_type && filters.strain_type !== "all") params.append("strain_type", filters.strain_type)
+    const q = params.toString()
+    return await this.makeRequest<StatsResponse>(`/stats${q ? `?${q}` : ""}`)
   }
 
   async getCities(): Promise<CityInfo[]> {
-    return await this.makeRequest<CityInfo[]>("/cities")
+    // Prefer enriched city info with counts and average price; fallback to plain names
+    try {
+      const res = await fetch(`${API_BASE_URL}/cities_stats`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          if (data.length === 0) return []
+          // If backend returned plain names, normalize
+          if (typeof data[0] === "string") {
+            return (data as string[]).map((name) => ({
+              name,
+              pharmacy_count: 0,
+              avg_price: 0,
+            }))
+          }
+          return data as CityInfo[]
+        }
+      }
+    } catch (e) {
+      // Ignore and try fallback
+    }
+    // Fallback to simple list of names
+    const names = await this.makeRequest<string[]>("/cities")
+    return names.map((name) => ({ name, pharmacy_count: 0, avg_price: 0 }))
   }
 
   async getProduct(id: string): Promise<Product> {
@@ -151,6 +197,23 @@ class ApiClient {
   async getBestDeals(limit = 10): Promise<Product[]> {
     return await this.makeRequest<Product[]>(`/deals/best?limit=${limit}`)
   }
+
+  async getCapabilities(): Promise<Capabilities> {
+    return await this.makeRequest<Capabilities>(`/capabilities`)
+  }
 }
 
 export const apiClient = new ApiClient()
+
+// Helper to fetch product list for selectors
+export interface ProductOption { id: string; name: string; label?: string }
+export async function fetchProductOptions(): Promise<ProductOption[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/products`)
+    if (!res.ok) throw new Error(String(res.status))
+    return await res.json()
+  } catch (e) {
+    console.error('Failed to fetch products', e)
+    return []
+  }
+}

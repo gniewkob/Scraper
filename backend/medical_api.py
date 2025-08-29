@@ -8,7 +8,8 @@ import random
 from . import cities
 from backend.db import get_cities as db_get_cities
 
-router = APIRouter(prefix="/api", tags=["medical"])
+# Namespace mock endpoints under /api/mock to avoid clashing with real routes
+router = APIRouter(prefix="/api/mock", tags=["medical-mock"])
 
 # Pydantic models
 class Product(BaseModel):
@@ -34,7 +35,7 @@ class SearchResponse(BaseModel):
 
 class StatsResponse(BaseModel):
     total_products: int
-    total_dispensaries: int
+    total_pharmacies: int
     avg_price: float
     cities_covered: int
     last_updated: str
@@ -141,7 +142,7 @@ async def get_stats():
     
     return StatsResponse(
         total_products=len(MOCK_PRODUCTS),
-        total_dispensaries=unique_dispensaries,
+        total_pharmacies=unique_dispensaries,
         avg_price=round(sum(prices) / len(prices), 2),
         cities_covered=unique_cities,
         last_updated=datetime.now().isoformat()
