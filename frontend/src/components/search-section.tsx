@@ -12,15 +12,25 @@ import {
 } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { apiClient, type SearchFilters, type CityInfo, fetchProductOptions, type ProductOption } from "@/lib/api"
+import {
+  apiClient,
+  type SearchFilters,
+  type CityInfo,
+  fetchProductOptions,
+  type ProductOption,
+} from "@/lib/api"
 
 interface SearchSectionProps {
-  onSearch: (filters: SearchFilters, mode: 'cheapest' | 'deals') => void
+  onSearch: (filters: SearchFilters, mode: "cheapest" | "deals") => void
   isLoading: boolean
   onFiltersChange?: (filters: Partial<SearchFilters>) => void
 }
 
-export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSectionProps) {
+export function SearchSection({
+  onSearch,
+  isLoading,
+  onFiltersChange,
+}: SearchSectionProps) {
   const [product, setProduct] = useState("")
   const [city, setCity] = useState("")
   const [productName, setProductName] = useState("")
@@ -29,7 +39,7 @@ export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSe
   const [citiesLoading, setCitiesLoading] = useState(true)
   const [supportsStrain, setSupportsStrain] = useState<boolean>(true)
   const [productOptions, setProductOptions] = useState<ProductOption[]>([])
-  const [mode, setMode] = useState<'cheapest' | 'deals'>('cheapest');
+  const [mode, setMode] = useState<"cheapest" | "deals">("cheapest")
 
   // (initial live stats emission is handled by the effect below on mount)
 
@@ -68,7 +78,12 @@ export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSe
   }, [])
 
   const handleSearch = () => {
-    const filters: SearchFilters = { limit: 10, sort_by: "price", sort_order: "asc", mode }
+    const filters: SearchFilters = {
+      limit: 10,
+      sort_by: "price",
+      sort_order: "asc",
+      mode,
+    }
 
     if (city && city !== "all") filters.city = city
     if (productName && productName !== "all") filters.product_name = productName
@@ -81,9 +96,9 @@ export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSe
   // Notify parent about selector changes for live stats
   useEffect(() => {
     const partial: Partial<SearchFilters> = {}
-    if (city && city !== 'all') partial.city = city
-    if (productName && productName !== 'all') partial.product_name = productName
-    if (product && product !== 'all') partial.strain_type = product
+    if (city && city !== "all") partial.city = city
+    if (productName && productName !== "all") partial.product_name = productName
+    if (product && product !== "all") partial.strain_type = product
     if (maxPrice) {
       const v = Number.parseFloat(maxPrice)
       if (!Number.isNaN(v)) partial.max_price = v
@@ -93,20 +108,27 @@ export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSe
 
   return (
     <Card className="p-8 mb-12 bg-card/50 backdrop-blur-sm neon-border shadow-2xl cannabis-pattern relative overflow-hidden">
-      <div className="absolute top-4 right-4 text-2xl opacity-20 float-animation">🌿</div>
-      <div className="absolute bottom-4 left-4 text-xl opacity-15 float-animation" style={{ animationDelay: "1s" }}>🛸</div>
+      <div className="absolute top-4 right-4 text-2xl opacity-20 float-animation">
+        🌿
+      </div>
+      <div
+        className="absolute bottom-4 left-4 text-xl opacity-15 float-animation"
+        style={{ animationDelay: "1s" }}
+      >
+        🛸
+      </div>
       <div className="flex items-center gap-3 mb-4">
         <button
           type="button"
-          className={`px-3 py-1 rounded ${mode === 'cheapest' ? 'bg-primary text-primary-foreground' : 'bg-input'}`}
-          onClick={() => setMode('cheapest')}
+          className={`px-3 py-1 rounded ${mode === "cheapest" ? "bg-primary text-primary-foreground" : "bg-input"}`}
+          onClick={() => setMode("cheapest")}
         >
           🔥 Najniższe ceny
         </button>
         <button
           type="button"
-          className={`px-3 py-1 rounded ${mode === 'deals' ? 'bg-primary text-primary-foreground' : 'bg-input'}`}
-          onClick={() => setMode('deals')}
+          className={`px-3 py-1 rounded ${mode === "deals" ? "bg-primary text-primary-foreground" : "bg-input"}`}
+          onClick={() => setMode("deals")}
         >
           🚀 Najlepsze okazje
         </button>
@@ -114,23 +136,23 @@ export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSe
 
       <div className="grid md:grid-cols-4 gap-6">
         {supportsStrain && (
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground flex items-center gap-2">
-            <Leaf className="w-4 h-4 text-primary glow-green" />
-            🌱 Wybierz produkt
-          </label>
-          <Select value={product} onValueChange={setProduct}>
-            <SelectTrigger className="bg-input border-border hover:border-primary/50 transition-colors neon-border">
-              <SelectValue placeholder="🔍 Wszystkie produkty..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">🌿 Wszystkie</SelectItem>
-              <SelectItem value="indica">🌙 Indica</SelectItem>
-              <SelectItem value="sativa">☀️ Sativa</SelectItem>
-              <SelectItem value="hybrid">🌈 Hybrid</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <Leaf className="w-4 h-4 text-primary glow-green" />
+              🌱 Wybierz produkt
+            </label>
+            <Select value={product} onValueChange={setProduct}>
+              <SelectTrigger className="bg-input border-border hover:border-primary/50 transition-colors neon-border">
+                <SelectValue placeholder="🔍 Wszystkie produkty..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">🌿 Wszystkie</SelectItem>
+                <SelectItem value="indica">🌙 Indica</SelectItem>
+                <SelectItem value="sativa">☀️ Sativa</SelectItem>
+                <SelectItem value="hybrid">🌈 Hybrid</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         )}
 
         <div className="space-y-2">
@@ -144,7 +166,9 @@ export function SearchSection({ onSearch, isLoading, onFiltersChange }: SearchSe
             <SelectContent>
               <SelectItem value="all">🌿 Wszystkie produkty</SelectItem>
               {productOptions.map((p) => (
-                <SelectItem key={p.id} value={p.name}>{p.label || p.name}</SelectItem>
+                <SelectItem key={p.id} value={p.name}>
+                  {p.label || p.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
