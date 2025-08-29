@@ -91,12 +91,19 @@ export function SearchSection({ onSearch, isLoading }: SearchSectionProps) {
           </label>
           <Select value={city} onValueChange={setCity}>
             <SelectTrigger className="bg-input border-border hover:border-accent/50 transition-colors neon-border">
-              <SelectValue placeholder={citiesLoading ? "🔄 Ładowanie..." : "🌍 Wszystkie miasta..."} />
+              <SelectValue
+                placeholder={
+                  citiesLoading ? "🔄 Ładowanie..." : "🌍 Wszystkie miasta..."
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">🌍 Wszystkie miasta</SelectItem>
               {cities.map((cityInfo) => (
-                <SelectItem key={cityInfo.name} value={cityInfo.name.toLowerCase()}>
+                <SelectItem
+                  key={cityInfo.name}
+                  value={cityInfo.name.toLowerCase()}
+                >
                   🏛️ {cityInfo.name} ({cityInfo.pharmacy_count} aptek)
                 </SelectItem>
               ))}
