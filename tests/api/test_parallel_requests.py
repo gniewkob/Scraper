@@ -2,7 +2,7 @@ import asyncio
 import sqlite3
 
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 from backend.main import app
 
@@ -25,7 +25,8 @@ async def async_client(migrated_db):
     conn.commit()
     conn.close()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client
 
 
