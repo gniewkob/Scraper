@@ -6,7 +6,7 @@ export interface Product {
   thc_content?: number
   cbd_content?: number
   price: number
-  pharmacy: string  // Changed from dispensary to match backend
+  pharmacy: string // Changed from dispensary to match backend
   location: string
   distance?: number
   availability: boolean
@@ -112,8 +112,10 @@ class ApiClient {
     const params = new URLSearchParams()
 
     if (filters.city) params.append("city", filters.city)
-    if (filters.strain_type && filters.strain_type !== "all") params.append("strain_type", filters.strain_type)
-    if (filters.max_price) params.append("max_price", filters.max_price.toString())
+    if (filters.strain_type && filters.strain_type !== "all")
+      params.append("strain_type", filters.strain_type)
+    if (filters.max_price)
+      params.append("max_price", filters.max_price.toString())
     if (filters.min_thc) params.append("min_thc", filters.min_thc.toString())
     if (filters.max_thc) params.append("max_thc", filters.max_thc.toString())
     if (filters.min_cbd) params.append("min_cbd", filters.min_cbd.toString())
