@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 import logging
 from typing import Dict, Optional, AsyncIterator
-import logging
 
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import (
@@ -23,7 +22,6 @@ from . import cities
 
 # cache of engines keyed by URL so modules can share a single instance
 _ENGINE_CACHE: Dict[str, AsyncEngine] = {}
-logger = logging.getLogger(__name__)
 logger = logging.getLogger(__name__)
 
 
