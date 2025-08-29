@@ -8,7 +8,6 @@ from typing import Dict, Optional, AsyncIterator
 import logging
 
 from sqlalchemy import select, text
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncEngine,
