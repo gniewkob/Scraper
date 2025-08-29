@@ -249,9 +249,13 @@ async def get_statistics(conn: AsyncConnection = Depends(get_connection)):
         )
 
 
-@router.get("/api/cities", response_class=JSONResponse)
-async def get_cities(conn: AsyncConnection = Depends(get_connection)):
-    """Get list of cities with pharmacy coverage."""
+@router.get("/api/cities_stats", response_class=JSONResponse)
+async def get_cities_stats(conn: AsyncConnection = Depends(get_connection)):
+    """Get list of cities with pharmacy coverage (name + counters).
+
+    Note: Avoids clashing with the core `/api/cities` endpoint that returns
+    a simple list of city names used elsewhere and in tests.
+    """
     
     try:
         # Get cities with pharmacy count

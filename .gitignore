@@ -36,6 +36,10 @@ scraper/data/pharmacy_prices.sqlite
 
 # Local environment (never commit real secrets)
 .env
+.env.local
+.env.backup
+.env.*
+!.env.example
 
 # Uvicorn log
 uvicorn_scraper.log
@@ -46,7 +50,7 @@ uvicorn_scraper.log
 # User alerts
 **/user_alerts.json*
 .aider*
-.env
-.env
-.env
-.env
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md

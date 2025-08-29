@@ -111,6 +111,15 @@ PORT=38273 uvicorn backend.main:app --reload --port $PORT
 Otwórz `http://localhost:38273` – pojawi się panel z listą ofert i trendem cenowym.
 *Jeśli w bazie brak danych, najpierw uruchom scraper.*
 
+Uwierzytelnianie administratora (dla endpointów wymagających dostępu do PII) działa przez nagłówek `Authorization: Bearer <hasło>`, gdzie `<hasło>` jest porównywane z wartością `ADMIN_PASSWORD_HASH` (bcrypt). Aby wygenerować hash:
+
+```bash
+python - << 'PY'
+import bcrypt; pwd=b'admin'; print(bcrypt.hashpw(pwd, bcrypt.gensalt()).decode())
+PY
+```
+W produkcji ustaw własne hasło i przechowuj hash w `ADMIN_PASSWORD_HASH`.
+
 **Statyczne zasoby:** Pliki CSS/JS w szablonach (Bootstrap, Chart.js, Leaflet) są pobierane z CDN z atrybutami `integrity` i `crossorigin`. Jeśli wolisz trzymać je lokalnie (np. do pracy offline), umieść je w katalogu `backend/static/` i zaktualizuj odwołania w szablonach.
 
 ---
