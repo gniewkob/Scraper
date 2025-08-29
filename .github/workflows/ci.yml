@@ -207,3 +207,76 @@ jobs:
             **/test-results/**/*.xml
           if-no-files-found: ignore
           retention-days: 7
+
+  browser_tests:
+    name: Browser Tests (${{ matrix.variant }})
+    runs-on: ubuntu-latest
+    needs: lint_and_test
+    timeout-minutes: 40
+    env:
+      CI: true
+      HEADLESS: true
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [selenium_xvfb, playwright_headed, xhr_capture]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and run selenium image
+        if: matrix.variant == 'selenium_xvfb'
+        env:
+          TARGET_URL: ${{ secrets.TARGET_URL }}
+          MIN_OFFERS: ${{ secrets.MIN_OFFERS }}
+        run: |
+          docker build -t scraper -f Dockerfile.scrape .
+          docker run --rm --network host -e TARGET_URL -e MIN_OFFERS scraper
+
+      - name: Setup Python
+        if: matrix.variant != 'selenium_xvfb'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: matrix.variant != 'selenium_xvfb'
+        run: |
+          pip install -r requirements.txt -r requirements-ci.txt
+          playwright install --with-deps firefox
+
+      - name: Run Playwright headed tests
+        if: matrix.variant == 'playwright_headed'
+        run: pytest tests/test_playwright_headed.py
+
+      - name: Run XHR capture tests
+        if: matrix.variant == 'xhr_capture'
+        run: pytest tests/test_xhr_capture.py
+
+      - name: Upload selenium screenshot
+        if: matrix.variant == 'selenium_xvfb' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium_screenshot
+          path: selenium.png
+
+      - name: Upload Playwright screenshot
+        if: matrix.variant == 'playwright_headed' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright_screenshot
+          path: playwright.png
+
+      - name: Upload network HAR
+        if: matrix.variant == 'xhr_capture' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: network_har
+          path: network.har
+
+      - name: Upload XHR log
+        if: matrix.variant == 'xhr_capture' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xhr_json
+          path: xhr.json
