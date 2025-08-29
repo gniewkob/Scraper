@@ -5,7 +5,9 @@ import { TrendingUp, Users, MapPin, Clock } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { apiClient, type StatsResponse, type SearchFilters } from "@/lib/api"
 
-interface Props { filters?: Partial<SearchFilters> | null }
+interface Props {
+  filters?: Partial<SearchFilters> | null
+}
 
 export function StatsSection({ filters }: Props) {
   const [stats, setStats] = useState<StatsResponse | null>(null)

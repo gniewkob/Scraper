@@ -109,14 +109,17 @@ export function ResultsSection({
                   <div>
                     <h4 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
                       {product.name}
-                      {product.strain_type && product.strain_type !== "unknown" && (
-                        <Badge variant="outline" className="text-xs">
-                          {product.strain_type}
-                        </Badge>
-                      )}
+                      {product.strain_type &&
+                        product.strain_type !== "unknown" && (
+                          <Badge variant="outline" className="text-xs">
+                            {product.strain_type}
+                          </Badge>
+                        )}
                       {index === 0 && <span className="text-sm">👑</span>}
                     </h4>
-                    <p className="text-muted-foreground text-sm flex items-center gap-2">🌿 {product.pharmacy}</p>
+                    <p className="text-muted-foreground text-sm flex items-center gap-2">
+                      🌿 {product.pharmacy}
+                    </p>
                   </div>
                   {index === 0 && (
                     <Badge className="bg-primary text-primary-foreground glow-green">
@@ -174,16 +177,30 @@ export function ResultsSection({
                 </div>
 
                 {(() => {
-                  const mapUrl = product.map_url || (product.location ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(product.location)}` : undefined)
+                  const mapUrl =
+                    product.map_url ||
+                    (product.location
+                      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(product.location)}`
+                      : undefined)
                   return mapUrl ? (
-                    <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 hover:scale-105 glow-green">
-                      <a href={mapUrl} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      asChild
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 hover:scale-105 glow-green"
+                    >
+                      <a
+                        href={mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Zap className="w-4 h-4 mr-2" />
                         🚀 Teleportuj się
                       </a>
                     </Button>
                   ) : (
-                    <Button disabled className="bg-primary/50 text-primary-foreground">
+                    <Button
+                      disabled
+                      className="bg-primary/50 text-primary-foreground"
+                    >
                       <Zap className="w-4 h-4 mr-2" />
                       Brak lokalizacji
                     </Button>
@@ -195,7 +212,7 @@ export function ResultsSection({
         ))}
       </div>
 
-      {typeof totalCount === 'number' && onPageChange && (
+      {typeof totalCount === "number" && onPageChange && (
         <div className="flex items-center justify-between mt-4">
           <button
             type="button"
@@ -206,7 +223,8 @@ export function ResultsSection({
             ◀️ Poprzednie
           </button>
           <div className="text-sm text-muted-foreground">
-            Strona {Math.floor(offset / limit) + 1} z {Math.max(1, Math.ceil(totalCount / limit))}
+            Strona {Math.floor(offset / limit) + 1} z{" "}
+            {Math.max(1, Math.ceil(totalCount / limit))}
           </div>
           <button
             type="button"

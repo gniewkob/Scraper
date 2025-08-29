@@ -13,16 +13,19 @@ export default function HomePage() {
   const [searchPerformed, setSearchPerformed] = useState(false)
   const [totalCount, setTotalCount] = useState<number>(0)
   const [lastFilters, setLastFilters] = useState<SearchFilters | null>(null)
-  const [mode, setMode] = useState<'cheapest' | 'deals'>('cheapest')
+  const [mode, setMode] = useState<"cheapest" | "deals">("cheapest")
 
-  const handleSearch = async (filters: SearchFilters, m: 'cheapest' | 'deals' = mode) => {
+  const handleSearch = async (
+    filters: SearchFilters,
+    m: "cheapest" | "deals" = mode,
+  ) => {
     setLoading(true)
     setSearchPerformed(true)
 
     try {
       setMode(m)
       setLastFilters(filters)
-      if (m === 'deals') {
+      if (m === "deals") {
         const deals = await apiClient.getBestDeals(filters.limit || 10)
         setProducts(deals)
         setTotalCount(deals.length)
@@ -42,13 +45,16 @@ export default function HomePage() {
 
   // Initial search: default to 10 cheapest across all
   useEffect(() => {
-    handleSearch({ limit: 10, sort_by: "price", sort_order: "asc", offset: 0 }, 'cheapest')
+    handleSearch(
+      { limit: 10, sort_by: "price", sort_order: "asc", offset: 0 },
+      "cheapest",
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handlePageChange = (newOffset: number) => {
     if (!lastFilters) return
-    handleSearch({ ...lastFilters, offset: newOffset }, 'cheapest')
+    handleSearch({ ...lastFilters, offset: newOffset }, "cheapest")
   }
 
   return (
@@ -65,10 +71,10 @@ export default function HomePage() {
           products={products}
           loading={loading}
           searchPerformed={searchPerformed}
-          totalCount={mode === 'cheapest' ? totalCount : undefined}
+          totalCount={mode === "cheapest" ? totalCount : undefined}
           limit={lastFilters?.limit || 10}
           offset={lastFilters?.offset || 0}
-          onPageChange={mode === 'cheapest' ? handlePageChange : undefined}
+          onPageChange={mode === "cheapest" ? handlePageChange : undefined}
         />
       </div>
     </div>
