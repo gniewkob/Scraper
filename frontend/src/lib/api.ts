@@ -66,7 +66,7 @@ export interface CityInfo {
 
 export interface Capabilities {
   strain_filter?: boolean
-  strain_source?: 'column' | 'mapping_table' | null
+  strain_source?: "column" | "mapping_table" | null
 }
 
 // Build API base url from public env (Next.js exposes NEXT_PUBLIC_* to browser).
@@ -104,7 +104,7 @@ class ApiClient {
       }
       // Only set Content-Type when sending a body; avoids unnecessary CORS preflights on GET
       if (options?.body !== undefined && !(headers as any)["Content-Type"]) {
-        (headers as any)["Content-Type"] = "application/json"
+        ;(headers as any)["Content-Type"] = "application/json"
       }
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -127,9 +127,12 @@ class ApiClient {
     const params = new URLSearchParams()
 
     if (filters.city) params.append("city", filters.city)
-    if (filters.product_name && filters.product_name !== "all") params.append("product_name", filters.product_name)
-    if (filters.strain_type && filters.strain_type !== "all") params.append("strain_type", filters.strain_type)
-    if (filters.max_price) params.append("max_price", filters.max_price.toString())
+    if (filters.product_name && filters.product_name !== "all")
+      params.append("product_name", filters.product_name)
+    if (filters.strain_type && filters.strain_type !== "all")
+      params.append("strain_type", filters.strain_type)
+    if (filters.max_price)
+      params.append("max_price", filters.max_price.toString())
     if (filters.min_thc) params.append("min_thc", filters.min_thc.toString())
     if (filters.max_thc) params.append("max_thc", filters.max_thc.toString())
     if (filters.min_cbd) params.append("min_cbd", filters.min_cbd.toString())
@@ -151,8 +154,10 @@ class ApiClient {
   async getStats(filters?: Partial<SearchFilters>): Promise<StatsResponse> {
     const params = new URLSearchParams()
     if (filters?.city) params.append("city", filters.city)
-    if (filters?.product_name) params.append("product_name", filters.product_name)
-    if (filters?.strain_type && filters.strain_type !== "all") params.append("strain_type", filters.strain_type)
+    if (filters?.product_name)
+      params.append("product_name", filters.product_name)
+    if (filters?.strain_type && filters.strain_type !== "all")
+      params.append("strain_type", filters.strain_type)
     const q = params.toString()
     return await this.makeRequest<StatsResponse>(`/stats${q ? `?${q}` : ""}`)
   }
@@ -206,14 +211,18 @@ class ApiClient {
 export const apiClient = new ApiClient()
 
 // Helper to fetch product list for selectors
-export interface ProductOption { id: string; name: string; label?: string }
+export interface ProductOption {
+  id: string
+  name: string
+  label?: string
+}
 export async function fetchProductOptions(): Promise<ProductOption[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/products`)
     if (!res.ok) throw new Error(String(res.status))
     return await res.json()
   } catch (e) {
-    console.error('Failed to fetch products', e)
+    console.error("Failed to fetch products", e)
     return []
   }
 }

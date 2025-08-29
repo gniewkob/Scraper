@@ -28,4 +28,5 @@ celery==5.5.3
 aiosqlite==0.21.0
 tenacity
 prometheus-client
-asyncpg==0.29.0
+# Optional Postgres driver (skip on Python 3.13 where wheels are unavailable)
+asyncpg==0.29.0; python_version < '3.13'
