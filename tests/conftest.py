@@ -11,8 +11,6 @@ import bcrypt
 from cryptography.fernet import Fernet
 import pytest
 
-from backend import db as backend_db
-
 os.environ.setdefault("SECRET_KEY", "test-secret")
 os.environ.setdefault(
     "ADMIN_PASSWORD_HASH", bcrypt.hashpw(b"admin", bcrypt.gensalt()).decode()
@@ -20,6 +18,7 @@ os.environ.setdefault(
 os.environ["DB_URL"] = ""
 os.environ.setdefault("ALERTS_FERNET_KEY", Fernet.generate_key().decode())
 
+from backend import db as backend_db
 
 @pytest.fixture()
 def migrated_db(monkeypatch):
