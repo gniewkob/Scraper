@@ -1,0 +1,39 @@
+name: Create Pydantic Deprecation Cleanup Issue
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create_issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Create or ensure issue exists
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'chore(pydantic): remove deprecated Field extras and update settings'
+            const body = `We are seeing Pydantic v2 deprecation warnings about using extra keyword arguments on \`Field\` (e.g., \`env=\`). This issue tracks cleanup across the repo.\n\nPlan:\n- Prefer default BaseSettings env resolution (uppercase field names) over \`Field(env=...)\`.\n- Where custom env names are needed, use aliases compatible with pydantic-settings v2.\n- Ensure \`SettingsConfigDict\` handles env file and prefixes.\n- Run pytest in CI to confirm no deprecation warnings.\n\nContext:\n- backend/config.py updated to remove \`Field(env=...)\` for \`secret_key\` and \`admin_password_hash\`.\n- Audit remaining modules.`
+
+            const { owner, repo } = context.repo
+            // Search for an open issue with the same title
+            const search = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${owner}/${repo} is:issue is:open "${title.replace(/"/g, '\\"')}"`,
+            })
+            if (search.data.total_count > 0) {
+              core.info('Issue already exists, skipping creation.')
+              return
+            }
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title,
+              body,
+              labels: ['chore', 'tech-debt'],
+            })
+            core.info('Issue created successfully.')
+
