@@ -1,0 +1,36 @@
+name: Cleanup Pydantic v2 deprecations
+description: Track and resolve deprecation warnings related to Pydantic v2 usage
+title: "chore(pydantic): remove deprecated Field extras and update settings"
+labels: ["chore", "tech-debt"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We are seeing Pydantic v2 deprecation warnings about using extra keyword arguments on `Field` (e.g., `env=`). This issue tracks cleanup across the repo.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Affected areas
+      options:
+        - label: backend/config.py uses `Field(env=...)` (fixed for `secret_key` and `admin_password_hash`)
+          required: false
+        - label: Audit other modules for deprecated `Field` extras
+          required: false
+        - label: Verify no runtime warnings remain in CI
+          required: false
+
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      description: Proposed steps to complete the cleanup
+      value: |
+        - Prefer default BaseSettings env resolution (uppercase field name) over `Field(env=...)`.
+        - Where custom env names are needed, prefer `alias` or `validation_alias` semantics compatible with pydantic-settings v2.
+        - Ensure `SettingsConfigDict` is used for `.env` and env prefix configuration.
+        - Run pytest in CI to confirm no deprecation warnings.
+    validations:
+      required: false
+

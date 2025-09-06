@@ -10,10 +10,12 @@ from pydantic import Field
 class Settings(BaseSettings):
     """Settings for the backend service."""
 
-    secret_key: str = Field(default="test-secret", env="SECRET_KEY")
+    # Pydantic v2: avoid deprecated Field extra keys like `env`.
+    # BaseSettings automatically reads uppercased field names from env vars
+    # (SECRET_KEY, ADMIN_PASSWORD_HASH), so explicit `env=` is unnecessary.
+    secret_key: str = Field(default="test-secret")
     admin_password_hash: str = Field(
         default="$2b$12$YCaF33BlK0B7IFPaPzjYuuUm9FisV2lvuP6mGbeovT5rsn36kO4.e",
-        env="ADMIN_PASSWORD_HASH",
     )
 
     twilio_account_sid: Optional[str] = None
