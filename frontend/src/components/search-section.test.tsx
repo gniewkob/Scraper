@@ -5,8 +5,14 @@ import { SearchSection } from "./search-section"
 
 vi.mock("@/lib/api", () => ({
   apiClient: {
-    getCities: vi.fn().mockResolvedValue(["Warszawa"]),
+    getCities: vi.fn().mockResolvedValue([
+      { name: "Warszawa", pharmacy_count: 10, avg_price: 0 },
+    ]),
+    getCapabilities: vi.fn().mockResolvedValue({ strain_filter: true }),
   },
+  fetchProductOptions: vi
+    .fn()
+    .mockResolvedValue([{ id: "p1", name: "Alien OG", label: "Alien OG" }]),
 }))
 
 describe("SearchSection", () => {

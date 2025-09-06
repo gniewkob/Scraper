@@ -7,7 +7,7 @@ vi.mock("@/lib/api", () => ({
   apiClient: {
     getStats: vi.fn().mockResolvedValue({
       total_products: 10,
-      total_dispensaries: 5,
+      total_pharmacies: 5,
       avg_price: 100,
       cities_covered: 3,
       last_updated: "2 min temu",
