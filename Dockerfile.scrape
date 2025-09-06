@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+# Avoid interactive prompts during apt operations
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
@@ -36,6 +39,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxtst6 \
     && rm -rf /var/lib/apt/lists/*
 
+# Ensure Selenium uses the system Chromium binary and driver
+ENV CHROME_BIN=/usr/bin/chromium
+ENV PATH="/usr/lib/chromium:$PATH"
+
 # Set work directory
 WORKDIR /app
 
@@ -46,4 +53,6 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir pytest selenium
 
+# Default test runner inside the container (overridable at `docker run`)
+ENV RUNNER=selenium_headed
 ENTRYPOINT ["xvfb-run", "-a", "pytest", "-q", "tests/test_scrape_matrix.py::test_selenium_headed"]

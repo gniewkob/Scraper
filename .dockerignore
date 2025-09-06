@@ -1,0 +1,35 @@
+# Reduce Docker build context size and speed up builds
+# VCS and editor junk
+.git
+.gitignore
+.github
+.DS_Store
+.cursor
+.nova
+
+# Python virtual envs and caches
+.venv
+venv
+**/__pycache__
+*.pyc
+.pytest_cache
+
+# Node/Next.js
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/dist
+
+# Build artifacts, logs, and PIDs
+*.log
+*.pid
+.pids
+logs
+
+# Local data files
+data/*.sqlite
+data/*.db
+
+# Docker caches
+**/.docker-cache
+
